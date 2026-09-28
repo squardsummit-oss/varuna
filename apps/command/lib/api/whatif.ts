@@ -493,8 +493,9 @@ export const TwinScenarioResultSchema = z.looseObject({
     offset_m: z.number(),
     source: z.string().nullable(),
     /**
-     * The sea that entered the city, net, positive inland: what the sea cells passed to land
-     * cells and pipes. The number to quote for "how much sea came in".
+     * Net face exchange between the sea cells and the land, positive inland. It is not the sea
+     * that entered the city on its own: the pipes are the other path, `outfall_m3` (negative
+     * when seawater is pushed up the drains).
      */
     sea_to_land_m3: z.number(),
     /** The same against the Twin with nothing changed, so the tide offset's own share. */

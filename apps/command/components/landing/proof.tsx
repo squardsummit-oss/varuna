@@ -28,6 +28,9 @@ interface Proof {
   csi: number | null;
   pod: number | null;
   leadMin: number | null;
+  /** Hits flagged before the civic log, and hits flagged after it inside the pin's uncertainty. */
+  hitsEarly: number | null;
+  hitsAfter: number | null;
   pins: number;
   thresholdCm: number;
 }
@@ -39,6 +42,8 @@ function read(body: Record<string, unknown>): Proof {
     csi: scores.csi ?? null,
     pod: scores.pod ?? null,
     leadMin: scores.median_lead_min ?? null,
+    hitsEarly: scores.n_hits_early ?? null,
+    hitsAfter: scores.n_hits_after ?? null,
     pins: Number(truth.n_in_window ?? 0),
     thresholdCm: Number(body.headline_threshold_cm ?? 15),
   };
@@ -69,7 +74,7 @@ export function Figure({
       <p
         ref={ref}
         data-figure={label}
-        className="num font-display text-display font-semibold tracking-display text-text"
+        className="num font-display text-display tracking-display text-text font-semibold"
       >
         {rounded === null ? (
           "—"
@@ -83,12 +88,28 @@ export function Figure({
           />
         )}
         {value !== null && suffix ? (
-          <span className="ml-1 text-h2 text-text-2">{suffix}</span>
+          <span className="text-h2 text-text-2 ml-1">{suffix}</span>
         ) : null}
       </p>
       <p className="text-h3 text-text">{label}</p>
-      <p className="max-w-[42ch] text-small text-text-2">{note}</p>
+      <p className="text-small text-text-2 max-w-[42ch]">{note}</p>
     </div>
+  );
+}
+
+/**
+ * The warning-time note, which has to say why the figure is a dash when it is one. The median is
+ * taken over the pins VARUNA flagged *before* the civic log (`varuna_verify.event`); on an event
+ * where every hit came after the log there is no such pin, and a bare dash under "Median warning
+ * time" read as a number that failed to load.
+ */
+export function leadNote(proof: Proof | null): string {
+  const base = "How long before the civic log VARUNA first called that street impassable.";
+  if (!proof || proof.leadMin !== null || proof.hitsEarly !== 0 || !proof.hitsAfter) return base;
+  const n = proof.hitsAfter;
+  return (
+    `None on this event: VARUNA flagged ${n === 1 ? "the one pin" : `all ${n} pins`} it caught ` +
+    "after the city logged them, inside each pin's stated time uncertainty."
   );
 }
 
@@ -121,7 +142,7 @@ export function Proof() {
   return (
     <section className="px-6 py-[72px] sm:px-12 lg:px-24 lg:py-[120px]">
       <div className="mx-auto max-w-[1200px]">
-        <h2 className="max-w-[24ch] font-display text-h1 font-semibold tracking-display text-text">
+        <h2 className="font-display text-h1 tracking-display text-text max-w-[24ch] font-semibold">
           How we score ourselves
         </h2>
         <div className="mt-10 grid gap-10 md:grid-cols-3">
@@ -129,13 +150,15 @@ export function Proof() {
             value={proof?.pod ?? null}
             decimals={2}
             label={`Probability of detection at ${proof?.thresholdCm ?? 15} cm`}
-            note="Share of the sourced pins VARUNA had already flagged when the city logged them."
+            // A hit is a pin where the forecast crossed the threshold inside the pin's own time
+            // uncertainty, before or after the log; the warning time below counts only "before".
+            note={`Share of the sourced pins where VARUNA forecast more than ${proof?.thresholdCm ?? 15} cm, inside each pin's stated time uncertainty.`}
           />
           <Figure
             value={proof?.leadMin ?? null}
             suffix="min"
             label="Median warning time"
-            note="How long before the civic log VARUNA first called that street impassable."
+            note={leadNote(proof)}
           />
           <Figure
             value={proof?.pins ?? null}
@@ -143,7 +166,7 @@ export function Proof() {
             note="Curated public records inside the forecast window, each with a source URL and a stated time uncertainty."
           />
         </div>
-        <p className="mt-10 max-w-[72ch] text-small text-text-3">
+        <p className="text-small text-text-3 mt-10 max-w-[72ch]">
           Computed on a reconstructed replay of 2 July 2019 against sourced ground truth. The
           numbers are what the model achieved, not what we would like it to achieve.{" "}
           <a href={LIMITATIONS_HREF} className="text-tide underline">

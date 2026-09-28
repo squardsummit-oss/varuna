@@ -77,7 +77,7 @@
     "stepPhoto": "Photo",
     "stepDepth": "Depth",
     "whereTitle": "Where is the water?",
-    "whereDescription": "Adjust the point if the map is off.",
+    "whereDescription": "Use your location, or type the coordinates.",
     "useMyLocation": "Use my location",
     "findingLocation": "Finding your location",
     "orType": "Or type the coordinates below.",

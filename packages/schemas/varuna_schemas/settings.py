@@ -50,6 +50,14 @@ class Settings(BaseSettings):
     varuna_replay_speed: float = Field(
         default=30.0, gt=0, description="Replay acceleration factor (30 = 30x real time)."
     )
+    varuna_replay_open_at: str | None = Field(
+        default="06:40",
+        description=(
+            "HH:MM IST on the default bundle's day where the replay clock opens, paused. The "
+            "console opens on the same cycle (ADR-0007: the demo opens at 06:40). 'off' opens "
+            "at the bundle's start; a time outside the window opens there too."
+        ),
+    )
     varuna_mode: RunMode = Field(default="replay", description="replay or live ingestion.")
     varuna_offline: bool = Field(
         default=False, description="Block all outbound network (offline package, tests)."

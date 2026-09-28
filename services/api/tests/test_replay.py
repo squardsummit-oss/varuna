@@ -151,6 +151,15 @@ def _write_bundle(root: Path, bundle_id: str, label: str, *, complete: bool) -> 
     return folder
 
 
+@pytest.fixture(autouse=True)
+def _open_at_the_window_start(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests read the clock from the window's start; the 06:40 opening has its own test.
+
+    Autouse, so it is set before the ``state`` fixture reads the settings.
+    """
+    monkeypatch.setenv("VARUNA_REPLAY_OPEN_AT", "off")
+
+
 @pytest.fixture
 def bundles(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     """A bundles folder holding one complete-looking bundle and one that is only a manifest."""
@@ -281,6 +290,26 @@ def test_clock_opens_the_configured_bundle_paused_at_t0(client: TestClient) -> N
     assert clock["cycle_index"] == 0
     assert clock["n_cycles"] == 49
     assert clock["progress"] == 0.0
+
+
+def test_the_demo_bundle_opens_at_its_configured_opening() -> None:
+    """The console opens on the 06:40 cycle, so the shared clock does too (ADR-0007)."""
+    from types import SimpleNamespace
+
+    from varuna_api.replay import _opening_instant
+
+    clock = SimpleNamespace(t0=T0, t1=T0.replace(hour=9, minute=40))
+
+    def settings(open_at: str | None, bundle: str = BUNDLE_ID) -> SimpleNamespace:
+        return SimpleNamespace(varuna_replay_open_at=open_at, varuna_bundle=bundle)
+
+    assert _opening_instant(clock, BUNDLE_ID, settings("06:40")) == T0.replace(hour=6, minute=40)
+    # Off, empty, another bundle, a time outside the window or nonsense: open at the start.
+    assert _opening_instant(clock, BUNDLE_ID, settings("off")) is None
+    assert _opening_instant(clock, BUNDLE_ID, settings(None)) is None
+    assert _opening_instant(clock, DESIGN_ID, settings("06:40")) is None
+    assert _opening_instant(clock, BUNDLE_ID, settings("11:00")) is None
+    assert _opening_instant(clock, BUNDLE_ID, settings("six forty")) is None
 
 
 def test_play_and_pause_move_the_shared_clock(client: TestClient) -> None:

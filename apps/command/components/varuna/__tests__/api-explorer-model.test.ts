@@ -61,7 +61,18 @@ describe("operationsFromOpenApi", () => {
       .filter((o) => o.method !== "GET" && o.runnable)
       .map((o) => o.key);
     expect(runnablePosts.sort()).toEqual(["POST /v1/route", "POST /v1/whatif"]);
-    expect(operations.filter((o) => o.method === "GET").every((o) => o.runnable)).toBe(true);
+    // Every read is sent except the desk's own, which carry the passphrase because the delivery
+    // log and the citizen inbox hold what officers and residents wrote. The explorer lists them
+    // and refuses to send them, exactly as it does the desk's writes.
+    const gets = operations.filter((o) => o.method === "GET");
+    expect(gets.filter((o) => !o.needsPassphrase).every((o) => o.runnable)).toBe(true);
+    expect(
+      gets
+        .filter((o) => !o.runnable)
+        .map((o) => o.key)
+        .sort(),
+    ).toEqual(["GET /v1/ops/log", "GET /v1/ops/reports"]);
+    for (const o of gets.filter((g) => !g.runnable)) expect(o.needsPassphrase).toBe(true);
     expect(op("POST /v1/replay/play").notRunnableReason).toMatch(/replay clock/);
     expect(op("POST /v1/reports").runnable).toBe(false);
   });
@@ -80,7 +91,14 @@ describe("operationsFromOpenApi", () => {
   it("groups by tag and filters on path, method and summary", () => {
     const groups = groupByTag(operations);
     expect(groups.reduce((n, g) => n + g.operations.length, 0)).toBe(operations.length);
-    expect(filterOperations(operations, "weather").map((o) => o.key)).toEqual(["GET /v1/weather"]);
+    // "weather" is a path and a tag: the live outlook is filed under the weather tag.
+    expect(filterOperations(operations, "weather").map((o) => o.key)).toEqual([
+      "GET /v1/outlook",
+      "GET /v1/weather",
+    ]);
+    expect(filterOperations(operations, "/v1/weather").map((o) => o.key)).toEqual([
+      "GET /v1/weather",
+    ]);
     expect(filterOperations(operations, "  ").length).toBe(operations.length);
   });
 });

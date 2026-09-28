@@ -251,13 +251,17 @@ function WhatIfLab() {
   const pickCycle = useCallback((next: string) => setRunId(next), []);
 
   // The answer on screen: the Twin's once it has finished the question, the emulator's until then.
+  // The job's fields are read out first so the memo depends on exactly the values it uses, which
+  // is what lets the React Compiler keep this memoization rather than skip the component.
+  const twinCacheLabel = twin.job?.cache?.label ?? null;
+  const twinScenarioNotes = twin.job?.scenario.notes;
   const answer: WhatIfAnswer | null = useMemo(() => {
     if (flow.engine === "twin" && twin.result) {
       return twinAnswer(twin.result, {
         names,
-        cacheLabel: twin.job?.cache?.label ?? null,
+        cacheLabel: twinCacheLabel,
         asked: flow.asked,
-        scenarioNotes: twin.job?.scenario.notes ?? [],
+        scenarioNotes: twinScenarioNotes ?? [],
       });
     }
     return flow.emulator ? emulatorAnswer(flow.emulator) : null;
@@ -266,8 +270,8 @@ function WhatIfLab() {
     flow.engine,
     flow.emulator,
     names,
-    twin.job?.cache?.label,
-    twin.job?.scenario.notes,
+    twinCacheLabel,
+    twinScenarioNotes,
     twin.result,
   ]);
   const tideAsked = (flow.asked?.tideOffsetM ?? 0) !== 0;

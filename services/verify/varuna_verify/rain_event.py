@@ -46,10 +46,19 @@ whether the probabilities beat the sample's own frequency.
 
 Determinism (rule 8): nothing is random, runs are read in name order, and every sum is taken in
 that order, so the same artifacts give the same bytes.
+
+**The shipped copy.** A deployment seeds runs without their rain cubes, so it cannot score rain.
+:func:`shipped_rain_skill` wraps this module's answer with a record of what it was scored on -
+each run's id, cycle time and :func:`run_json_digest`, the scorer's version, the truth field and
+a digest of its files - and :func:`write_shipped_rain_skill` writes it deterministically to
+``demo/verification/<event>.rain-skill.json`` (gzipped past :data:`SHIPPED_GZIP_OVER_BYTES`).
+``varuna verify`` writes it; the API serves it only while it holds exactly those runs.
 """
 
 from __future__ import annotations
 
+import gzip
+import hashlib
 import json
 import math
 from collections.abc import Iterable, Sequence
@@ -77,14 +86,24 @@ __all__ = [
     "CSI_FLOOR",
     "HEADLINE_THRESHOLD_MM_H",
     "RAIN_EVENT_VERSION",
+    "SHIPPED_FORMAT",
+    "SHIPPED_GZIP_OVER_BYTES",
+    "SHIPPED_KEY",
     "THRESHOLDS_MM_H",
     "CycleForecast",
     "cycle_analysis",
     "event_rain_skill",
     "load_cycle",
     "rain_event_inputs",
+    "read_shipped_text",
+    "run_json_digest",
     "score_cycles",
+    "shipped_bytes",
+    "shipped_names",
+    "shipped_rain_skill",
+    "shipped_text",
     "skill_horizon",
+    "write_shipped_rain_skill",
 ]
 
 RAIN_EVENT_VERSION = "2"
@@ -1016,3 +1035,182 @@ def event_rain_skill(
         },
         "notes": notes,
     }
+
+
+# ============================================================================ the shipped copy
+SHIPPED_FORMAT = "varuna.rain-skill.shipped/1"
+"""What a shipped copy says it is; a reader refuses any other format."""
+
+SHIPPED_SUFFIX = ".rain-skill.json"
+"""A shipped copy is ``<event>.rain-skill.json``, or that name plus ``.gz`` when it is large."""
+
+SHIPPED_GZIP_OVER_BYTES = 200_000
+"""A shipped copy whose JSON is larger than this is written gzipped (level 9, no timestamp)."""
+
+SHIPPED_KEY = "shipped"
+"""The key the shipped record sits under, beside the payload's own keys."""
+
+
+def shipped_names(event: str) -> tuple[str, str]:
+    """The two names a shipped copy of ``event`` can have: plain JSON, then gzipped."""
+    name = f"{event}{SHIPPED_SUFFIX}"
+    return name, f"{name}.gz"
+
+
+def run_json_digest(run: Path) -> str:
+    """SHA-256 of ``run.json`` parsed and re-serialised with sorted keys.
+
+    Parsed rather than hashed as bytes, so a checkout that rewrites line endings, or a copy that
+    re-indents, still names the same run; any change to a value - a re-bake stamps a new
+    ``created_at`` - names a different one.
+
+    Raises:
+        FileNotFoundError: the run has no ``run.json``.
+        ValueError: ``run.json`` is not JSON.
+    """
+    body = json.loads((run / "run.json").read_text(encoding="utf-8"))
+    canonical = json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _tree_digest(root: Path) -> str | None:
+    """SHA-256 over every file under ``root``: its relative path, then its bytes, in path order."""
+    if not root.is_dir():
+        return None
+    digest = hashlib.sha256()
+    for path in sorted(p for p in root.rglob("*") if p.is_file()):
+        digest.update(path.relative_to(root).as_posix().encode("utf-8") + b"\0")
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def shipped_rain_skill(
+    payload: dict[str, Any],
+    *,
+    runs_root: Path | None = None,
+    bundles_root: Path | None = None,
+) -> dict[str, Any]:
+    """``payload`` - :func:`event_rain_skill`'s answer - with the record a server matches it by.
+
+    A deployment seeds its runs without ``rain/cube.zarr`` and ``rain/quantiles.zarr`` (15 and
+    4.7 MB a cycle), so it cannot score rain itself. The scores computed here, on the machine
+    that baked the runs, ship instead, under :data:`SHIPPED_KEY`: which runs were scored, each
+    with its cycle time and :func:`run_json_digest`, the scorer and its version, and the truth
+    field with a digest of its files. A server serves the copy only while it holds exactly those
+    runs (``varuna_api.routers.verify``); the scores themselves are untouched.
+
+    Raises:
+        ValueError: ``payload`` is not a scored event - there is nothing to ship.
+        FileNotFoundError: a scored run has no ``run.json`` under ``runs_root``.
+    """
+    if not payload.get("available"):
+        msg = "an event whose rain skill was not scored has nothing to ship"
+        raise ValueError(msg)
+    if SHIPPED_KEY in payload:  # pragma: no cover - a guard for the day the scorer grows the key
+        msg = f"the scorer now returns {SHIPPED_KEY!r} itself; the shipped record would replace it"
+        raise RuntimeError(msg)
+    event = str(payload["event"])
+    root = runs_root or runs_dir()
+    runs: list[dict[str, Any]] = [
+        {
+            "run_id": cycle["run_id"],
+            "cycle_ts": cycle["cycle_ts"],
+            "run_json_sha256": run_json_digest(root / cycle["run_id"]),
+            "scored": True,
+        }
+        for cycle in payload.get("cycles") or []
+    ]
+    for skipped in payload.get("skipped_runs") or []:
+        run = root / skipped["run_id"]
+        meta = json.loads((run / "run.json").read_text(encoding="utf-8"))
+        runs.append(
+            {
+                "run_id": skipped["run_id"],
+                "cycle_ts": meta.get("cycle_ts"),
+                "run_json_sha256": run_json_digest(run),
+                "scored": False,
+            }
+        )
+    runs.sort(key=lambda run: str(run["run_id"]))
+    truth = payload.get("truth") or {}
+    truth_path = (bundles_root or Path(bundles_dir())) / event / Path(*TRUTH_MEMBER)
+    record = {
+        "format": SHIPPED_FORMAT,
+        "event": event,
+        "scorer": "varuna_verify.rain_event",
+        "scorer_version": payload.get("version"),
+        "written_by": f"uv run varuna verify --event {event}",
+        "scored_from": "rain/quantiles.zarr and rain/cube.zarr of each run",
+        "runs": runs,
+        "truth": {
+            "path": f"bundles/{event}/{TRUTH_SOURCE}",
+            "sha256": _tree_digest(truth_path),
+            "t0": truth.get("t0"),
+            "t1": truth.get("t1"),
+            "n_frames": truth.get("n_frames"),
+        },
+    }
+    return {**payload, SHIPPED_KEY: record}
+
+
+def _jsonable(value: Any) -> Any:
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.floating):
+        return float(value)
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    msg = f"{type(value).__name__} is not JSON"
+    raise TypeError(msg)
+
+
+def shipped_text(document: dict[str, Any]) -> str:
+    """The shipped copy's JSON: sorted keys, no spaces, shortest round-trip floats, one LF.
+
+    Deterministic (rule 8): the same document gives the same text on every platform. A score
+    that is not finite is refused rather than written as ``NaN``.
+    """
+    body = json.dumps(
+        document,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+        default=_jsonable,
+    )
+    return body + "\n"
+
+
+def shipped_bytes(text: str) -> tuple[bool, bytes]:
+    """``(gzipped, bytes)`` for ``text``: gzipped, with a zero timestamp, above the size cap."""
+    raw = text.encode("utf-8")
+    if len(raw) <= SHIPPED_GZIP_OVER_BYTES:
+        return False, raw
+    return True, gzip.compress(raw, compresslevel=9, mtime=0)
+
+
+def read_shipped_text(path: Path) -> str:
+    """The JSON text of a shipped copy at ``path``, gunzipped when its name ends in ``.gz``."""
+    raw = path.read_bytes()
+    if path.name.endswith(".gz"):
+        raw = gzip.decompress(raw)
+    return raw.decode("utf-8")
+
+
+def write_shipped_rain_skill(document: dict[str, Any], directory: Path) -> Path:
+    """Write :func:`shipped_rain_skill`'s document into ``directory`` and return the file.
+
+    Exactly one copy per event is left behind: writing the gzipped name removes a plain one, and
+    the other way round, so a reader never finds two that disagree. Bytes, not text, so Windows
+    writes LF like everywhere else (rule 8).
+    """
+    plain, packed = shipped_names(str(document["event"]))
+    gzipped, data = shipped_bytes(shipped_text(document))
+    target = directory / (packed if gzipped else plain)
+    other = directory / (plain if gzipped else packed)
+    directory.mkdir(parents=True, exist_ok=True)
+    temp = target.with_name(target.name + ".tmp")
+    temp.write_bytes(data)
+    temp.replace(target)
+    other.unlink(missing_ok=True)
+    return target

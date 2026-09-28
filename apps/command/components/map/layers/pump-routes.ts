@@ -508,23 +508,30 @@ export function pumpRouteLayers({
       getLineColor: INK,
       lineWidthMinPixels: 1.5,
     }),
-    new TextLayer<DepotLabel>({
-      id: "pumps-depot-label",
-      data: labels,
-      getPosition: (d) => d.position,
-      getText: (d) => d.text,
-      getSize: 11,
-      getColor: DEPOT_LABEL,
-      getPixelOffset: [0, 12],
-      getTextAnchor: "middle",
-      getAlignmentBaseline: "top",
-      lineHeight: 1.25,
-      fontFamily: font,
-      outlineWidth: 3,
-      outlineColor: INK,
-      fontSettings: { sdf: true, fontSize: 64, buffer: 8 },
-      characterSet: "auto",
-    }),
+    // Only while a pump is pointed at. An empty TextLayer with `characterSet: "auto"` builds a
+    // font atlas with no glyphs, and uploading that empty canvas is a WebGL warning in the
+    // console ("texSubImage2D: no canvas") on every load of the screen.
+    ...(labels.length === 0
+      ? []
+      : [
+          new TextLayer<DepotLabel>({
+            id: "pumps-depot-label",
+            data: labels,
+            getPosition: (d) => d.position,
+            getText: (d) => d.text,
+            getSize: 11,
+            getColor: DEPOT_LABEL,
+            getPixelOffset: [0, 12],
+            getTextAnchor: "middle",
+            getAlignmentBaseline: "top",
+            lineHeight: 1.25,
+            fontFamily: font,
+            outlineWidth: 3,
+            outlineColor: INK,
+            fontSettings: { sdf: true, fontSize: 64, buffer: 8 },
+            characterSet: "auto",
+          }),
+        ]),
     // The place: a ring in the depth ramp at its peak without the pump. Inside it, the disc is
     // the same no-pump depth until the lorry arrives, then its peak with the pump - the change
     // the gauge beside the map drains through (M34) - and a tide ring says the pump is there.

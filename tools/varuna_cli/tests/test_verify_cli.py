@@ -283,12 +283,149 @@ def test_check_fails_on_a_stale_or_missing_copy(
     assert json.loads(out.read_bytes())["run_ids"] == stale["run_ids"], "--check never rewrites"
 
 
+FIXTURE_RUN = "MUM-20190702T0030Z-fixture-baked"
+
+
+@pytest.fixture
+def fixture_runs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """The fixture rain payload's one run, on disk, so the shipped copy can record its run.json."""
+    runs = tmp_path / "data" / "runs"
+    (runs / FIXTURE_RUN).mkdir(parents=True)
+    (runs / FIXTURE_RUN / "run.json").write_text(
+        json.dumps({"bundle": EVENT, "cycle_ts": CYCLE.isoformat(), "run_id": FIXTURE_RUN}),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("VARUNA_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("VARUNA_BUNDLES_DIR", str(tmp_path / "bundles"))
+    return runs
+
+
 def test_the_default_target_is_the_landing_copy(
-    fixture_event: dict[str, Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    fixture_event: dict[str, Any],
+    fixture_runs: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(verify_cli, "_repo_root", lambda: tmp_path)
+    result = _run()
+    assert result.exit_code == 0, result.output
+    assert json.loads((tmp_path / verify_cli.COMMITTED_COPY).read_bytes())["event"] == EVENT
+    assert (tmp_path / verify_cli.SHIPPED_RAIN_DIR / f"{EVENT}.rain-skill.json").is_file()
+
+
+# ------------------------------------------------------------------ the shipped rain copy
+
+
+def test_the_default_target_also_ships_the_full_rain_payload(
+    fixture_event: dict[str, Any],
+    fixture_runs: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(verify_cli, "_repo_root", lambda: tmp_path)
     assert _run().exit_code == 0
-    assert json.loads((tmp_path / verify_cli.COMMITTED_COPY).read_bytes())["event"] == EVENT
+    shipped = tmp_path / verify_cli.SHIPPED_RAIN_DIR / f"{EVENT}.rain-skill.json"
+    document = json.loads(shipped.read_bytes())
+
+    # The payload the API serves, whole, not the landing headline.
+    payload = json.loads(json.dumps(_rain_payload()))
+    assert {k: v for k, v in document.items() if k != "shipped"} == payload
+    record = document["shipped"]
+    assert record["format"] == rain_event.SHIPPED_FORMAT
+    assert record["scorer_version"] == rain_event.RAIN_EVENT_VERSION
+    assert record["written_by"] == f"uv run varuna verify --event {EVENT}"
+    assert record["runs"] == [
+        {
+            "run_id": FIXTURE_RUN,
+            "cycle_ts": CYCLE.isoformat(),
+            "run_json_sha256": rain_event.run_json_digest(fixture_runs / FIXTURE_RUN),
+            "scored": True,
+        }
+    ]
+    assert record["truth"]["path"] == f"bundles/{EVENT}/truth/rain.zarr"
+
+    # Deterministic: a second write gives the same bytes, and --check passes over both files.
+    first = shipped.read_bytes()
+    assert b"\r" not in first and first.endswith(b"}\n")
+    assert _run().exit_code == 0
+    assert shipped.read_bytes() == first
+    checked = _run("--check")
+    assert checked.exit_code == 0, checked.output
+    assert "shipped rain skill" in checked.output
+
+
+def test_a_large_rain_payload_ships_gzipped_and_alone(
+    fixture_event: dict[str, Any],
+    fixture_runs: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import gzip
+
+    monkeypatch.setattr(verify_cli, "_repo_root", lambda: tmp_path)
+    folder = tmp_path / verify_cli.SHIPPED_RAIN_DIR
+    assert _run().exit_code == 0
+    assert (folder / f"{EVENT}.rain-skill.json").is_file()
+
+    monkeypatch.setattr(rain_event, "SHIPPED_GZIP_OVER_BYTES", 100)
+    assert _run().exit_code == 0
+    packed = folder / f"{EVENT}.rain-skill.json.gz"
+    assert packed.is_file()
+    assert not (folder / f"{EVENT}.rain-skill.json").exists(), "one copy per event, never two"
+    first = packed.read_bytes()
+    assert _run().exit_code == 0
+    assert packed.read_bytes() == first, "gzip carries no timestamp, so the bytes repeat"
+    assert json.loads(gzip.decompress(first))["shipped"]["runs"][0]["run_id"] == FIXTURE_RUN
+    assert _run("--check").exit_code == 0
+
+
+def test_check_fails_on_a_stale_or_missing_rain_copy(
+    fixture_event: dict[str, Any],
+    fixture_runs: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(verify_cli, "_repo_root", lambda: tmp_path)
+    assert _run().exit_code == 0
+    shipped = tmp_path / verify_cli.SHIPPED_RAIN_DIR / f"{EVENT}.rain-skill.json"
+
+    # A re-bake under the same id changes run.json, so the recorded digest goes stale.
+    meta = fixture_runs / FIXTURE_RUN / "run.json"
+    meta.write_text(meta.read_text(encoding="utf-8")[:-1] + ', "rebaked": true}', "utf-8")
+    stale = _run("--check")
+    assert stale.exit_code == 1
+    assert "is stale" in stale.output and "rain" in stale.output
+
+    shipped.unlink()
+    missing = _run("--check")
+    assert missing.exit_code == 1
+    assert "does not exist" in missing.output
+
+
+def test_out_writes_no_rain_copy_unless_asked(
+    fixture_event: dict[str, Any], fixture_runs: Path, tmp_path: Path
+) -> None:
+    out = tmp_path / "elsewhere" / "verification.json"
+    assert _run("--out", str(out)).exit_code == 0
+    assert not list(tmp_path.rglob("*.rain-skill.json*"))
+
+    folder = tmp_path / "rain"
+    assert _run("--out", str(out), "--rain-dir", str(folder)).exit_code == 0
+    assert (folder / f"{EVENT}.rain-skill.json").is_file()
+
+
+def test_a_scored_run_without_run_json_is_refused_not_shipped(
+    fixture_event: dict[str, Any],
+    fixture_runs: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(verify_cli, "_repo_root", lambda: tmp_path)
+    (fixture_runs / FIXTURE_RUN / "run.json").unlink()
+    result = _run()
+    assert result.exit_code == 1
+    assert "cannot ship" in result.output
+    assert not (tmp_path / verify_cli.COMMITTED_COPY).exists(), "nothing written by half"
 
 
 def test_another_event_never_overwrites_the_landing_copy(

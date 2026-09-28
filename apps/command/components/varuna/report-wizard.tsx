@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DepthChips, DEPTH_HINT_OPTIONS, type DepthHint } from "@/components/varuna/depth-chips";
-import { MapSlot } from "@/components/varuna/map-slot";
 import { Panel } from "@/components/varuna/panel";
 import { errorMessage, useSubmitReport } from "@/lib/api";
 import { photoTooLarge } from "@/lib/api/reports";
@@ -400,9 +399,6 @@ export function ReportWizard({ className }: ReportWizardProps) {
       {step === 1 ? (
         <Panel title={t("whereTitle")} description={t("whereDescription")}>
           <div className="flex flex-col gap-4 p-4">
-            <div className="rounded-panel border-line h-56 overflow-hidden border">
-              <MapSlot audience="public" emptyState={null} />
-            </div>
             <div className="flex flex-wrap items-center gap-2">
               {/* 44 px: every control a citizen touches (SPEC.md 7.11). */}
               <Button

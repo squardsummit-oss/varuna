@@ -25,6 +25,7 @@ import { apiUrl } from "@/lib/api/client";
 import { allSegments } from "@/lib/api/run-depth";
 import { apiProfile, loadPlaces, planRoute, type Place, type RoutePlan } from "@/lib/api/route";
 import { useReplayStore } from "@/lib/stores/replay";
+import { useOpeningRun } from "@/lib/use-opening-run";
 import { navItem } from "@/lib/nav";
 import { cityBounds } from "@/components/map/basemap";
 import { extentFrame, pathsFrame } from "@/lib/map/affected-bounds";
@@ -61,8 +62,13 @@ export function RouteScreen() {
   // time, profile, tolerance, either end, the cycle - asks again (SPEC.md 7.4 AC3). The count
   // rather than a flag, so pressing the button on an unchanged trip still re-asks.
   const [asked, setAsked] = useState(0);
-  // The run the trip is costed against; undefined means the newest for this city.
-  const [runId, setRunId] = useState<string | undefined>(undefined);
+  // The run the trip is costed against: the one picked, else the demo's opening cycle (06:40, the
+  // same instant the departure time and the console open on), else the newest for this city. The
+  // newest alone is 09:10, after the storm, and a 06:40 departure costed on it read "Routed on run
+  // ...T0340Z" under a replay clock at 06:40.
+  const opening = useOpeningRun("mumbai");
+  const [pickedRunId, setRunId] = useState<string | undefined>(undefined);
+  const runId = pickedRunId ?? opening.runId;
   // An alert's "Plan a route around it" sends `?to=<lon>,<lat>&place=<street>`. The planner only
   // routes between registered places (each with its source), so it picks the nearest registered
   // place within ARRIVAL_SNAP_M and says which, rather than routing to a typed coordinate.

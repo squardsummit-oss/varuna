@@ -249,6 +249,18 @@ export function midSentence(label: string): string {
   return label.charAt(0).toLowerCase() + label.slice(1);
 }
 
+/**
+ * Where a served score was computed, when it was not computed by the API answering: a deployment
+ * serves the demo laptop's scores for the same runs (`provenance.served_from`, written by
+ * `varuna verify`) because its copies of the runs carry no rain cubes. Printed as served.
+ */
+export function servedFromNote(provenance: Record<string, unknown>): string | null {
+  const served = provenance.served_from;
+  if (served === null || typeof served !== "object") return null;
+  const note = (served as Record<string, unknown>).note;
+  return typeof note === "string" && note.trim() !== "" ? note.trim() : null;
+}
+
 function MethodNote({
   skill,
   scope,
@@ -264,6 +276,7 @@ function MethodNote({
   const last = byLead[byLead.length - 1];
   const mismatched = cycles.filter((cycle) => cycle.persistence.matchesCycle === false);
   const items = [
+    servedFromNote(skill.provenance),
     `${skill.truth.note} It is labelled "${skill.label || "Reconstructed replay"}" everywhere it is quoted.`,
     `An event is ${skill.definitions.event_pixel ? skill.definitions.event_pixel.replace(/^A /, "a ").replace(/\.$/, "") : "a pixel whose truth rain rate is strictly above the threshold"} (${thresholdMmH} mm/h here), on the 500 m Sky grid at the lead's valid time.`,
     `Scope: ${midSentence(skill.byScope[scope].label)}, ${skill.byScope[scope].nPixels.toLocaleString("en-IN")} pixels per frame.`,

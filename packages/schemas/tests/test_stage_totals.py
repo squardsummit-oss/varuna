@@ -110,9 +110,17 @@ def test_stale_serialised_total_is_recomputed_on_load() -> None:
 @pytest.mark.parametrize("run_json", DEMO_RUNS, ids=lambda p: p.parent.name)
 def test_committed_demo_runs_total_their_top_level_stages(run_json: Path) -> None:
     raw = json.loads(run_json.read_text(encoding="utf-8"))
-    # Derived by a different rule than the one under test: a stage key has no underscore
-    # and is not a total. Agreement on real files is the point.
-    expected = sum(ms for key, ms in raw["stage_ms"].items() if "_" not in key and key != "total")
+    # Derived by a different rule than the one under test: a stage key has no underscore, is
+    # not a total, and is not `provenance` - the city fingerprint the cycle times under its own
+    # key (a98b8a5), which is bookkeeping rather than one of the cycle's stages. Agreement on
+    # real files is the point.
+    expected = sum(
+        ms
+        for key, ms in raw["stage_ms"].items()
+        if "_" not in key and key not in ("total", "provenance")
+    )
     meta = RunMeta.model_validate_json(run_json.read_text(encoding="utf-8"))
+    # Only `provenance` is excused by name, so any other key written without an underscore
+    # still fails here until it is deliberately named a stage.
     assert meta.total_ms == expected
     assert meta.total_ms <= sum(raw["stage_ms"].values())

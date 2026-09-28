@@ -347,7 +347,9 @@ export function PumpBoard({
           >
             <header className="border-line border-b px-4 py-3">
               <h3 className="type-small text-text font-medium">{column.title}</h3>
-              <p className="num type-micro text-text-3">{depthCaption(column, planApplied, depthNote)}</p>
+              <p className="num type-micro text-text-3">
+                {depthCaption(column, planApplied, depthNote)}
+              </p>
             </header>
             <div className="flex min-h-0 flex-1 flex-col gap-2 p-3">
               {column.depthCm && column.depthCm.before.length > 1 ? (

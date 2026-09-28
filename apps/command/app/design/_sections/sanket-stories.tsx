@@ -6,11 +6,7 @@ import { AlertDetails } from "@/components/varuna/alert-details";
 import { AlertRow } from "@/components/varuna/alert-row";
 import type { DeliveryLogRow } from "@/components/varuna/delivery-log";
 import { Panel } from "@/components/varuna/panel";
-import {
-  alertStatus,
-  type EscalationStep,
-  type RunAlert,
-} from "@/lib/api/alerts";
+import { alertStatus, type EscalationStep, type RunAlert } from "@/lib/api/alerts";
 import { navItem } from "@/lib/nav";
 
 import { Demo } from "./section";
@@ -20,34 +16,35 @@ const CYCLE_TS = "2019-07-02T08:40:00+05:30";
 
 /**
  * The deepest street alert of the 08:40 IST cycle, field for field as
- * `GET /v1/alerts?run_id=MUM-20190702T0310Z-...` answered on 2026-09-28. This bake predates the
- * product's `name`, `locality` and member counts, so those are null here as they are on screen.
+ * `GET /v1/alerts?run_id=MUM-20190702T0310Z-...` answered on 2026-09-28 after the re-bake on the
+ * rebuilt coast. Its CAP document is on disk, so "Show the CAP document" reads a real one.
  */
 const SEVERE: RunAlert = {
-  id: "VARUNA-MUM-20190702T0310Z-SKY1.0-TWIN1.0-FLASH0.1-BAKED-STREET-0926-SEVERE",
+  id: "VARUNA-MUM-20190702T0310Z-SKY1.0-TWIN1.0-FLASH0.1-BAKED-STREET-0977-SEVERE",
   runId: RUN_ID,
   level: "severe",
   thresholdCm: 45,
-  headline: "Sant Shitolebaba Maharaj Marg: depth above 45 cm from 09:20 to 11:40",
+  headline:
+    "Sant Shitolebaba Maharaj Marg, near Sakinaka: depth above 45 cm from 09:30 until at least 11:40",
   instruction:
-    "Avoid Sant Shitolebaba Maharaj Marg for the window. Peak forecast 100 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.",
+    "Avoid Sant Shitolebaba Maharaj Marg. Peak forecast 76 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.",
   areaDesc: "Sant Shitolebaba Maharaj Marg",
-  name: null,
-  locality: null,
+  name: "Sant Shitolebaba Maharaj Marg",
+  locality: "near Sakinaka",
   scope: "segment",
   hotspotId: null,
   lon: 72.89574214999999,
   lat: 19.0957649,
-  peakCm: 99.8,
-  windowFrom: "2019-07-02T09:20:00+05:30",
+  peakCm: 76.3,
+  windowFrom: "2019-07-02T09:30:00+05:30",
   windowTo: "2019-07-02T11:40:00+05:30",
-  windowOpenEnded: null,
-  membersAbove: null,
-  membersTotal: null,
-  raisedTs: "2019-07-02T08:10:00+05:30",
-  persistsCycles: 3,
+  windowOpenEnded: true,
+  membersAbove: 50,
+  membersTotal: 50,
+  raisedTs: "2019-07-02T08:40:00+05:30",
+  persistsCycles: 2,
   persistsUnit: "cycles",
-  firstSeenTs: "2019-07-02T07:40:00+05:30",
+  firstSeenTs: "2019-07-02T08:10:00+05:30",
   sentTs: "2019-07-02T08:40:00+05:30",
   notify: ["ward_officer", "control_room", "police_traffic"],
   pumps: [],
@@ -62,21 +59,23 @@ const SEVERE: RunAlert = {
   history: [],
 };
 
-/** A Watch from the same cycle and answer, raised on the same street network. */
+/** A Watch from the same cycle and answer. */
 const WATCH: RunAlert = {
   ...SEVERE,
-  id: "VARUNA-MUM-20190702T0310Z-SKY1.0-TWIN1.0-FLASH0.1-BAKED-STREET-0591-WATCH",
+  id: "VARUNA-MUM-20190702T0310Z-SKY1.0-TWIN1.0-FLASH0.1-BAKED-STREET-0770-WATCH",
   level: "watch",
   thresholdCm: 15,
   headline:
-    "Mathuradas Vasanji Road (Andheri Kurla Road): depth above 15 cm from 09:10 to 11:40",
+    "Pipeline Road, near Kamani junction: depth above 15 cm from 09:35 until at least 11:40",
   instruction:
-    "Avoid Mathuradas Vasanji Road (Andheri Kurla Road) for the window. Peak forecast 66 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.",
-  areaDesc: "Mathuradas Vasanji Road (Andheri Kurla Road)",
-  lon: 72.88355967843972,
-  lat: 19.0950275437463,
-  peakCm: 66,
-  windowFrom: "2019-07-02T09:10:00+05:30",
+    "Avoid Pipeline Road. Peak forecast 64 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.",
+  areaDesc: "Pipeline Road",
+  name: "Pipeline Road",
+  locality: "near Kamani junction",
+  lon: 72.88422845,
+  lat: 19.088119899999995,
+  peakCm: 63.7,
+  windowFrom: "2019-07-02T09:35:00+05:30",
   notify: ["ward_officer"],
 };
 
@@ -146,8 +145,8 @@ const DELIVERY: DeliveryLogRow[] = [
 
 const MESSAGES = {
   whatsapp:
-    "VARUNA severe alert (exercise)\nSant Shitolebaba Maharaj Marg: depth above 45 cm from 09:20 to 11:40.\nAvoid Sant Shitolebaba Maharaj Marg for the window. Peak forecast 100 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.\nArea: Sant Shitolebaba Maharaj Marg. Forecast from 08:40 IST, 2 Jul 2019.",
-  sms: "VARUNA severe exercise: Sant Shitolebaba Maharaj Marg: depth above 45 cm from 09:20 to 11:40. Avoid the street.",
+    "VARUNA severe alert (exercise)\nSant Shitolebaba Maharaj Marg, near Sakinaka: depth above 45 cm from 09:30 until at least 11:40.\nAvoid Sant Shitolebaba Maharaj Marg. Peak forecast 76 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.\nArea: Sant Shitolebaba Maharaj Marg. Forecast from 08:40 IST, 2 Jul 2019.",
+  sms: "VARUNA severe exercise: Sant Shitolebaba Maharaj Marg, near Sakinaka: depth above 45 cm from 09:30 until at least 11:40. Avoid the street.",
 };
 
 const IGNORE = () => undefined;

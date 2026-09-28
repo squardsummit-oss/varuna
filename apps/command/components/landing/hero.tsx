@@ -56,6 +56,11 @@ const STILL_STEP = 24;
 
 const FRAME_MS = LOOP_MS / N_STEPS;
 
+/** The hero map's fit margin: the copy column on the left (96 px gutter plus a 520 px column) and
+ * the readout and legend along the bottom. `CityMap` shrinks a side that would leave the frame
+ * under 40 % of the map, so a phone still gets a frame. */
+const HERO_FIT_PADDING = { top: 24, right: 24, bottom: 96, left: 640 } as const;
+
 export function useScrubLoop(playing: boolean, still: boolean): number {
   // The loop's own position, advanced only from the animation frame and kept in a ref, so a pause
   // - the pointer over the hero, or the loop not yet handed over - holds the frame on screen and
@@ -269,6 +274,13 @@ export function Hero() {
             // while the loop is trying to start.
             showBuildings={false}
             showHotspots
+            // Section 7.1 loops the scrub "over Hindmata/King's Circle/Sion". Framing what is
+            // drawn had put the airport and Powai in the middle and the flooded spine under the
+            // copy, so the hero opens on the run's main affected area at its peak, in the part of
+            // the map the copy column and the readout leave clear. Computed once per run, before
+            // the hand-over, and never moved by the loop.
+            frameOn="affected"
+            fitPadding={HERO_FIT_PADDING}
           />
         )}
       </div>

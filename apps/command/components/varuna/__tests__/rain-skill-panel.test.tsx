@@ -3,7 +3,12 @@ import { createRequire } from "node:module";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { RainSkillPanel, midSentence, notScoredText } from "@/app/verify/rain-skill-panel";
+import {
+  RainSkillPanel,
+  midSentence,
+  notScoredText,
+  servedFromNote,
+} from "@/app/verify/rain-skill-panel";
 import { RainSkillLoadError, parseRainSkill } from "@/lib/api/verification-rain";
 
 const loadRainSkill = vi.hoisted(() => vi.fn());
@@ -56,7 +61,7 @@ const failure = (lead: number, csi: number, held: number) => ({
 });
 
 /** The shape the scorer serves, trimmed to two leads and two cycles. */
-function scored() {
+function scored(provenance: Record<string, unknown> = {}) {
   const scope = (label: string, horizonLead: number) => ({
     label,
     n_pixels: 589,
@@ -149,7 +154,7 @@ function scored() {
       runs_without_member_cube: [],
       skipped_runs: [],
       unavailable: {},
-      provenance: {},
+      provenance,
       notes: [],
     },
     "MUM-2019-07-02",
@@ -289,6 +294,37 @@ describe("RainSkillPanel (Pramana, 7.10)", () => {
     expect(screen.getByText(/Pooled over 8 baked cycles/)).toBeInTheDocument();
     expect(screen.getByText(/It is labelled "Reconstructed replay"/)).toBeInTheDocument();
     expect(screen.getByText(/not a confidence interval/)).toBeInTheDocument();
+  });
+
+  it("says where the scores were computed when a deployment serves the laptop's copy", async () => {
+    const note =
+      "Scored on the demo laptop from the baked runs' rain cubes (rain/quantiles.zarr and " +
+      "rain/cube.zarr), which the copies of those runs on this server do not carry. Served from " +
+      "demo/verification/MUM-2019-07-02.rain-skill.json.gz because this server holds the same 7 " +
+      "runs, matched by id and run.json.";
+    loadRainSkill.mockResolvedValue(
+      scored({
+        generator: "varuna_verify.rain_event",
+        served_from: { kind: "shipped_copy", note },
+      }),
+    );
+    render(<RainSkillPanel event="MUM-2019-07-02" />);
+    await screen.findByText("No useful lead at 20 mm/h.");
+    const method = screen.getByRole("heading", { name: "How this was scored" }).parentElement!;
+    expect(within(method).getByText(note)).toBeInTheDocument();
+  });
+
+  it("prints no served-from line when the API scored the runs itself", async () => {
+    loadRainSkill.mockResolvedValue(scored({ generator: "varuna_verify.rain_event" }));
+    render(<RainSkillPanel event="MUM-2019-07-02" />);
+    await screen.findByText("No useful lead at 20 mm/h.");
+    expect(screen.queryByText(/Scored on the demo laptop/)).toBeNull();
+    expect(servedFromNote({})).toBeNull();
+    expect(servedFromNote({ served_from: "a string" })).toBeNull();
+    expect(servedFromNote({ served_from: { note: "  " } })).toBeNull();
+    expect(servedFromNote({ served_from: { note: " Scored elsewhere. " } })).toBe(
+      "Scored elsewhere.",
+    );
   });
 
   it("draws the reliability section and the served per-cycle CSI at 20 mm/h", async () => {

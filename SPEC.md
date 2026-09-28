@@ -65,6 +65,19 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - Rain CSI at 20 mm/h loses to persistence from +5 min, so Pramana says "No useful lead" and the 90-minute line is not claimed.
 - The deployed Pramana rain tab shows its "not scored" state, because the shipped runs omit the 15 MB rain cube.
 
+**2026-09-29 finishing pass.**
+- **Every screen was checked in headless Chromium at 1440 x 900 and 1366 x 768** (/map and /report at 390 x 844 too): axe WCAG A/AA 0 violations, no horizontal overflow, no console errors, a visible first focus ring and no "Unnamed" text.
+- **Fixes from that pass:**
+  - The ward desk and Marga open on the storm cycle.
+  - The public map and the landing hero frame the flood.
+  - Pravesh says "Loading" instead of "Press Start" over a finished build, and has its legend.
+  - The landing and Pramana POD notes no longer claim early warning the scores do not show.
+  - The report flow drops a placeholder map that invited the reader to adjust a point it never drew.
+  - Jalayantra's review defects are closed with tests, including the timeline drawn 5 minutes early and the gauges running ahead of the lorries after a cycle round trip.
+  - /design has stories for 114 of 119 components, with a test that fails on a missing one.
+  - Pramana's rain tab works on the deployed site from `demo/verification/MUM-2019-07-02.rain-skill.json.gz`, which `varuna verify` writes and the API serves only when its run ids and run.json digests match the seeded runs.
+- **Gates:** vitest 1,806/1,806, ESLint clean, design lint clean, Playwright design-QA 34/34.
+
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
 - [ ] R1 A Mumbai replay streams through the same pipeline as live data; the mode banner reads "Replay 30×" and the run stamp says "baked" or "live".
@@ -1146,7 +1159,7 @@ Tick boxes per the protocol in §0. Task IDs are stable; reference them in commi
 **Rehearsal checklist**
 
 - [ ] Every step reachable by clicks or the command palette; no terminal
-- [ ] The replay is pre-seeked to 06:40 and paused on load; Play is the first click (partial, 2026-09-16: `/console` with no `?run=` opens on the 06:40 cycle, paused, instead of the newest run (09:10, the calm cycle after the storm), and the map holds its load until it knows which run to ask for. The API's replay clock still boots at the bundle's 05:40 opening, so the mode banner and the map read different times until one clock drives both. Play at the end of the window used to do nothing on the shared deployed clock; it now starts the window again)
+- [x] The replay is pre-seeked to 06:40 and paused on load; Play is the first click (2026-09-29: the API's shared clock now opens at 06:40 too, `VARUNA_REPLAY_OPEN_AT`, placed without an event; rewind still returns to the 05:40 window start. Earlier, partial, 2026-09-16: `/console` with no `?run=` opens on the 06:40 cycle, paused, instead of the newest run (09:10, the calm cycle after the storm), and the map holds its load until it knows which run to ask for. The API's replay clock still boots at the bundle's 05:40 opening, so the mode banner and the map read different times until one clock drives both. Play at the end of the window used to do nothing on the shared deployed clock; it now starts the window again)
 - [ ] Sound on for the phone mock; phone mock visible on the second screen if available
 - [ ] A physical phone receives the alert only if a real sender is configured; otherwise the on-screen mock is the story
 - [ ] Fallback video ready on both laptops; offline package verified the morning of the finale

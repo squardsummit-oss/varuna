@@ -40,26 +40,28 @@ export interface PumpCardProps {
  */
 export function PumpCard({ pump, className }: PumpCardProps) {
   const eta =
-    typeof pump.etaMinutes === "number" ? `ETA ${formatMinutes(pump.etaMinutes)}` : `ETA ${MISSING}`;
+    typeof pump.etaMinutes === "number"
+      ? `ETA ${formatMinutes(pump.etaMinutes)}`
+      : `ETA ${MISSING}`;
 
   return (
     <article
       data-slot="pump-card"
       aria-label={`Pump ${pump.id}`}
       className={cn(
-        "flex flex-col gap-2 rounded-control border border-line bg-deep p-3",
+        "rounded-control border-line bg-deep flex flex-col gap-2 border p-3",
         className,
       )}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <h4 className="num type-body font-medium text-text">{pump.id}</h4>
+        <h4 className="num type-body text-text font-medium">{pump.id}</h4>
         <span className="num type-micro text-text-2">
           {formatCount(pump.capacityM3PerHour)} m³/h
         </span>
       </div>
       <p className="type-small text-text-2">{pump.depot}</p>
       <div className="flex items-center justify-between gap-2">
-        <span className="rounded-chip border border-line px-2 py-0.5 type-micro text-text-2">
+        <span className="rounded-chip border-line type-micro text-text-2 border px-2 py-0.5">
           {PUMP_STATUS_LABELS[pump.status]}
         </span>
         <span className="num type-micro text-text-3">{eta}</span>

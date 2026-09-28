@@ -1755,9 +1755,11 @@ def physics_check(body: Annotated[dict[str, Any], Body()]) -> dict[str, Any]:
 # cycle's own Sky rain on the 30 m grid, the city's inferred prior blockage (the blockage the
 # cycle's Twin ran at, before Pulse), and the bundle's tide - with the lever applied to one of
 # them. At a scenario of nothing it reproduced the bake to under 0.05 cm on 6,902 of 6,904 wet
-# streets; at +1.0 m of tide it put 1.26 Mm3 of sea onto the land across the Mahim cell - measured
-# when the sea was the tidal outfalls' cells, before the city had a sea raster - and moved no
-# hotspot. That run costs 45-75 s
+# streets; at +1.0 m of tide its shoreline exchange read 1.26 Mm3 inland across the Mahim cell -
+# `sea_to_land_m3`, the net face exchange between sea cells and land, not the sea that entered the
+# city (see `_sea_block`), and measured when the sea was the tidal outfalls' cells, before the city
+# had a sea raster, when that quantity also counted the rain on those cells - and moved no hotspot.
+# That run costs 45-75 s
 # here (Sky 14.3 s, Twin 58.8 s under contention; the bake recorded 38.8 s), which is a job with a
 # progress bar and not a request, and it holds the host, so it takes the same one-heavy-run lock
 # the live cycle and the rain nowcast take.

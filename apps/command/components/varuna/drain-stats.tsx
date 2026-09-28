@@ -93,6 +93,7 @@ export function DrainStatsStrip({ stats, className }: DrainStatsStripProps) {
     return (
       <div
         className={cn("grid gap-3 sm:grid-cols-2 xl:grid-cols-4", className)}
+        role="status"
         aria-busy="true"
         aria-label="Loading what this cycle learned"
       >

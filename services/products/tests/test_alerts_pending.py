@@ -151,8 +151,10 @@ def test_served_queue_on_a_run_from_before_the_cross_cycle_rule_counts_the_list(
 def test_served_queue_on_the_committed_0840_cycle() -> None:
     """The numbers the alert centre was misreporting, rebuilt from the shipped record.
 
-    The file lists 60 of 213 raised, and 24 of the 32 pending places it lists with no row were
-    already raised at a lower level: "Watching, not raised yet" named them.
+    On the bake this was written against the file listed 60 of 213 raised, and 24 of the 32
+    pending places it listed with no row were already raised at a lower level: "Watching, not
+    raised yet" named them. The re-bake on the rebuilt coast (2a0a634) raises 74 and lists 60, and
+    none of its 22 pending places without a row is raised at another level.
     """
     path = (
         Path(__file__).resolve().parents[3]
@@ -166,9 +168,9 @@ def test_served_queue_on_the_committed_0840_cycle() -> None:
     body = json.loads(path.read_text(encoding="utf-8"))
     served = served_queue(body)
     assert len(body["alerts"]) == MAX_ALERTS
-    assert served["n_raised"] == 213
-    assert served["n_raised_by_level"] == {"severe": 13, "moderate": 35, "watch": 165}
-    assert (served["n_pending_new"], served["n_pending_step_up"]) == (109, 66)
+    assert served["n_raised"] == 74
+    assert served["n_raised_by_level"] == {"severe": 1, "moderate": 9, "watch": 64}
+    assert (served["n_pending_new"], served["n_pending_step_up"]) == (147, 38)
     listed = {(a["scope"], a["area_desc"]) for a in body["alerts"]}
     no_row = [p for p in served["pending"] if (p["scope"], p["area_desc"]) not in listed]
-    assert (len(no_row), sum(p["raised_level"] is not None for p in no_row)) == (32, 24)
+    assert (len(no_row), sum(p["raised_level"] is not None for p in no_row)) == (22, 0)

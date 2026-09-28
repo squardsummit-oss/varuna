@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from datetime import datetime
 
 import structlog
 from varuna_cycle.bus import Bus
@@ -105,6 +106,26 @@ def _speed_from(settings: Settings) -> float:
     return DEFAULT_SPEED
 
 
+def _opening_instant(clock: ReplayClock, bundle_id: str, settings: Settings) -> datetime | None:
+    """``VARUNA_REPLAY_OPEN_AT`` on the default bundle's first day, or ``None`` to open at t0.
+
+    Only the configured demo bundle opens there: another bundle's window is its own, and a
+    design storm has no 06:40 to open on. A malformed value is logged and ignored.
+    """
+    raw = (settings.varuna_replay_open_at or "").strip()
+    if raw.lower() in {"", "off", "none", "start"} or bundle_id != settings.varuna_bundle:
+        return None
+    try:
+        hour, minute = (int(part) for part in raw.split(":", 1))
+        opening = clock.t0.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    except ValueError:
+        log.warning("replay.open_at_unreadable", value=raw)
+        return None
+    if not clock.t0 <= opening <= clock.t1:
+        return None
+    return opening
+
+
 def _warm_streams(clock: ReplayClock) -> None:
     """Read a bundle's schedule ahead of the first Play; a failure is the clock's to report."""
     try:
@@ -156,6 +177,11 @@ class ReplayController:
             previous, self._clock = self._clock, clock
         if previous is not None:
             await previous.stop()
+        opening = _opening_instant(clock, bundle_id, settings)
+        if opening is not None:
+            # The console opens on the demo's 06:40 cycle; a clock at the window's 05:40 start
+            # put a time bar reading "05:40 (+0 min)" beside a map at 06:45.
+            clock.start_at(opening)
         # Reading the schedule of the demo bundle costs about a second and a half (a Zarr time
         # axis and a 400k-row Parquet column); do it off the loop so the first Play does not
         # wait for it.

@@ -23,6 +23,11 @@ export interface MapSlotProps {
   audience?: "operator" | "public";
   /** Empty-state copy. `null` renders none: a location picker is not a forecast. */
   emptyState?: { title: string; description: string } | null;
+  /**
+   * Draw the operator's "Reconstructed replay" chip. Off where the slot stands in for a city whose
+   * forecast is a design storm (Chennai on the onboarding wizard): the chip would be false there.
+   */
+  replayChip?: boolean;
 }
 
 const OPERATOR_EMPTY_STATE = {
@@ -39,13 +44,14 @@ export function MapSlot({
   legendClearsRightPanel = false,
   audience = "operator",
   emptyState = OPERATOR_EMPTY_STATE,
+  replayChip = true,
 }: MapSlotProps) {
   const stops = depthLegendStops();
   const isOperator = audience === "operator";
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-ink"
+      className="bg-ink relative h-full w-full overflow-hidden"
       role="region"
       aria-label="Map canvas"
     >
@@ -73,9 +79,9 @@ export function MapSlot({
         </div>
       ) : null}
 
-      {isOperator ? (
+      {isOperator && replayChip ? (
         <div className="absolute bottom-10 left-4 z-10">
-          <span className="inline-flex h-7 items-center rounded-full border border-line bg-deep px-3 type-small text-text-2">
+          <span className="border-line bg-deep type-small text-text-2 inline-flex h-7 items-center rounded-full border px-3">
             Reconstructed replay
           </span>
         </div>
@@ -86,23 +92,23 @@ export function MapSlot({
           className={cn(
             // w-72 is the width at which the widest row ("45-60 cm  buses and trucks impassable")
             // sits on one line; anything narrower wraps the threshold away from its colour.
-            "absolute bottom-10 z-10 w-72 rounded-[var(--radius-panel)] border border-line bg-deep p-3",
+            "border-line bg-deep absolute bottom-10 z-10 w-72 rounded-[var(--radius-panel)] border p-3",
             // 24.5rem clears the replay panel (right-4 + w-360px) and leaves a 16 px gutter.
             legendClearsRightPanel ? "right-[24.5rem]" : "right-4",
           )}
           aria-label="Depth legend"
         >
-          <h2 className="type-small font-medium text-text">Depth</h2>
+          <h2 className="type-small text-text font-medium">Depth</h2>
           <ul className="mt-2 space-y-1.5">
             {stops.map((stop) => (
-              <li key={stop.key} className="flex items-center gap-2 type-micro text-text-2">
+              <li key={stop.key} className="type-micro text-text-2 flex items-center gap-2">
                 <span
                   aria-hidden="true"
                   className="size-2.5 shrink-0 rounded-full"
                   style={{ background: stop.cssVar }}
                 />
                 <span className="num shrink-0 whitespace-nowrap">{stop.label}</span>
-                <span className="truncate text-text-3">{stop.meaning}</span>
+                <span className="text-text-3 truncate">{stop.meaning}</span>
               </li>
             ))}
           </ul>
@@ -112,7 +118,7 @@ export function MapSlot({
       {/* One line for both: the imagery on top and the vector data VARUNA derived the city from,
           which is on screen whether or not the imagery loaded. `CityMap` draws the same line on
           the screens that mount it without this slot. */}
-      <p className="absolute inset-x-0 bottom-0 z-10 px-4 py-2 type-micro text-text-3">
+      <p className="type-micro text-text-3 absolute inset-x-0 bottom-0 z-10 px-4 py-2">
         {MAP_ATTRIBUTION}
       </p>
     </div>

@@ -32,8 +32,9 @@ export function DeferredStory({ title, minHeight, children, className }: Deferre
     const node = ref.current;
     if (!node || near) return;
     if (typeof IntersectionObserver === "undefined") {
-      setNear(true);
-      return;
+      // No observer to wait for: mount on the next task, the way a callback would.
+      const id = window.setTimeout(() => setNear(true), 0);
+      return () => window.clearTimeout(id);
     }
     const observer = new IntersectionObserver(
       (entries) => {
@@ -49,7 +50,14 @@ export function DeferredStory({ title, minHeight, children, className }: Deferre
   }, [near]);
 
   const placeholder = (
-    <div aria-busy="true" aria-label={`Loading the ${title} stories`} className="flex flex-col gap-3">
+    // `role="status"`: an `aria-label` on a bare div is prohibited (axe `aria-prohibited-attr`),
+    // and the status role is what a loading region is.
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label={`Loading the ${title} stories`}
+      className="flex flex-col gap-3"
+    >
       <Skeleton className="h-5 w-56" />
       <div style={{ height: Math.max(0, minHeight - 32) }}>
         <Skeleton className="h-full w-full" />

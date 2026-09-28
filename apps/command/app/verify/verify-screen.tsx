@@ -70,7 +70,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "0 to 1, higher is better",
       value: h?.pod ?? null,
       format: asScore,
-      note: "Share of the pins VARUNA had already flagged.",
+      note: "Share of the sourced pins where VARUNA forecast water above the threshold inside each pin's stated time window, whether before or after the city logged it.",
     },
     {
       id: "far",

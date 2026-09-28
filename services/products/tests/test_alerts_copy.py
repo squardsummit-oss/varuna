@@ -164,8 +164,8 @@ def test_the_longest_headline_on_the_demo_cycles_still_carries_the_sms_instructi
     """Every listed alert of the seven committed cycles, re-headlined as this module now writes it.
 
     The SMS is one segment and ``sms_text`` cuts the tail to fit, so the instruction is what goes
-    first. "still above at 11:40, the end of the forecast" lost it on 29 of these 152 once the
-    locality joined the headline; the short form must lose it on none.
+    first. "still above at 11:40, the end of the forecast" lost it on 29 of the 152 the earlier bake
+    listed once the locality joined the headline; the short form must lose it on none.
     """
     runs = sorted(DEMO_RUNS.glob("MUM-*"))
     if not runs:
@@ -195,5 +195,7 @@ def test_the_longest_headline_on_the_demo_cycles_still_carries_the_sms_instructi
             lengths.append(len(headline))
             assert len(text) <= SMS_LIMIT
             assert text.endswith("Avoid the street."), text
-    assert len(lengths) == 152
-    assert max(lengths) == 116
+    # The seven cycles re-baked on the rebuilt coast (2a0a634) list 76 alerts where the earlier
+    # bake listed 152; the longest headline was 116 characters then and is 110 now.
+    assert len(lengths) == 76
+    assert max(lengths) == 110

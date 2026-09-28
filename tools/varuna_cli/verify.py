@@ -13,8 +13,15 @@ What it writes is exactly what the API serves, from the same functions, plus one
   every field the landing page, the chip and the end-to-end test read is there;
 * ``rain_skill`` - the headline of :func:`varuna_verify.rain_event.event_rain_skill` (the useful
   skill horizon, the CSI of the ensemble mean, median and persistence at 20 and 40 mm/h at every
-  lead, the cycles it pooled), not its ~230 KB payload, which only ``/verify`` reads and only from
-  the API.
+  lead, the cycles it pooled), not its ~205 KB payload, which only ``/verify`` reads.
+
+It also writes that full payload, for the deployed site. A deployment seeds ``demo/runs``, which
+omit the runs' rain cubes (``rain/cube.zarr`` and ``rain/quantiles.zarr``, about 20 MB a cycle), so
+its ``GET /v1/verification/rain-skill`` has nothing to score. The payload scored here, with a record
+of which runs it scored (ids, cycle times, a digest of each ``run.json``), the scorer's version and
+the truth field, goes to ``demo/verification/<event>.rain-skill.json`` - gzipped past 200 KB -
+and the API serves it only while it holds exactly those runs
+(:func:`varuna_verify.rain_event.shipped_rain_skill`, ``varuna_api.routers.verify``).
 
 **Deterministic (rule 8).** Keys are sorted, floats print as Python's shortest round-trip form
 with exponents written the way Prettier writes them, the file ends in one ``\\n`` and uses LF on
@@ -22,8 +29,9 @@ every platform, and nothing in it is a wall-clock time: the only times are the r
 the pins' and the truth field's. The layout is the one Prettier gives JSON at a print width of
 100, so the pre-commit hook that runs ``prettier --check`` over ``apps/command`` leaves it alone.
 
-``--check`` scores the event again and exits 1 when the committed copy differs from what would be
-written, so a stale copy is a failed check rather than a number on a slide.
+``--check`` scores the event again and exits 1 when the committed copy, or the shipped rain copy,
+differs from what would be written, so a stale copy is a failed check rather than a number on a
+slide. A shipped rain copy is compared by its JSON, so a zlib that packs differently is not stale.
 """
 
 from __future__ import annotations
@@ -40,10 +48,12 @@ __all__ = [
     "COMMITTED_COPY",
     "DEFAULT_EVENT",
     "PRINT_WIDTH",
+    "SHIPPED_RAIN_DIR",
     "app",
     "landing_copy",
     "rain_headline",
     "render",
+    "scored",
 ]
 
 DEFAULT_EVENT = "MUM-2019-07-02"
@@ -51,6 +61,9 @@ DEFAULT_EVENT = "MUM-2019-07-02"
 
 COMMITTED_COPY = Path("apps") / "command" / "public" / "verification.json"
 """Where the landing copy lives, relative to the repository root."""
+
+SHIPPED_RAIN_DIR = Path("demo") / "verification"
+"""Where the full rain-skill payload ships for a deployment, relative to the repository root."""
 
 PRINT_WIDTH = 100
 """Prettier's ``printWidth`` in ``.prettierrc``; the renderer lays lines out against it."""
@@ -258,8 +271,8 @@ def rain_headline(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def landing_copy(event: str = DEFAULT_EVENT) -> dict[str, Any]:
-    """The sweep ``GET /v1/verification`` serves, plus the rain-skill headline under ``rain_skill``.
+def scored(event: str = DEFAULT_EVENT) -> tuple[dict[str, Any], dict[str, Any]]:
+    """``(landing copy, full rain payload)``, scoring the rain once for both.
 
     Raises:
         FileNotFoundError: the event has no ground truth (``make bundle``).
@@ -271,7 +284,44 @@ def landing_copy(event: str = DEFAULT_EVENT) -> dict[str, Any]:
     if "rain_skill" in body:  # pragma: no cover - a guard for the day the sweep grows the key
         msg = "the sweep now returns rain_skill itself; the landing copy would overwrite it"
         raise RuntimeError(msg)
-    return {**body, "rain_skill": rain_headline(event_rain_skill(event))}
+    rain = event_rain_skill(event)
+    return {**body, "rain_skill": rain_headline(rain)}, rain
+
+
+def landing_copy(event: str = DEFAULT_EVENT) -> dict[str, Any]:
+    """The sweep ``GET /v1/verification`` serves, plus the rain-skill headline under ``rain_skill``.
+
+    Raises:
+        FileNotFoundError: the event has no ground truth (``make bundle``).
+    """
+    return scored(event)[0]
+
+
+def _shipped_rain_text(rain: dict[str, Any]) -> str:
+    """The shipped rain copy's JSON for ``rain``.
+
+    Raises:
+        FileNotFoundError: a scored run has no ``run.json`` to record.
+    """
+    from varuna_verify.rain_event import shipped_rain_skill, shipped_text
+
+    return shipped_text(shipped_rain_skill(rain))
+
+
+def _check_rain_copy(event: str, text: str, folder: Path) -> str | None:
+    """Why the shipped rain copy in ``folder`` differs from ``text``, or None when it matches."""
+    from varuna_verify.rain_event import read_shipped_text, shipped_bytes, shipped_names
+
+    plain, packed = shipped_names(event)
+    gzipped, _ = shipped_bytes(text)
+    expected, other = (packed, plain) if gzipped else (plain, packed)
+    if (folder / other).is_file():
+        return f"{folder / other} should not exist: the copy is {folder / expected}."
+    if not (folder / expected).is_file():
+        return f"{folder / expected} does not exist."
+    if read_shipped_text(folder / expected) != text:
+        return f"{folder / expected} is stale: it differs from the rain scores the runs give today."
+    return None
 
 
 def _repo_root() -> Path:
@@ -324,11 +374,19 @@ def verify(
             "apps/command/public/verification.json, which holds MUM-2019-07-02 only).",
         ),
     ] = None,
+    rain_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--rain-dir",
+            help="Folder for the full rain-skill payload a deployment serves (default: "
+            "demo/verification with the landing copy; not written with --out unless given).",
+        ),
+    ] = None,
     check: Annotated[
         bool,
         typer.Option(
             "--check",
-            help="Write nothing; exit 1 when the file differs from what would be written.",
+            help="Write nothing; exit 1 when a file differs from what would be written.",
         ),
     ] = False,
 ) -> None:
@@ -342,11 +400,13 @@ def verify(
             )
             raise typer.Exit(code=2)
         target = _repo_root() / COMMITTED_COPY
+        rain_folder: Path | None = rain_dir or _repo_root() / SHIPPED_RAIN_DIR
     else:
         target = out
+        rain_folder = rain_dir
 
     try:
-        body = landing_copy(event)
+        body, rain = scored(event)
     except FileNotFoundError as error:
         typer.echo(str(error), err=True)
         raise typer.Exit(code=2) from error
@@ -359,7 +419,19 @@ def verify(
         raise typer.Exit(code=1)
 
     text = render(body)
+    rain_text: str | None = None
+    if rain_folder is not None and rain.get("available"):
+        try:
+            rain_text = _shipped_rain_text(rain)
+        except (FileNotFoundError, ValueError) as error:
+            typer.echo(
+                f"The rain skill was scored but cannot ship: {error}. Nothing was written.",
+                err=True,
+            )
+            raise typer.Exit(code=1) from error
+
     if check:
+        failed = False
         try:
             current = target.read_bytes().decode("utf-8")
         except FileNotFoundError:
@@ -376,8 +448,26 @@ def verify(
             )
             for line in _summary(body):
                 typer.echo(line, err=True)
+            failed = True
+        else:
+            typer.echo(f"{target} matches the scores the runs give today.")
+        if rain_folder is not None and rain_text is not None:
+            problem = _check_rain_copy(event, rain_text, rain_folder)
+            if problem is None:
+                typer.echo(f"The shipped rain skill in {rain_folder} matches the runs' rain today.")
+            else:
+                typer.echo(
+                    f"{problem} Run uv run varuna verify --event {event} to rewrite it.", err=True
+                )
+                failed = True
+        elif rain_folder is not None:
+            typer.echo(
+                f"Rain skill not scored here ({rain.get('reason')}), so the shipped copy in "
+                f"{rain_folder} was not checked.",
+                err=True,
+            )
+        if failed:
             raise typer.Exit(code=1)
-        typer.echo(f"{target} matches the scores the runs give today.")
         return
 
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -385,5 +475,17 @@ def verify(
     # platform (rule 8).
     target.write_bytes(text.encode("utf-8"))
     typer.echo(f"Wrote {target} ({len(text.encode('utf-8')):,} bytes).")
+    if rain_folder is not None and rain_text is not None:
+        from varuna_verify.rain_event import shipped_rain_skill, write_shipped_rain_skill
+
+        written = write_shipped_rain_skill(shipped_rain_skill(rain), rain_folder)
+        typer.echo(
+            f"Wrote {written} ({written.stat().st_size:,} bytes, "
+            f"{len(rain_text.encode('utf-8')):,} as JSON), the rain skill a deployment serves."
+        )
+    elif rain_folder is not None:
+        typer.echo(
+            f"Rain skill not scored ({rain.get('reason')}), so {rain_folder} was left as it is."
+        )
     for line in _summary(body):
         typer.echo(line)

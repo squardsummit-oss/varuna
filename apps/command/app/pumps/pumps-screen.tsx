@@ -227,9 +227,8 @@ export function PumpsScreen() {
   // (said as such), or still waiting. Only the last may read as loading.
   const mapSettled = pumpMap !== null && pumpMap.runId === planRunId;
   const shownMap = mapSettled ? pumpMap.map : null;
-  const shownMapError =
-    (mapError && mapError.runId === planRunId ? mapError.message : null) ??
-    (mapSettled && pumpMap.map === null ? MAP_MISSING : null);
+  const mapFailed = mapError && mapError.runId === planRunId ? mapError.message : null;
+  const shownMapError = mapFailed ?? (mapSettled && pumpMap.map === null ? MAP_MISSING : null);
   const mapLoading = Boolean(planRunId) && !mapSettled && !shownMapError;
 
   // The dispatch on screen: one clock per map per Optimise or replay. Before Optimise the clock
@@ -378,11 +377,13 @@ export function PumpsScreen() {
       ? describeOpening(plan, cycles)
       : null;
   const highlightPumpId = hoveredPumpId ?? selectedPumpId;
-  // What a board column says while its depth series is not there to draw.
+  // What a board column says while its depth series is not there to draw: still loading, or the
+  // request failed (the reason is printed above the board). A settled answer with no map in it
+  // leaves the board's own "No depth series", which is then true.
   const depthNote = mapLoading
     ? "Loading this place's depth series"
-    : shownMapError
-      ? "Depth series not loaded; the dispatch map says why"
+    : mapFailed
+      ? "Depth series did not load; the reason is above the board"
       : null;
 
   const total = priced ? priced.totalMinutesSaved : plan?.totalMinutesSaved;
@@ -585,6 +586,14 @@ export function PumpsScreen() {
                   {priced
                     ? `The board as arranged saves about ${total} minutes above 45 cm, priced in ${priced.priceMs} ms.`
                     : "The optimiser's figures, computed when the cycle ran."}
+                </p>
+              ) : null}
+
+              {/* The board draws each place's depth from the dispatch map; when that did not
+                  come, say why here, where the columns send the reader. */}
+              {plan && shownMapError ? (
+                <p className="type-micro text-text-2 max-w-[72ch]" role="status">
+                  {shownMapError}
                 </p>
               ) : null}
 

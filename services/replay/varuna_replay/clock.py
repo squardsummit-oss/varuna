@@ -583,6 +583,15 @@ class ReplayClock:
         await self.announce()
         return self.snapshot()
 
+    def start_at(self, when: datetime) -> None:
+        """Place a freshly opened clock at ``when``, clamped to the window, without announcing it.
+
+        For the opening position only: a seek would publish a ``replay.clock`` event, and the
+        clock is opened lazily by whichever request reaches it first - often a seek of its own.
+        """
+        with self._lock:
+            self._anchor(self._clamp(when))
+
     async def seek(self, when: datetime | str) -> ReplayClockState:
         """Move the clock to ``when``, clamped to the bundle window."""
         target = when if isinstance(when, datetime) else datetime.fromisoformat(str(when))

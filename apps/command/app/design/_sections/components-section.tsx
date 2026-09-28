@@ -1,7 +1,7 @@
 "use client";
 
 import { Waves } from "lucide-react";
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AgreementBar } from "@/components/varuna/agreement-bar";
@@ -50,7 +50,23 @@ import { navItem } from "@/lib/nav";
 import { useUiStore } from "@/lib/stores/ui";
 import { useRunStore, type RunMeta } from "@/lib/stores/run";
 
+import { BrandStories } from "./brand-stories";
+import { DeferredStory } from "./deferred-story";
 import { Demo, DesignSection } from "./section";
+
+/*
+ * The screen-level groups load when they near the viewport (DeferredStory): they carry charts,
+ * maps and API reads, so /design pays for them only when someone scrolls to them. The coverage
+ * test (`__tests__/story-coverage.test.ts`) reads these files, so a component exported from
+ * components/varuna, pumps, citizen or authority without a story here fails the suite.
+ */
+const DrishtiStories = lazy(() => import("./drishti-stories"));
+const NadiStories = lazy(() => import("./nadi-stories"));
+const SanketStories = lazy(() => import("./sanket-stories"));
+const JalayantraStories = lazy(() => import("./jalayantra-stories"));
+const PramanaStories = lazy(() => import("./pramana-stories"));
+const PublicStories = lazy(() => import("./public-stories"));
+const AuthorityStories = lazy(() => import("./authority-stories"));
 
 /* Sample data. Every string is about the 2 July 2019 Mumbai replay, per SPEC.md section 6.8. */
 
@@ -58,17 +74,22 @@ import { Demo, DesignSection } from "./section";
 const NO_ATTRIBUTION =
   "Not computed on this run: Flash-lite is element-wise per segment — ADR-0042.";
 
+/**
+ * The 06:40 IST baked cycle as `GET /v1/runs/MUM-20190702T0110Z-...` answered on 2026-09-28: a real
+ * run, so a component that reads the run store and asks the API about it gets an answer, and the
+ * stage times are the ones that run recorded (the Twin at 60 s is the budget it misses, P4.6).
+ */
 const SAMPLE_RUN: RunMeta = {
-  run_id: "MUM-20190702T1210Z-sky1.0-twin1.0-flash0.3-baked",
+  run_id: "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
   city: "mumbai",
   cycle_ts: "2019-07-02T06:40:00+05:30",
   mode: "replay",
   replay_mode: "baked",
   ensemble_n: 50,
   bundle: "MUM-2019-07-02",
-  stage_ms: { decode: 210, sky: 4300, twin: 6100, flash: 280, pulse: 1900, products: 640 },
-  mass_balance_err: 0.0004,
-  versions: { sky: "1.0", twin: "1.0", flash: "0.3" },
+  stage_ms: { sky: 3151, twin: 59979, flash: 2370, pulse: 1941, products: 3106 },
+  mass_balance_err: 7.690743785692783e-15,
+  versions: { sky: "1.0", twin: "1.0", flash: "0.1" },
 };
 
 /** A plausible rise-and-recede shape, so the story panel's sparklines are not flat lines. */
@@ -173,13 +194,13 @@ const SAMPLE_PHONE_MESSAGES: PhoneMessage[] = [
   },
 ];
 
+/** The same run's stage times: no decode stage (the replay radar is already a cube). */
 const SAMPLE_STAGES: StageTiming[] = [
-  { id: "decode", ms: 210 },
-  { id: "sky", ms: 4300 },
-  { id: "twin", ms: 6100 },
-  { id: "flash", ms: 280 },
-  { id: "pulse", ms: 1900 },
-  { id: "products", ms: 640 },
+  { id: "sky", ms: 3151 },
+  { id: "twin", ms: 59979 },
+  { id: "flash", ms: 2370 },
+  { id: "pulse", ms: 1941 },
+  { id: "products", ms: 3106 },
 ];
 
 const SAMPLE_DELTAS: DeltaRow[] = [
@@ -474,6 +495,8 @@ export function ComponentsSection() {
       description="Every component of components/varuna in its states, with the sample data the console would show on 2 July 2019. Screens compose these; they never copy them."
     >
       <div className="flex flex-col gap-6">
+        <BrandStories />
+
         <Panel
           title="Page header"
           description="Title, description, honesty label and actions. A screen with a Sanskrit name also carries its English gloss, the Devanagari and what the word means (ADR-0085)."
@@ -855,7 +878,7 @@ export function ComponentsSection() {
           >
             <div className="flex flex-col gap-4">
               <Demo label="Complete cycle" bare>
-                <CycleBudgetBar stages={SAMPLE_STAGES} totalMs={13430} />
+                <CycleBudgetBar stages={SAMPLE_STAGES} totalMs={70547} />
               </Demo>
               <Demo label="No timings yet" bare>
                 <CycleBudgetBar />
@@ -1024,6 +1047,33 @@ export function ComponentsSection() {
               publishes runs.
             </p>
           </div>
+        </Panel>
+
+        <DeferredStory title="Drishti" minHeight={2400}>
+          <DrishtiStories />
+        </DeferredStory>
+        <DeferredStory title="Nadi" minHeight={1600}>
+          <NadiStories />
+        </DeferredStory>
+        <DeferredStory title="Sanket" minHeight={1200}>
+          <SanketStories />
+        </DeferredStory>
+        <DeferredStory title="Jalayantra" minHeight={1800}>
+          <JalayantraStories />
+        </DeferredStory>
+        <DeferredStory title="Pramana" minHeight={1400}>
+          <PramanaStories />
+        </DeferredStory>
+        <DeferredStory title="Public map and citizen dashboard" minHeight={2400}>
+          <PublicStories />
+        </DeferredStory>
+        <Panel
+          title="Ward officer's desk"
+          description="The authority desk's panels. This page holds no passphrase and the local API is read-only, so every write is refused by the API rather than faked here."
+        >
+          <DeferredStory title="Ward officer's desk" minHeight={1600}>
+            <AuthorityStories />
+          </DeferredStory>
         </Panel>
 
         <Panel

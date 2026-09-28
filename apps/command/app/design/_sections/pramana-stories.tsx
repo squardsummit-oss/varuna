@@ -63,7 +63,10 @@ export default function PramanaStories() {
           />
         </Demo>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <Demo label="Skill by lead time, POD" note="No horizon: it is drawn on the CSI view only.">
+          <Demo
+            label="Skill by lead time, POD"
+            note="No horizon: it is drawn on the CSI view only."
+          >
             <SkillByLeadChart
               rows={POD_ROWS}
               metric="pod"
@@ -72,7 +75,10 @@ export default function PramanaStories() {
               height={220}
             />
           </Demo>
-          <Demo label="Brier score by lead" note="Lower is better; persistence and climatology beside it.">
+          <Demo
+            label="Brier score by lead"
+            note="Lower is better; persistence and climatology beside it."
+          >
             <BrierByLeadChart rows={BRIER_ROWS} thresholdMmH={THRESHOLD} height={220} />
           </Demo>
         </div>
@@ -109,7 +115,11 @@ export default function PramanaStories() {
             <ReliabilityDiagram bands={BANDS} thresholdMmH={THRESHOLD} />
           </Demo>
           <Demo label="Reliability, empty" note="The scorer's reason, when no band has a bin.">
-            <ReliabilityDiagram bands={[]} thresholdMmH={THRESHOLD} emptyReason={NO_MEMBERS_REASON} />
+            <ReliabilityDiagram
+              bands={[]}
+              thresholdMmH={THRESHOLD}
+              emptyReason={NO_MEMBERS_REASON}
+            />
           </Demo>
         </div>
       </div>

@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pandas as pd
+import pyarrow.parquet as pq
 import pytest
 from varuna_products.depth import segment_name_aliases, segment_names
 from varuna_products.names import split_names, street_name
@@ -120,21 +121,36 @@ def test_no_name_in_the_built_mumbai_city_starts_with_a_bracket() -> None:
         pytest.skip("city/mumbai is not built; run `make city CITY=mumbai` first")
 
     names = segment_names(root)
-    stored = pd.read_parquet(root / "segments.parquet", columns=["name"])["name"]
-    was_broken = sum(1 for v in stored.dropna() if str(v).startswith("["))
+    columns = set(pq.read_schema(root / "segments.parquet").names)
+    stored = pd.read_parquet(
+        root / "segments.parquet", columns=[c for c in ("name", "name_aliases") if c in columns]
+    )
+    was_broken = sum(1 for v in stored["name"].dropna() if str(v).startswith("["))
 
-    assert was_broken > 0, "this table is already clean; the test would prove nothing"
     assert [v for v in names.values() if v.startswith("[")] == []
-    # Nothing thrown away: every repaired row kept its other name.
-    assert len(segment_name_aliases(root)) == was_broken
+    if was_broken:
+        # A table built before the city pipeline split the names: the read repairs them, and
+        # nothing is thrown away - every repaired row kept its other name.
+        assert len(segment_name_aliases(root)) == was_broken
+    else:
+        # A table built after the split (the rebuild of 2026-09-28): the builder writes one name
+        # and keeps the others in their own column. A clean table without that column would prove
+        # nothing, so the column and the aliases in it are what this asserts, and the read must
+        # carry every one of them through.
+        assert "name_aliases" in columns, "a clean table with no aliases column proves nothing"
+        carried = sum(1 for v in stored["name_aliases"] if v is not None and len(v) > 0)
+        assert carried > 0
+        assert len(segment_name_aliases(root)) == carried
 
 
 DEMO_ROUTE_SEGMENTS = {
     # The two the KEM -> Sion ambulance actually crosses, measured by running
     # `varuna_route.router.plan((72.841, 19.003), (72.862, 19.041))` against the demo runs: the
     # naive and the VARUNA route both list them, which is how the string reached a jury screen.
-    "S0-036": ("Jaganath Shankur Seth (Dadar TT) Flyover", ("Dadar TT flyover",)),
-    "S0-281": ("King's Circle Flyover", ("Eastern Express Highway",)),
+    # Re-measured 2026-09-29 on the city rebuilt 2026-09-28, whose segment ids carry the OSM way
+    # id and whose builder keeps the flyover's common name first and its full name as the alias.
+    "S102176163-000": ("Dadar TT flyover", ("Jaganath Shankur Seth (Dadar TT) Flyover",)),
+    "S102161599-000": ("King's Circle Flyover", ("Eastern Express Highway",)),
 }
 
 

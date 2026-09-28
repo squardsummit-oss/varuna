@@ -505,6 +505,8 @@ function OnboardView({ city }: { city: string }) {
   // The city's own segment layer, kept as it arrived: `allSegments` draws the whole network and
   // `joinSegments` colours the subset the first forecast wetted, and both want this shape.
   const [roads, setRoads] = useState<SegmentCollection | null>(null);
+  // The street layer was asked for and the API refused it: the map says so instead of "loading".
+  const [streetsFailed, setStreetsFailed] = useState(false);
   const [buildings, setBuildings] = useState<[number, number][][] | null>(null);
   const [drains, setDrains] = useState<DrainPath[] | null>(null);
   // Every pipe the drain layer served, of which the map draws the first `MAP_EDGE_LIMIT`.
@@ -615,11 +617,17 @@ function OnboardView({ city }: { city: string }) {
 
     if (reached > LAYER_AFTER.streets) {
       once("streets", async () => {
-        const response = await fetch(apiUrl(`/v1/city/${city}/layers/segments`), {
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error(`segments ${response.status}`);
-        setRoads((await response.json()) as SegmentCollection);
+        try {
+          const response = await fetch(apiUrl(`/v1/city/${city}/layers/segments`), {
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error(`segments ${response.status}`);
+          setRoads((await response.json()) as SegmentCollection);
+          setStreetsFailed(false);
+        } catch (failure) {
+          if (!controller.signal.aborted) setStreetsFailed(true);
+          throw failure;
+        }
       });
     }
     if (show.buildings && reached > LAYER_AFTER.buildings) {
@@ -739,6 +747,7 @@ function OnboardView({ city }: { city: string }) {
     try {
       asked.current.clear();
       setRoads(null);
+      setStreetsFailed(false);
       setBuildings(null);
       setDrains(null);
       setDrainsTotal(null);
@@ -947,7 +956,12 @@ function OnboardView({ city }: { city: string }) {
           <div className="relative min-h-[44rem] min-w-0 flex-1 lg:min-h-0">
             {hasLayers ? (
               <>
+                {/* Behind the map, as on the console: it hosts the depth legend section 6.7 keeps
+                    on screen whenever streets are coloured by depth, and the credit line. No
+                    replay chip - this city's first forecast is a design storm. */}
+                <MapSlot replayChip={false} emptyState={null} />
                 <CityMap
+                  attribution={false}
                   frames={shownDepth && show.depth ? shownDepth.frames : []}
                   rasterBounds={shownDepth && show.depth ? shownDepth.bounds : null}
                   baseSegments={show.streets ? (segments ?? []) : []}
@@ -978,11 +992,27 @@ function OnboardView({ city }: { city: string }) {
                 </div>
               </>
             ) : (
+              // No "Reconstructed replay" chip: this city's first forecast is a design storm. And a
+              // built city whose streets are still on their way is not "not built": saying "Press
+              // Start" over a finished record sent the operator to rebuild what was on disk.
               <MapSlot
-                emptyState={{
-                  title: `No ${name} layers yet`,
-                  description: `Press Start onboarding ${name}.`,
-                }}
+                replayChip={false}
+                emptyState={
+                  reached <= LAYER_AFTER.streets
+                    ? {
+                        title: `No ${name} layers yet`,
+                        description: `Press Start onboarding ${name}.`,
+                      }
+                    : streetsFailed
+                      ? {
+                          title: `${name}'s streets did not load`,
+                          description: `The API did not serve /v1/city/${city}/layers/segments. Reload once it answers.`,
+                        }
+                      : {
+                          title: `Loading ${name}'s streets`,
+                          description: `The layers this build wrote are on their way from the API.`,
+                        }
+                }
               />
             )}
             {/* Bottom-left, clear of the Layers panel above it and the credit line below it; with

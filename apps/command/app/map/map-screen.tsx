@@ -44,6 +44,10 @@ const STOPS_AT_CM: Record<PublicProfile, number> = {
   pedestrian: 30,
 };
 
+/** The map's fit margin: the collapsed sheet (about 96 px) and the floating Report water button
+ * over the bottom of the map, a thin margin elsewhere. */
+const FIT_PADDING = { top: 16, right: 16, bottom: 128, left: 16 } as const;
+
 /** Streets listed in the sheet. More than this and nobody scrolls to the bottom on a phone. */
 const NEARBY_LIMIT = 12;
 
@@ -308,6 +312,12 @@ export function MapScreen() {
           onLoaded={onLoaded}
           onStatus={onStatus}
           passableBelowCm={STOPS_AT_CM[profile]}
+          // Open on the run's main affected area at its peak - where the sheet's "streets to
+          // avoid" are, since the sheet ranks by peak depth too - not on the whole AOI, which on
+          // a phone put the airport in the middle and every listed street off screen. The bottom
+          // margin is the collapsed sheet and the Report water button above it.
+          frameOn="affected"
+          fitPadding={FIT_PADDING}
           showRaster={false}
           showBuildings={false}
           showSurcharge={false}

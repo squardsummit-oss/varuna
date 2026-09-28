@@ -16,7 +16,13 @@ import {
 import { gaugePercent, gaugeScaleCm, PlaceGauges } from "@/components/pumps/place-gauges";
 import { arriveMs } from "@/components/pumps/dispatch-clock";
 import { benefitCaveat, plainMinutes, PumpHeadline } from "@/components/pumps/pump-headline";
-import { loadPumpPlan, parsePumpMap, type PumpPlan, type RawPumpMap } from "@/lib/api/pumps";
+import {
+  loadPumpMap,
+  loadPumpPlan,
+  parsePumpMap,
+  type PumpPlan,
+  type RawPumpMap,
+} from "@/lib/api/pumps";
 
 // `GET /v1/pumps/map` for the 08:40 demo cycle (MUM-20190702T0310Z), as the API served it on
 // 2026-09-28, with each road cut to six vertices. Every number below is the API's.
@@ -96,6 +102,55 @@ describe("loading the plan", () => {
       const controller = new AbortController();
       controller.abort();
       await expect(loadPumpPlan("MUM-x", controller.signal)).rejects.toThrow("Failed to fetch");
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
+  it("names the dispatch map, not the plan, when only the map's request fails", async () => {
+    const original = globalThis.fetch;
+    globalThis.fetch = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+    try {
+      // The plan is already on screen when the map is asked for: the sentence must not say
+      // there is no plan, or the screen's "the plan's own figures still stand" contradicts it.
+      const error = await loadPumpMap("MUM-x").then(
+        () => null,
+        (e: unknown) => e,
+      );
+      expect(error).toBeInstanceOf(Error);
+      expect((error as Error).message).toMatch(
+        /^The VARUNA API did not answer at .+, so there is no dispatch map to show\. .*make dev starts it\.$/,
+      );
+      expect((error as Error).message).not.toMatch(/pump plan/);
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
+  it("never reads a 404 for the map as 'no map': the API's refusal, or an API too old", async () => {
+    const original = globalThis.fetch;
+    const answer = (status: number, body: unknown) =>
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(body), {
+          status,
+          headers: { "content-type": "application/json" },
+        }),
+      );
+    try {
+      // This API's own refusal of the run: its sentence, as it wrote it.
+      globalThis.fetch = answer(404, {
+        error: {
+          code: "not_found",
+          message: "Run MUM-x has no hotspot ranking, so there is no plan to draw.",
+          run_id: "MUM-x",
+        },
+      });
+      await expect(loadPumpMap("MUM-x")).rejects.toThrow(
+        "Run MUM-x has no hotspot ranking, so there is no plan to draw.",
+      );
+      // FastAPI's bare "Not Found": an API older than the route, said as such.
+      globalThis.fetch = answer(404, { detail: "Not Found" });
+      await expect(loadPumpMap("MUM-x")).rejects.toThrow(/older than this screen/);
     } finally {
       globalThis.fetch = original;
     }

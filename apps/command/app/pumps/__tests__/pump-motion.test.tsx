@@ -131,7 +131,6 @@ describe("the dispatch clock", () => {
       "pumps-road-casing",
       "pumps-road",
       "pumps-depot",
-      "pumps-depot-label",
       "pumps-place-ring",
       "pumps-place-core-before",
       "pumps-place-core-after",
@@ -211,7 +210,9 @@ describe("place names on the map", () => {
           props: Record<string, unknown>;
         }[]
       ).find((l) => l.id === "pumps-depot-label")?.props.data as { text: string }[];
-    expect(depotLabelData(null)).toEqual([]);
+    // With nothing pointed at there is no label layer at all: an empty TextLayer uploads an
+    // empty font atlas, which the browser reports as "texSubImage2D: no canvas" on every load.
+    expect(depotLabelData(null)).toBeUndefined();
     expect(depotLabelData("P-08").map((d) => d.text)).toEqual(["Kurla Depot (BEST)"]);
   });
 
