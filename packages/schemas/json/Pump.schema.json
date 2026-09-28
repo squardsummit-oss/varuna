@@ -1,0 +1,97 @@
+{
+  "$id": "urn:varuna:schema:Pump",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A mobile pump (``GET /v1/pumps``). The prototype inventory is synthetic and labelled.",
+  "properties": {
+    "assigned_hotspot_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Assigned Hotspot Id"
+    },
+    "capacity_m3h": {
+      "description": "Rated discharge in m^3/h.",
+      "exclusiveMinimum": 0,
+      "title": "Capacity M3H",
+      "type": "number"
+    },
+    "depot": {
+      "description": "Depot name, e.g. 'Parel depot'.",
+      "title": "Depot",
+      "type": "string"
+    },
+    "eta_min": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Travel time to the selected hotspot in minutes.",
+      "title": "Eta Min"
+    },
+    "id": {
+      "description": "e.g. P-12",
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "name": {
+      "description": "Display name, e.g. 'Pump P-12'.",
+      "title": "Name",
+      "type": "string"
+    },
+    "status": {
+      "default": "available",
+      "enum": [
+        "available",
+        "assigned",
+        "en_route",
+        "pumping",
+        "maintenance"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "synthetic": {
+      "description": "True for the prototype's synthetic inventory.",
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "capacity_m3h",
+    "depot",
+    "lon",
+    "lat",
+    "synthetic"
+  ],
+  "title": "Pump",
+  "type": "object"
+}

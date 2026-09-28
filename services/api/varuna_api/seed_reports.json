@@ -1,0 +1,295 @@
+{
+ "about": "Demo citizen reports for the 2 July 2019 replay, all synthetic. Each is one of the bundle's own synthetic reports (bundles/MUM-2019-07-02/reports.jsonl, bundle_report_id) at a registered hotspot (city/mumbai/hotspots.geojson, hotspot_id) inside the 06:40-09:40 IST window: its place, time, depth chip and words are that row's, so the seed adds no observation. Pulse assimilates the bundle row; the seed is never written to the inbox, so nothing is counted twice. Five carry an illustrative Wikimedia Commons photo, linked with its author and licence and not copied. Statuses under seeded_history are demo statuses no officer set, and GET /v1/reports marks each one seeded.",
+ "bundle": "MUM-2019-07-02",
+ "city": "mumbai",
+ "window": {
+  "from": "2019-07-02T06:40:00+05:30",
+  "to": "2019-07-02T09:40:00+05:30"
+ },
+ "chip_rule": "A seed's chip agrees with the run when the run's p50 at its hotspot, at the last step at or before the report, lies within 1.5 sd of the chip's centimetres (ankle 10 +/- 8, knee 45 +/- 12, waist 90 +/- 15; SPEC.md 11.6). The run is the newest baked cycle at or before the report, the one the console shows then; run_check records what it said, measured 2026-09-26. Every knee and waist row in the bundle fails the rule - the run shows 0.0 to 1.6 cm at their hotspots at their times - so every seed is an ankle row.",
+ "licences_checked": "Author and licence as Wikimedia Commons lists them on 2026-09-26; a person should confirm each before the finale. Every photo URL answered 200 image/jpeg on 2026-09-26. Mumbai monsoon.jpg's licence link is written https where Commons writes http, so a screen that renders only https links still renders it.",
+ "reports": [
+  {
+   "id": "seed-RPT-MUM-HS-06-ankle",
+   "bundle_report_id": "RPT-MUM-HS-06-ankle",
+   "hotspot_id": "MUM-HS-06",
+   "ts": "2019-07-02T07:03:00+05:30",
+   "lat": 19.050857,
+   "lon": 72.869589,
+   "place": "Chunabhatti railway station",
+   "metres_from_register_point": 113,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Chunabhatti railway station.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T07:00:00+05:30",
+    "depth_p50_cm": 1.6,
+    "depth_p90_cm": 1.7,
+    "peak_depth_cm": 1.6,
+    "peak_ts": "2019-07-02T07:00:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": null,
+   "seeded_history": []
+  },
+  {
+   "id": "seed-RPT-MUM-HS-04-ankle",
+   "bundle_report_id": "RPT-MUM-HS-04-ankle",
+   "hotspot_id": "MUM-HS-04",
+   "ts": "2019-07-02T07:05:00+05:30",
+   "lat": 19.032604,
+   "lon": 72.858435,
+   "place": "Gandhi Market (Matunga)",
+   "metres_from_register_point": 62,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Gandhi Market (Matunga).",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T07:05:00+05:30",
+    "depth_p50_cm": 1.1,
+    "depth_p90_cm": 1.3,
+    "peak_depth_cm": 1.7,
+    "peak_ts": "2019-07-02T07:40:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": {
+    "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Bombay_flooded_street2.jpg/330px-Bombay_flooded_street2.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Bombay_flooded_street2.jpg/960px-Bombay_flooded_street2.jpg",
+    "credit": {
+     "title": "Bombay flooded street2.jpg",
+     "author": "Hitesh Ashar",
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "source_url": "https://commons.wikimedia.org/wiki/File:Bombay_flooded_street2.jpg",
+     "original_source": "https://www.flickr.com/photos/asharism/30477406/",
+     "taken": "2005-08-01",
+     "caption": "Heavy monsoon in Mumbai, August 2005",
+     "note": "Illustrative photo from Wikimedia Commons; not taken at this spot or on 2 July 2019."
+    }
+   },
+   "seeded_history": [
+    {
+     "status": "seen",
+     "ts": "2019-07-02T07:18:00+05:30",
+     "role": "ward officer",
+     "note": "Seeded demo status; nobody at the ward desk set it."
+    },
+    {
+     "status": "crew_sent",
+     "ts": "2019-07-02T07:46:00+05:30",
+     "role": "control room",
+     "note": "Seeded demo status; nobody at the ward desk set it."
+    }
+   ]
+  },
+  {
+   "id": "seed-RPT-MUM-HS-03-ankle",
+   "bundle_report_id": "RPT-MUM-HS-03-ankle",
+   "hotspot_id": "MUM-HS-03",
+   "ts": "2019-07-02T07:22:00+05:30",
+   "lat": 19.026694,
+   "lon": 72.855213,
+   "place": "King's Circle / Maheshwari Udyan junction",
+   "metres_from_register_point": 91,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at King's Circle / Maheshwari Udyan junction.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T07:20:00+05:30",
+    "depth_p50_cm": 0.0,
+    "depth_p90_cm": 0.0,
+    "peak_depth_cm": 0.4,
+    "peak_ts": "2019-07-02T08:35:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": {
+    "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Flooding_in_Mumbai%2C_India_2017.jpg/330px-Flooding_in_Mumbai%2C_India_2017.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Flooding_in_Mumbai%2C_India_2017.jpg/960px-Flooding_in_Mumbai%2C_India_2017.jpg",
+    "credit": {
+     "title": "Flooding in Mumbai, India 2017.jpg",
+     "author": "Paasikivi",
+     "license": "CC BY-SA 4.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+     "source_url": "https://commons.wikimedia.org/wiki/File:Flooding_in_Mumbai,_India_2017.jpg",
+     "original_source": null,
+     "taken": "2017",
+     "caption": "Flooding in Mumbai, 2017",
+     "note": "Illustrative photo from Wikimedia Commons; not taken at this spot or on 2 July 2019."
+    }
+   },
+   "seeded_history": []
+  },
+  {
+   "id": "seed-RPT-MUM-HS-01-ankle",
+   "bundle_report_id": "RPT-MUM-HS-01-ankle",
+   "hotspot_id": "MUM-HS-01",
+   "ts": "2019-07-02T08:31:00+05:30",
+   "lat": 19.009107,
+   "lon": 72.841914,
+   "place": "Hindmata junction (Hindmata Cinema, Dr B. Ambedkar Marg)",
+   "metres_from_register_point": 112,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Hindmata junction (Hindmata Cinema, Dr B. Ambedkar Marg).",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T08:30:00+05:30",
+    "depth_p50_cm": 1.3,
+    "depth_p90_cm": 1.4,
+    "peak_depth_cm": 11.6,
+    "peak_ts": "2019-07-02T11:10:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": {
+    "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Bombay_flooded_street.jpg/330px-Bombay_flooded_street.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Bombay_flooded_street.jpg/960px-Bombay_flooded_street.jpg",
+    "credit": {
+     "title": "Bombay flooded street.jpg",
+     "author": "Hitesh Ashar",
+     "license": "CC BY 2.0",
+     "license_url": "https://creativecommons.org/licenses/by/2.0",
+     "source_url": "https://commons.wikimedia.org/wiki/File:Bombay_flooded_street.jpg",
+     "original_source": "https://www.flickr.com/photos/asharism/30478352/",
+     "taken": "2005-08-01",
+     "caption": "Heavy monsoon in Mumbai, August 2005",
+     "note": "Illustrative photo from Wikimedia Commons; not taken at this spot or on 2 July 2019."
+    }
+   },
+   "seeded_history": [
+    {
+     "status": "seen",
+     "ts": "2019-07-02T08:38:00+05:30",
+     "role": "ward officer",
+     "note": "Seeded demo status; nobody at the ward desk set it."
+    }
+   ]
+  },
+  {
+   "id": "seed-RPT-MUM-HS-02-ankle",
+   "bundle_report_id": "RPT-MUM-HS-02-ankle",
+   "hotspot_id": "MUM-HS-02",
+   "ts": "2019-07-02T08:32:00+05:30",
+   "lat": 18.995346,
+   "lon": 72.836358,
+   "place": "Parel / Bharat Mata Cinema",
+   "metres_from_register_point": 34,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Parel / Bharat Mata Cinema.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T08:30:00+05:30",
+    "depth_p50_cm": 1.5,
+    "depth_p90_cm": 1.6,
+    "peak_depth_cm": 1.9,
+    "peak_ts": "2019-07-02T08:45:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": null,
+   "seeded_history": []
+  },
+  {
+   "id": "seed-RPT-MUM-HS-18-ankle",
+   "bundle_report_id": "RPT-MUM-HS-18-ankle",
+   "hotspot_id": "MUM-HS-18",
+   "ts": "2019-07-02T08:32:00+05:30",
+   "lat": 19.056188,
+   "lon": 72.838034,
+   "place": "Bandra Talao",
+   "metres_from_register_point": 67,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Bandra Talao.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T08:30:00+05:30",
+    "depth_p50_cm": 1.4,
+    "depth_p90_cm": 1.4,
+    "peak_depth_cm": 13.7,
+    "peak_ts": "2019-07-02T11:10:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": {
+    "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Mumbai_monsoon.jpg/330px-Mumbai_monsoon.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Mumbai_monsoon.jpg/960px-Mumbai_monsoon.jpg",
+    "credit": {
+     "title": "Mumbai monsoon.jpg",
+     "author": "PlaneMad",
+     "license": "CC BY-SA 3.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+     "source_url": "https://commons.wikimedia.org/wiki/File:Mumbai_monsoon.jpg",
+     "original_source": null,
+     "taken": "2006-07-04",
+     "caption": "Waterlogging on Linking Road, Bandra, monsoon 2006",
+     "note": "Illustrative photo from Wikimedia Commons; not taken at this spot or on 2 July 2019."
+    }
+   },
+   "seeded_history": []
+  },
+  {
+   "id": "seed-RPT-MUM-HS-09-ankle",
+   "bundle_report_id": "RPT-MUM-HS-09-ankle",
+   "hotspot_id": "MUM-HS-09",
+   "ts": "2019-07-02T08:45:00+05:30",
+   "lat": 19.079864,
+   "lon": 72.845978,
+   "place": "Vakola Junction",
+   "metres_from_register_point": 116,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Vakola Junction.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T08:45:00+05:30",
+    "depth_p50_cm": 0.4,
+    "depth_p90_cm": 0.4,
+    "peak_depth_cm": 4.2,
+    "peak_ts": "2019-07-02T09:55:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": null,
+   "seeded_history": []
+  },
+  {
+   "id": "seed-RPT-MUM-HS-11-ankle",
+   "bundle_report_id": "RPT-MUM-HS-11-ankle",
+   "hotspot_id": "MUM-HS-11",
+   "ts": "2019-07-02T08:47:00+05:30",
+   "lat": 19.090462,
+   "lon": 72.842614,
+   "place": "Milan Subway",
+   "metres_from_register_point": 23,
+   "depth_hint": "ankle",
+   "text": "Water over the kerb at Milan Subway.",
+   "synthetic": true,
+   "run_check": {
+    "run_id": "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "valid_ts": "2019-07-02T08:45:00+05:30",
+    "depth_p50_cm": 0.3,
+    "depth_p90_cm": 0.3,
+    "peak_depth_cm": 2.9,
+    "peak_ts": "2019-07-02T09:35:00+05:30",
+    "chip_consistent": true
+   },
+   "photo": {
+    "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/An_ST_bus_near_the_WEH_flyover_at_Borivali_%2835520287%29.jpg/330px-An_ST_bus_near_the_WEH_flyover_at_Borivali_%2835520287%29.jpg",
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/An_ST_bus_near_the_WEH_flyover_at_Borivali_%2835520287%29.jpg/960px-An_ST_bus_near_the_WEH_flyover_at_Borivali_%2835520287%29.jpg",
+    "credit": {
+     "title": "An ST bus near the WEH flyover at Borivali (35520287).jpg",
+     "author": "Rakesh from Bangalore",
+     "license": "CC BY-SA 2.0",
+     "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+     "source_url": "https://commons.wikimedia.org/wiki/File:An_ST_bus_near_the_WEH_flyover_at_Borivali_(35520287).jpg",
+     "original_source": null,
+     "taken": "2005-07-28",
+     "caption": "An ST bus in floodwater near the WEH flyover, Borivali, after the 26 July 2005 flood",
+     "note": "Illustrative photo from Wikimedia Commons; not taken at this spot or on 2 July 2019."
+    }
+   },
+   "seeded_history": []
+  }
+ ]
+}

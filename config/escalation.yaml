@@ -1,0 +1,39 @@
+# The escalation matrix (SPEC.md 7.5, 11.10; blueprint 6.10), ward officer to public.
+#
+# Read by the alert product (`varuna_products.alerts.load_escalation`): every alert a cycle raises
+# carries the tiers its level reaches when it is raised (`notify`), and
+# `GET /v1/alerts/escalation` serves this file to the matrix on /alerts. A tier's `id` is the value
+# `POST /v1/alerts/{id}/escalate` takes in `escalate_to` (varuna_schemas EscalationTarget), so the
+# order below is the order an officer escalates in.
+#
+# `levels` are the alert levels that reach a tier when the alert is raised. A tier with no levels
+# is reached only by an officer escalating to it. Nothing here sends a message: the prototype's
+# channels are the dashboard and an on-screen phone mock, and a real sender exists only when its
+# keys are set (varuna_products.notify).
+version: 1
+tiers:
+  - id: ward_officer
+    recipient: Ward officer
+    trigger: "Watch raised in the ward: forecast street depth above 15 cm for two cycles running"
+    channel: Dashboard, WhatsApp
+    levels: [watch, moderate, severe]
+  - id: control_room
+    recipient: Control room
+    trigger: Moderate raised, or a Watch escalated by the ward officer
+    channel: Dashboard, WhatsApp, phone call
+    levels: [moderate, severe]
+  - id: police_traffic
+    recipient: Police and traffic
+    trigger: Severe raised, or escalated by the control room
+    channel: WhatsApp, SMS, road-conditions feed
+    levels: [severe]
+  - id: transit
+    recipient: Transit (buses, suburban rail)
+    trigger: Escalated by the control room for a bus corridor or a station approach
+    channel: GTFS-RT service alert, WhatsApp
+    levels: []
+  - id: public
+    recipient: Public
+    trigger: Escalated by the control room once a Severe has persisted two cycles
+    channel: Public map, SMS broadcast, CAP feed
+    levels: []

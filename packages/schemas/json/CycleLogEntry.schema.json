@@ -1,0 +1,66 @@
+{
+  "$id": "urn:varuna:schema:CycleLogEntry",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One row of the replay panel's cycle log.",
+  "properties": {
+    "cycle_ts": {
+      "format": "date-time",
+      "title": "Cycle Ts",
+      "type": "string"
+    },
+    "degraded_feeds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Degraded Feeds",
+      "type": "array"
+    },
+    "mass_balance_err": {
+      "description": "Relative Twin mass-balance error.",
+      "minimum": 0,
+      "title": "Mass Balance Err",
+      "type": "number"
+    },
+    "mode": {
+      "enum": [
+        "baked",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "published_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Published Ts"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stage_ms": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Stage Ms",
+      "type": "object"
+    }
+  },
+  "required": [
+    "cycle_ts",
+    "run_id",
+    "mode",
+    "mass_balance_err"
+  ],
+  "title": "CycleLogEntry",
+  "type": "object"
+}

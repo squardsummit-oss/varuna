@@ -1,0 +1,93 @@
+{
+  "$id": "urn:varuna:schema:DesignStorm",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A Chicago hyetograph built from a stated design intensity (SPEC.md 10.1, P2.8).\n\nThis is **not** an intensity-duration-frequency curve. No published IDF curve for Mumbai\nor Chennai could be sourced (``docs/research/data_sources.md`` section 6), so the depth\ncomes from the drainage-norm design intensity in the city config and the shape comes from\nstated parameters. :attr:`basis` says so in UI-ready copy.",
+  "properties": {
+    "basis": {
+      "description": "Why this is not a fitted IDF curve and what would settle it (SPEC.md 0.6).",
+      "minLength": 40,
+      "title": "Basis",
+      "type": "string"
+    },
+    "duration_min": {
+      "description": "Storm duration in minutes.",
+      "exclusiveMinimum": 0,
+      "title": "Duration Min",
+      "type": "integer"
+    },
+    "hyetograph_mm_h": {
+      "description": "Block intensities in mm/h, one per step_min block.",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 1,
+      "title": "Hyetograph Mm H",
+      "type": "array"
+    },
+    "intensity_mm_h": {
+      "description": "The stated design intensity the depth is built from.",
+      "exclusiveMinimum": 0,
+      "title": "Intensity Mm H",
+      "type": "number"
+    },
+    "intensity_source": {
+      "description": "Where that intensity comes from, file and field.",
+      "minLength": 8,
+      "title": "Intensity Source",
+      "type": "string"
+    },
+    "kind": {
+      "const": "chicago_hyetograph",
+      "default": "chicago_hyetograph",
+      "title": "Kind",
+      "type": "string"
+    },
+    "peak_position_r": {
+      "description": "Peak position as a fraction of the duration (0.4 = 40 % in).",
+      "exclusiveMaximum": 1,
+      "exclusiveMinimum": 0,
+      "title": "Peak Position R",
+      "type": "number"
+    },
+    "shape_b_min": {
+      "description": "Chicago shape parameter b, in minutes (stated).",
+      "exclusiveMinimum": 0,
+      "title": "Shape B Min",
+      "type": "number"
+    },
+    "shape_c": {
+      "description": "Chicago shape exponent c (stated).",
+      "exclusiveMaximum": 1,
+      "exclusiveMinimum": 0,
+      "title": "Shape C",
+      "type": "number"
+    },
+    "step_min": {
+      "description": "Hyetograph block length in minutes.",
+      "exclusiveMinimum": 0,
+      "title": "Step Min",
+      "type": "integer"
+    },
+    "total_depth_mm": {
+      "description": "intensity_mm_h * duration_min / 60, exactly.",
+      "minimum": 0,
+      "title": "Total Depth Mm",
+      "type": "number"
+    }
+  },
+  "required": [
+    "intensity_mm_h",
+    "intensity_source",
+    "duration_min",
+    "step_min",
+    "peak_position_r",
+    "shape_b_min",
+    "shape_c",
+    "total_depth_mm",
+    "hyetograph_mm_h",
+    "basis"
+  ],
+  "title": "DesignStorm",
+  "type": "object"
+}

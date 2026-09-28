@@ -1,0 +1,392 @@
+{
+  "$defs": {
+    "AlertStateChange": {
+      "additionalProperties": false,
+      "description": "One entry of the alert's audit log (acknowledge and escalate are logged with user and time).",
+      "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "state": {
+          "enum": [
+            "raised",
+            "acknowledged",
+            "escalated",
+            "cleared"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "ts": {
+          "format": "date-time",
+          "title": "Ts",
+          "type": "string"
+        },
+        "user": {
+          "description": "Operator id or 'system'.",
+          "title": "User",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ts",
+        "state",
+        "user"
+      ],
+      "title": "AlertStateChange",
+      "type": "object"
+    },
+    "Polygon": {
+      "additionalProperties": false,
+      "description": "Rings of positions; the first ring is the exterior. Rings must close (first == last).",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "anyOf": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "Polygon",
+          "default": "Polygon",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Polygon",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:Alert",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One alert as stored in ``alerts.json`` and served by ``GET /v1/alerts``.",
+  "properties": {
+    "acknowledged_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acknowledged By"
+    },
+    "acknowledged_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acknowledged Ts"
+    },
+    "area_desc": {
+      "description": "e.g. 'Ward F/North, Hindmata'.",
+      "title": "Area Desc",
+      "type": "string"
+    },
+    "cap_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Relative path of the CAP XML inside the run directory.",
+      "title": "Cap Path"
+    },
+    "cap_status": {
+      "description": "Exercise on replay, Actual when live.",
+      "enum": [
+        "Actual",
+        "Exercise"
+      ],
+      "title": "Cap Status",
+      "type": "string"
+    },
+    "channels": {
+      "description": "Channels the alert was sent to.",
+      "items": {
+        "enum": [
+          "dashboard",
+          "cap",
+          "whatsapp",
+          "sms"
+        ],
+        "type": "string"
+      },
+      "title": "Channels",
+      "type": "array"
+    },
+    "cleared_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cleared Ts"
+    },
+    "escalated_to": {
+      "anyOf": [
+        {
+          "enum": [
+            "ward_officer",
+            "control_room",
+            "police_traffic",
+            "transit",
+            "public"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Escalated To"
+    },
+    "headline": {
+      "description": "e.g. 'Hindmata junction: depth likely above 45 cm from 18:20 to 20:00'.",
+      "title": "Headline",
+      "type": "string"
+    },
+    "history": {
+      "items": {
+        "$ref": "#/$defs/AlertStateChange"
+      },
+      "title": "History",
+      "type": "array"
+    },
+    "hotspot_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Hotspot register id, if any.",
+      "title": "Hotspot Id"
+    },
+    "id": {
+      "description": "Also the CAP identifier stem, e.g. VARUNA-MUM-20190702T1745-FN-0031.",
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "instruction": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Route hint and pump plan, e.g. 'Avoid Hindmata and Parel TT ...'.",
+      "title": "Instruction"
+    },
+    "level": {
+      "enum": [
+        "watch",
+        "moderate",
+        "severe"
+      ],
+      "title": "Level",
+      "type": "string"
+    },
+    "persists_cycles": {
+      "description": "Consecutive cycles above the raise probability (hysteresis).",
+      "minimum": 1,
+      "title": "Persists Cycles",
+      "type": "integer"
+    },
+    "polygon": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Polygon"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "CAP area polygon (WGS84)."
+    },
+    "pumps": {
+      "description": "Pumps dispatched for this alert.",
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Pumps",
+      "type": "array"
+    },
+    "raised_ts": {
+      "format": "date-time",
+      "title": "Raised Ts",
+      "type": "string"
+    },
+    "run_id": {
+      "description": "Run that raised (or last updated) the alert.",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "scope": {
+      "enum": [
+        "segment",
+        "ward",
+        "facility"
+      ],
+      "title": "Scope",
+      "type": "string"
+    },
+    "scope_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Segment, ward or facility id the alert is about.",
+      "title": "Scope Id"
+    },
+    "state": {
+      "default": "raised",
+      "enum": [
+        "raised",
+        "acknowledged",
+        "escalated",
+        "cleared"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "threshold_cm": {
+      "description": "Depth threshold that defines the level (15 / 30 / 45 cm).",
+      "exclusiveMinimum": 0,
+      "title": "Threshold Cm",
+      "type": "integer"
+    },
+    "trigger_p": {
+      "description": "P(depth > threshold) at the trigger cycle.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Trigger P",
+      "type": "number"
+    },
+    "window_from": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Start of the exceedance window.",
+      "title": "Window From"
+    },
+    "window_to": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "End of the exceedance window.",
+      "title": "Window To"
+    }
+  },
+  "required": [
+    "id",
+    "run_id",
+    "scope",
+    "level",
+    "threshold_cm",
+    "headline",
+    "area_desc",
+    "trigger_p",
+    "raised_ts",
+    "persists_cycles",
+    "cap_status"
+  ],
+  "title": "Alert",
+  "type": "object"
+}

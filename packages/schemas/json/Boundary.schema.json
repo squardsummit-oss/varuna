@@ -1,0 +1,41 @@
+{
+  "$id": "urn:varuna:schema:Boundary",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A boundary condition attached to a node (blueprint 9.1 ``boundary``).",
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "node_id": {
+      "minLength": 1,
+      "title": "Node Id",
+      "type": "string"
+    },
+    "series_source": {
+      "description": "'tide table <url>', 'illustrative' or 'fixed <stage m>'.",
+      "title": "Series Source",
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "tide",
+        "river",
+        "fixed",
+        "free"
+      ],
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "node_id",
+    "type",
+    "series_source"
+  ],
+  "title": "Boundary",
+  "type": "object"
+}

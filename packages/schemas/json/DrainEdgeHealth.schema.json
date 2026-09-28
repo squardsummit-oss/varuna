@@ -1,0 +1,141 @@
+{
+  "$id": "urn:varuna:schema:DrainEdgeHealth",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Posterior blockage state of one pipe (feature properties of ``drain_health.geojson``).",
+  "properties": {
+    "beta_mean": {
+      "description": "Posterior mean blockage.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Beta Mean",
+      "type": "number"
+    },
+    "beta_prior_mean": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Prior mean, for before/after.",
+      "title": "Beta Prior Mean"
+    },
+    "beta_sd": {
+      "description": "Posterior standard deviation of beta.",
+      "minimum": 0,
+      "title": "Beta Sd",
+      "type": "number"
+    },
+    "capacity_reduction_pct": {
+      "description": "100 x (1 - effective capacity / full capacity).",
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Capacity Reduction Pct",
+      "type": "number"
+    },
+    "confidence": {
+      "default": "inferred",
+      "enum": [
+        "inferred",
+        "surveyed"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "diameter_mm": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diameter Mm"
+    },
+    "edge_id": {
+      "minLength": 1,
+      "title": "Edge Id",
+      "type": "string"
+    },
+    "explains": {
+      "description": "Hotspot ids this pipe helps explain.",
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Explains",
+      "type": "array"
+    },
+    "kappa": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Inlet clogging at the upstream inlet.",
+      "title": "Kappa"
+    },
+    "last_update": {
+      "description": "Cycle time of the last posterior update (IST).",
+      "format": "date-time",
+      "title": "Last Update",
+      "type": "string"
+    },
+    "observations_n": {
+      "default": 0,
+      "description": "Observations that touched this pipe.",
+      "minimum": 0,
+      "title": "Observations N",
+      "type": "integer"
+    },
+    "q_full_m3s": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Q Full M3S"
+    },
+    "street": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Street"
+    }
+  },
+  "required": [
+    "edge_id",
+    "beta_mean",
+    "beta_sd",
+    "capacity_reduction_pct",
+    "last_update"
+  ],
+  "title": "DrainEdgeHealth",
+  "type": "object"
+}

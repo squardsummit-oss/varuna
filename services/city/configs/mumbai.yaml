@@ -1,0 +1,89 @@
+# VARUNA city-in-a-box configuration - Mumbai central AOI (SPEC.md 3.3, 10.1).
+# Every raster tile named here must already be in city/cache/ (tools/prefetch_city_cache.py).
+id: mumbai
+code: MUM
+name: Mumbai
+aoi_id: MUM-CENTRAL
+
+# lon 72.815 -> 72.905, lat 18.995 -> 19.135; about 9.5 km x 15.5 km.
+bbox: [72.815, 18.995, 72.905, 19.135]
+crs: 32643 # UTM 43N
+grid_m: 30.0 # about 316 x 517 cells
+
+# 5 m nests over the two worst chronic spots. Declared now, built in P1.
+nests:
+  - id: MUM-NEST-HINDMATA
+    name: Hindmata junction
+    lon: 72.841
+    lat: 19.012
+    size_m: 1000.0
+    res_m: 5.0
+    tier: P1
+  - id: MUM-NEST-KINGSCIRCLE
+    name: King's Circle
+    lon: 72.857
+    lat: 19.027
+    size_m: 1000.0
+    res_m: 5.0
+    tier: P1
+
+# The AOI's west edge faces the Arabian Sea (Worli/Mahim bay) and the south edge drains
+# towards the Elphinstone/Lower Parel storm outfalls; the north-east edge meets the Mithi
+# river and Mahim creek. Stage on these outfalls follows the tide, which is what tide-locks
+# the drains in the demo. Tide series is labelled illustrative until a public table is cited.
+tidal_outfalls:
+  - id: MUM-OUTFALL-MAHIM
+    name: Mahim bay outfall (west edge)
+    lon: 72.8215
+    lat: 19.0330
+    flap_gate: false
+    stage_source: illustrative
+    note: West domain edge, Arabian Sea. Tide-locked; no flap gate, so backflow is possible.
+  - id: MUM-OUTFALL-WORLI
+    name: Worli sea face outfall (south-west edge)
+    lon: 72.8175
+    lat: 19.0005
+    flap_gate: true
+    stage_source: illustrative
+    note: South-west domain edge, Arabian Sea. Flap gate blocks reverse flow.
+  - id: MUM-OUTFALL-MITHI
+    name: Mithi river / Mahim creek outfall (north-east edge)
+    lon: 72.8770
+    lat: 19.0700
+    flap_gate: false
+    stage_source: illustrative
+    note: Creek boundary; the Mithi backs up on a high tide and reverses the trunk drain.
+
+design_intensity_mm_h:
+  legacy: 25.0 # legacy BMC drains
+  upgraded: 50.0 # BRIMSTOWAD-upgraded corridors
+
+hotspots_path: hotspots.geojson
+infra_path: assets/mumbai_infra.json
+
+# Sky domain: 60 km square at 500 m (120 x 120 px) centred on the AOI.
+radar_domain:
+  center_lon: 72.86
+  center_lat: 19.065
+  size_km: 60.0
+  res_m: 500.0
+
+# Cached open-data tiles (names only; read through varuna_city.cache).
+dem_tiles:
+  - Copernicus_DSM_COG_10_N18_00_E072_00_DEM.tif
+  - Copernicus_DSM_COG_10_N19_00_E072_00_DEM.tif
+landcover_tiles:
+  - ESA_WorldCover_10m_2021_v200_N18E072_Map.tif
+
+manning_n:
+  asphalt: 0.016
+  open_ground: 0.04
+  vegetation: 0.07
+  water: 0.03
+
+cn_range: [90, 98]
+depression_min_area_m2: 900.0
+building_burn_m: 5.0
+road_carve_m: 0.15
+min_drain_slope: 0.003
+inlet_spacing_m: 40.0

@@ -1,0 +1,975 @@
+{
+ "type": "FeatureCollection",
+ "name": "hotspots_mumbai_draft",
+ "metadata": {
+  "aoi": "MUM-CENTRAL",
+  "bbox_wgs84": [
+   72.815,
+   18.995,
+   72.905,
+   19.135
+  ],
+  "generated": "2026-09-06",
+  "generator": "VARUNA research team, built from the docs/research/_raw cache (no new network calls)",
+  "spec": "SPEC.md 3.3 and 10.1 step 9",
+  "geocoding": "Nominatim https://nominatim.openstreetmap.org/search (raw JSON in docs/research/_raw/nominatim_*.json) and Overpass https://overpass-api.de/api/interpreter (docs/research/_raw/overpass_*.json); OpenStreetMap data, ODbL, accessed 2026-09-04/05",
+  "rules": "sourced=true only when a cached public source names the place as a waterlogging spot; sourced=false features may be used by the pipeline but must NOT be labelled chronic in the UI. coord_verified=false means the coordinate is a candidate, not a geocode.",
+  "counts": {
+   "features": 28,
+   "in_aoi_with_verified_coord": 27,
+   "sourced_true": 13
+  },
+  "review": {
+   "reviewed": "2026-09-06",
+   "reviewer": "completeness critic",
+   "quotes_checked": 31,
+   "quotes_verified_verbatim": 30,
+   "quotes_unsupported": 1,
+   "counts_after_review": {
+    "sourced_true": 13,
+    "note": "unchanged at 13: the one unsupported quote (Kurla/arXiv) was a second source on a hotspot that retains a verified India TV source."
+   }
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8421396,
+     19.010099
+    ]
+   },
+   "properties": {
+    "name": "Hindmata junction (Hindmata Cinema, Dr B. Ambedkar Marg)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/S",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 9739425792,
+     "url": "https://www.openstreetmap.org/node/9739425792"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Hindmata_Cinema__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.freepressjournal.in/mumbai/mumbai-rains-knee-deep-water-accumulates-in-dadar-hindmata-due-to-heavy-downpour-video-surfaces",
+      "cached_path": "docs/research/_raw/pages/fpj_hindmata_kneedeep.txt",
+      "cached_line": 41,
+      "quote": "Hindmata is among the low-lying areas in Mumbai and has the unwanted distinction of being among the first areas that witnesses waterlogging whenever it rains heavily.",
+      "source_published": "2024-10-11",
+      "review_note": "Published 10-11 October 2024, NOT the 2019 event. Usable only as a general chronic-flooding statement about Hindmata; must not be cited as 1-2 July 2019 evidence."
+     },
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 152,
+      "quote": "BMC has deployed de-watering equipment at Hindmata flyover. It is a low-lying and is prone to water-logging."
+     },
+     {
+      "source_url": "https://arxiv.org/abs/2306.09770",
+      "cached_path": "docs/research/_raw/pages/arxiv_2306.09770.txt",
+      "cached_line": 320,
+      "quote": "We conducted a survey of the six flood hotspots in Mumbai, Borivali, Khar, Hindmata, Dahisar, Malad, and Gandhi market."
+     }
+    ],
+    "notes": "Nominatim query 'Hindmata, Dadar East, Mumbai' returned NO RESULT; 'Hindmata Cinema, Mumbai' resolved to this BEST bus stop on the flooding stretch of Dr B. Ambedkar Marg. Spec approximation was 19.012, 72.841."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8362588,
+     18.9956372
+    ]
+   },
+   "properties": {
+    "name": "Parel / Bharat Mata Cinema",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/S (unverified)",
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 1187354637,
+     "url": "https://www.openstreetmap.org/way/1187354637"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_pois.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 333,
+      "quote": "In Mumbai, waterlogging was reported from low-lying areas of Hindmata junction, Bandra and Parel."
+     },
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 166,
+      "quote": "Areas most affected by rains in Mumbai are Sion, Malad, Bandra, Andheri West, Kurla, King's Circle, Lower Parel, Matunga, Thane, Vakola and Palghar."
+     }
+    ],
+    "notes": "Nominatim 'Bharatmata Cinema, Parel, Mumbai' returned NO RESULT; the coordinate comes from the Overpass POI sweep (amenity=cinema, 'Bharat Mata Cinema'). The sources name Parel / Lower Parel as an area, not this junction. The point sits ~70 m north of the AOI southern edge."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8558265,
+     19.0272742
+    ]
+   },
+   "properties": {
+    "name": "King's Circle / Maheshwari Udyan junction",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 1235473854,
+     "url": "https://www.openstreetmap.org/way/1235473854"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_King_s_Circle__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://scroll.in/latest/929041/in-photos-rain-wreaks-havoc-in-mumbai-more-expected-in-next-two-days",
+      "cached_path": "docs/research/_raw/pages/scroll_929041.txt",
+      "cached_line": 116,
+      "quote": "Vehicles submerged at the waterlogged King's Circle after heavy rains in Mumbai on Monday."
+     },
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 166,
+      "quote": "Areas most affected by rains in Mumbai are Sion, Malad, Bandra, Andheri West, Kurla, King's Circle, Lower Parel, Matunga, Thane, Vakola and Palghar."
+     }
+    ],
+    "notes": "Junction way (highway=trunk, name 'King's Circle'). Alternative geocode: King's Circle railway station node/1650694464 at 19.0316822, 72.8577375."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8590161,
+     19.0325417
+    ]
+   },
+   "properties": {
+    "name": "Gandhi Market (Matunga)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 9788462276,
+     "url": "https://www.openstreetmap.org/node/9788462276"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Gandhi_Market__Sion__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 273,
+      "quote": "Traffic is moving slow due to waterlogging at Gandhi Market, Sion, LBS Nayak Nagar, Everard Nagar, Kherwadi flyover, Amar Mahal, Khar Subway, Milan Subway, Andheri, Jogeshwari JVLR"
+     },
+     {
+      "source_url": "https://www.outlookindia.com/national/cloudburst-in-kullu-mumbai-waterlogged-5-states-facing-the-wrath-of-monsoons-news-207195",
+      "cached_path": "docs/research/_raw/pages/outlook_207195.txt",
+      "cached_line": 73,
+      "quote": "many low-lying places like Hindmata, and areas in Dadar and Sion, including the Gandhi Market and road number 24 in Sion, were inundated"
+     },
+     {
+      "source_url": "https://arxiv.org/abs/2306.09770",
+      "cached_path": "docs/research/_raw/pages/arxiv_2306.09770.txt",
+      "cached_line": 320,
+      "quote": "The mitigation measures in the major hotspots like Gandhi market, Hindmata, Khar, and Borivali are working efficiently"
+     }
+    ],
+    "notes": "OSM bus stop 'Gandhi Market Matunga' on Laxmibai Kelkar Marg."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.863491,
+     19.0427327
+    ]
+   },
+   "properties": {
+    "name": "Sion Circle",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 1235473849,
+     "url": "https://www.openstreetmap.org/way/1235473849"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Sion_Circle__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 273,
+      "quote": "Traffic is moving slow due to waterlogging at Gandhi Market, Sion, LBS Nayak Nagar, Everard Nagar, Kherwadi flyover, Amar Mahal, Khar Subway, Milan Subway, Andheri"
+     },
+     {
+      "source_url": "https://www.outlookindia.com/national/cloudburst-in-kullu-mumbai-waterlogged-5-states-facing-the-wrath-of-monsoons-news-207195",
+      "cached_path": "docs/research/_raw/pages/outlook_207195.txt",
+      "cached_line": 73,
+      "quote": "many low-lying places like Hindmata, and areas in Dadar and Sion, including the Gandhi Market and road number 24 in Sion, were inundated"
+     },
+     {
+      "source_url": "https://www.tribuneindia.com/news/uncategorized/rains-continue-in-mumbai-adjoining-parts-for-second-day-108506/",
+      "cached_path": "docs/research/_raw/pages/tribune_108506.txt",
+      "cached_line": 234,
+      "quote": "Water-logging was reported in low-lying areas like Sion and Milan Subway.",
+      "source_published": "2020-07-04",
+      "review_note": "Published 4 July 2020, NOT the 2019 event. Usable only as a general chronic statement; must not be cited as 1-2 July 2019 evidence."
+     }
+    ],
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.869097,
+     19.05177
+    ]
+   },
+   "properties": {
+    "name": "Chunabhatti railway station",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 2663219988,
+     "url": "https://www.openstreetmap.org/node/2663219988"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_pois.json",
+    "sources": [
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 184,
+      "quote": "Areas like Vakola junction, Vakola, Postal Colony, Chunabhatti railway station, Vakola road are waterlogged."
+     }
+    ],
+    "notes": "Overpass POI 'Chuna Bhatti' (railway=station, operator CR). A bus-stop geocode also exists: node/9788462267 at 19.0520886, 72.8674141 (Nominatim, F/N Ward)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8520846,
+     19.0261579
+    ]
+   },
+   "properties": {
+    "name": "Matunga (Matunga East)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 1288965355,
+     "url": "https://www.openstreetmap.org/node/1288965355"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Matunga__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 244,
+      "quote": "Waterlogging at Matunga police station"
+     },
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 166,
+      "quote": "Areas most affected by rains in Mumbai are Sion, Malad, Bandra, Andheri West, Kurla, King's Circle, Lower Parel, Matunga, Thane, Vakola and Palghar."
+     }
+    ],
+    "notes": "The Deccan Herald pin is Matunga police station; no geocode for the police station is in the cache, so the suburb node is used. Treat as area-level, not junction-level."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8816381,
+     19.081654
+    ]
+   },
+   "properties": {
+    "name": "Kurla, LBS Marg",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "L",
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 554898799,
+     "url": "https://www.openstreetmap.org/way/554898799"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Lal_Bahadur_Shastri_Marg__Kurla_West__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 166,
+      "quote": "Areas most affected by rains in Mumbai are Sion, Malad, Bandra, Andheri West, Kurla, King's Circle, Lower Parel, Matunga, Thane, Vakola and Palghar."
+     },
+     {
+      "source_url": "https://arxiv.org/abs/2306.09770",
+      "cached_path": "docs/research/_raw/pages/arxiv_2306.09770.txt",
+      "cached_line": 204,
+      "quote": "Waterlogging near school in Kurla west",
+      "verified": "unverified",
+      "review_note": "REVIEW 2026-09-06: this quote is NOT present in the cached file at line 204 or anywhere in it (grep for 'near school', 'Waterlogging near', 'school in Kurla' returns 0 hits). The nearest real passage is line 593 'Heavy waterlogging in Ghatkopar East, Tilak Nagar and Kurla West.' dated 2022-07-01 - a 2022 tweet, not 2019. Treat this hotspot as coordinate-verified but flood-claim UNVERIFIED."
+     }
+    ],
+    "notes": "LBS Marg way segment at Hallow Pul, Kurla West. The sources name Kurla / Kurla West as an area, not this segment.",
+    "review_note": "REVIEW 2026-09-06: one of the two sources (arXiv 2306.09770, 'Waterlogging near school in Kurla west') is UNVERIFIED - the quote is absent from the cached file. This hotspot stays sourced=true on the remaining India TV live-blog line only ('Areas most affected ... Kurla ...', indiatv_531812.txt line 166, verified verbatim)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.84693,
+     19.0803926
+    ]
+   },
+   "properties": {
+    "name": "Vakola Junction",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "H/E",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 10265662169,
+     "url": "https://www.openstreetmap.org/node/10265662169"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_names2.json",
+    "sources": [
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 184,
+      "quote": "Areas like Vakola junction, Vakola, Postal Colony, Chunabhatti railway station, Vakola road are waterlogged."
+     }
+    ],
+    "notes": "OSM junction node named 'Vakola Junction'. Ward taken from the Nominatim result for 'Vakola, Mumbai' (node/6126211462, H/E Ward)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8949685,
+     19.0607418
+    ]
+   },
+   "properties": {
+    "name": "Postal Colony, Chembur",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "M/W",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 245666110,
+     "url": "https://www.openstreetmap.org/node/245666110"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Postal_Colony__Chembur__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 184,
+      "quote": "Areas like Vakola junction, Vakola, Postal Colony, Chunabhatti railway station, Vakola road are waterlogged."
+     }
+    ],
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.842833,
+     19.0904503
+    ]
+   },
+   "properties": {
+    "name": "Milan Subway",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": true,
+    "ward": null,
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 39532540,
+     "url": "https://www.openstreetmap.org/way/39532540"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_pois.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 198,
+      "quote": "2 men drowned whilst stuck in their car at Milan Subway."
+     },
+     {
+      "source_url": "https://www.tribuneindia.com/news/uncategorized/rains-continue-in-mumbai-adjoining-parts-for-second-day-108506/",
+      "cached_path": "docs/research/_raw/pages/tribune_108506.txt",
+      "cached_line": 234,
+      "quote": "Water-logging was reported in low-lying areas like Sion and Milan Subway.",
+      "source_published": "2020-07-04",
+      "review_note": "Published 4 July 2020, NOT the 2019 event. Usable only as a general chronic statement; must not be cited as 1-2 July 2019 evidence."
+     },
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 140,
+      "quote": "12) Milan Subway via Milan flyover"
+     }
+    ],
+    "notes": "OSM way highway=tertiary, tunnel=yes, layer=-1, name 'Milan Subway' - a true sink. Nominatim returned NO RESULT for both 'Milan Subway, Santacruz, Mumbai' and 'Milan Subway, Vile Parle, Mumbai'. Ward NOT FOUND in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8469802,
+     19.1192854
+    ]
+   },
+   "properties": {
+    "name": "Andheri Subway",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": true,
+    "ward": "K/E",
+    "sourced": true,
+    "osm": {
+     "type": "node",
+     "id": 1646774128,
+     "url": "https://www.openstreetmap.org/node/1646774128"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Andheri_Subway__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+      "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+      "cached_line": 197,
+      "quote": "12.09 pm: Andheri subway in Mumbai closed due to flooding, reports ANI."
+     },
+     {
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+      "cached_line": 151,
+      "quote": "12:18 pm: Andheri subway has been closed due to water logging"
+     },
+     {
+      "source_url": "https://arxiv.org/abs/2306.09770",
+      "cached_path": "docs/research/_raw/pages/arxiv_2306.09770.txt",
+      "cached_line": 599,
+      "quote": "Andheri subway has been shut at 640 due to water clogging"
+     }
+    ],
+    "notes": "The geocode is an OSM railway stop tagged 'Andheri, Railway-Subway Connection'; the road-underpass centreline is NOT FOUND in the cache (the Overpass tunnel sweep over 19.110-19.130, 72.835-72.856 returned no named Andheri Subway way)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8360248,
+     19.0672644
+    ]
+   },
+   "properties": {
+    "name": "Khar Subway",
+    "in_aoi": true,
+    "coord_verified": false,
+    "is_sink": true,
+    "ward": null,
+    "sourced": true,
+    "osm": {
+     "type": "way",
+     "id": 1471871370,
+     "url": "https://www.openstreetmap.org/way/1471871370"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_names3.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 273,
+      "quote": "Traffic is moving slow due to waterlogging at Gandhi Market, Sion, LBS Nayak Nagar, Everard Nagar, Kherwadi flyover, Amar Mahal, Khar Subway, Milan Subway, Andheri"
+     },
+     {
+      "source_url": "https://arxiv.org/abs/2306.09770",
+      "cached_path": "docs/research/_raw/pages/arxiv_2306.09770.txt",
+      "cached_line": 320,
+      "quote": "We conducted a survey of the six flood hotspots in Mumbai, Borivali, Khar, Hindmata, Dahisar, Malad, and Gandhi market."
+     }
+    ],
+    "notes": "COORDINATE NOT VERIFIED. Nominatim returned NO RESULT for 'Khar Subway, Mumbai' and 'Khar Subway, Khar, Mumbai'; OSM has no way named 'Khar Subway'. The coordinate shown is the only unnamed road tunnel (highway=residential, layer=-1) returned by the Overpass tunnel sweep over 19.060-19.080, 72.830-72.850 and may be a different underpass. Settle with a manual OSM/JOSM inspection near Khar Road station (node/347138797, 19.068241, 72.840041) or a BMC chronic-spot list carrying coordinates."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8474044,
+     19.0178033
+    ]
+   },
+   "properties": {
+    "name": "Dadar TT / Khodadad Circle",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 1235213730,
+     "url": "https://www.openstreetmap.org/way/1235213730"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_names3.json",
+    "sources": [
+     {
+      "source_url": "https://www.outlookindia.com/national/cloudburst-in-kullu-mumbai-waterlogged-5-states-facing-the-wrath-of-monsoons-news-207195",
+      "cached_path": "docs/research/_raw/pages/outlook_207195.txt",
+      "cached_line": 73,
+      "quote": "many low-lying places like Hindmata, and areas in Dadar and Sion, including the Gandhi Market and road number 24 in Sion, were inundated"
+     }
+    ],
+    "notes": "Kept sourced=false: the cached sources name 'Dadar' as an area but never the TT / Khodadad junction. Nominatim 'Dadar TT, Mumbai' resolved to the Dadar BEST Workshop (way/112798409), which is the wrong feature, so the junction way from Overpass is used. Ward from Nominatim node/9788462281 (Khodadad Circle, F/N Ward)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8518049,
+     19.047013
+    ]
+   },
+   "properties": {
+    "name": "Dharavi T-junction",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "G/N",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 1488801300,
+     "url": "https://www.openstreetmap.org/way/1488801300"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Dharavi_T_Junction__Mumbai.json",
+    "sources": [],
+    "notes": "Verified junction coordinate (junction=yes on Sion Bandra Link Road); no chronic-waterlogging source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8759337,
+     19.0269192
+    ]
+   },
+   "properties": {
+    "name": "Wadala",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 700688007,
+     "url": "https://www.openstreetmap.org/node/700688007"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Wadala__Mumbai.json",
+    "sources": [],
+    "notes": "Suburb node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8685474,
+     19.0239461
+    ]
+   },
+   "properties": {
+    "name": "Antop Hill",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 4292746740,
+     "url": "https://www.openstreetmap.org/node/4292746740"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Antop_Hill__Mumbai.json",
+    "sources": [],
+    "notes": "Suburb node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8377699,
+     19.056744
+    ]
+   },
+   "properties": {
+    "name": "Bandra Talao",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "H/W",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 107295488,
+     "url": "https://www.openstreetmap.org/way/107295488"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Bandra_Talao__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 333,
+      "quote": "In Mumbai, waterlogging was reported from low-lying areas of Hindmata junction, Bandra and Parel."
+     }
+    ],
+    "notes": "Kept sourced=false: 'Bandra' is named as an area, not this tank. It is a water body (water=reservoir), useful as a storage node rather than a street hotspot."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8485093,
+     19.0546701
+    ]
+   },
+   "properties": {
+    "name": "Kalanagar / Kherwadi (Bandra East)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "H/E",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 1647344904,
+     "url": "https://www.openstreetmap.org/node/1647344904"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Kalanagar__Bandra_East__Mumbai.json",
+    "sources": [
+     {
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+      "cached_line": 273,
+      "quote": "Traffic is moving slow due to waterlogging at Gandhi Market, Sion, LBS Nayak Nagar, Everard Nagar, Kherwadi flyover, Amar Mahal, Khar Subway, Milan Subway, Andheri"
+     }
+    ],
+    "notes": "Kept sourced=false: the Deccan Herald entry names 'Kherwadi flyover', for which no geocode exists in the cache; Kalanagar is the adjacent verified node."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8871162,
+     19.0851644
+    ]
+   },
+   "properties": {
+    "name": "Kamani junction, LBS Marg (Kurla)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "L",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 11071531770,
+     "url": "https://www.openstreetmap.org/node/11071531770"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Kamani__Kurla__Mumbai.json",
+    "sources": [],
+    "notes": "Nominatim 'Kamani Junction, Kurla, Mumbai' returned NO RESULT; 'Kamani, Kurla, Mumbai' resolved to this BEST bus stop on LBS Marg. No chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8642303,
+     19.0407302
+    ]
+   },
+   "properties": {
+    "name": "Sion Koliwada",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 5907330383,
+     "url": "https://www.openstreetmap.org/node/5907330383"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Sion_Koliwada__Mumbai.json",
+    "sources": [],
+    "notes": "Neighbourhood node; Sion Circle carries the sourced claim for this area."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8693,
+     19.0396
+    ]
+   },
+   "properties": {
+    "name": "Pratiksha Nagar (Sion East)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "F/N",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 245663124,
+     "url": "https://www.openstreetmap.org/node/245663124"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Pratiksha_Nagar__Sion__Mumbai.json",
+    "sources": [],
+    "notes": "Locality node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.881,
+     19.061
+    ]
+   },
+   "properties": {
+    "name": "Nehru Nagar, Kurla East",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "L",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 245666177,
+     "url": "https://www.openstreetmap.org/node/245666177"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Nehru_Nagar__Kurla_East__Mumbai.json",
+    "sources": [],
+    "notes": "Neighbourhood node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8826122,
+     19.100419
+    ]
+   },
+   "properties": {
+    "name": "Sakinaka (Tele Exchange Lane)",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "L",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 215075825,
+     "url": "https://www.openstreetmap.org/way/215075825"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Sakinaka__Mumbai.json",
+    "sources": [],
+    "notes": "Nominatim 'Sakinaka Junction, Andheri East, Mumbai' returned NO RESULT; this way is Sakinaka Tele Exchange Lane, not the Andheri-Kurla Road junction. Coordinate verified but the feature is approximate."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8612672,
+     19.079273
+    ]
+   },
+   "properties": {
+    "name": "Kalina",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "H/E",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 1375215062,
+     "url": "https://www.openstreetmap.org/node/1375215062"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Kalina__Mumbai.json",
+    "sources": [],
+    "notes": "Suburb node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8398344,
+     19.0423145
+    ]
+   },
+   "properties": {
+    "name": "Mahim",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": false,
+    "ward": "G/N",
+    "sourced": false,
+    "osm": {
+     "type": "node",
+     "id": 631525426,
+     "url": "https://www.openstreetmap.org/node/631525426"
+    },
+    "geocode_cached_path": "docs/research/_raw/nominatim_Mahim__Mumbai.json",
+    "sources": [],
+    "notes": "Suburb node; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.86447,
+     19.04438
+    ]
+   },
+   "properties": {
+    "name": "Sion pedestrian subway",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": true,
+    "ward": "F/N (unverified)",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 632206820,
+     "url": "https://www.openstreetmap.org/way/632206820"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_pois.json",
+    "sources": [],
+    "notes": "OSM way named 'Sion Pedestrian Subway' - a genuine sink inside the AOI; no chronic-spot source in the cache."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.86361,
+     19.04206
+    ]
+   },
+   "properties": {
+    "name": "Sion Subway 1",
+    "in_aoi": true,
+    "coord_verified": true,
+    "is_sink": true,
+    "ward": "F/N (unverified)",
+    "sourced": false,
+    "osm": {
+     "type": "way",
+     "id": 632207092,
+     "url": "https://www.openstreetmap.org/way/632207092"
+    },
+    "geocode_cached_path": "docs/research/_raw/overpass_pois.json",
+    "sources": [],
+    "notes": "OSM way named 'Sion Subway 1' - a genuine sink inside the AOI; no chronic-spot source in the cache."
+   }
+  }
+ ]
+}

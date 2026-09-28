@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "Polygon": {
+      "additionalProperties": false,
+      "description": "Rings of positions; the first ring is the exterior. Rings must close (first == last).",
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "anyOf": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "minItems": 1,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "Polygon",
+          "default": "Polygon",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "Polygon",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:SurfaceUnit",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A micro-catchment draining to one inlet (blueprint 9.1 ``surface_unit``; SPEC.md 10.1\nstep 6: D8 watersheds capped to 0.5-2 ha, or 150 m hexagons as the fallback).",
+  "properties": {
+    "area_m2": {
+      "exclusiveMinimum": 0,
+      "title": "Area M2",
+      "type": "number"
+    },
+    "cells": {
+      "description": "Flat indices of the 30 m cells in the unit.",
+      "items": {
+        "type": "integer"
+      },
+      "title": "Cells",
+      "type": "array"
+    },
+    "cn": {
+      "description": "SCS curve number (90-98 in the monsoon).",
+      "maximum": 100,
+      "minimum": 30,
+      "title": "Cn",
+      "type": "number"
+    },
+    "depression_area_m2": {
+      "default": 0.0,
+      "minimum": 0,
+      "title": "Depression Area M2",
+      "type": "number"
+    },
+    "depression_depth_m": {
+      "default": 0.0,
+      "description": "Depth of the residual pit inside the unit, if any.",
+      "minimum": 0,
+      "title": "Depression Depth M",
+      "type": "number"
+    },
+    "geometry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Polygon"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "imperviousness": {
+      "description": "Fraction of impervious cover.",
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Imperviousness",
+      "type": "number"
+    },
+    "inlet_node_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Drain node it drains to.",
+      "title": "Inlet Node Id"
+    },
+    "method": {
+      "default": "watershed",
+      "description": "How the unit was delineated.",
+      "enum": [
+        "watershed",
+        "hexagon"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "n_manning": {
+      "description": "Area-mean Manning roughness.",
+      "exclusiveMinimum": 0,
+      "title": "N Manning",
+      "type": "number"
+    },
+    "segment_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Road segment it fronts.",
+      "title": "Segment Id"
+    }
+  },
+  "required": [
+    "id",
+    "area_m2",
+    "imperviousness",
+    "cn",
+    "n_manning"
+  ],
+  "title": "SurfaceUnit",
+  "type": "object"
+}

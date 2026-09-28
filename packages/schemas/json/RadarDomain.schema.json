@@ -1,0 +1,40 @@
+{
+  "$id": "urn:varuna:schema:RadarDomain",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The Sky domain: a square centred on the AOI (60 km at 500 m for Mumbai, SPEC.md 3.3).",
+  "properties": {
+    "center_lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Center Lat",
+      "type": "number"
+    },
+    "center_lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Center Lon",
+      "type": "number"
+    },
+    "res_m": {
+      "description": "Pixel size in metres (500 for pySTEPS).",
+      "exclusiveMinimum": 0,
+      "title": "Res M",
+      "type": "number"
+    },
+    "size_km": {
+      "description": "Side length of the square domain in km.",
+      "exclusiveMinimum": 0,
+      "title": "Size Km",
+      "type": "number"
+    }
+  },
+  "required": [
+    "center_lon",
+    "center_lat",
+    "size_km",
+    "res_m"
+  ],
+  "title": "RadarDomain",
+  "type": "object"
+}

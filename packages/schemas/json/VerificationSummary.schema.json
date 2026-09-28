@@ -1,0 +1,614 @@
+{
+  "$defs": {
+    "ContingencyTable": {
+      "additionalProperties": false,
+      "description": "Hits / misses / false alarms / correct negatives for one threshold.",
+      "properties": {
+        "correct_negatives": {
+          "minimum": 0,
+          "title": "Correct Negatives",
+          "type": "integer"
+        },
+        "false_alarms": {
+          "minimum": 0,
+          "title": "False Alarms",
+          "type": "integer"
+        },
+        "hits": {
+          "minimum": 0,
+          "title": "Hits",
+          "type": "integer"
+        },
+        "misses": {
+          "minimum": 0,
+          "title": "Misses",
+          "type": "integer"
+        },
+        "threshold_cm": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Threshold Cm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hits",
+        "misses",
+        "false_alarms",
+        "correct_negatives"
+      ],
+      "title": "ContingencyTable",
+      "type": "object"
+    },
+    "FlashLiteScore": {
+      "additionalProperties": false,
+      "description": "Emulator skill versus held-out Twin runs (``docs/verification/flash_lite.json``).",
+      "properties": {
+        "csi_30": {
+          "description": "CSI at 30 cm versus Twin.",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Csi 30",
+          "type": "number"
+        },
+        "fitted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fitted At"
+        },
+        "n_heldout_runs": {
+          "minimum": 0,
+          "title": "N Heldout Runs",
+          "type": "integer"
+        },
+        "n_train_runs": {
+          "minimum": 0,
+          "title": "N Train Runs",
+          "type": "integer"
+        },
+        "rmse_cm": {
+          "minimum": 0,
+          "title": "Rmse Cm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "rmse_cm",
+        "csi_30",
+        "n_train_runs",
+        "n_heldout_runs"
+      ],
+      "title": "FlashLiteScore",
+      "type": "object"
+    },
+    "HotspotScore": {
+      "additionalProperties": false,
+      "description": "Scores at one chronic spot.",
+      "properties": {
+        "contingency": {
+          "$ref": "#/$defs/ContingencyTable"
+        },
+        "hotspot_id": {
+          "minLength": 1,
+          "title": "Hotspot Id",
+          "type": "string"
+        },
+        "lead_time_gained_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minutes between the first alert and the first observed report.",
+          "title": "Lead Time Gained Min"
+        },
+        "mae_cm": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Depth MAE where pins carry depth.",
+          "title": "Mae Cm"
+        },
+        "n_pins": {
+          "default": 0,
+          "minimum": 0,
+          "title": "N Pins",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "timing_err_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Forecast peak minus observed onset in minutes (signed).",
+          "title": "Timing Err Min"
+        }
+      },
+      "required": [
+        "hotspot_id",
+        "name",
+        "contingency"
+      ],
+      "title": "HotspotScore",
+      "type": "object"
+    },
+    "MissedPin": {
+      "additionalProperties": false,
+      "description": "A ground-truth pin the model missed, with the likely reason ('Where we are wrong').",
+      "properties": {
+        "forecast_p50_cm": {
+          "minimum": 0,
+          "title": "Forecast P50 Cm",
+          "type": "number"
+        },
+        "forecast_p_gt_30": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Forecast P Gt 30",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "observed_depth_cm": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed Depth Cm"
+        },
+        "pin_id": {
+          "minLength": 1,
+          "title": "Pin Id",
+          "type": "string"
+        },
+        "reason": {
+          "description": "e.g. 'Drain outfall not in the inferred graph'.",
+          "title": "Reason",
+          "type": "string"
+        },
+        "source_url": {
+          "minLength": 8,
+          "title": "Source Url",
+          "type": "string"
+        },
+        "ts": {
+          "format": "date-time",
+          "title": "Ts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pin_id",
+        "name",
+        "ts",
+        "forecast_p50_cm",
+        "forecast_p_gt_30",
+        "reason",
+        "source_url"
+      ],
+      "title": "MissedPin",
+      "type": "object"
+    },
+    "ReliabilityBin": {
+      "additionalProperties": false,
+      "description": "One bin of the reliability diagram for P(> 30 cm).",
+      "properties": {
+        "forecast_p_mean": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Forecast P Mean",
+          "type": "number"
+        },
+        "n": {
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "observed_freq": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Observed Freq",
+          "type": "number"
+        },
+        "p_hi": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Hi",
+          "type": "number"
+        },
+        "p_lo": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Lo",
+          "type": "number"
+        }
+      },
+      "required": [
+        "p_lo",
+        "p_hi",
+        "forecast_p_mean",
+        "observed_freq",
+        "n"
+      ],
+      "title": "ReliabilityBin",
+      "type": "object"
+    },
+    "SkillByLead": {
+      "additionalProperties": false,
+      "description": "Rain CSI at one lead time and threshold (the 'confidence decays after 90 min' chart).",
+      "properties": {
+        "csi": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Csi"
+        },
+        "far": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Far"
+        },
+        "lead_min": {
+          "minimum": 0,
+          "title": "Lead Min",
+          "type": "integer"
+        },
+        "n": {
+          "default": 0,
+          "description": "Pixels or gauge-times scored.",
+          "minimum": 0,
+          "title": "N",
+          "type": "integer"
+        },
+        "pod": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pod"
+        },
+        "threshold_mm_h": {
+          "enum": [
+            20,
+            40
+          ],
+          "title": "Threshold Mm H",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lead_min",
+        "threshold_mm_h"
+      ],
+      "title": "SkillByLead",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:VerificationSummary",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Headline scores for one event.",
+  "properties": {
+    "bias_cm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Mean forecast minus observed depth.",
+      "title": "Bias Cm"
+    },
+    "brier": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Brier score for P(> 30 cm).",
+      "title": "Brier"
+    },
+    "computed_at": {
+      "format": "date-time",
+      "title": "Computed At",
+      "type": "string"
+    },
+    "contingency": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContingencyTable"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "csi": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Csi"
+    },
+    "event": {
+      "description": "Bundle id, e.g. MUM-2019-07-02.",
+      "title": "Event",
+      "type": "string"
+    },
+    "far": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Far"
+    },
+    "flash_lite": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlashLiteScore"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "label": {
+      "default": "Computed on a reconstructed replay with sourced ground truth",
+      "description": "Footnote shown next to the numbers.",
+      "title": "Label",
+      "type": "string"
+    },
+    "latency_s": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Frame-to-product latency.",
+      "title": "Latency S"
+    },
+    "lead_time_gained_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Median minutes between first alert and first observed report.",
+      "title": "Lead Time Gained Min"
+    },
+    "limitations": {
+      "description": "Blueprint 15.1 limitations in prototype terms.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "mae_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Depth MAE at pins with depth.",
+      "title": "Mae Cm"
+    },
+    "missed": {
+      "items": {
+        "$ref": "#/$defs/MissedPin"
+      },
+      "title": "Missed",
+      "type": "array"
+    },
+    "n_ground_truth": {
+      "description": "Sourced pins inside the AOI.",
+      "minimum": 0,
+      "title": "N Ground Truth",
+      "type": "integer"
+    },
+    "n_pins_with_depth": {
+      "default": 0,
+      "minimum": 0,
+      "title": "N Pins With Depth",
+      "type": "integer"
+    },
+    "per_hotspot": {
+      "items": {
+        "$ref": "#/$defs/HotspotScore"
+      },
+      "title": "Per Hotspot",
+      "type": "array"
+    },
+    "pod": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pod"
+    },
+    "reliability": {
+      "items": {
+        "$ref": "#/$defs/ReliabilityBin"
+      },
+      "title": "Reliability",
+      "type": "array"
+    },
+    "roc_auc": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Roc Auc"
+    },
+    "routing_value": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Share of naive emergency trips crossing an observed-impassable segment that VARUNA routes avoid.",
+      "title": "Routing Value"
+    },
+    "run_ids": {
+      "description": "Runs scored (one per cycle).",
+      "items": {
+        "type": "string"
+      },
+      "title": "Run Ids",
+      "type": "array"
+    },
+    "skill_by_lead": {
+      "items": {
+        "$ref": "#/$defs/SkillByLead"
+      },
+      "title": "Skill By Lead",
+      "type": "array"
+    },
+    "threshold_cm": {
+      "default": 30,
+      "description": "Depth threshold for CSI/POD/FAR.",
+      "exclusiveMinimum": 0,
+      "title": "Threshold Cm",
+      "type": "integer"
+    },
+    "timing_err_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Median timing error at spots.",
+      "title": "Timing Err Min"
+    }
+  },
+  "required": [
+    "event",
+    "computed_at",
+    "n_ground_truth"
+  ],
+  "title": "VerificationSummary",
+  "type": "object"
+}

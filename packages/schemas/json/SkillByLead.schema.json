@@ -1,0 +1,76 @@
+{
+  "$id": "urn:varuna:schema:SkillByLead",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Rain CSI at one lead time and threshold (the 'confidence decays after 90 min' chart).",
+  "properties": {
+    "csi": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Csi"
+    },
+    "far": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Far"
+    },
+    "lead_min": {
+      "minimum": 0,
+      "title": "Lead Min",
+      "type": "integer"
+    },
+    "n": {
+      "default": 0,
+      "description": "Pixels or gauge-times scored.",
+      "minimum": 0,
+      "title": "N",
+      "type": "integer"
+    },
+    "pod": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pod"
+    },
+    "threshold_mm_h": {
+      "enum": [
+        20,
+        40
+      ],
+      "title": "Threshold Mm H",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "lead_min",
+    "threshold_mm_h"
+  ],
+  "title": "SkillByLead",
+  "type": "object"
+}

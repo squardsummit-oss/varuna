@@ -1,0 +1,33 @@
+# Vercel builds only the Next.js console. Everything Python lives on Railway (ADR-0014),
+# and leaving it in the upload makes Vercel detect a second, ambiguous service at the root.
+pyproject.toml
+uv.lock
+.python-version
+services/
+tools/
+tests/
+docker/
+Dockerfile
+railway.json
+
+# Generated data and evidence: large, gitignored or irrelevant to the console build.
+city/
+data/
+bundles/
+docs/research/
+docs/screens/
+docs/*.pdf
+*.tif
+*.zarr
+
+# Local caches and build output that the Vercel build regenerates or never reads. `.next-perf`
+# is the performance pass's production build (P10.4) and `test-results` Playwright's artefacts;
+# together with `.venv` they took an upload past Vercel's 15,000-file limit on 2026-09-26.
+.venv/
+.wf/
+apps/command/.next/
+apps/command/.next-perf/
+apps/command/test-results/
+test-results/
+playwright-report/
+demo/

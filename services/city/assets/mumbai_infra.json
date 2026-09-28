@@ -1,0 +1,1121 @@
+{
+ "metadata": {
+  "aoi": "MUM-CENTRAL",
+  "bbox_wgs84": [
+   72.815,
+   18.995,
+   72.905,
+   19.135
+  ],
+  "generated": "2026-09-06",
+  "generator": "VARUNA research team, built from the docs/research/_raw cache (no new network calls)",
+  "spec": "SPEC.md 10.1 step 8",
+  "data_source": "OpenStreetMap via Nominatim and Overpass, ODbL, accessed 2026-09-04/05",
+  "honesty": "mobile_pumps[] is entirely SYNTHETIC and every entry carries synthetic=true. Every other entry carries the OSM element it came from and the cached file it was read out of. Where a fact could not be sourced the field is null and the notes say NOT FOUND.",
+  "curated_from": "docs/research/assets_mumbai.draft.json",
+  "curated_on": "2026-09-06",
+  "task": "P1.9 (SPEC.md 10.1 step 8)"
+ },
+ "hospitals": [
+  {
+   "name": "King Edward Memorial (KEM) Hospital, Parel",
+   "lon": 72.84218,
+   "lat": 19.001551,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 113561413,
+   "source_url": "https://www.openstreetmap.org/way/113561413",
+   "cached_path": "docs/research/_raw/nominatim_KEM_Hospital__Parel__Mumbai.json",
+   "role": "major_public_hospital",
+   "ward": "F/S",
+   "notes": "Nominatim returned the hospital grounds polygon (landuse=hospital, 'King Edward Memorial Hospital'). Demo ambulance trip origin (SPEC.md 3.3)."
+  },
+  {
+   "name": "Lokmanya Tilak Municipal General (LTMG) Hospital, Sion",
+   "lon": 72.8582305,
+   "lat": 19.0348427,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1413471846,
+   "source_url": "https://www.openstreetmap.org/way/1413471846",
+   "cached_path": "docs/research/_raw/nominatim_Sion_Hospital__Mumbai.json",
+   "role": "major_public_hospital",
+   "ward": "F/N",
+   "notes": "Also in OSM as node/7664032232 (19.0363806, 72.8598664), node/7225067271 'L.T.Muncipal Medical College and Sion Hospital' (19.03692, 72.85820) and way/49681498 'Lokmanya Tilak Hospital' (19.03636, 72.85921), all in docs/research/_raw/overpass_pois.json. Demo ambulance trip destination."
+  },
+  {
+   "name": "Nowrosjee Wadia Maternity Hospital, Parel",
+   "lon": 72.8423867,
+   "lat": 19.0039375,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 618791586,
+   "source_url": "https://www.openstreetmap.org/way/618791586",
+   "cached_path": "docs/research/_raw/nominatim_Nowrosjee_Wadia_Maternity_Hospital__Mumbai.json",
+   "role": "hospital",
+   "ward": "F/S",
+   "notes": "Overpass centre for the same way is 19.0036051, 72.8423727 (docs/research/_raw/overpass_names3.json)."
+  },
+  {
+   "name": "Tata Memorial Hospital, Parel",
+   "lon": 72.8432125,
+   "lat": 19.004984,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 7052388277,
+   "source_url": "https://www.openstreetmap.org/node/7052388277",
+   "cached_path": "docs/research/_raw/nominatim_Tata_Memorial_Hospital__Parel__Mumbai.json",
+   "role": "hospital",
+   "ward": "F/S"
+  },
+  {
+   "name": "Kurla Municipal Hospital",
+   "lon": 72.883116,
+   "lat": 19.081508,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 4996322798,
+   "source_url": "https://www.openstreetmap.org/node/4996322798",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "role": "hospital",
+   "operator": "MCGM",
+   "notes": "From the Overpass POI sweep."
+  },
+  {
+   "name": "Mata Ramabai B. Ambedkar Hospital, Chembur",
+   "lon": 72.894641,
+   "lat": 19.055714,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2319217775,
+   "source_url": "https://www.openstreetmap.org/node/2319217775",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "role": "hospital",
+   "notes": "From the Overpass POI sweep."
+  },
+  {
+   "name": "Dr Balabhai Nanavati Hospital, Vile Parle",
+   "lon": 72.840012,
+   "lat": 19.095968,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 3951526714,
+   "source_url": "https://www.openstreetmap.org/node/3951526714",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "role": "hospital",
+   "notes": "From the Overpass POI sweep."
+  },
+  {
+   "name": "Bharatiya Arogya Nidhi Sheth Kantilal C. Parikh General Hospital, Juhu",
+   "lon": 72.82834,
+   "lat": 19.11178,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 4998848423,
+   "source_url": "https://www.openstreetmap.org/node/4998848423",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "role": "hospital",
+   "notes": "From the Overpass POI sweep."
+  }
+ ],
+ "fire_stations": [
+  {
+   "name": "Dadar Fire Brigade",
+   "lon": 72.845705,
+   "lat": 19.01418,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 116072855,
+   "source_url": "https://www.openstreetmap.org/way/116072855",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Kurla Agnishaman Kendra",
+   "lon": 72.885935,
+   "lat": 19.08443,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 353174234,
+   "source_url": "https://www.openstreetmap.org/way/353174234",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "MCGM"
+  },
+  {
+   "name": "Babasaheb Worlikar Fire Station",
+   "lon": 72.823534,
+   "lat": 19.013219,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 354294947,
+   "source_url": "https://www.openstreetmap.org/way/354294947",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Bandra Fire Brigade",
+   "lon": 72.837564,
+   "lat": 19.050443,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 434887905,
+   "source_url": "https://www.openstreetmap.org/way/434887905",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Mini Fire Station (Santacruz West)",
+   "lon": 72.831273,
+   "lat": 19.085369,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1243105383,
+   "source_url": "https://www.openstreetmap.org/way/1243105383",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Andheri Fire Station",
+   "lon": 72.840863,
+   "lat": 19.112162,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1479265653,
+   "source_url": "https://www.openstreetmap.org/way/1479265653",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Marol fire brigade",
+   "lon": 72.877878,
+   "lat": 19.109561,
+   "in_aoi": true,
+   "osm_type": "relation",
+   "osm_id": 21105810,
+   "source_url": "https://www.openstreetmap.org/relation/21105810",
+   "cached_path": "docs/research/_raw/overpass_pois.json"
+  },
+  {
+   "name": "Chembur Fire Station",
+   "lon": 72.89352,
+   "lat": 19.054525,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2311428475,
+   "source_url": "https://www.openstreetmap.org/node/2311428475",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "Mumbai fire brigade"
+  },
+  {
+   "name": "Aerodrome Rescue and Fire Fighting (CSMIA)",
+   "lon": 72.873611,
+   "lat": 19.091366,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1376380212,
+   "source_url": "https://www.openstreetmap.org/way/1376380212",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "notes": "Airport rescue and fire fighting service, not a city fire station."
+  },
+  {
+   "name": "Unnamed fire station (Dadar West / Shitaladevi)",
+   "lon": 72.841209,
+   "lat": 19.033118,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 9024751917,
+   "source_url": "https://www.openstreetmap.org/node/9024751917",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "notes": "OSM amenity=fire_station with no name tag; name NOT FOUND."
+  },
+  {
+   "name": "'Testing Fire Station' (Sion)",
+   "lon": 72.853887,
+   "lat": 19.039624,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2187315849,
+   "source_url": "https://www.openstreetmap.org/node/2187315849",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "suspect_osm_entry": true,
+   "notes": "The OSM name looks like a test/placeholder edit. Do not show in the UI until it is confirmed on the ground or removed."
+  }
+ ],
+ "stations": [
+  {
+   "name": "Dadar (Central Railway)",
+   "lon": 72.843026,
+   "lat": 19.017376,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2630075003,
+   "source_url": "https://www.openstreetmap.org/node/2630075003",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Dadar (Western Railway)",
+   "lon": 72.842848,
+   "lat": 19.019227,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2630075004,
+   "source_url": "https://www.openstreetmap.org/node/2630075004",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Matunga (Central Railway)",
+   "lon": 72.850147,
+   "lat": 19.027436,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 4264457295,
+   "source_url": "https://www.openstreetmap.org/node/4264457295",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Matunga Road (Western Railway)",
+   "lon": 72.846681,
+   "lat": 19.027815,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 4264462833,
+   "source_url": "https://www.openstreetmap.org/node/4264462833",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "King's Circle (Central Railway, Harbour line)",
+   "lon": 72.857737,
+   "lat": 19.031682,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 1650694464,
+   "source_url": "https://www.openstreetmap.org/node/1650694464",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Sion (Central Railway)",
+   "lon": 72.863283,
+   "lat": 19.046521,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2663263713,
+   "source_url": "https://www.openstreetmap.org/node/2663263713",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Chuna Bhatti (Central Railway, Harbour line)",
+   "lon": 72.869097,
+   "lat": 19.05177,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2663219988,
+   "source_url": "https://www.openstreetmap.org/node/2663219988",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Kurla (Central Railway)",
+   "lon": 72.87938,
+   "lat": 19.06528,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2663447640,
+   "source_url": "https://www.openstreetmap.org/node/2663447640",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Lokmanya Tilak Terminus",
+   "lon": 72.891978,
+   "lat": 19.069466,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 6175360983,
+   "source_url": "https://www.openstreetmap.org/node/6175360983",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Vidyavihar (Central Railway)",
+   "lon": 72.897117,
+   "lat": 19.079542,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 620013256,
+   "source_url": "https://www.openstreetmap.org/node/620013256",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Tilak Nagar (Central Railway, Harbour line)",
+   "lon": 72.89047,
+   "lat": 19.065786,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 3530903066,
+   "source_url": "https://www.openstreetmap.org/node/3530903066",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Chembur (Central Railway, Harbour line)",
+   "lon": 72.90114,
+   "lat": 19.062632,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2454571178,
+   "source_url": "https://www.openstreetmap.org/node/2454571178",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Mahim Junction (Western Railway)",
+   "lon": 72.846604,
+   "lat": 19.040663,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2630075005,
+   "source_url": "https://www.openstreetmap.org/node/2630075005",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Bandra (Western Railway)",
+   "lon": 72.84022,
+   "lat": 19.054979,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2630075000,
+   "source_url": "https://www.openstreetmap.org/node/2630075000",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Khar Road (Western Railway)",
+   "lon": 72.840041,
+   "lat": 19.068241,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 347138797,
+   "source_url": "https://www.openstreetmap.org/node/347138797",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Santa Cruz (Western Railway)",
+   "lon": 72.841757,
+   "lat": 19.081522,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 213030714,
+   "source_url": "https://www.openstreetmap.org/node/213030714",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Vile Parle (Western Railway)",
+   "lon": 72.844004,
+   "lat": 19.09991,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 2630075010,
+   "source_url": "https://www.openstreetmap.org/node/2630075010",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Andheri (Western Railway)",
+   "lon": 72.84642,
+   "lat": 19.119698,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 5696928866,
+   "source_url": "https://www.openstreetmap.org/node/5696928866",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "Western Railway"
+  },
+  {
+   "name": "Parel (Western Railway / Central Railway)",
+   "lon": 72.837661,
+   "lat": 19.009482,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 3501418212,
+   "source_url": "https://www.openstreetmap.org/node/3501418212",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Prabhadevi (Elphinstone Road, Western Railway)",
+   "lon": 72.835897,
+   "lat": 19.007472,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 3462327239,
+   "source_url": "https://www.openstreetmap.org/node/3462327239",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Lower Parel (Western Railway)",
+   "lon": 72.830276,
+   "lat": 18.99568,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 621911847,
+   "source_url": "https://www.openstreetmap.org/node/621911847",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  },
+  {
+   "name": "Sewri (Central Railway, Harbour line)",
+   "lon": 72.854422,
+   "lat": 18.99878,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 700886180,
+   "source_url": "https://www.openstreetmap.org/node/700886180",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "CR"
+  },
+  {
+   "name": "Vadala Road (Central Railway, Harbour line)",
+   "lon": 72.858913,
+   "lat": 19.016136,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1343435452,
+   "source_url": "https://www.openstreetmap.org/way/1343435452",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "Central Railways"
+  },
+  {
+   "name": "Bandra Terminus",
+   "lon": 72.841303,
+   "lat": 19.062704,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 107303404,
+   "source_url": "https://www.openstreetmap.org/way/107303404",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "operator": "WR"
+  }
+ ],
+ "pumping_stations": [
+  {
+   "name": "BMC Carol Road Sewage Water Pumping Station",
+   "lon": 72.8352077,
+   "lat": 19.0069822,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092873,
+   "source_url": "https://www.openstreetmap.org/node/14125092873",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name",
+   "notes": "OSM names it a sewage pumping station, not stormwater."
+  },
+  {
+   "name": "BMC Mahim Sewage Water Pumping Station",
+   "lon": 72.845164,
+   "lat": 19.0251978,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092878,
+   "source_url": "https://www.openstreetmap.org/node/14125092878",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Wadala Sewage Water Pumping Station",
+   "lon": 72.8580948,
+   "lat": 19.0156475,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092879,
+   "source_url": "https://www.openstreetmap.org/node/14125092879",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Matunga Sewage Water Pumping Station",
+   "lon": 72.8484004,
+   "lat": 19.0226815,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1378123580,
+   "source_url": "https://www.openstreetmap.org/way/1378123580",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Influent Sewage Water Pumping Station (Dharavi)",
+   "lon": 72.8373454,
+   "lat": 19.0465941,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 220302517,
+   "source_url": "https://www.openstreetmap.org/way/220302517",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC BKC Sewage Water Pumping Station",
+   "lon": 72.8648425,
+   "lat": 19.060307,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092883,
+   "source_url": "https://www.openstreetmap.org/node/14125092883",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Kalina Sewage Water Pumping Station",
+   "lon": 72.8658101,
+   "lat": 19.0746847,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092884,
+   "source_url": "https://www.openstreetmap.org/node/14125092884",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Sakinaka Sewage Water Pumping Station",
+   "lon": 72.8850229,
+   "lat": 19.1072103,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125247275,
+   "source_url": "https://www.openstreetmap.org/node/14125247275",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Tulsi Pipe Sewage Water Pumping Station",
+   "lon": 72.8274921,
+   "lat": 18.9978109,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092874,
+   "source_url": "https://www.openstreetmap.org/node/14125092874",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Globe Mill Sewage Water Pumping Station",
+   "lon": 72.8231536,
+   "lat": 19.0049614,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092875,
+   "source_url": "https://www.openstreetmap.org/node/14125092875",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Kadeshwari Sewage Water Pumping Station (Bandra West)",
+   "lon": 72.8221476,
+   "lat": 19.0582469,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125247269,
+   "source_url": "https://www.openstreetmap.org/node/14125247269",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name"
+  },
+  {
+   "name": "BMC Cleaveland Sewage Water Pumping Station (Cleveland Bunder, Worli)",
+   "lon": 72.8179307,
+   "lat": 19.0166913,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 14125092877,
+   "source_url": "https://www.openstreetmap.org/node/14125092877",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=pumping_station",
+   "system": "sewerage per OSM name",
+   "notes": "Nominatim 'Cleveland Bunder Pumping Station, Worli, Mumbai' returned NO RESULT; this is the OSM feature nearest that name. The place way/1472415855 'Cleveland Bunder' (19.0160355, 72.817026) is in docs/research/_raw/overpass_names2.json. Spec listed Cleveland Bunder as a stormwater station; OSM tags it as sewage."
+  },
+  {
+   "name": "Danda Stormwater Pumping Station (Khar Danda)",
+   "lon": 72.8254107,
+   "lat": 19.0786158,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 909478803,
+   "source_url": "https://www.openstreetmap.org/way/909478803",
+   "cached_path": "docs/research/_raw/overpass_pois.json",
+   "osm_kind": "man_made=wastewater_plant",
+   "system": "stormwater per OSM name",
+   "notes": "One of only two OSM features in the sweep explicitly named a storm water pumping station."
+  },
+  {
+   "name": "BMC Pumping station Building no 1 (Andheri West)",
+   "lon": 72.8229484,
+   "lat": 19.1184781,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 310812690,
+   "source_url": "https://www.openstreetmap.org/way/310812690",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "osm_kind": "building name only",
+   "system": "unknown",
+   "notes": "Named only as a building; no man_made tag, so the kind of pumping station is NOT FOUND."
+  },
+  {
+   "name": "Unnamed pumping station (Bandra West)",
+   "lon": 72.837659,
+   "lat": 19.0635672,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1526167373,
+   "source_url": "https://www.openstreetmap.org/way/1526167373",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "osm_kind": "man_made=pumping_station",
+   "system": "unknown",
+   "notes": "OSM has no name tag; identity NOT FOUND."
+  },
+  {
+   "name": "Storm Water Pumping Station - Haji Ali",
+   "lon": 72.8122843,
+   "lat": 18.9786563,
+   "in_aoi": false,
+   "osm_type": "way",
+   "osm_id": 1289073487,
+   "source_url": "https://www.openstreetmap.org/way/1289073487",
+   "cached_path": "docs/research/_raw/overpass_names2.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=water_works",
+   "system": "stormwater per OSM name",
+   "notes": "OUTSIDE the MUM-CENTRAL AOI (lon 72.8123 < 72.815, lat 18.9787 < 18.995). Nominatim 'Haji Ali Pumping Station, Mumbai' returned NO RESULT; this came from the Overpass name sweep."
+  },
+  {
+   "name": "Love Grove Sewage Pumping Station, Worli",
+   "lon": 72.8159113,
+   "lat": 18.9924341,
+   "in_aoi": false,
+   "osm_type": "way",
+   "osm_id": 1289081182,
+   "source_url": "https://www.openstreetmap.org/way/1289081182",
+   "cached_path": "docs/research/_raw/overpass_names2.json",
+   "osm_kind": "man_made=wastewater_plant",
+   "system": "sewerage per OSM name",
+   "notes": "OUTSIDE the AOI (lat 18.9924 < 18.995). Spec listed 'Lovegrove' as a stormwater station; OSM tags it as sewage."
+  },
+  {
+   "name": "Britannia Sewage Water Treatment Plant (Reay Road)",
+   "lon": 72.8495926,
+   "lat": 18.974925,
+   "in_aoi": false,
+   "osm_type": "way",
+   "osm_id": 1356107260,
+   "source_url": "https://www.openstreetmap.org/way/1356107260",
+   "cached_path": "docs/research/_raw/overpass_names2.json",
+   "operator": "MCGM",
+   "osm_kind": "man_made=wastewater_plant",
+   "system": "sewerage per OSM name",
+   "notes": "OUTSIDE the AOI (lat 18.9749 < 18.995). This is the treatment plant, not the Britannia stormwater outfall pumping station, which is NOT FOUND in the cache."
+  }
+ ],
+ "holding_tanks": [
+  {
+   "name": "Saint Xavier's Football Ground, Parel",
+   "lon": 72.8423877,
+   "lat": 19.0065272,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 113566065,
+   "source_url": "https://www.openstreetmap.org/way/113566065",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "kind": "candidate_holding_tank_site",
+   "capacity_m3": null,
+   "commissioned": null,
+   "notes": "The ground is verified in OSM (leisure=pitch). NOT FOUND in this cache: any public source stating that a BMC stormwater holding tank was built under it, its capacity, or its commissioning date. Do not present it as a holding tank until a BMC document or dated news report is added."
+  }
+ ],
+ "depots": [
+  {
+   "name": "F/N BMC Ward Office (Matunga)",
+   "lon": 72.8542714,
+   "lat": 19.0265628,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 115628091,
+   "source_url": "https://www.openstreetmap.org/way/115628091",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "F/N"
+  },
+  {
+   "name": "BMC Ward Office (Sion / Matunga)",
+   "lon": 72.854268,
+   "lat": 19.0299554,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 236596240,
+   "source_url": "https://www.openstreetmap.org/way/236596240",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "F/N (unverified)",
+   "notes": "OSM name is just 'BMC Ward Office'; which ward it serves is NOT FOUND in the cache."
+  },
+  {
+   "name": "BMC L Ward Office (Kurla)",
+   "lon": 72.8788995,
+   "lat": 19.0705444,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 353424820,
+   "source_url": "https://www.openstreetmap.org/way/353424820",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "L"
+  },
+  {
+   "name": "H/W Ward Office (Bandra West)",
+   "lon": 72.8355608,
+   "lat": 19.0563696,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 356450738,
+   "source_url": "https://www.openstreetmap.org/way/356450738",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "H/W"
+  },
+  {
+   "name": "MCGM H/West Ward Office (Santacruz West)",
+   "lon": 72.8396565,
+   "lat": 19.0727405,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1060046624,
+   "source_url": "https://www.openstreetmap.org/way/1060046624",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "H/W"
+  },
+  {
+   "name": "BMC M Ward Office (Chembur)",
+   "lon": 72.8991057,
+   "lat": 19.061105,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 1127314714,
+   "source_url": "https://www.openstreetmap.org/way/1127314714",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "M/W"
+  },
+  {
+   "name": "BMC G South Ward Office (Elphinstone / Worli)",
+   "lon": 72.8304651,
+   "lat": 19.0083095,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 353757968,
+   "source_url": "https://www.openstreetmap.org/way/353757968",
+   "cached_path": "docs/research/_raw/overpass_pumps.json",
+   "ward": "G/S"
+  },
+  {
+   "name": "Municipal Garage, Worli",
+   "lon": 72.8185734,
+   "lat": 18.9950677,
+   "in_aoi": true,
+   "osm_type": "way",
+   "osm_id": 353366215,
+   "source_url": "https://www.openstreetmap.org/way/353366215",
+   "cached_path": "docs/research/_raw/overpass_names2.json",
+   "notes": "On the AOI boundary (lat 18.99507, just inside 18.995)."
+  },
+  {
+   "name": "Kurla Depot (BEST)",
+   "lon": 72.876058,
+   "lat": 19.0745661,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 3878597746,
+   "source_url": "https://www.openstreetmap.org/node/3878597746",
+   "cached_path": "docs/research/_raw/nominatim_Kurla_Depot__Mumbai.json"
+  },
+  {
+   "name": "Wadala Depot",
+   "lon": 72.874025,
+   "lat": 19.038824,
+   "in_aoi": true,
+   "osm_type": "node",
+   "osm_id": 632342238,
+   "source_url": "https://www.openstreetmap.org/node/632342238",
+   "cached_path": "docs/research/_raw/nominatim_Wadala_Antop_Hill__Mumbai.json"
+  }
+ ],
+ "mobile_pumps": [
+  {
+   "id": "P-01",
+   "synthetic": true,
+   "capacity_m3_per_h": 250,
+   "depot": "F/N BMC Ward Office (Matunga)",
+   "lon": 72.8542714,
+   "lat": 19.0265628,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-02",
+   "synthetic": true,
+   "capacity_m3_per_h": 250,
+   "depot": "F/N BMC Ward Office (Matunga)",
+   "lon": 72.8542714,
+   "lat": 19.0265628,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-03",
+   "synthetic": true,
+   "capacity_m3_per_h": 400,
+   "depot": "BMC G South Ward Office (Elphinstone / Worli)",
+   "lon": 72.8304651,
+   "lat": 19.0083095,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-04",
+   "synthetic": true,
+   "capacity_m3_per_h": 400,
+   "depot": "BMC G South Ward Office (Elphinstone / Worli)",
+   "lon": 72.8304651,
+   "lat": 19.0083095,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-05",
+   "synthetic": true,
+   "capacity_m3_per_h": 600,
+   "depot": "Municipal Garage, Worli",
+   "lon": 72.8185734,
+   "lat": 18.9950677,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-06",
+   "synthetic": true,
+   "capacity_m3_per_h": 250,
+   "depot": "BMC Ward Office (Sion / Matunga)",
+   "lon": 72.854268,
+   "lat": 19.0299554,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-07",
+   "synthetic": true,
+   "capacity_m3_per_h": 400,
+   "depot": "BMC L Ward Office (Kurla)",
+   "lon": 72.8788995,
+   "lat": 19.0705444,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-08",
+   "synthetic": true,
+   "capacity_m3_per_h": 600,
+   "depot": "Kurla Depot (BEST)",
+   "lon": 72.876058,
+   "lat": 19.0745661,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-09",
+   "synthetic": true,
+   "capacity_m3_per_h": 250,
+   "depot": "H/W Ward Office (Bandra West)",
+   "lon": 72.8355608,
+   "lat": 19.0563696,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-10",
+   "synthetic": true,
+   "capacity_m3_per_h": 400,
+   "depot": "MCGM H/West Ward Office (Santacruz West)",
+   "lon": 72.8396565,
+   "lat": 19.0727405,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-11",
+   "synthetic": true,
+   "capacity_m3_per_h": 250,
+   "depot": "BMC M Ward Office (Chembur)",
+   "lon": 72.8991057,
+   "lat": 19.061105,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  },
+  {
+   "id": "P-12",
+   "synthetic": true,
+   "capacity_m3_per_h": 600,
+   "depot": "Wadala Depot",
+   "lon": 72.874025,
+   "lat": 19.038824,
+   "status": "available",
+   "source_url": null,
+   "notes": "SYNTHETIC. Capacity and status are invented for the prototype; only the depot coordinate is real (see depots[]). Label 'Synthetic pump inventory' wherever these appear."
+  }
+ ],
+ "wards": {
+  "note": "BMC ward relations returned by the Overpass admin sweep over the AOI bbox (docs/research/_raw/overpass_wards.json, query docs/research/_raw/overpass_wards.ql). admin_level=10 = BMC ward, admin_level=9 = BMC zone.",
+  "source_url": "https://overpass-api.de/api/interpreter",
+  "cached_path": "docs/research/_raw/overpass_wards.json",
+  "covering_aoi": [
+   {
+    "ref": "F/S",
+    "osm_relation": 7885395,
+    "url": "https://www.openstreetmap.org/relation/7885395",
+    "centre": [
+     72.8516213,
+     18.9976605
+    ]
+   },
+   {
+    "ref": "F/N",
+    "osm_relation": 7885396,
+    "url": "https://www.openstreetmap.org/relation/7885396",
+    "centre": [
+     72.8638375,
+     19.0284692
+    ]
+   },
+   {
+    "ref": "G/N",
+    "osm_relation": 7885381,
+    "url": "https://www.openstreetmap.org/relation/7885381",
+    "centre": [
+     72.8471607,
+     19.0298732
+    ]
+   },
+   {
+    "ref": "G/S",
+    "osm_relation": 7885391,
+    "url": "https://www.openstreetmap.org/relation/7885391",
+    "centre": [
+     72.8212107,
+     19.0024079
+    ]
+   },
+   {
+    "ref": "H/E",
+    "osm_relation": 7885378,
+    "url": "https://www.openstreetmap.org/relation/7885378",
+    "centre": [
+     72.858412,
+     19.072726
+    ]
+   },
+   {
+    "ref": "H/W",
+    "osm_relation": 7885382,
+    "url": "https://www.openstreetmap.org/relation/7885382",
+    "centre": [
+     72.8303935,
+     19.0655062
+    ]
+   },
+   {
+    "ref": "L",
+    "osm_relation": 7885380,
+    "url": "https://www.openstreetmap.org/relation/7885380",
+    "centre": [
+     72.8857843,
+     19.088501
+    ]
+   },
+   {
+    "ref": "K/E",
+    "osm_relation": 7885379,
+    "url": "https://www.openstreetmap.org/relation/7885379",
+    "centre": [
+     72.8667489,
+     19.1126193
+    ]
+   },
+   {
+    "ref": "M/W",
+    "osm_relation": 7885389,
+    "url": "https://www.openstreetmap.org/relation/7885389",
+    "centre": [
+     72.8948267,
+     19.0330687
+    ]
+   },
+   {
+    "ref": "K/W",
+    "osm_relation": 7885383,
+    "url": "https://www.openstreetmap.org/relation/7885383",
+    "centre": [
+     72.8151293,
+     19.1186443
+    ]
+   }
+  ],
+  "zones": [
+   {
+    "name": "Mumbai Zone 2",
+    "osm_relation": 7888968,
+    "url": "https://www.openstreetmap.org/relation/7888968"
+   },
+   {
+    "name": "Mumbai Zone 3",
+    "osm_relation": 7888967,
+    "url": "https://www.openstreetmap.org/relation/7888967"
+   },
+   {
+    "name": "Mumbai Zone 5",
+    "osm_relation": 7888965,
+    "url": "https://www.openstreetmap.org/relation/7888965"
+   }
+  ],
+  "caveat": "Coverage was decided from the ward relation centroids returned by 'out center' plus the ward field in Nominatim display names; the relation geometries were not downloaded, so no polygon intersection test was run. M/W and K/W touch the AOI only at its edges."
+ }
+}

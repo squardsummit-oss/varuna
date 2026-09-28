@@ -1,0 +1,267 @@
+{
+  "$defs": {
+    "HotspotDelta": {
+      "additionalProperties": false,
+      "description": "One row of the delta table: before -> after at a hotspot.",
+      "properties": {
+        "depth_after_cm": {
+          "description": "Peak p50 depth under the scenario.",
+          "minimum": 0,
+          "title": "Depth After Cm",
+          "type": "number"
+        },
+        "depth_before_cm": {
+          "description": "Peak p50 depth in the base run.",
+          "minimum": 0,
+          "title": "Depth Before Cm",
+          "type": "number"
+        },
+        "hotspot_id": {
+          "minLength": 1,
+          "title": "Hotspot Id",
+          "type": "string"
+        },
+        "minutes_impassable_after": {
+          "minimum": 0,
+          "title": "Minutes Impassable After",
+          "type": "number"
+        },
+        "minutes_impassable_before": {
+          "description": "Minutes above the car threshold.",
+          "minimum": 0,
+          "title": "Minutes Impassable Before",
+          "type": "number"
+        },
+        "name": {
+          "description": "e.g. Hindmata junction",
+          "title": "Name",
+          "type": "string"
+        },
+        "peak_ts_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Peak Ts After"
+        },
+        "peak_ts_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Peak Ts Before"
+        }
+      },
+      "required": [
+        "hotspot_id",
+        "name",
+        "depth_before_cm",
+        "depth_after_cm",
+        "minutes_impassable_before",
+        "minutes_impassable_after"
+      ],
+      "title": "HotspotDelta",
+      "type": "object"
+    },
+    "SegmentDelta": {
+      "additionalProperties": false,
+      "description": "Per-segment change of peak p50 depth for the diff layer.",
+      "properties": {
+        "delta_p50_cm": {
+          "description": "after - before in cm (negative = improved).",
+          "title": "Delta P50 Cm",
+          "type": "number"
+        },
+        "segment_id": {
+          "minLength": 1,
+          "title": "Segment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "delta_p50_cm"
+      ],
+      "title": "SegmentDelta",
+      "type": "object"
+    },
+    "WhatIfRequest": {
+      "additionalProperties": false,
+      "description": "Body of ``POST /v1/whatif``.",
+      "properties": {
+        "clean_top_n": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternative to cleaned_edges: clean the top N by beta.",
+          "title": "Clean Top N"
+        },
+        "cleaned_edges": {
+          "description": "Pipes set to beta = 0.05 (cleaned).",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Cleaned Edges",
+          "type": "array"
+        },
+        "pump_plan": {
+          "default": false,
+          "description": "Apply the current pump plan as extra outflow.",
+          "title": "Pump Plan",
+          "type": "boolean"
+        },
+        "rain_scale": {
+          "default": 1.0,
+          "description": "Rain multiplier 0.5-2.0.",
+          "maximum": 2.0,
+          "minimum": 0.5,
+          "title": "Rain Scale",
+          "type": "number"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base run; None = latest published.",
+          "title": "Run Id"
+        },
+        "tide_offset_m": {
+          "default": 0.0,
+          "description": "Tide stage offset in metres, -0.5 to +1.0.",
+          "maximum": 1.0,
+          "minimum": -0.5,
+          "title": "Tide Offset M",
+          "type": "number"
+        }
+      },
+      "title": "WhatIfRequest",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:WhatIfResponse",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Response of ``POST /v1/whatif`` (emulator, under a second).",
+  "properties": {
+    "cleaned_edges": {
+      "description": "Pipes actually cleaned (resolved from clean_top_n).",
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Cleaned Edges",
+      "type": "array"
+    },
+    "diff_raster_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Relative path of the Δdepth PNG inside the run directory.",
+      "title": "Diff Raster Path"
+    },
+    "emulator_ms": {
+      "description": "Emulator wall-clock (budget 1000 ms).",
+      "minimum": 0,
+      "title": "Emulator Ms",
+      "type": "integer"
+    },
+    "hotspots": {
+      "items": {
+        "$ref": "#/$defs/HotspotDelta"
+      },
+      "title": "Hotspots",
+      "type": "array"
+    },
+    "label": {
+      "default": "Reduced-order emulator calibrated to VARUNA-Twin",
+      "description": "Honesty badge for the panel.",
+      "title": "Label",
+      "type": "string"
+    },
+    "request": {
+      "$ref": "#/$defs/WhatIfRequest"
+    },
+    "run_id": {
+      "description": "Base run the scenario was applied to.",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "segment_deltas": {
+      "description": "Optional per-segment deltas (large; omitted by default).",
+      "items": {
+        "$ref": "#/$defs/SegmentDelta"
+      },
+      "title": "Segment Deltas",
+      "type": "array"
+    },
+    "segments_improved": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Segments Improved",
+      "type": "integer"
+    },
+    "segments_unchanged": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Segments Unchanged",
+      "type": "integer"
+    },
+    "segments_worse": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Segments Worse",
+      "type": "integer"
+    },
+    "valid_ts": {
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    },
+    "whatif_id": {
+      "description": "Handle for the physics check and the diff raster.",
+      "title": "Whatif Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "whatif_id",
+    "valid_ts",
+    "request",
+    "emulator_ms"
+  ],
+  "title": "WhatIfResponse",
+  "type": "object"
+}

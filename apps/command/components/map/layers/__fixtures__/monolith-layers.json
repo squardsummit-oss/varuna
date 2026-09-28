@@ -1,0 +1,9055 @@
+{
+ "console": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "probability": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      239,
+      68,
+      68,
+      204
+     ],
+     [
+      249,
+      115,
+      22,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      38
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      2,
+      null,
+      false,
+      "Infinity",
+      30
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n47.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "public": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": false,
+    "capRounded": true,
+    "getColor": [
+     [
+      185,
+      28,
+      28,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      235
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": [
+      2,
+      30,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": null,
+  "onClick": false,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "diff-half": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      59,
+      130,
+      246,
+      189
+     ],
+     [
+      43,
+      58,
+      85,
+      190
+     ],
+     [
+      43,
+      58,
+      85,
+      190
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     7.2,
+     2.3,
+     10.8
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      true,
+      72.8495,
+      null
+     ],
+     "getWidth": [
+      true
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "diff-full": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      59,
+      130,
+      246,
+      189
+     ],
+     [
+      43,
+      58,
+      85,
+      190
+     ],
+     [
+      239,
+      68,
+      68,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     7.2,
+     2.3,
+     10.8
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      true,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      true
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "hero": {
+  "layers": [
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": false,
+    "capRounded": true,
+    "getColor": [
+     [
+      185,
+      28,
+      28,
+      255
+     ],
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      43,
+      58,
+      85,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": [
+      3,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": false,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": null,
+  "onClick": false,
+  "onViewStateChange": false,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"></div>"
+ },
+ "empty": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": false,
+  "tooltip": null,
+  "onClick": false,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "motion-600ms": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.85730907983202,
+       19.036699989846028
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      0.875
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "motion-1000ms": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.861826262216,
+       19.04084074036467
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      0.9953703703703703
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "motion-2000ms": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "reduced": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ],
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   }
+  ],
+  "viewState": {
+   "longitude": 72.86,
+   "latitude": 19.065,
+   "zoom": 11.4,
+   "bearing": 0,
+   "pitch": 0
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": false,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "focus": {
+  "layers": [
+   {
+    "id": "satellite",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 16,
+    "maxZoom": 19,
+    "minZoom": 8,
+    "onTileError": "[function]",
+    "opacity": 0.5459999999999999,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "buildings",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     17,
+     26,
+     46,
+     235
+    ],
+    "getLineColor": [
+     36,
+     49,
+     79,
+     170
+    ],
+    "getPolygon": [
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.8405,
+       19
+      ],
+      [
+       72.8405,
+       19.0005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthMinPixels": 0.4,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true
+   },
+   {
+    "id": "streets-dry",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     43,
+     58,
+     85,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.84,
+       19.01
+      ],
+      [
+       72.842,
+       19.012
+      ]
+     ],
+     [
+      [
+       72.856,
+       19.026
+      ],
+      [
+       72.858,
+       19.028
+      ],
+      [
+       72.859,
+       19.03
+      ]
+     ]
+    ],
+    "getWidth": [
+     2.0999999999999996,
+     0.8
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "widthMinPixels": 0.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "drains",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "dashJustified": true,
+    "extensions": [
+     {
+      "class": "PathStyleExtension",
+      "opts": {
+       "dash": true,
+       "highPrecisionDash": false,
+       "offset": false
+      }
+     }
+    ],
+    "getColor": [
+     [
+      62,
+      76,
+      110,
+      200
+     ],
+     [
+      124,
+      58,
+      237,
+      200
+     ],
+     [
+      192,
+      38,
+      211,
+      200
+     ],
+     [
+      232,
+      121,
+      249,
+      200
+     ]
+    ],
+    "getDashArray": [
+     4,
+     3
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.8412,
+       19.0121
+      ]
+     ],
+     [
+      [
+       72.85,
+       19.02
+      ],
+      [
+       72.851,
+       19.021
+      ]
+     ],
+     [
+      [
+       72.86,
+       19.03
+      ],
+      [
+       72.861,
+       19.031
+      ]
+     ],
+     [
+      [
+       72.87,
+       19.04
+      ],
+      [
+       72.871,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     1.9,
+     2.8,
+     4,
+     4
+    ],
+    "pickable": false,
+    "widthMinPixels": 0.8,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "depth-raster",
+    "class": "BitmapLayer",
+    "async:data": {
+     "length": 0
+    },
+    "async:image": "[bitmap 1]",
+    "bounds": [
+     72.815,
+     18.995,
+     72.905,
+     19.135
+    ],
+    "opacity": 0.55,
+    "pickable": false,
+    "textureParameters": {
+     "magFilter": "nearest",
+     "minFilter": "linear"
+    }
+   },
+   {
+    "id": "streets-wet",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 3
+    },
+    "autoHighlight": true,
+    "capRounded": true,
+    "getColor": [
+     [
+      245,
+      158,
+      11,
+      255
+     ],
+     [
+      59,
+      130,
+      246,
+      255
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ],
+     [
+      [
+       72.857,
+       19.027
+      ],
+      [
+       72.858,
+       19.0275
+      ]
+     ],
+     [
+      [
+       72.862,
+       19.039
+      ],
+      [
+       72.863,
+       19.04
+      ],
+      [
+       72.864,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": [
+     4.6,
+     2.3,
+     6.8999999999999995
+    ],
+    "highlightColor": [
+     227,
+     234,
+     246,
+     90
+    ],
+    "jointRounded": true,
+    "pickable": true,
+    "updateTriggers": {
+     "getColor": [
+      1,
+      null,
+      false,
+      "Infinity",
+      null
+     ],
+     "getWidth": [
+      false
+     ]
+    },
+    "widthMinPixels": 1.6,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "hotspot-rings",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": false,
+    "getLineColor": [
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      130
+     ]
+    ],
+    "getLineWidth": [
+     3,
+     1.2
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.012
+     ],
+     [
+      72.862,
+      19.039
+     ]
+    ],
+    "getRadius": 120,
+    "lineWidthMinPixels": 1,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getLineColor": "H-hindmata",
+     "getLineWidth": "H-hindmata"
+    }
+   },
+   {
+    "id": "surcharge",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "filled": true,
+    "getFillColor": [
+     239,
+     68,
+     68,
+     200
+    ],
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 1,
+    "pickable": false,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "surcharge-pulse",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 2
+    },
+    "extensions": [
+     {
+      "class": "SurchargePulseExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     239,
+     68,
+     68,
+     240
+    ],
+    "getPosition": [
+     [
+      72.8412,
+      19.0121
+     ],
+     [
+      72.8601,
+      19.035
+     ]
+    ],
+    "getRadius": [
+     109.57010852370435,
+     40
+    ],
+    "lineWidthMinPixels": 2,
+    "pickable": false,
+    "pulseAnimated": true,
+    "radiusMaxPixels": 16,
+    "radiusMinPixels": 3,
+    "radiusUnits": "meters",
+    "stroked": true,
+    "updateTriggers": {
+     "getRadius": [
+      {
+       "id": "N-1",
+       "lat": 19.0121,
+       "lon": 72.8412,
+       "q": 0.4
+      },
+      {
+       "id": "N-2",
+       "lat": 19.035,
+       "lon": 72.8601
+      }
+     ]
+    }
+   },
+   {
+    "id": "isochrones",
+    "class": "PolygonLayer",
+    "async:data": {
+     "length": 4
+    },
+    "filled": true,
+    "getFillColor": [
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      36
+     ],
+     [
+      45,
+      212,
+      191,
+      71
+     ],
+     [
+      45,
+      212,
+      191,
+      115
+     ]
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     140
+    ],
+    "getLineWidth": 1,
+    "getPolygon": [
+     [
+      [
+       72.8,
+       18.9
+      ],
+      [
+       72.9,
+       18.9
+      ],
+      [
+       72.9,
+       19.1
+      ],
+      [
+       72.8,
+       18.9
+      ]
+     ],
+     [
+      [
+       72.83,
+       18.99
+      ],
+      [
+       72.86,
+       18.99
+      ],
+      [
+       72.86,
+       19.02
+      ],
+      [
+       72.83,
+       18.99
+      ]
+     ],
+     [],
+     [
+      [
+       72.84,
+       19
+      ],
+      [
+       72.845,
+       19
+      ],
+      [
+       72.845,
+       19.005
+      ],
+      [
+       72.84,
+       19
+      ]
+     ]
+    ],
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "stroked": true,
+    "transitions": {
+     "getFillColor": {
+      "duration": 300,
+      "easing": "[function]"
+     },
+     "getPolygon": {
+      "duration": 300,
+      "easing": "[function]"
+     }
+    }
+   },
+   {
+    "id": "route-casing",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 2
+    },
+    "capRounded": true,
+    "getColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ]
+    ],
+    "getWidth": 7,
+    "jointRounded": true,
+    "pickable": false,
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "routes",
+    "class": "PathLayer",
+    "async:data": {
+     "length": 4
+    },
+    "capRounded": true,
+    "getColor": [
+     [
+      100,
+      116,
+      139,
+      235
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      150
+     ],
+     [
+      185,
+      28,
+      28,
+      255
+     ]
+    ],
+    "getPath": [
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.842,
+       19.02
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.835,
+       19.015
+      ],
+      [
+       72.85,
+       19.03
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.003
+      ],
+      [
+       72.862,
+       19.041
+      ]
+     ],
+     [
+      [
+       72.841,
+       19.012
+      ],
+      [
+       72.843,
+       19.013
+      ]
+     ]
+    ],
+    "getWidth": [
+     3,
+     5,
+     3,
+     4
+    ],
+    "jointRounded": true,
+    "pickable": false,
+    "updateTriggers": {
+     "getColor": 4,
+     "getPath": [
+      4,
+      1
+     ],
+     "getWidth": 4
+    },
+    "widthUnits": "pixels"
+   },
+   {
+    "id": "truth-ripple-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "ripple",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": false,
+    "getLineColor": [
+     45,
+     212,
+     191,
+     220
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-pins",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.84,
+      19.079
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "truth-drop-P-1",
+    "class": "ScatterplotLayer",
+    "async:data": {
+     "length": 1
+    },
+    "dropPart": "pin",
+    "dropStartMs": 700,
+    "extensions": [
+     {
+      "class": "TruthDropExtension",
+      "opts": null
+     }
+    ],
+    "filled": true,
+    "getFillColor": [
+     255,
+     255,
+     255,
+     255
+    ],
+    "getLineColor": [
+     45,
+     212,
+     191,
+     255
+    ],
+    "getLineWidth": 2,
+    "getPosition": [
+     [
+      72.858,
+      19.032
+     ]
+    ],
+    "getRadius": 70,
+    "lineWidthUnits": "pixels",
+    "pickable": false,
+    "radiusMaxPixels": 12,
+    "radiusMinPixels": 4,
+    "radiusUnits": "meters",
+    "stroked": true
+   },
+   {
+    "id": "place-labels",
+    "class": "TileLayer",
+    "async:data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "data": "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    "maxCacheSize": 220,
+    "maxRequests": 12,
+    "maxZoom": 19,
+    "minZoom": 10,
+    "onTileError": "[function]",
+    "opacity": 0.85,
+    "pickable": false,
+    "refinementStrategy": "best-available",
+    "renderSubLayers": "[function]",
+    "tileSize": 256
+   },
+   {
+    "id": "label-markers",
+    "class": "IconLayer",
+    "async:data": {
+     "length": 2
+    },
+    "getColor": [
+     [
+      227,
+      234,
+      246,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ]
+    ],
+    "getIcon": [
+     "dot",
+     "dot"
+    ],
+    "getPosition": [
+     [
+      72.841,
+      19.003
+     ],
+     [
+      72.841,
+      19.012
+     ]
+    ],
+    "getSize": [
+     7,
+     9
+    ],
+    "pickable": false,
+    "sizeUnits": "pixels",
+    "updateTriggers": {
+     "getColor": 2,
+     "getSize": 2
+    }
+   },
+   {
+    "id": "map-labels",
+    "class": "TextLayer",
+    "async:data": {
+     "length": 5
+    },
+    "characterSet": "auto",
+    "fontFamily": "var(--font-sans), system-ui, sans-serif",
+    "fontSettings": {
+     "buffer": 8,
+     "fontSize": 64,
+     "sdf": true
+    },
+    "fontWeight": 600,
+    "getAlignmentBaseline": "bottom",
+    "getColor": [
+     [
+      227,
+      234,
+      246,
+      255
+     ],
+     [
+      227,
+      234,
+      246,
+      255
+     ],
+     [
+      227,
+      234,
+      246,
+      255
+     ],
+     [
+      227,
+      234,
+      246,
+      255
+     ],
+     [
+      45,
+      212,
+      191,
+      255
+     ]
+    ],
+    "getPixelOffset": [
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      0
+     ],
+     [
+      0,
+      -12
+     ],
+     [
+      0,
+      -12
+     ]
+    ],
+    "getPosition": [
+     [
+      72.842,
+      19.012
+     ],
+     [
+      72.843,
+      19.013
+     ],
+     [
+      72.858,
+      19.0275
+     ],
+     [
+      72.841,
+      19.003
+     ],
+     [
+      72.841,
+      19.012
+     ]
+    ],
+    "getSize": [
+     10,
+     10,
+     10,
+     12,
+     13
+    ],
+    "getText": [
+     "Dr Babasaheb Ambedkar Road",
+     "Hindmata junction",
+     "King's Circle",
+     "KEM Hospital",
+     "Hindmata junction"
+    ],
+    "getTextAnchor": "middle",
+    "outlineColor": [
+     10,
+     16,
+     32,
+     235
+    ],
+    "outlineWidth": 3,
+    "pickable": false,
+    "sizeUnits": "pixels",
+    "updateTriggers": {
+     "getColor": 5,
+     "getSize": 5,
+     "getText": 5
+    }
+   }
+  ],
+  "viewState": {
+   "longitude": 72.841,
+   "latitude": 19.012,
+   "zoom": 15,
+   "bearing": 0,
+   "pitch": 0,
+   "transitionDuration": 900,
+   "transitionInterpolator": "[FlyToInterpolator]"
+  },
+  "controller": true,
+  "pickingRadius": 6,
+  "animate": true,
+  "tooltip": [
+   {
+    "text": "Hindmata junction\n18.0 cm",
+    "style": {
+     "backgroundColor": "var(--deep)",
+     "color": "var(--text)",
+     "border": "1px solid var(--line)",
+     "borderRadius": "8px",
+     "fontSize": "12px",
+     "padding": "6px 8px",
+     "whiteSpace": "pre-line"
+    }
+   },
+   null
+  ],
+  "onClick": true,
+  "onViewStateChange": true,
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+ },
+ "scrub-rebuilt": [
+  "streets-wet",
+  "hotspot-rings"
+ ],
+ "select-rebuilt": [
+  "depth-raster",
+  "streets-wet",
+  "hotspot-rings"
+ ]
+}

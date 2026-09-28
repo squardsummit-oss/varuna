@@ -1,0 +1,16 @@
+# services/route-rs is a Rust crate (Cargo.toml), not a Python package. It carries this file only
+# because the root uv workspace globs `services/*` as members, and uv refuses a member directory
+# without a pyproject.toml - every `uv run` in the repository would fail without it. It is a
+# virtual member: nothing is built or installed from it. The export helper under tools/ and the
+# parity test under tests/ import `varuna_route` from the workspace environment. Adding
+# `exclude = ["services/route-rs"]` to the root `[tool.uv.workspace]` would make this file
+# unnecessary; that is the lead's call, since the root pyproject is not this chunk's to edit.
+[project]
+name = "varuna-route-rs"
+version = "0.1.0"
+description = "Rust Axum routing service with the same contract as POST /v1/route (task P8.12)"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false

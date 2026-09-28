@@ -1,0 +1,30 @@
+[package]
+name = "varuna-route"
+version = "0.1.0"
+edition = "2021"
+description = "VARUNA-Route in Rust: POST /v1/route with the same contract and the same answers as the Python router (task P8.12)"
+publish = false
+
+[[bin]]
+name = "varuna-route"
+path = "src/main.rs"
+
+[lib]
+name = "varuna_route"
+path = "src/lib.rs"
+
+[dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
+serde = { version = "1", features = ["derive"] }
+# float_roundtrip: the export and the run files are written by Python's repr, and only a
+# correctly rounded parser gives back the same doubles. preserve_order: keys come out in the
+# order the Python response writes them, so a diff of the two bodies reads line for line.
+serde_json = { version = "1", features = ["float_roundtrip", "preserve_order"] }
+sha2 = "0.10"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "thin"
+debug = false

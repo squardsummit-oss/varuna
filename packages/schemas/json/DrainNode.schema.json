@@ -1,0 +1,142 @@
+{
+  "$id": "urn:varuna:schema:DrainNode",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A node of the drain graph (inlet, manhole, outfall, ...).",
+  "properties": {
+    "confidence": {
+      "default": "inferred",
+      "enum": [
+        "inferred",
+        "surveyed"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "flap_gate": {
+      "default": false,
+      "description": "Outfall blocks reverse flow.",
+      "title": "Flap Gate",
+      "type": "boolean"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "inlet_area_m2": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Orifice area A_o.",
+      "title": "Inlet Area M2"
+    },
+    "inlet_len_m": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Weir length L_i.",
+      "title": "Inlet Len M"
+    },
+    "inlet_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "e.g. kerb, grate; None if not an inlet.",
+      "title": "Inlet Type"
+    },
+    "kappa_mean": {
+      "default": 0.25,
+      "description": "Prior mean inlet clogging.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Kappa Mean",
+      "type": "number"
+    },
+    "kappa_sd": {
+      "default": 0.15,
+      "minimum": 0,
+      "title": "Kappa Sd",
+      "type": "number"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "storage_area_m2": {
+      "description": "Manhole plan area for node continuity.",
+      "exclusiveMinimum": 0,
+      "title": "Storage Area M2",
+      "type": "number"
+    },
+    "tidal": {
+      "default": false,
+      "description": "Outfall stage follows the tide series.",
+      "title": "Tidal",
+      "type": "boolean"
+    },
+    "type": {
+      "enum": [
+        "inlet",
+        "manhole",
+        "junction",
+        "outfall",
+        "depression",
+        "hotspot",
+        "tank",
+        "pump_station"
+      ],
+      "title": "Type",
+      "type": "string"
+    },
+    "z_ground_m": {
+      "description": "Ground level in metres above datum.",
+      "title": "Z Ground M",
+      "type": "number"
+    },
+    "z_invert_m": {
+      "description": "Invert level in metres above datum.",
+      "title": "Z Invert M",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "lon",
+    "lat",
+    "type",
+    "z_ground_m",
+    "z_invert_m",
+    "storage_area_m2"
+  ],
+  "title": "DrainNode",
+  "type": "object"
+}

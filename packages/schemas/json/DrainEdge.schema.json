@@ -1,0 +1,162 @@
+{
+  "$id": "urn:varuna:schema:DrainEdge",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A pipe or box drain between two nodes, sized by the rational method.",
+  "properties": {
+    "beta_prior_mean": {
+      "description": "Prior blockage mean from land use (0.15-0.35).",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Beta Prior Mean",
+      "type": "number"
+    },
+    "beta_prior_sd": {
+      "minimum": 0,
+      "title": "Beta Prior Sd",
+      "type": "number"
+    },
+    "confidence": {
+      "default": "inferred",
+      "enum": [
+        "inferred",
+        "surveyed"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "diameter_mm": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Circular pipes: 450/600/900/1200/1500 mm.",
+      "title": "Diameter Mm"
+    },
+    "from_node": {
+      "minLength": 1,
+      "title": "From Node",
+      "type": "string"
+    },
+    "height_m": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Box drains only.",
+      "title": "Height M"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "last_desilted": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Desilted"
+    },
+    "length_m": {
+      "exclusiveMinimum": 0,
+      "title": "Length M",
+      "type": "number"
+    },
+    "n_manning": {
+      "default": 0.013,
+      "exclusiveMinimum": 0,
+      "title": "N Manning",
+      "type": "number"
+    },
+    "q_full_m3s": {
+      "description": "Manning full-flow capacity at beta = 0, m^3/s.",
+      "exclusiveMinimum": 0,
+      "title": "Q Full M3S",
+      "type": "number"
+    },
+    "shape": {
+      "default": "circular",
+      "enum": [
+        "circular",
+        "box"
+      ],
+      "title": "Shape",
+      "type": "string"
+    },
+    "slope": {
+      "description": "Bed slope (dimensionless); minimum 0.003.",
+      "exclusiveMinimum": 0,
+      "title": "Slope",
+      "type": "number"
+    },
+    "street": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Street it runs under, e.g. Dr Ambedkar Road.",
+      "title": "Street"
+    },
+    "to_node": {
+      "minLength": 1,
+      "title": "To Node",
+      "type": "string"
+    },
+    "trunk": {
+      "default": false,
+      "description": "True for trunks along waterways.",
+      "title": "Trunk",
+      "type": "boolean"
+    },
+    "width_m": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Box drains only.",
+      "title": "Width M"
+    }
+  },
+  "required": [
+    "id",
+    "from_node",
+    "to_node",
+    "length_m",
+    "slope",
+    "q_full_m3s",
+    "beta_prior_mean",
+    "beta_prior_sd"
+  ],
+  "title": "DrainEdge",
+  "type": "object"
+}

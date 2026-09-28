@@ -1,0 +1,85 @@
+{
+  "$id": "urn:varuna:schema:RoadCondition",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Feature properties of the ``road-conditions`` provider feed (impassable / degraded segments\nwith validity windows) for navigation and transit apps.",
+  "properties": {
+    "depth_p50_cm": {
+      "minimum": 0,
+      "title": "Depth P50 Cm",
+      "type": "number"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    },
+    "p_exceed": {
+      "description": "P(depth > profile threshold) in the window.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Exceed",
+      "type": "number"
+    },
+    "profile": {
+      "description": "Profile the status applies to.",
+      "enum": [
+        "ambulance",
+        "fire_tender",
+        "bus",
+        "car",
+        "two_wheeler",
+        "pedestrian"
+      ],
+      "title": "Profile",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passable",
+        "degraded",
+        "impassable"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "valid_from": {
+      "format": "date-time",
+      "title": "Valid From",
+      "type": "string"
+    },
+    "valid_to": {
+      "format": "date-time",
+      "title": "Valid To",
+      "type": "string"
+    }
+  },
+  "required": [
+    "segment_id",
+    "status",
+    "profile",
+    "valid_from",
+    "valid_to",
+    "depth_p50_cm",
+    "p_exceed",
+    "run_id"
+  ],
+  "title": "RoadCondition",
+  "type": "object"
+}

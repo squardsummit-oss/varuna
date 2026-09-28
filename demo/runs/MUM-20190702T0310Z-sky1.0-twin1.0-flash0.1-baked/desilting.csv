@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,MUM-E018763,off D S Babrekar Marg,,0.4505,0.1926,63.1,0,,inferred
+2,MUM-E005209,D S Babrekar Marg,,0.4112,0.2017,58.6,0,,inferred
+3,MUM-E005212,D S Babrekar Marg,,0.4064,0.1866,58.1,0,,inferred
+4,MUM-E045779,off D S Babrekar Marg,,0.384,0.1946,55.4,0,,inferred
+5,MUM-E017287,off Mathuradas Vasanji Road (Andheri Kurla Road),,0.3725,0.1368,54.0,0,,inferred
+6,MUM-E020632,off Mahadev Palav Marg,near Parel / Bharat Mata Cinema,0.3701,0.2288,53.7,0,,inferred
+7,MUM-E008026,off Dattaji Salvi Marg,,0.3692,0.1429,53.6,0,,inferred
+8,MUM-E017286,off Mathuradas Vasanji Road (Andheri Kurla Road),,0.368,0.1437,53.5,0,,inferred
+9,MUM-E017285,off Mathuradas Vasanji Road (Andheri Kurla Road),,0.3665,0.1379,53.3,0,,inferred
+10,MUM-E019055,off BKC - CST Link Road,,0.366,0.1859,53.2,0,,inferred
+11,MUM-E020504,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1425,52.9,0,,inferred
+12,MUM-E020505,off Sion Panvel Highway,near Chunabhatti railway station,0.3637,0.1437,52.9,0,,inferred
+13,MUM-E020507,off Sion Panvel Highway,near Chunabhatti railway station,0.3636,0.1402,52.9,0,,inferred
+14,MUM-E020508,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1427,52.9,0,,inferred
+15,MUM-E008541,off Road No 28A,near Sion Koliwada,0.3623,0.1404,52.8,0,,inferred
+16,MUM-E008544,off Road No 28A,near Sion Koliwada,0.3627,0.1423,52.8,1,,inferred
+17,MUM-E008542,off Road No 28A,near Sion Koliwada,0.3622,0.1455,52.7,0,,inferred
+18,MUM-E008543,off Road No 28A,near Sion Koliwada,0.3622,0.1445,52.7,0,,inferred
+19,MUM-E016769,off Alfred Creado Lane,,0.3622,0.1381,52.7,0,,inferred
+20,MUM-E020506,off Sion Panvel Highway,near Chunabhatti railway station,0.3616,0.1416,52.7,0,,inferred
+21,MUM-E046647,off Jawaharlal Nehru Road,near Kalina,0.3619,0.1434,52.7,0,,inferred
+22,MUM-E016768,off Alfred Creado Lane,,0.3603,0.1356,52.5,0,,inferred
+23,MUM-E017288,off Mathuradas Vasanji Road (Andheri Kurla Road),,0.3579,0.1445,52.2,0,,inferred
+24,MUM-E008025,off Dattaji Salvi Marg,,0.3574,0.1464,52.1,0,,inferred
+25,MUM-E005472,Raobahadur S.K. Bole Marg,,0.3551,0.215,51.9,0,,inferred

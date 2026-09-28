@@ -1,0 +1,62 @@
+{
+  "$id": "urn:varuna:schema:NestSpec",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A fine-resolution nest (5 m at Hindmata and King's Circle, P1).",
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "name": {
+      "description": "e.g. Hindmata junction",
+      "title": "Name",
+      "type": "string"
+    },
+    "res_m": {
+      "default": 5.0,
+      "description": "Cell size in metres.",
+      "exclusiveMinimum": 0,
+      "title": "Res M",
+      "type": "number"
+    },
+    "size_m": {
+      "default": 1000.0,
+      "description": "Side length in metres (1 km^2 nest).",
+      "exclusiveMinimum": 0,
+      "title": "Size M",
+      "type": "number"
+    },
+    "tier": {
+      "default": "P1",
+      "enum": [
+        "P0",
+        "P1",
+        "P2"
+      ],
+      "title": "Tier",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "lon",
+    "lat"
+  ],
+  "title": "NestSpec",
+  "type": "object"
+}

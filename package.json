@@ -1,0 +1,26 @@
+{
+  "name": "varuna",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VARUNA - street-level urban flood nowcasting digital twin (SIH 2026, PS SIH26085)",
+  "license": "MIT",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint:design": "node tools/lint-design.mjs",
+    "typegen": "pnpm --filter @varuna/command typegen",
+    "tokens:build": "pnpm --filter @varuna/tokens build"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.15.1",
+    "concurrently": "^10.0.5",
+    "turbo": "^2.10.12"
+  }
+}

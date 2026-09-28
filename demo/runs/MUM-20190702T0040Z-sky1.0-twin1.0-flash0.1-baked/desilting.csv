@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,MUM-E017178,off Avenue 3: Lane 3,,0.384,0.1401,55.4,0,,inferred
+2,MUM-E017179,off Avenue 3: Lane 3,,0.3609,0.1399,52.6,0,,inferred
+3,MUM-E017177,off Avenue 3: Lane 3,,0.359,0.1409,52.3,0,,inferred
+4,MUM-E000218,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+5,MUM-E000219,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+6,MUM-E000220,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+7,MUM-E000221,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+8,MUM-E000222,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+9,MUM-E000223,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+10,MUM-E000224,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+11,MUM-E000225,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+12,MUM-E000226,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+13,MUM-E000275,off Anant Kanekar Marg,,0.35,0.15,51.2,0,,inferred
+14,MUM-E000965,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+15,MUM-E000966,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+16,MUM-E000967,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+17,MUM-E000968,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+18,MUM-E000969,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+19,MUM-E000970,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+20,MUM-E000971,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+21,MUM-E000972,Cubic mall parking entrance,,0.35,0.15,51.2,0,,inferred
+22,MUM-E000973,Cubic mall parking entrance,,0.35,0.15,51.2,0,,inferred
+23,MUM-E000974,Cubic mall parking entrance,,0.35,0.15,51.2,0,,inferred
+24,MUM-E001201,off Bandra Station Road,,0.35,0.15,51.2,0,,inferred
+25,MUM-E001202,off Bandra Station Road,,0.35,0.15,51.2,0,,inferred

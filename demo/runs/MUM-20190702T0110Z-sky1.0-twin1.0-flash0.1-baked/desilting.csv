@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,MUM-E005853,Mahakali Caves Road,,0.8305,0.1186,94.8,0,,inferred
+2,MUM-E040721,Mahakali Caves Road,,0.7105,0.1557,87.3,0,,inferred
+3,MUM-E012372,off Flank Road,,0.5141,0.2415,70.0,0,,inferred
+4,MUM-E012801,Krantiveer Lakhuji Salve Marg,,0.506,0.2415,69.1,0,,inferred
+5,MUM-E012817,Krantiveer Lakhuji Salve Marg,,0.4984,0.2322,68.3,0,,inferred
+6,MUM-E018154,off Jijamata Road,,0.3734,0.1463,54.1,0,,inferred
+7,MUM-E042339,off Air India Road,,0.3735,0.1375,54.1,0,,inferred
+8,MUM-E042340,off Air India Road,,0.3703,0.1431,53.7,0,,inferred
+9,MUM-E018153,off Jijamata Road,,0.3686,0.1407,53.5,0,,inferred
+10,MUM-E010004,off Chheda Nagar Service Road,,0.3626,0.143,52.8,0,,inferred
+11,MUM-E010005,off Chheda Nagar Service Road,,0.3619,0.1448,52.7,0,,inferred
+12,MUM-E042341,off Air India Road,,0.3559,0.1465,52.0,0,,inferred
+13,MUM-E000218,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+14,MUM-E000219,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+15,MUM-E000220,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+16,MUM-E000221,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+17,MUM-E000222,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+18,MUM-E000223,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+19,MUM-E000224,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+20,MUM-E000225,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+21,MUM-E000226,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+22,MUM-E000275,off Anant Kanekar Marg,,0.35,0.15,51.2,0,,inferred
+23,MUM-E000965,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+24,MUM-E000966,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+25,MUM-E000967,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred

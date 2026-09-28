@@ -1,0 +1,42 @@
+{
+  "$id": "urn:varuna:schema:EngineVersions",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Engine versions that produced a run; the first three appear in the run id.",
+  "properties": {
+    "flash": {
+      "description": "VARUNA-Flash version (0.x = reduced-order emulator)",
+      "title": "Flash",
+      "type": "string"
+    },
+    "products": {
+      "description": "Products version",
+      "title": "Products",
+      "type": "string"
+    },
+    "pulse": {
+      "description": "VARUNA-Pulse version",
+      "title": "Pulse",
+      "type": "string"
+    },
+    "sky": {
+      "description": "VARUNA-Sky version, e.g. 1.0",
+      "title": "Sky",
+      "type": "string"
+    },
+    "twin": {
+      "description": "VARUNA-Twin version",
+      "title": "Twin",
+      "type": "string"
+    }
+  },
+  "required": [
+    "sky",
+    "twin",
+    "flash",
+    "pulse",
+    "products"
+  ],
+  "title": "EngineVersions",
+  "type": "object"
+}

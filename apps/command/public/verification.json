@@ -1,0 +1,390 @@
+{
+  "by_threshold": {
+    "15": {
+      "contingency": {
+        "false_alarms": 12,
+        "hits": 3,
+        "misses": 14
+      },
+      "scores": {
+        "csi": 0.103,
+        "far": 0.8,
+        "median_lead_min": null,
+        "n_hits_after": 3,
+        "n_hits_early": 0,
+        "pod": 0.176
+      },
+      "threshold_cm": 15.0
+    },
+    "30": {
+      "contingency": {
+        "false_alarms": 2,
+        "hits": 1,
+        "misses": 16
+      },
+      "scores": {
+        "csi": 0.053,
+        "far": 0.667,
+        "median_lead_min": null,
+        "n_hits_after": 1,
+        "n_hits_early": 0,
+        "pod": 0.059
+      },
+      "threshold_cm": 30.0
+    },
+    "5": {
+      "contingency": {
+        "false_alarms": 79,
+        "hits": 17,
+        "misses": 0
+      },
+      "scores": {
+        "csi": 0.177,
+        "far": 0.823,
+        "median_lead_min": 73.0,
+        "n_hits_after": 5,
+        "n_hits_early": 12,
+        "pod": 1.0
+      },
+      "threshold_cm": 5.0
+    }
+  },
+  "contingency": {
+    "false_alarms": 12,
+    "hits": 3,
+    "misses": 14
+  },
+  "event": "MUM-2019-07-02",
+  "ground_truth": {
+    "n_in_window": 17,
+    "n_pins": 29,
+    "sourced": true
+  },
+  "headline_threshold_cm": 15.0,
+  "matched": [
+    {
+      "forecast_ts": "2019-07-02T10:20:00+05:30",
+      "kind": "news",
+      "lead_min": -70.0,
+      "n_segments": 1,
+      "name": "King's Circle / Maheshwari Udyan, Matunga",
+      "pin_id": "MUM19-18",
+      "pin_ts": "2019-07-02T09:10:00+05:30",
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today"
+    },
+    {
+      "forecast_ts": "2019-07-02T10:10:00+05:30",
+      "kind": "news",
+      "lead_min": -60.0,
+      "n_segments": 1,
+      "name": "Kailash Parbat Society, Kurla East",
+      "pin_id": "MUM19-19",
+      "pin_ts": "2019-07-02T09:10:00+05:30",
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today"
+    },
+    {
+      "forecast_ts": "2019-07-02T09:35:00+05:30",
+      "kind": "log",
+      "lead_min": -25.0,
+      "n_segments": 2,
+      "name": "Vakola police station, Santacruz East",
+      "pin_id": "MUM19-21",
+      "pin_ts": "2019-07-02T09:10:00+05:30",
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today"
+    }
+  ],
+  "missed": [
+    {
+      "deepest_nearby_cm": 16.3,
+      "kind": "log",
+      "n_segments_near": 4,
+      "name": "Kranti Nagar, Kurla East",
+      "pin_id": "MUM19-07",
+      "pin_ts": "2019-07-02T08:07:00+05:30",
+      "reason": "Flagged, but later than the pin's time uncertainty allows",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 22.8,
+      "kind": "log",
+      "n_segments_near": 14,
+      "name": "Gandhi Market, Sion / Matunga",
+      "pin_id": "MUM19-08",
+      "pin_ts": "2019-07-02T08:47:00+05:30",
+      "reason": "Flagged, but later than the pin's time uncertainty allows",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 9.9,
+      "kind": "log",
+      "n_segments_near": 18,
+      "name": "Sion (junction area)",
+      "pin_id": "MUM19-09",
+      "pin_ts": "2019-07-02T08:47:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 6.5,
+      "kind": "log",
+      "n_segments_near": 5,
+      "name": "Milan Subway, Santacruz",
+      "pin_id": "MUM19-10",
+      "pin_ts": "2019-07-02T08:47:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 10.8,
+      "kind": "log",
+      "n_segments_near": 18,
+      "name": "Kherwadi flyover / Kalanagar, Bandra East",
+      "pin_id": "MUM19-11",
+      "pin_ts": "2019-07-02T08:47:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 14.7,
+      "kind": "log",
+      "n_segments_near": 9,
+      "name": "Andheri (locality named in the advisory)",
+      "pin_id": "MUM19-12",
+      "pin_ts": "2019-07-02T08:47:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 38.9,
+      "kind": "log",
+      "n_segments_near": 14,
+      "name": "Vakola junction, Santacruz East",
+      "pin_id": "MUM19-15",
+      "pin_ts": "2019-07-02T08:31:00+05:30",
+      "reason": "Flagged, but later than the pin's time uncertainty allows",
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812"
+    },
+    {
+      "deepest_nearby_cm": 9.0,
+      "kind": "log",
+      "n_segments_near": 2,
+      "name": "Chunabhatti railway station",
+      "pin_id": "MUM19-16",
+      "pin_ts": "2019-07-02T08:31:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812"
+    },
+    {
+      "deepest_nearby_cm": 16.7,
+      "kind": "log",
+      "n_segments_near": 5,
+      "name": "Postal Colony, Chembur",
+      "pin_id": "MUM19-17",
+      "pin_ts": "2019-07-02T08:31:00+05:30",
+      "reason": "Flagged, but later than the pin's time uncertainty allows",
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812"
+    },
+    {
+      "deepest_nearby_cm": 9.2,
+      "kind": "news",
+      "n_segments_near": 4,
+      "name": "Sion railway station",
+      "pin_id": "MUM19-20",
+      "pin_ts": "2019-07-02T09:10:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today"
+    },
+    {
+      "deepest_nearby_cm": 9.2,
+      "kind": "news",
+      "n_segments_near": 4,
+      "name": "Sion station / Sion police station surroundings",
+      "pin_id": "MUM19-22",
+      "pin_ts": "2019-07-02T10:33:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812"
+    },
+    {
+      "deepest_nearby_cm": 9.4,
+      "kind": "log",
+      "n_segments_near": 1,
+      "name": "Sakinaka police station, Andheri East",
+      "pin_id": "MUM19-23",
+      "pin_ts": "2019-07-02T12:02:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    },
+    {
+      "deepest_nearby_cm": 14.7,
+      "kind": "news",
+      "n_segments_near": 9,
+      "name": "Andheri subway",
+      "pin_id": "MUM19-24",
+      "pin_ts": "2019-07-02T12:09:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today"
+    },
+    {
+      "deepest_nearby_cm": 14.7,
+      "kind": "news",
+      "n_segments_near": 15,
+      "name": "Kurla West (near a school)",
+      "pin_id": "MUM19-25",
+      "pin_ts": "2019-07-02T12:25:00+05:30",
+      "reason": "No street within 250 m was forecast over the threshold",
+      "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html"
+    }
+  ],
+  "notes": [
+    "Scored at 15 cm, the depth at which cars stop.",
+    "A pin matches a street within 250 m and inside its own stated time uncertainty plus 30 minutes.",
+    "False alarms are counted only near a pin, because nobody logged most of Mumbai that morning and an unpinned wet street is not evidence of a wrong forecast. The count is a lower bound.",
+    "Ground truth is 29 curated public records, each with a source URL and a stated time uncertainty. The radar and the gauges in this replay are reconstructed.",
+    "Scored at 5, 15 and 30 cm because the pins record waterlogging and not a depth; the headline is 15 cm, the depth at which a two-wheeler slows."
+  ],
+  "rain_skill": {
+    "available": true,
+    "csi_by_lead": {
+      "20": [
+        { "lead_min": 5, "mean": 0.556, "n_cycles": 7, "p50": 0.4721, "persistence": 0.6291 },
+        { "lead_min": 10, "mean": 0.3353, "n_cycles": 7, "p50": 0.1558, "persistence": 0.4855 },
+        { "lead_min": 15, "mean": 0.2305, "n_cycles": 7, "p50": 0.0738, "persistence": 0.2787 },
+        { "lead_min": 20, "mean": 0.0897, "n_cycles": 7, "p50": 0.0092, "persistence": 0.1544 },
+        { "lead_min": 25, "mean": 0.0876, "n_cycles": 7, "p50": 0.0039, "persistence": 0.1488 },
+        { "lead_min": 30, "mean": 0.0667, "n_cycles": 7, "p50": 0.0028, "persistence": 0.1608 },
+        { "lead_min": 35, "mean": 0.0279, "n_cycles": 6, "p50": 0.0, "persistence": 0.19 },
+        { "lead_min": 40, "mean": 0.0154, "n_cycles": 6, "p50": 0.0, "persistence": 0.1979 },
+        { "lead_min": 45, "mean": 0.0096, "n_cycles": 6, "p50": 0.0, "persistence": 0.1618 },
+        { "lead_min": 50, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.1342 },
+        { "lead_min": 55, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.1538 },
+        { "lead_min": 60, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.1444 },
+        { "lead_min": 65, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.1446 },
+        { "lead_min": 70, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.057 },
+        { "lead_min": 75, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0098 },
+        { "lead_min": 80, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0084 },
+        { "lead_min": 85, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0359 },
+        { "lead_min": 90, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.1187 },
+        { "lead_min": 95, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.2165 },
+        { "lead_min": 100, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.2979 },
+        { "lead_min": 105, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.3429 },
+        { "lead_min": 110, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.3621 },
+        { "lead_min": 115, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.337 },
+        { "lead_min": 120, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.2915 },
+        { "lead_min": 125, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.2995 },
+        { "lead_min": 130, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.3168 },
+        { "lead_min": 135, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.3498 },
+        { "lead_min": 140, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.3513 },
+        { "lead_min": 145, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.333 },
+        { "lead_min": 150, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.3512 },
+        { "lead_min": 155, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.3272 },
+        { "lead_min": 160, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.2401 },
+        { "lead_min": 165, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.1112 },
+        { "lead_min": 170, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 175, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 180, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 }
+      ],
+      "40": [
+        { "lead_min": 5, "mean": 0.3847, "n_cycles": 7, "p50": 0.2421, "persistence": 0.482 },
+        { "lead_min": 10, "mean": 0.0, "n_cycles": 7, "p50": 0.0, "persistence": 0.2397 },
+        { "lead_min": 15, "mean": 0.0, "n_cycles": 7, "p50": 0.0, "persistence": 0.076 },
+        { "lead_min": 20, "mean": 0.0, "n_cycles": 7, "p50": 0.0, "persistence": 0.0214 },
+        { "lead_min": 25, "mean": 0.0, "n_cycles": 7, "p50": 0.0, "persistence": 0.0082 },
+        { "lead_min": 30, "mean": 0.0, "n_cycles": 7, "p50": 0.0, "persistence": 0.012 },
+        { "lead_min": 35, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 40, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 45, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0009 },
+        { "lead_min": 50, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0206 },
+        { "lead_min": 55, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0315 },
+        { "lead_min": 60, "mean": 0.0, "n_cycles": 6, "p50": 0.0, "persistence": 0.0314 },
+        { "lead_min": 65, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0278 },
+        { "lead_min": 70, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 75, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 80, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 85, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 90, "mean": 0.0, "n_cycles": 5, "p50": 0.0, "persistence": 0.004 },
+        { "lead_min": 95, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.0993 },
+        { "lead_min": 100, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.3049 },
+        { "lead_min": 105, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.4783 },
+        { "lead_min": 110, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.453 },
+        { "lead_min": 115, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.3973 },
+        { "lead_min": 120, "mean": 0.0, "n_cycles": 4, "p50": 0.0, "persistence": 0.382 },
+        { "lead_min": 125, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.3812 },
+        { "lead_min": 130, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.2765 },
+        { "lead_min": 135, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.124 },
+        { "lead_min": 140, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.0702 },
+        { "lead_min": 145, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.0827 },
+        { "lead_min": 150, "mean": 0.0, "n_cycles": 3, "p50": 0.0, "persistence": 0.0607 },
+        { "lead_min": 155, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 160, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 165, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 170, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 175, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 },
+        { "lead_min": 180, "mean": 0.0, "n_cycles": 2, "p50": 0.0, "persistence": 0.0 }
+      ]
+    },
+    "csi_floor": 0.5,
+    "headline_threshold_mm_h": 20.0,
+    "horizon": {
+      "beats_persistence_leads_min": [],
+      "csi_floor": 0.5,
+      "first_failure": {
+        "csi": 0.556,
+        "lead_min": 5,
+        "n_cycles": 7,
+        "persistence_csi": 0.6291,
+        "reasons": ["below_persistence"]
+      },
+      "forecast": "mean",
+      "lead_min": 0,
+      "status": "found",
+      "threshold_mm_h": 20.0
+    },
+    "label": "Reconstructed replay",
+    "n_cycles": 7,
+    "run_ids": [
+      "MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+      "MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked"
+    ],
+    "scope": "aoi",
+    "scope_label": "Sky pixels (500 m) whose centres fall inside the city grid",
+    "skipped_runs": [],
+    "truth": {
+      "n_frames": 49,
+      "note": "Scored against the bundle's reconstructed truth field, not a measurement: truth/rain.zarr is the storm designer's own rain field.",
+      "source": "truth/rain.zarr",
+      "t0": "2019-07-02T05:40:00+05:30",
+      "t1": "2019-07-02T09:40:00+05:30"
+    },
+    "unavailable": {},
+    "version": "2"
+  },
+  "run_ids": [
+    "MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked"
+  ],
+  "scores": {
+    "csi": 0.103,
+    "far": 0.8,
+    "median_lead_min": null,
+    "n_hits_after": 3,
+    "n_hits_early": 0,
+    "pod": 0.176
+  },
+  "threshold_cm": 15.0,
+  "unavailable": {
+    "brier_score": "The runs carry a 50-member street ensemble and its probabilities of street depth above each threshold, but this scorer reads only the depth series and does not score those probabilities yet. The probability of rain is scored: Rain skill by lead time serves its Brier score.",
+    "depth_mae_cm": "None of the 29 sourced pins states a depth - they are civic logs and news reports, not gauges - so there is nothing to take a difference against.",
+    "reliability_diagram": "For street depth, this needs the scorer to read the same probabilities as the Brier score. The reliability of the rain probability is drawn under Rain skill by lead time."
+  },
+  "window": ["2019-07-02T06:15:00+05:30", "2019-07-02T12:10:00+05:30"]
+}

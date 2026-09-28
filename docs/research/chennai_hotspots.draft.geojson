@@ -1,0 +1,822 @@
+{
+ "type": "FeatureCollection",
+ "name": "chennai_hotspots_draft",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:OGC:1.3/CRS84"
+  }
+ },
+ "metadata": {
+  "aoi": "CHN-SOUTH",
+  "aoi_bbox_wgs84": [
+   80.2,
+   12.96,
+   80.28,
+   13.05
+  ],
+  "crs_for_computation": "EPSG:32644",
+  "generated": "2026-09-06",
+  "generator": "VARUNA research team (docs/research/data_sources.md section 5)",
+  "geocoder": "https://nominatim.openstreetmap.org/search?q=<query>&format=jsonv2&limit=3",
+  "geocode_logs": [
+   "docs/research/_raw/nominatim_chennai.txt",
+   "docs/research/_raw/nominatim_chennai2.txt"
+  ],
+  "waterway_source": "https://overpass-api.de/api/interpreter (cached: docs/research/_raw/overpass_chennai_waterways.json, osm3s base 2026-09-05T08:45:51Z)",
+  "honesty_rules": "SPEC.md section 0 rules 6 and 7. Coordinates are VERIFIED geocodes (each carries osm_id). Flooding claims are separate: only features with flood_source_verified=true carry a dated public source and may be displayed as fact. Features with flood_source_verified=false are candidate locations only and MUST be filtered out of any ground-truth or verification view.",
+  "counts": {
+   "features_total": 30,
+   "coordinate_verified": 29,
+   "flood_source_verified": 2,
+   "flood_source_weak": 2,
+   "unsourced_candidates": 22,
+   "not_a_flood_claim": 3,
+   "not_geocoded": 1,
+   "counts_note": "2 verified + 2 weak + 22 unsourced candidates + 3 features that are not flood claims (Velachery Lake, Adyar River, Adyar Creek) + 1 not-geocoded outfall candidate = 30."
+  },
+  "known_gaps": [
+   "Kathipara junction (Guindy) - Nominatim NO RESULT and HTTP error; no coordinate. Settle with Overpass nwr[\"name\"~\"Kathipara\",i](12.96,80.20,13.05,80.28).",
+   "Pondy Bazaar / Thyagaraya Road (T. Nagar) - Nominatim NO RESULT / HTTP error; no coordinate.",
+   "No official Greater Chennai Corporation vulnerable-spots list was located; every unsourced feature rests on local knowledge and news, not a corporation publication.",
+   "Buckingham Canal is not tagged as a waterway inside CHN-SOUTH in OSM; the tidal outfall is placed on Adyar Creek instead.",
+   "GCC rain gauge network: NOT FOUND as a public machine-readable feed (https://www.chennaicorporation.gov.in/gcc/ is reachable, 200, but exposes no station API).",
+   "Chennai tide: NOT FOUND as an open series (https://incois.gov.in/portal/datainfo/drf.jsp returns 404). tide.csv for CHN-IDF-25yr must be labelled source=illustrative."
+  ],
+  "review": {
+   "reviewed": "2026-09-06",
+   "note": "coordinate_source_url added mechanically from the osm_id already present in each feature; it evidences the COORDINATE only. source_url stays null where no flood claim is sourced - those features must not be shown as chronic spots."
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2228506,
+     12.9801655
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-01",
+    "name": "Velachery",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/422418168",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": true,
+    "source_strength": "strong",
+    "source_url": "https://www.dailyo.in/news/why-does-velachery-in-chennai-flood-so-easily-every-monsoon-42820",
+    "source_cached": "docs/research/_raw/pages/chn_dailyo_velachery.txt",
+    "source_date": "2023-12-06",
+    "source_quote": "Velachery, covering an area of approximately 6.82 square kilometres and accommodating a population of 143,991, faces recurrent flooding during the monsoons.",
+    "accessed": "2026-09-06",
+    "note": "Primary Chennai onboarding hotspot. Hard-rock terrain plus lake-bed development; drains to Velachery Lake and the Pallikaranai marsh.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/422418168"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.232804,
+     13.0460744
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-02",
+    "name": "North Usman Road, T. Nagar",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "way/843860857",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": true,
+    "source_strength": "strong",
+    "source_url": "https://gulfnews.com/world/asia/india/3-killed-as-rain-batters-tamil-nadu-leaves-parts-of-chennai-waterlogged-1.84684314",
+    "source_cached": "docs/research/_raw/pages/chn_gulfnews_tn_rain.txt",
+    "source_date": "2021-12-31",
+    "source_quote": "Heavy rain has caused water logging in Chennai which caused inconvenience to traffic movement in Jemini bridge and Valluvar Kottam, Thyagaraya Nagar (T. Nagar) and Usman road of the city.",
+    "accessed": "2026-09-06",
+    "note": "Highest-footfall commercial street in the AOI. The same page records GCC Commissioner Gagandeep Singh Bedi saying more than 145 pumps were operating - a real pump figure, unlike our synthetic inventory.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/843860857"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.209121,
+     12.9822215
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-03",
+    "name": "Adambakkam",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/256202991",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "weak",
+    "source_url": "https://www.deccanherald.com/india/cyclone-nivar-heavy-rains-lead-to-waterlogging-across-chennai-919478.html",
+    "source_cached": null,
+    "source_date": null,
+    "accessed": "2026-09-06",
+    "note": "WEAK SOURCE - the article names Adambakkam among waterlogged areas during Cyclone Nivar, but the URL returned HTTP 403 to our fetcher; the name comes from a search-result snippet, not the page body. Re-fetch and quote the body before displaying as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/256202991"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.220809,
+     13.04359
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-04",
+    "name": "West Mambalam",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "node/2241055790",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "weak",
+    "source_url": "https://www.deccanherald.com/india/cyclone-nivar-heavy-rains-lead-to-waterlogging-across-chennai-919478.html",
+    "source_cached": null,
+    "source_date": null,
+    "accessed": "2026-09-06",
+    "note": "WEAK SOURCE - same 403 caveat as CHN-HS-03. Drains to the Mambalam Canal (way/23161547).",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/2241055790"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2227619,
+     12.9842045
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-05",
+    "name": "Velachery Main Road",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/27480309",
+    "highway": "secondary",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/27480309"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2179443,
+     12.982804
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-06",
+    "name": "Velachery Bypass Road",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/721922454",
+    "highway": "primary",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/721922454"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2192719,
+     12.9712086
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-07",
+    "name": "Velachery Railway Station",
+    "kind": "asset_transit",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/9402008106",
+    "osm_tags": "highway=bus_stop (named Velachery Railway Station)",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "The geocode resolved to a bus-stop node named after the station, not to the station itself. Re-resolve with railway=station before using as an exposure asset.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/9402008106"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2291946,
+     12.9803651
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-08",
+    "name": "Baby Nagar, Velachery",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/4294644648",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/4294644648"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.224188,
+     12.9826389
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-09",
+    "name": "Dhandeeswaram, Velachery",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/4294644649",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/4294644649"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2120528,
+     12.9782313
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-10",
+    "name": "AGS Colony, Velachery",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/318725675",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/318725675"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2309161,
+     12.9817821
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-11",
+    "name": "Taramani Link Road",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/422927582",
+    "highway": "primary",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/422927582"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2404069,
+     12.9849067
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-12",
+    "name": "Taramani",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/325198962",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/325198962"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2001292,
+     12.9611348
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-13",
+    "name": "Madipakkam",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 14 Perungudi",
+    "osm_id": "node/278544356",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "in_aoi": "edge",
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. Sits on the AOI west edge (lon 80.2001 vs AOI min 80.20) - include only if the AOI is widened, otherwise it will fall outside the grid.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/278544356"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2069875,
+     12.9652457
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-14",
+    "name": "Ram Nagar, Madipakkam",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 14 Perungudi",
+    "osm_id": "node/442506948",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/442506948"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2239536,
+     13.020817
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-15",
+    "name": "Saidapet",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "node/247689106",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. Sits on the south bank of the Adyar River (way/178105900) - the natural candidate for a fluvial plus tide-lock interaction in the Chennai demo.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/247689106"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2242262,
+     13.0192595
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-16",
+    "name": "Saidapet Bridge, Anna Salai",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "node/306551393",
+    "osm_tags": "highway=bus_stop on Anna Salai (Mount Road)",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. Adyar River crossing on the city's main arterial - a routing chokepoint equivalent to Hindmata in the Mumbai demo.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/306551393"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2056195,
+     13.0299401
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-17",
+    "name": "Jafferkhanpet",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "node/290741806",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. Served by the Jafferkhanpet Canal (way/27709396).",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/290741806"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2065506,
+     13.0242453
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-18",
+    "name": "Ekkattuthangal",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/364280369",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/364280369"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2131366,
+     13.0080474
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-19",
+    "name": "Guindy Railway Station",
+    "kind": "asset_transit",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/9920341495",
+    "osm_tags": "highway=bus_stop (named Guindy Railway Station)",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "The geocode resolved to a bus-stop node named after the station. Re-resolve with railway=station before using as an exposure asset.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/9920341495"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2145697,
+     13.0359275
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-20",
+    "name": "Ashok Nagar",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 10 Kodambakkam",
+    "osm_id": "node/247689098",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/247689098"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2435512,
+     13.0193703
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-21",
+    "name": "Kotturpuram",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/249497870",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. On the Adyar River south bank downstream of Saidapet.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/249497870"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2411957,
+     13.0317092
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-22",
+    "name": "Nandanam",
+    "kind": "asset_transit",
+    "zone": "Zone 9 Teynampet",
+    "osm_id": "node/6285857243",
+    "osm_tags": "railway=station",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "MRTS station on Anna Salai - exposure asset for reachability, not a sourced flood spot.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/6285857243"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.249716,
+     12.9960623
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-23",
+    "name": "Indira Nagar, Adyar",
+    "kind": "asset_transit",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/5311755238",
+    "osm_tags": "railway=station, on Buckingham Canal Greenway",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "MRTS station sitting on the Buckingham Canal alignment - the best marker we have for that alignment inside the AOI, since no waterway way carries the canal's name here.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/5311755238"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2485192,
+     13.0038682
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-24",
+    "name": "Kasturba Nagar, Adyar",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "node/1387068423",
+    "osm_tags": "building=yes (geocode landed on a building, not the locality centroid)",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim, and the geocode is a building rather than the locality - re-resolve before use. The display_name mentions Canal bank road, i.e. the Buckingham Canal bank.",
+    "coordinate_source_url": "https://www.openstreetmap.org/node/1387068423"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2569733,
+     13.004169
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-25",
+    "name": "Lattice Bridge Road (Dr Muthulakshmi Salai), Adyar",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/28278656",
+    "highway": "secondary",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim - not to be displayed as fact.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/28278656"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2276789,
+     12.9778151
+    ]
+   },
+   "properties": {
+    "id": "CHN-HS-26",
+    "name": "Sastri Road, Baby Nagar (Adyar)",
+    "kind": "chronic_waterlogging_spot",
+    "zone": "Zone 13 Adyar",
+    "osm_id": "way/27370267",
+    "highway": "residential",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "UNSOURCED chronic-spot claim. The query was for Sastri Nagar, Adyar; Nominatim resolved to Sastri Road in Baby Nagar - name mismatch, re-check before use.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/27370267"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2104711,
+     12.9882955
+    ]
+   },
+   "properties": {
+    "id": "CHN-WB-01",
+    "name": "Velachery Lake",
+    "kind": "water_body",
+    "zone": "Zone 13 Adyar / Zone 12 Alandur",
+    "osm_id": "way/25504265",
+    "osm_tags": "water=lake",
+    "coordinate_method": "nominatim_geocode",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "n/a",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "Receiving water body, not a road hotspot. Use as a storage boundary condition in the Chennai city config.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/25504265"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2208242,
+     13.015169
+    ]
+   },
+   "properties": {
+    "id": "CHN-OF-01",
+    "name": "Adyar River",
+    "kind": "outfall_trunk",
+    "osm_id": "way/178105900",
+    "osm_tags": "waterway=river",
+    "coordinate_method": "overpass_way_centroid",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "n/a",
+    "source_url": "https://overpass-api.de/api/interpreter",
+    "source_cached": "docs/research/_raw/overpass_chennai_waterways.json",
+    "accessed": "2026-09-05",
+    "tidal": false,
+    "note": "Primary receiving water for the northern half of CHN-SOUTH. Mambalam Canal (way/23161547), Mambalam Drain (way/214162275), Reddikuppam Canal (way/25460072) and Jafferkhanpet Canal (way/27709396) discharge to it. Coordinate is the way centroid, not a single outfall point.",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/178105900"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     80.2695111,
+     13.0187265
+    ]
+   },
+   "properties": {
+    "id": "CHN-OF-02",
+    "name": "Adyar Creek",
+    "kind": "outfall_tidal",
+    "osm_id": "way/111749073",
+    "osm_tags": "waterway=stream",
+    "coordinate_method": "overpass_way_centroid",
+    "coordinate_verified": true,
+    "flood_source_verified": false,
+    "source_strength": "n/a",
+    "source_url": "https://overpass-api.de/api/interpreter",
+    "source_cached": "docs/research/_raw/overpass_chennai_waterways.json",
+    "accessed": "2026-09-05",
+    "tidal": true,
+    "note": "DESIGNATED TIDE-LOCKED OUTFALL for the Chennai city config, mirroring the Mahim/Mithi tide-lock in the Mumbai demo. Tide stage series must be labelled source=illustrative (no open Chennai tide series was found).",
+    "coordinate_source_url": "https://www.openstreetmap.org/way/111749073"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "id": "CHN-OF-03",
+    "name": "Adyar river mouth",
+    "kind": "outfall_candidate",
+    "osm_id": null,
+    "coordinate_method": "NOT GEOCODED",
+    "coordinate_verified": false,
+    "flood_source_verified": false,
+    "source_strength": "none",
+    "source_url": null,
+    "accessed": "2026-09-06",
+    "note": "NOT FOUND - Nominatim returned NO RESULT for 'Adyar River mouth, Chennai' (docs/research/_raw/nominatim_chennai.txt). Deliberately left with a null geometry rather than an invented coordinate. Settle by tracing way/178105900 to its eastern end, or with an Overpass query for the river's downstream node."
+   }
+  }
+ ]
+}

@@ -1,0 +1,396 @@
+{
+  "$defs": {
+    "BBox": {
+      "additionalProperties": false,
+      "description": "A WGS84 bounding box. Accepts ``[min_lon, min_lat, max_lon, max_lat]`` as well as an object.",
+      "properties": {
+        "max_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Max Lat",
+          "type": "number"
+        },
+        "max_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Max Lon",
+          "type": "number"
+        },
+        "min_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Min Lat",
+          "type": "number"
+        },
+        "min_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Min Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_lon",
+        "min_lat",
+        "max_lon",
+        "max_lat"
+      ],
+      "title": "BBox",
+      "type": "object"
+    },
+    "DesignIntensity": {
+      "additionalProperties": false,
+      "description": "Rational-method design rain intensities in mm/h used to size inferred drains.",
+      "properties": {
+        "legacy": {
+          "default": 25.0,
+          "description": "Legacy BMC drains, mm/h.",
+          "exclusiveMinimum": 0,
+          "title": "Legacy",
+          "type": "number"
+        },
+        "upgraded": {
+          "default": 50.0,
+          "description": "Upgraded (BRIMSTOWAD) corridors, mm/h.",
+          "exclusiveMinimum": 0,
+          "title": "Upgraded",
+          "type": "number"
+        }
+      },
+      "title": "DesignIntensity",
+      "type": "object"
+    },
+    "NestSpec": {
+      "additionalProperties": false,
+      "description": "A fine-resolution nest (5 m at Hindmata and King's Circle, P1).",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Lon",
+          "type": "number"
+        },
+        "name": {
+          "description": "e.g. Hindmata junction",
+          "title": "Name",
+          "type": "string"
+        },
+        "res_m": {
+          "default": 5.0,
+          "description": "Cell size in metres.",
+          "exclusiveMinimum": 0,
+          "title": "Res M",
+          "type": "number"
+        },
+        "size_m": {
+          "default": 1000.0,
+          "description": "Side length in metres (1 km^2 nest).",
+          "exclusiveMinimum": 0,
+          "title": "Size M",
+          "type": "number"
+        },
+        "tier": {
+          "default": "P1",
+          "enum": [
+            "P0",
+            "P1",
+            "P2"
+          ],
+          "title": "Tier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "lon",
+        "lat"
+      ],
+      "title": "NestSpec",
+      "type": "object"
+    },
+    "RadarDomain": {
+      "additionalProperties": false,
+      "description": "The Sky domain: a square centred on the AOI (60 km at 500 m for Mumbai, SPEC.md 3.3).",
+      "properties": {
+        "center_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Center Lat",
+          "type": "number"
+        },
+        "center_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Center Lon",
+          "type": "number"
+        },
+        "res_m": {
+          "description": "Pixel size in metres (500 for pySTEPS).",
+          "exclusiveMinimum": 0,
+          "title": "Res M",
+          "type": "number"
+        },
+        "size_km": {
+          "description": "Side length of the square domain in km.",
+          "exclusiveMinimum": 0,
+          "title": "Size Km",
+          "type": "number"
+        }
+      },
+      "required": [
+        "center_lon",
+        "center_lat",
+        "size_km",
+        "res_m"
+      ],
+      "title": "RadarDomain",
+      "type": "object"
+    },
+    "TidalOutfall": {
+      "additionalProperties": false,
+      "description": "A coastal or creek outfall whose stage follows the tide (the demo's tide-locked outfall).",
+      "properties": {
+        "flap_gate": {
+          "default": false,
+          "description": "True blocks reverse flow.",
+          "title": "Flap Gate",
+          "type": "boolean"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Lon",
+          "type": "number"
+        },
+        "name": {
+          "description": "e.g. Worli sea face outfall",
+          "title": "Name",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "stage_source": {
+          "default": "illustrative",
+          "description": "'tide table <url>' when public tables were used, else 'illustrative'.",
+          "title": "Stage Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "lon",
+        "lat"
+      ],
+      "title": "TidalOutfall",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:CityConfig",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One city's build configuration (``mumbai.yaml``).",
+  "properties": {
+    "aoi_id": {
+      "description": "AOI identifier, e.g. MUM-CENTRAL.",
+      "title": "Aoi Id",
+      "type": "string"
+    },
+    "bbox": {
+      "$ref": "#/$defs/BBox",
+      "description": "WGS84 extent of the AOI."
+    },
+    "building_burn_m": {
+      "default": 5.0,
+      "description": "Height added to building cells.",
+      "minimum": 0,
+      "title": "Building Burn M",
+      "type": "number"
+    },
+    "cn_range": {
+      "default": [
+        90,
+        98
+      ],
+      "description": "SCS curve-number range for saturated monsoon soils.",
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Cn Range",
+      "type": "array"
+    },
+    "code": {
+      "default": "",
+      "description": "Three-letter code used in run ids; defaults from the slug (MUM, CHN).",
+      "pattern": "^([A-Z]{3})?$",
+      "title": "Code",
+      "type": "string"
+    },
+    "crs": {
+      "description": "EPSG code of the metric computation CRS.",
+      "maximum": 32767,
+      "minimum": 1024,
+      "title": "Crs",
+      "type": "integer"
+    },
+    "dem_tiles": {
+      "description": "Copernicus GLO-30 tile file names under city/cache/dem/ that cover the AOI (SPEC.md 10.1 step 1). Names only, never URLs: the pipeline reads the cache.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dem Tiles",
+      "type": "array"
+    },
+    "depression_min_area_m2": {
+      "default": 900.0,
+      "description": "Pits smaller than this are breached as spurious.",
+      "exclusiveMinimum": 0,
+      "title": "Depression Min Area M2",
+      "type": "number"
+    },
+    "design_intensity_mm_h": {
+      "$ref": "#/$defs/DesignIntensity"
+    },
+    "grid_m": {
+      "default": 30.0,
+      "description": "City grid cell size in metres.",
+      "exclusiveMinimum": 0,
+      "title": "Grid M",
+      "type": "number"
+    },
+    "hotspots_path": {
+      "default": "hotspots.geojson",
+      "description": "Hotspot register, relative to the city folder; every point carries a source_url.",
+      "title": "Hotspots Path",
+      "type": "string"
+    },
+    "id": {
+      "description": "City slug, e.g. mumbai.",
+      "pattern": "^[a-z][a-z0-9_-]*$",
+      "title": "Id",
+      "type": "string"
+    },
+    "infra_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Hand-curated infrastructure JSON (pumping stations, tanks).",
+      "title": "Infra Path"
+    },
+    "inlet_spacing_m": {
+      "default": 40.0,
+      "description": "Inlet spacing along roads.",
+      "exclusiveMinimum": 0,
+      "title": "Inlet Spacing M",
+      "type": "number"
+    },
+    "landcover_tiles": {
+      "description": "ESA WorldCover 10 m tile file names under city/cache/worldcover/ covering the AOI (SPEC.md 10.1 step 3).",
+      "items": {
+        "type": "string"
+      },
+      "title": "Landcover Tiles",
+      "type": "array"
+    },
+    "manning_n": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Manning n by land-cover class.",
+      "title": "Manning N",
+      "type": "object"
+    },
+    "min_drain_slope": {
+      "default": 0.003,
+      "description": "Minimum inferred pipe slope.",
+      "exclusiveMinimum": 0,
+      "title": "Min Drain Slope",
+      "type": "number"
+    },
+    "name": {
+      "description": "Display name, e.g. Mumbai.",
+      "title": "Name",
+      "type": "string"
+    },
+    "nests": {
+      "items": {
+        "$ref": "#/$defs/NestSpec"
+      },
+      "title": "Nests",
+      "type": "array"
+    },
+    "radar_domain": {
+      "$ref": "#/$defs/RadarDomain"
+    },
+    "road_carve_m": {
+      "default": 0.15,
+      "description": "Depth carved along road centrelines.",
+      "minimum": 0,
+      "title": "Road Carve M",
+      "type": "number"
+    },
+    "tidal_outfalls": {
+      "items": {
+        "$ref": "#/$defs/TidalOutfall"
+      },
+      "title": "Tidal Outfalls",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "aoi_id",
+    "bbox",
+    "crs",
+    "radar_domain"
+  ],
+  "title": "CityConfig",
+  "type": "object"
+}

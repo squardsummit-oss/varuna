@@ -1,0 +1,43 @@
+{
+  "$id": "urn:varuna:schema:ComputeRequest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of ``POST /v1/cycle/compute`` ('Compute live').",
+  "properties": {
+    "bundle": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Bundle to read streams from; None = current.",
+      "title": "Bundle"
+    },
+    "cycle_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Cycle time; None = the replay clock's current time.",
+      "title": "Cycle Ts"
+    },
+    "force": {
+      "default": false,
+      "description": "Recompute even when a baked run exists.",
+      "title": "Force",
+      "type": "boolean"
+    }
+  },
+  "title": "ComputeRequest",
+  "type": "object"
+}

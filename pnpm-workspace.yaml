@@ -1,0 +1,29 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  unrs-resolver: true
+  sharp: true
+  esbuild: true
+  "@tailwindcss/oxide": true
+  # Arrive with next-intl for its message-extraction tooling, which this project does not use.
+  # Both ship prebuilt platform binaries, so their install scripts are not run.
+  '@parcel/watcher': false
+  '@swc/core': false
+
+# Transitive dependencies pinned past a published advisory. Each entry is scoped to the
+# vulnerable range so an unaffected major is left alone, and each names what it fixes.
+# pnpm 11 reads overrides here, not from package.json's "pnpm" field.
+overrides:
+  # maxTotalMergeKeys does not limit CPU use for empty merge sources. Only the 4.x line is
+  # affected; js-yaml@3, which @lhci/utils needs and whose API differs, is deliberately untouched.
+  "js-yaml@>=4.0.0 <4.3.2": "4.3.2"
+  # Path traversal via unsanitised prefix/postfix, and an arbitrary write through a symlinked
+  # `dir`. Reaches us only through @lhci/cli and inquirer, both development-only.
+  "tmp@<0.2.6": "0.2.6"
+  # unzipSync can loop forever on a malformed ZIP64 archive. Patch bump inside 0.7.x.
+  "fflate@>=0.7.0 <0.7.5": "0.7.5"
+  # Missing buffer bounds check in v3/v5/v6 when `buf` is supplied. @lhci/cli is the only
+  # consumer, and only in the Lighthouse CI job.
+  "uuid@<11.1.1": "11.1.1"

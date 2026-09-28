@@ -1,0 +1,358 @@
+{
+  "emulator": {
+    "run_id": "TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "method": "twin_level_emulator_delta",
+    "engine": "emulator",
+    "rain_scale": 1.5,
+    "tide_offset_m": 0.5,
+    "tide": {
+      "requested_m": 0.5,
+      "applied_m": 0.0,
+      "needs_twin": true,
+      "twin_endpoint": "/v1/whatif/twin",
+      "message": "Tide +0.5 m is not in this answer: the emulator has no sea level. Rain, cleaning and pumps are answered here; the tide needs a full-city Twin run of about a minute."
+    },
+    "change_threshold_cm": 0.5,
+    "before_floor_cm": 5.0,
+    "emulator": {
+      "rmse_cm": 5.7,
+      "csi_30cm": 0.085,
+      "n_training_runs": 6
+    },
+    "beta_source": {
+      "kind": "pulse_posterior",
+      "run_id": "TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+      "resolved": 4,
+      "filled_with_prior": 1,
+      "filled_with_flat_prior": 1,
+      "min": 0.2,
+      "max": 0.9,
+      "posterior_edges": 5
+    },
+    "nothing_changed": false,
+    "summary": "5 segments deeper, each by 0.5 cm or more. Tide not included: it runs on the Twin.",
+    "n_changed": 5,
+    "n_worse": 5,
+    "n_improved": 0,
+    "n_newly_wet": 1,
+    "n_dry_before": 1,
+    "n_segments_compared": 4,
+    "n_not_modelled": 0,
+    "cleaned_segments": [],
+    "cleaned_unmatched": [],
+    "levers": {
+      "pump_plan": {
+        "inventory": "synthetic",
+        "label": "Lower bound: the emulator prices a pump against the rain that fell locally, not against the sea or water arriving from upstream, so a pump at a tide-locked street does more than this.",
+        "board_benefit_model": "emulator",
+        "applied": true,
+        "assignments": [
+          {
+            "pump_id": "P-01",
+            "hotspot_id": "TST-HS-1",
+            "name": "Test junction",
+            "eta_min": 0,
+            "arrival_step": 0,
+            "segments": 2,
+            "cm_per_step": 0.786
+          },
+          {
+            "pump_id": "P-02",
+            "hotspot_id": "street:Beta Marg",
+            "name": "Beta Marg",
+            "eta_min": 0,
+            "arrival_step": 0,
+            "segments": 1,
+            "cm_per_step": 0.524
+          }
+        ],
+        "segments_drained": 3,
+        "not_priced": [],
+        "arrives_after_window": []
+      },
+      "clean_top": {
+        "applied": true,
+        "label": "Top 1 pipe by learned blockage, city-wide",
+        "pipes": [
+          {
+            "edge_id": "E1",
+            "beta_before": 0.9,
+            "street": null
+          }
+        ],
+        "beta_after": 0.05,
+        "ranked_from": 5,
+        "streets_under": 1,
+        "streets_not_in_emulator": 0,
+        "segments_changed": 1
+      }
+    },
+    "segments": [
+      {
+        "segment_id": "S-D",
+        "before_cm": null,
+        "after_cm": 50.0,
+        "delta_cm": 50.0,
+        "newly_wet": true
+      },
+      {
+        "segment_id": "S-E",
+        "before_cm": 8.0,
+        "after_cm": 58.0,
+        "delta_cm": 50.0,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-C",
+        "before_cm": 10.0,
+        "after_cm": 54.8,
+        "delta_cm": 44.8,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-B",
+        "before_cm": 20.0,
+        "after_cm": 62.1,
+        "delta_cm": 42.1,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-A",
+        "before_cm": 60.0,
+        "after_cm": 97.6,
+        "delta_cm": 37.6,
+        "newly_wet": false
+      }
+    ],
+    "hotspots": [
+      {
+        "hotspot_id": "TST-HS-1",
+        "name": "Test junction",
+        "lon": 72.84,
+        "lat": 19.01,
+        "before_cm": 55.0,
+        "after_cm": 94.9,
+        "delta_cm": 39.9,
+        "minutes_above_before": {
+          "30": 45,
+          "45": 40
+        },
+        "minutes_above_after": {
+          "30": 50,
+          "45": 40
+        },
+        "segments": 2,
+        "segments_missing": 1
+      }
+    ],
+    "hotspots_not_modelled": ["Unmodelled junction"],
+    "largest_changes": [
+      {
+        "segment_id": "S-D",
+        "before_cm": null,
+        "after_cm": 50.0,
+        "delta_cm": 50.0,
+        "newly_wet": true,
+        "name": null
+      },
+      {
+        "segment_id": "S-E",
+        "before_cm": 8.0,
+        "after_cm": 58.0,
+        "delta_cm": 50.0,
+        "newly_wet": false,
+        "name": null
+      },
+      {
+        "segment_id": "S-C",
+        "before_cm": 10.0,
+        "after_cm": 54.8,
+        "delta_cm": 44.8,
+        "newly_wet": false,
+        "name": "Beta Marg"
+      },
+      {
+        "segment_id": "S-B",
+        "before_cm": 20.0,
+        "after_cm": 62.1,
+        "delta_cm": 42.1,
+        "newly_wet": false,
+        "name": "Alpha Road"
+      },
+      {
+        "segment_id": "S-A",
+        "before_cm": 60.0,
+        "after_cm": 97.6,
+        "delta_cm": 37.6,
+        "newly_wet": false,
+        "name": "Alpha Road"
+      }
+    ],
+    "worst_after": [
+      {
+        "segment_id": "S-A",
+        "before_cm": 60.0,
+        "after_cm": 97.6,
+        "delta_cm": 37.6,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-B",
+        "before_cm": 20.0,
+        "after_cm": 62.1,
+        "delta_cm": 42.1,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-E",
+        "before_cm": 8.0,
+        "after_cm": 58.0,
+        "delta_cm": 50.0,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-C",
+        "before_cm": 10.0,
+        "after_cm": 54.8,
+        "delta_cm": 44.8,
+        "newly_wet": false
+      },
+      {
+        "segment_id": "S-D",
+        "before_cm": null,
+        "after_cm": 50.0,
+        "delta_cm": 50.0,
+        "newly_wet": true
+      }
+    ],
+    "ms": 1080.0,
+    "notes": [
+      "Reduced-order emulator calibrated to VARUNA-Twin: RMSE 5.7 cm and CSI 0.09 at 30 cm on held-out storms. The ranking is what this supports; run the physics check for a depth.",
+      "1 segment run at a changed blockage supplied by the caller.",
+      "Rain scaled to 1.50x.",
+      "Pumps drain 3 segments from each pump's arrival.",
+      "Blockage is Pulse's posterior from run TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked: 4 segments from the learned state and 1 from the city's inferred prior, 1 of them at a flat 0.2 because no pipe drains the street. Blockage spans 0.2 to 0.9.",
+      "Tide +0.5 m is not in this answer: the emulator has no sea level. Rain, cleaning and pumps are answered here; the tide needs a full-city Twin run of about a minute.",
+      "Top 1 pipe by learned blockage, city-wide: 1 pipe cleaned to beta = 0.05, which changed the blockage of 1 street in the emulator. A street whose worst pipe was cleaned runs at its next-worst pipe.",
+      "The cycle's pump plan: 2 pumps draining 3 streets from each pump's arrival. Lower bound: the emulator prices a pump against the rain that fell locally, not against the sea or water arriving from upstream, so a pump at a tide-locked street does more than this. Synthetic pump inventory.",
+      "1 of the changed streets were below 5 cm in the run, which does not store their depth; their change is measured from 0 cm.",
+      "1 hotspots have no road segment in the fitted emulator and are not in the table: Unmodelled junction.",
+      "The level is the Twin's own forecast for this run; the emulator supplies only the difference the scenario makes, step by step. Run the physics check for a scenario the Twin has solved end to end."
+    ]
+  },
+  "physics_tide": {
+    "run_id": "TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "method": "twin_full_aoi",
+    "runs_on_twin": true,
+    "summary": "This scenario runs on the Twin: with the tide at +0.5 m its answer is the physics, so there is no emulator answer to check.",
+    "tolerance_cm": 5.0,
+    "agrees": null,
+    "max_diff_cm": null,
+    "max_diff_hotspot": null,
+    "hotspots": [],
+    "hotspots_outside_window": [],
+    "rain_scale": 1.3,
+    "tide_offset_m": 0.5,
+    "cleaned_segments": [],
+    "twin_job": {
+      "endpoint": "/v1/whatif/twin",
+      "body": {
+        "run_id": "TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+        "rain_scale": 1.3,
+        "tide_offset_m": 0.5,
+        "cleaned_segments": []
+      },
+      "enabled": true,
+      "cached": null,
+      "expected_ms": 4600,
+      "expected_from": "Run TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked: twin 3,400 ms + sky 1,200 ms, plus the city load on a server's first scenario."
+    },
+    "levers_not_checked": ["pump_plan", "clean_top"],
+    "twin_ms": 0.0,
+    "ms": 54.3,
+    "budget_ms": 10000,
+    "within_budget": true,
+    "notes": [
+      "Flash-lite has no sea level, so a tide scenario has no emulator answer and nothing for the physics to check. It runs on one full-city coupled Twin at the cycle's own inputs, and that run is the answer.",
+      "The full-city run takes about a minute and holds the server while it runs.",
+      "The pump plan is not in this Twin run: the Twin has no pump sink on the street, so the pumps are priced by the emulator only, as a lower bound.",
+      "Clean top pipes by learned blockage is not in this Twin run, which is levelled on the city's prior blockage; clean those streets by name to run them here."
+    ]
+  },
+  "nothing": {
+    "run_id": "TST-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+    "method": "twin_level_emulator_delta",
+    "engine": "emulator",
+    "rain_scale": 1.0,
+    "tide_offset_m": 0.0,
+    "tide": {
+      "requested_m": 0.0,
+      "applied_m": 0.0,
+      "needs_twin": false,
+      "message": null
+    },
+    "change_threshold_cm": 0.5,
+    "before_floor_cm": 5.0,
+    "nothing_changed": true,
+    "summary": "Nothing changed.",
+    "n_changed": 0,
+    "n_worse": 0,
+    "n_improved": 0,
+    "n_newly_wet": 0,
+    "n_dry_before": 0,
+    "cleaned_segments": [],
+    "cleaned_unmatched": [],
+    "levers": {
+      "pump_plan": null,
+      "clean_top": null
+    },
+    "segments": [],
+    "hotspots": [
+      {
+        "hotspot_id": "TST-HS-1",
+        "name": "Test junction",
+        "lon": 72.84,
+        "lat": 19.01,
+        "before_cm": 55.0,
+        "after_cm": 55.0,
+        "delta_cm": 0.0,
+        "minutes_above_before": {
+          "30": 45,
+          "45": 40
+        },
+        "minutes_above_after": {
+          "30": 45,
+          "45": 40
+        },
+        "segments": 3,
+        "segments_missing": 0
+      },
+      {
+        "hotspot_id": "TST-HS-2",
+        "name": "Unmodelled junction",
+        "lon": 72.85,
+        "lat": 19.02,
+        "before_cm": 12.0,
+        "after_cm": 12.0,
+        "delta_cm": 0.0,
+        "minutes_above_before": {
+          "30": 0,
+          "45": 0
+        },
+        "minutes_above_after": {
+          "30": 0,
+          "45": 0
+        },
+        "segments": 1,
+        "segments_missing": 0
+      }
+    ],
+    "hotspots_not_modelled": [],
+    "largest_changes": [],
+    "worst_after": [],
+    "ms": 0.0,
+    "notes": [
+      "No lever is set: rain 1.0x, nothing cleaned, no pumps. The forecast is the run's own."
+    ]
+  }
+}

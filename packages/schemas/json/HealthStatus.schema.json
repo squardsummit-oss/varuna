@@ -1,0 +1,259 @@
+{
+  "$defs": {
+    "ReplayClock": {
+      "additionalProperties": false,
+      "description": "The single simulation clock shared by the console and the replay page.",
+      "properties": {
+        "bundle_id": {
+          "title": "Bundle Id",
+          "type": "string"
+        },
+        "cycle_index": {
+          "description": "Cycles triggered since t0.",
+          "minimum": 0,
+          "title": "Cycle Index",
+          "type": "integer"
+        },
+        "last_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Run Id"
+        },
+        "mode": {
+          "description": "baked = publish pre-computed runs; live = compute each cycle.",
+          "enum": [
+            "baked",
+            "live"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "n_cycles": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total cycles in the bundle.",
+          "title": "N Cycles"
+        },
+        "next_cycle_ts": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cycle Ts"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the clock wants the operator to know, in UI copy: 'No baked run for 06:45 IST. Run make bake ...', 'The replay reached the end of the window.' None when there is nothing to say.",
+          "title": "Note"
+        },
+        "playing": {
+          "title": "Playing",
+          "type": "boolean"
+        },
+        "sim_time": {
+          "description": "Current simulation instant (IST).",
+          "format": "date-time",
+          "title": "Sim Time",
+          "type": "string"
+        },
+        "speed": {
+          "description": "Acceleration factor: 1, 10, 30 or 60.",
+          "exclusiveMinimum": 0,
+          "title": "Speed",
+          "type": "number"
+        },
+        "t0": {
+          "format": "date-time",
+          "title": "T0",
+          "type": "string"
+        },
+        "t1": {
+          "format": "date-time",
+          "title": "T1",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bundle_id",
+        "sim_time",
+        "playing",
+        "speed",
+        "t0",
+        "t1",
+        "cycle_index",
+        "mode"
+      ],
+      "title": "ReplayClock",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:HealthStatus",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``GET /healthz``: liveness, mode, bundle and the last published run.",
+  "properties": {
+    "bundle": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bundle"
+    },
+    "city": {
+      "title": "City",
+      "type": "string"
+    },
+    "degraded_feeds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Degraded Feeds",
+      "type": "array"
+    },
+    "last_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Run Id"
+    },
+    "last_run_mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "baked",
+            "live"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Run Mode"
+    },
+    "last_run_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Run Ts"
+    },
+    "mode": {
+      "description": "Ingestion mode from settings.",
+      "enum": [
+        "replay",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "offline": {
+      "default": false,
+      "description": "True when outbound network is blocked.",
+      "title": "Offline",
+      "type": "boolean"
+    },
+    "replay": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReplayClock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "replay_mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "replay",
+            "live",
+            "degraded"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replay Mode"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "degraded",
+        "starting"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "uptime_s": {
+      "minimum": 0,
+      "title": "Uptime S",
+      "type": "number"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "version",
+    "mode",
+    "city",
+    "uptime_s"
+  ],
+  "title": "HealthStatus",
+  "type": "object"
+}

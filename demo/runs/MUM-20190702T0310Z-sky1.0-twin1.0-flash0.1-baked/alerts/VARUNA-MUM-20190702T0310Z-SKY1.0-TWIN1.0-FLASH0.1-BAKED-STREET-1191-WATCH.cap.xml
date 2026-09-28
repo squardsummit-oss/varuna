@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>VARUNA-MUM-20190702T0310Z-SKY1.0-TWIN1.0-FLASH0.1-BAKED-STREET-1191-WATCH</identifier>
+  <sender>varuna@sih2026.example</sender>
+  <sent>2019-07-02T08:40:00+05:30</sent>
+  <status>Exercise</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <info>
+    <category>Met</category>
+    <event>Street flooding</event>
+    <urgency>Expected</urgency>
+    <severity>Minor</severity>
+    <certainty>Likely</certainty>
+    <onset>2019-07-02T09:40:00+05:30</onset>
+    <expires>2019-07-02T11:40:00+05:30</expires>
+    <headline>Vashinaka Road: depth above 15 cm from 09:40 until at least 11:40</headline>
+    <description>VARUNA nowcast run MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked.</description>
+    <instruction>Avoid Vashinaka Road. Peak forecast 37 cm. Route emergency vehicles around it; see the reachability tab for the affected catchment.</instruction>
+    <area>
+      <areaDesc>Vashinaka Road</areaDesc>
+      <circle>19.033244772627388,72.89805621854518 0.5</circle>
+    </area>
+  </info>
+</alert>

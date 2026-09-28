@@ -1,0 +1,77 @@
+{
+  "$id": "urn:varuna:schema:HotspotDelta",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One row of the delta table: before -> after at a hotspot.",
+  "properties": {
+    "depth_after_cm": {
+      "description": "Peak p50 depth under the scenario.",
+      "minimum": 0,
+      "title": "Depth After Cm",
+      "type": "number"
+    },
+    "depth_before_cm": {
+      "description": "Peak p50 depth in the base run.",
+      "minimum": 0,
+      "title": "Depth Before Cm",
+      "type": "number"
+    },
+    "hotspot_id": {
+      "minLength": 1,
+      "title": "Hotspot Id",
+      "type": "string"
+    },
+    "minutes_impassable_after": {
+      "minimum": 0,
+      "title": "Minutes Impassable After",
+      "type": "number"
+    },
+    "minutes_impassable_before": {
+      "description": "Minutes above the car threshold.",
+      "minimum": 0,
+      "title": "Minutes Impassable Before",
+      "type": "number"
+    },
+    "name": {
+      "description": "e.g. Hindmata junction",
+      "title": "Name",
+      "type": "string"
+    },
+    "peak_ts_after": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Peak Ts After"
+    },
+    "peak_ts_before": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Peak Ts Before"
+    }
+  },
+  "required": [
+    "hotspot_id",
+    "name",
+    "depth_before_cm",
+    "depth_after_cm",
+    "minutes_impassable_before",
+    "minutes_impassable_after"
+  ],
+  "title": "HotspotDelta",
+  "type": "object"
+}

@@ -1,0 +1,10 @@
+{
+  "model": "data\\train\\flash_lite.npz",
+  "n_segments": 21296,
+  "fitted_segments": 13655,
+  "n_training_runs": 6,
+  "n_holdout_runs": 2,
+  "rmse_cm": 5.694,
+  "csi_30cm": 0.0849,
+  "note": "Reduced-order emulator calibrated to VARUNA-Twin. Corpus of 8 Twin runs peaking at 23-109 mm/h over the segments across 2 blockage draws, 6 fitted and 2 held out; SPEC.md 11.7 asks for 200 runs and this is 8, so the held-out skill below is the number to trust, not the structure."
+}

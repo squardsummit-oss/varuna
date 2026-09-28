@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "ContingencyTable": {
+      "additionalProperties": false,
+      "description": "Hits / misses / false alarms / correct negatives for one threshold.",
+      "properties": {
+        "correct_negatives": {
+          "minimum": 0,
+          "title": "Correct Negatives",
+          "type": "integer"
+        },
+        "false_alarms": {
+          "minimum": 0,
+          "title": "False Alarms",
+          "type": "integer"
+        },
+        "hits": {
+          "minimum": 0,
+          "title": "Hits",
+          "type": "integer"
+        },
+        "misses": {
+          "minimum": 0,
+          "title": "Misses",
+          "type": "integer"
+        },
+        "threshold_cm": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Threshold Cm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hits",
+        "misses",
+        "false_alarms",
+        "correct_negatives"
+      ],
+      "title": "ContingencyTable",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:HotspotScore",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Scores at one chronic spot.",
+  "properties": {
+    "contingency": {
+      "$ref": "#/$defs/ContingencyTable"
+    },
+    "hotspot_id": {
+      "minLength": 1,
+      "title": "Hotspot Id",
+      "type": "string"
+    },
+    "lead_time_gained_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Minutes between the first alert and the first observed report.",
+      "title": "Lead Time Gained Min"
+    },
+    "mae_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Depth MAE where pins carry depth.",
+      "title": "Mae Cm"
+    },
+    "n_pins": {
+      "default": 0,
+      "minimum": 0,
+      "title": "N Pins",
+      "type": "integer"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "timing_err_min": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Forecast peak minus observed onset in minutes (signed).",
+      "title": "Timing Err Min"
+    }
+  },
+  "required": [
+    "hotspot_id",
+    "name",
+    "contingency"
+  ],
+  "title": "HotspotScore",
+  "type": "object"
+}

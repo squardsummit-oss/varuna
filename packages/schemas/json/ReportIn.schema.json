@@ -1,0 +1,84 @@
+{
+  "$id": "urn:varuna:schema:ReportIn",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of ``POST /v1/reports`` from the citizen report flow.",
+  "properties": {
+    "depth_hint": {
+      "description": "ankle (~10 cm), knee (~45 cm) or waist (~90 cm).",
+      "enum": [
+        "ankle",
+        "knee",
+        "waist"
+      ],
+      "title": "Depth Hint",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "photo_b64": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional JPEG/PNG as base64 (no data: prefix).",
+      "title": "Photo B64"
+    },
+    "reporter_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Anonymous device token for de-duplication; never a name.",
+      "title": "Reporter Id"
+    },
+    "text": {
+      "default": "",
+      "description": "Optional description.",
+      "maxLength": 500,
+      "title": "Text",
+      "type": "string"
+    },
+    "ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Observation time; None = now (server clock or replay clock).",
+      "title": "Ts"
+    }
+  },
+  "required": [
+    "lat",
+    "lon",
+    "depth_hint"
+  ],
+  "title": "ReportIn",
+  "type": "object"
+}

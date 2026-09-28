@@ -1,0 +1,477 @@
+{
+  "$defs": {
+    "BBox": {
+      "additionalProperties": false,
+      "description": "A WGS84 bounding box. Accepts ``[min_lon, min_lat, max_lon, max_lat]`` as well as an object.",
+      "properties": {
+        "max_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Max Lat",
+          "type": "number"
+        },
+        "max_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Max Lon",
+          "type": "number"
+        },
+        "min_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Min Lat",
+          "type": "number"
+        },
+        "min_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Min Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_lon",
+        "min_lat",
+        "max_lon",
+        "max_lat"
+      ],
+      "title": "BBox",
+      "type": "object"
+    },
+    "CityFingerprint": {
+      "additionalProperties": false,
+      "description": "Which city files a run read: the first 12 hex of a sha256 of each, ``None`` when absent.\n\nThe run id carries engine versions and nothing about the city, so a run baked before a city\nrebuild and one baked after share an id. This is how a reader tells them apart without\nreading the products. Each digest is of the file's content, not its bytes on disk: the\nsegment ids in order; the decoded rasters with their shape and transform; the drain tables'\nids and the columns that say how a node meets the sea; and ``condition.json``'s coast-wall\nfields. A rebuild that reproduces the city reproduces every digest.",
+      "properties": {
+        "coast_wall": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "condition.json: the coast wall's level, rule, ring, raise and basins.",
+          "title": "Coast Wall"
+        },
+        "dem_conditioned": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dem_conditioned.tif: the ground the Twin runs on, wall included.",
+          "title": "Dem Conditioned"
+        },
+        "drain_edges": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "drain_edges.parquet: edge ids and the nodes each joins.",
+          "title": "Drain Edges"
+        },
+        "drain_nodes": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "drain_nodes.parquet: node ids, cells and outfall, tidal and flap flags.",
+          "title": "Drain Nodes"
+        },
+        "intertidal_mask": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "intertidal_mask.tif, when the city build writes one.",
+          "title": "Intertidal Mask"
+        },
+        "sea_mask": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sea_mask.tif: open sea and tidal creek codes.",
+          "title": "Sea Mask"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "segments.parquet: segment ids in order.",
+          "title": "Segments"
+        }
+      },
+      "title": "CityFingerprint",
+      "type": "object"
+    },
+    "EngineVersions": {
+      "additionalProperties": false,
+      "description": "Engine versions that produced a run; the first three appear in the run id.",
+      "properties": {
+        "flash": {
+          "description": "VARUNA-Flash version (0.x = reduced-order emulator)",
+          "title": "Flash",
+          "type": "string"
+        },
+        "products": {
+          "description": "Products version",
+          "title": "Products",
+          "type": "string"
+        },
+        "pulse": {
+          "description": "VARUNA-Pulse version",
+          "title": "Pulse",
+          "type": "string"
+        },
+        "sky": {
+          "description": "VARUNA-Sky version, e.g. 1.0",
+          "title": "Sky",
+          "type": "string"
+        },
+        "twin": {
+          "description": "VARUNA-Twin version",
+          "title": "Twin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sky",
+        "twin",
+        "flash",
+        "pulse",
+        "products"
+      ],
+      "title": "EngineVersions",
+      "type": "object"
+    },
+    "GridSpec": {
+      "additionalProperties": false,
+      "description": "The computational grid of the 2D solver (SPEC.md 3.3).",
+      "properties": {
+        "bounds": {
+          "$ref": "#/$defs/BBox",
+          "description": "WGS84 extent of the grid for the map BitmapLayer."
+        },
+        "crs": {
+          "description": "Computation CRS, e.g. EPSG:32643 (UTM 43N).",
+          "title": "Crs",
+          "type": "string"
+        },
+        "dx_m": {
+          "description": "Cell size in metres (30 for the city grid).",
+          "exclusiveMinimum": 0,
+          "title": "Dx M",
+          "type": "number"
+        },
+        "nx": {
+          "description": "Columns.",
+          "exclusiveMinimum": 0,
+          "title": "Nx",
+          "type": "integer"
+        },
+        "ny": {
+          "description": "Rows.",
+          "exclusiveMinimum": 0,
+          "title": "Ny",
+          "type": "integer"
+        },
+        "transform": {
+          "anyOf": [
+            {
+              "maxItems": 6,
+              "minItems": 6,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Affine (a, b, c, d, e, f) in CRS units for raster writers; optional.",
+          "title": "Transform"
+        }
+      },
+      "required": [
+        "dx_m",
+        "nx",
+        "ny",
+        "crs",
+        "bounds"
+      ],
+      "title": "GridSpec",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:RunMeta",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``run.json``: provenance for one cycle's artifacts (SPEC.md 10.3, blueprint 9.1 ``run``).",
+  "properties": {
+    "aoi_depth_band": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "p10, p50 and p90 of mean street depth in cm at each forecast step, taken across the ensemble's members: the band the time bar draws (SPEC.md 7.2). None when the run has fewer than two members, so a deterministic run never draws a band of no width.",
+      "title": "Aoi Depth Band"
+    },
+    "bundle": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Replay bundle id, None when live.",
+      "title": "Bundle"
+    },
+    "city": {
+      "description": "City slug, e.g. mumbai.",
+      "title": "City",
+      "type": "string"
+    },
+    "city_fingerprint": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CityFingerprint"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Digests of the city files the run read, so a run baked on another build of the city can be told apart under the same id. None on a run baked before."
+    },
+    "created_at": {
+      "description": "When the run directory was written (IST).",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "cycle_ts": {
+      "description": "Cycle time (IST).",
+      "format": "date-time",
+      "title": "Cycle Ts",
+      "type": "string"
+    },
+    "degraded_feeds": {
+      "description": "Feeds missing in this cycle, e.g. ['radar', 'traffic'].",
+      "items": {
+        "type": "string"
+      },
+      "title": "Degraded Feeds",
+      "type": "array"
+    },
+    "ensemble_n": {
+      "description": "Street-forecast members (50 in the prototype).",
+      "minimum": 1,
+      "title": "Ensemble N",
+      "type": "integer"
+    },
+    "grid": {
+      "$ref": "#/$defs/GridSpec"
+    },
+    "mass_balance_err": {
+      "description": "Relative mass-balance error of the Twin run (fraction, target < 0.001).",
+      "minimum": 0,
+      "title": "Mass Balance Err",
+      "type": "number"
+    },
+    "mass_balance_ledger": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Where the Twin's residual sits, in m3: the surface's own, the drain's own, and the two exchange gaps between them, which sum to the residual on a coupled run. A run baked before the ledger existed carries none.",
+      "title": "Mass Balance Ledger"
+    },
+    "mode": {
+      "description": "baked = pre-computed by make bake; live = computed now.",
+      "enum": [
+        "baked",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "n_steps": {
+      "default": 36,
+      "description": "Number of forecast steps.",
+      "exclusiveMinimum": 0,
+      "title": "N Steps",
+      "type": "integer"
+    },
+    "notes": {
+      "description": "Honesty notes shown in the run stamp, e.g. 'reconstructed replay'.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "radar_frame_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Timestamp of the latest radar frame used, if any.",
+      "title": "Radar Frame Ts"
+    },
+    "rain_aoi_mm_h": {
+      "description": "AOI-mean rain rate in mm/h at each forecast step: the storm this run was given. What-if scales it, so a run without it can only answer 'what if' about pipes.",
+      "items": {
+        "type": "number"
+      },
+      "title": "Rain Aoi Mm H",
+      "type": "array"
+    },
+    "replay_mode": {
+      "default": "replay",
+      "description": "Ingestion mode of the cycle.",
+      "enum": [
+        "replay",
+        "live",
+        "degraded"
+      ],
+      "title": "Replay Mode",
+      "type": "string"
+    },
+    "run_id": {
+      "description": "See build_run_id().",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "stage_ms": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "Wall-clock per stage in ms (decode, sky, twin, ...).",
+      "title": "Stage Ms",
+      "type": "object"
+    },
+    "step_min": {
+      "default": 5,
+      "description": "Forecast step in minutes.",
+      "exclusiveMinimum": 0,
+      "title": "Step Min",
+      "type": "integer"
+    },
+    "twin_revision": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The Twin revision that computed the run, finer than the version in the run id - for example 1.0+coast-2026-09-28, the Twin with the city's own coastline. None on a run baked before run.json carried it.",
+      "title": "Twin Revision"
+    },
+    "versions": {
+      "$ref": "#/$defs/EngineVersions"
+    }
+  },
+  "required": [
+    "run_id",
+    "city",
+    "cycle_ts",
+    "versions",
+    "mode",
+    "ensemble_n",
+    "mass_balance_err",
+    "created_at",
+    "grid"
+  ],
+  "title": "RunMeta",
+  "type": "object"
+}

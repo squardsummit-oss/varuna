@@ -1,0 +1,9 @@
+node_modules
+.next
+dist
+.turbo
+city
+data
+bundles
+*.md
+pnpm-lock.yaml

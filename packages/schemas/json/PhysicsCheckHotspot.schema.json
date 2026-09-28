@@ -1,0 +1,35 @@
+{
+  "$id": "urn:varuna:schema:PhysicsCheckHotspot",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Emulator versus Twin peak depth at one hotspot.",
+  "properties": {
+    "emulator_cm": {
+      "minimum": 0,
+      "title": "Emulator Cm",
+      "type": "number"
+    },
+    "hotspot_id": {
+      "minLength": 1,
+      "title": "Hotspot Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "twin_cm": {
+      "minimum": 0,
+      "title": "Twin Cm",
+      "type": "number"
+    }
+  },
+  "required": [
+    "hotspot_id",
+    "name",
+    "emulator_cm",
+    "twin_cm"
+  ],
+  "title": "PhysicsCheckHotspot",
+  "type": "object"
+}

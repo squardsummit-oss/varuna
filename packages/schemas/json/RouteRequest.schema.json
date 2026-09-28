@@ -1,0 +1,164 @@
+{
+  "$id": "urn:varuna:schema:RouteRequest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of ``POST /v1/route``.",
+  "properties": {
+    "alternates": {
+      "default": 2,
+      "description": "Number of alternates to return.",
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Alternates",
+      "type": "integer"
+    },
+    "depart_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Departure (IST); None = the console's scrub time.",
+      "title": "Depart At"
+    },
+    "destination": {
+      "description": "[lon, lat], e.g. Sion Hospital [72.8628, 19.0176].",
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "type": "number"
+        },
+        {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "type": "number"
+        }
+      ],
+      "title": "Destination",
+      "type": "array"
+    },
+    "destination_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Destination Name"
+    },
+    "explain": {
+      "default": true,
+      "description": "Include structured reasons.",
+      "title": "Explain",
+      "type": "boolean"
+    },
+    "origin": {
+      "description": "[lon, lat], e.g. KEM Hospital [72.8419, 19.0035].",
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "type": "number"
+        },
+        {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "type": "number"
+        }
+      ],
+      "title": "Origin",
+      "type": "array"
+    },
+    "origin_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Origin Name"
+    },
+    "profile": {
+      "default": "car",
+      "enum": [
+        "ambulance",
+        "fire_tender",
+        "bus",
+        "car",
+        "two_wheeler",
+        "pedestrian"
+      ],
+      "title": "Profile",
+      "type": "string"
+    },
+    "risk_tolerance": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Max P(impassable) accepted per segment; None = profile default.",
+      "title": "Risk Tolerance"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "None = the latest published run.",
+      "title": "Run Id"
+    },
+    "spread": {
+      "default": true,
+      "description": "Return up to three safe corridors and an assignment (TECH_SPEC 3.2-3.3).",
+      "title": "Spread",
+      "type": "boolean"
+    },
+    "trip_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The client's own stable id for this trip, so the corridor assignment survives a reload. Nothing is stored against it; None means the request is not spread.",
+      "title": "Trip Id"
+    }
+  },
+  "required": [
+    "origin",
+    "destination"
+  ],
+  "title": "RouteRequest",
+  "type": "object"
+}

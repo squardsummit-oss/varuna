@@ -1,0 +1,102 @@
+{
+  "$id": "urn:varuna:schema:GroundTruthPin",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Properties of one feature in ``ground_truth.geojson``. Real and sourced, never synthetic\n(SPEC.md 0.7, 10.2).",
+  "properties": {
+    "depth_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Only when the source states or shows a depth.",
+      "title": "Depth Cm"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "log",
+        "news",
+        "social",
+        "platform"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "name": {
+      "description": "e.g. Hindmata junction",
+      "title": "Name",
+      "type": "string"
+    },
+    "source_url": {
+      "minLength": 8,
+      "title": "Source Url",
+      "type": "string"
+    },
+    "synthetic": {
+      "default": false,
+      "description": "Always False: ground truth is sourced.",
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Short quote or paraphrase of the source.",
+      "title": "Text"
+    },
+    "ts": {
+      "description": "Best estimate of when the flooding was observed (IST).",
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    },
+    "ts_uncertainty_min": {
+      "default": 0,
+      "description": "Half-width of the time window.",
+      "minimum": 0,
+      "title": "Ts Uncertainty Min",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "ts",
+    "name",
+    "lon",
+    "lat",
+    "kind",
+    "source_url"
+  ],
+  "title": "GroundTruthPin",
+  "type": "object"
+}

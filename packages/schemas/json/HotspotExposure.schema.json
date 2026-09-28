@@ -1,0 +1,122 @@
+{
+  "$id": "urn:varuna:schema:HotspotExposure",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What is at stake around a hotspot (blueprint 6.8: traffic, hospitals, transit, population).",
+  "properties": {
+    "facilities": {
+      "description": "Icon set shown on the hotspot row.",
+      "items": {
+        "enum": [
+          "hospital",
+          "fire_station",
+          "station",
+          "transit",
+          "school",
+          "shelter"
+        ],
+        "type": "string"
+      },
+      "title": "Facilities",
+      "type": "array"
+    },
+    "nearest_hospital": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "e.g. KEM Hospital, Parel.",
+      "title": "Nearest Hospital"
+    },
+    "nearest_hospital_m": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nearest Hospital M"
+    },
+    "nearest_station": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "e.g. Dadar station.",
+      "title": "Nearest Station"
+    },
+    "nearest_station_m": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nearest Station M"
+    },
+    "population_300m": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Population 300M"
+    },
+    "traffic_volume_proxy": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Relative traffic volume proxy by road class.",
+      "title": "Traffic Volume Proxy"
+    },
+    "transit_lines": {
+      "description": "Bus and rail lines affected.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Transit Lines",
+      "type": "array"
+    },
+    "weight": {
+      "description": "Exposure weight from the city pipeline (dimensionless).",
+      "minimum": 0,
+      "title": "Weight",
+      "type": "number"
+    }
+  },
+  "required": [
+    "weight"
+  ],
+  "title": "HotspotExposure",
+  "type": "object"
+}

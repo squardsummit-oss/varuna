@@ -1,0 +1,27 @@
+[project]
+name = "varuna-city"
+version = "0.1.0"
+description = "VARUNA city service"
+requires-python = ">=3.12,<3.13"
+dependencies = ["varuna-schemas", "numpy>=2", "scipy>=1.14", "rasterio>=1.4", "rioxarray>=0.17", "xarray>=2024.7", "geopandas>=1.0", "shapely>=2.0", "pyproj>=3.6", "osmnx>=2.0", "networkx>=3.3", "whitebox>=2.3", "pyflwdir>=0.5", "pyarrow>=17", "pillow>=10", "matplotlib>=3.9", "pyyaml>=6", "requests>=2.32", "numba>=0.60", "h3>=4", "truststore>=0.10", "mapbox-vector-tile>=2.1", "pmtiles>=3.4"]
+
+[tool.uv.sources]
+varuna-schemas = { workspace = true }
+varuna-api = { workspace = true }
+varuna-city = { workspace = true }
+varuna-replay = { workspace = true }
+varuna-sky = { workspace = true }
+varuna-twin = { workspace = true }
+varuna-pulse = { workspace = true }
+varuna-flash = { workspace = true }
+varuna-products = { workspace = true }
+varuna-route = { workspace = true }
+varuna-cycle = { workspace = true }
+varuna-verify = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["varuna_city"]

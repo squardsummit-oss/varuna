@@ -1,0 +1,1183 @@
+{
+  "run_id": "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+  "city": "mumbai",
+  "cycle_ts": "2019-07-02T08:40:00+05:30",
+  "valid_from": "2019-07-02T08:45:00+05:30",
+  "step_min": 5,
+  "n_steps": 36,
+  "threshold_cm": 45.0,
+  "travel_speed_kmh": 18.0,
+  "benefit_model": "emulator",
+  "benefit_label": "Flash-lite emulator re-run with the pump's outflow",
+  "inventory": "synthetic",
+  "emulator": {
+    "rmse_cm": 5.7,
+    "csi_30cm": 0.085,
+    "n_training_runs": 6
+  },
+  "route_profile": "truck",
+  "summary": {
+    "pumps_dispatched": 12,
+    "pumps_in_fleet": 12,
+    "minutes_before": 985,
+    "minutes_after": 70,
+    "minutes_saved": 915,
+    "helped_most": {
+      "pump_id": "P-08",
+      "name": "Lokmanya Tilak Nagar",
+      "minutes_before": 115,
+      "minutes_after": 15,
+      "minutes_saved": 100
+    },
+    "routed": 12,
+    "routed_minutes_saved": 920,
+    "late_on_road": 0
+  },
+  "legs": [
+    {
+      "pump_id": "P-05",
+      "capacity_m3_per_h": 600.0,
+      "depot": {
+        "name": "Municipal Garage, Worli",
+        "lon": 72.8185734,
+        "lat": 18.9950677
+      },
+      "target": {
+        "id": "street:Gurunanak Marg",
+        "name": "Gurunanak Marg",
+        "kind": "street",
+        "lon": 72.83624615598252,
+        "lat": 19.05942045307956
+      },
+      "eta_min": 25,
+      "minutes_before": 90,
+      "minutes_after": 0,
+      "minutes_saved": 90,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.1, 1.2, 1.8, 2.8, 4.3, 6.0, 8.2, 11.5, 15.7, 19.9, 23.7, 27.5, 30.8, 34.0, 36.2, 38.7,
+        41.1, 43.0, 45.4, 47.2, 48.7, 50.4, 51.9, 53.3, 54.4, 55.4, 56.3, 57.2, 57.8, 58.4, 59.1,
+        59.8, 60.4, 60.8, 61.2, 61.5
+      ],
+      "depth_after_cm": [
+        0.1, 1.2, 1.8, 2.8, 4.3, 6.0, 8.1, 11.2, 14.9, 18.4, 21.4, 24.4, 26.9, 29.3, 30.7, 32.5,
+        34.1, 35.2, 36.8, 37.8, 38.5, 39.4, 40.2, 40.8, 41.1, 41.3, 41.4, 41.5, 41.3, 41.2, 41.4,
+        41.8, 42.1, 42.3, 42.6, 42.7
+      ],
+      "window_before": {
+        "from_min": 95,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 61.5,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 42.7,
+        "at_min": 180
+      },
+      "effective_from_min": 25,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 16.4,
+        "distance_m": 8765.3,
+        "max_depth_cm": 1.6,
+        "path": [
+          [72.819135, 18.995206],
+          [72.818326, 18.996682],
+          [72.817731, 18.99795],
+          [72.817513, 18.998303],
+          [72.836453, 19.059433],
+          [72.836039, 19.059408]
+        ],
+        "streets": [
+          "Dr E Moses Marg",
+          "Dr Annie Besant Road",
+          "Doctor Annie Besant Road",
+          "Dr Annie Besant Road",
+          "Swatantrya Veer Savarkar Marg",
+          "Raobahadur S.K. Bole Marg",
+          "Gokhale Road",
+          "Lady Jamshedji Road",
+          "['Mahim Causeway', 'Lady Jamshedji Road']",
+          "['Swami Vivekanand Road', 'Mahim Causeway']",
+          "Swami Vivekanand Road",
+          "Gurunanak Marg"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 90
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-08",
+      "capacity_m3_per_h": 600.0,
+      "depot": {
+        "name": "Kurla Depot (BEST)",
+        "lon": 72.876058,
+        "lat": 19.0745661
+      },
+      "target": {
+        "id": "street:Lokmanya Tilak Nagar",
+        "name": "Lokmanya Tilak Nagar",
+        "kind": "street",
+        "lon": 72.88791954999999,
+        "lat": 19.0999751
+      },
+      "eta_min": 10,
+      "minutes_before": 115,
+      "minutes_after": 15,
+      "minutes_saved": 100,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        1.3, 3.1, 5.7, 8.8, 12.2, 15.3, 18.5, 22.5, 26.6, 30.5, 34.4, 38.3, 42.2, 45.5, 48.1, 49.7,
+        50.9, 50.5, 49.4, 48.3, 48.2, 47.7, 48.3, 47.3, 47.9, 47.6, 47.5, 47.7, 47.9, 48.2, 48.5,
+        48.7, 48.6, 48.5, 47.4, 46.2
+      ],
+      "depth_after_cm": [
+        1.3, 3.1, 5.7, 8.8, 12.1, 15.1, 18.0, 21.7, 25.5, 29.0, 32.5, 35.9, 39.4, 42.2, 44.4, 45.6,
+        46.3, 45.5, 44.1, 42.6, 42.2, 41.4, 41.8, 40.5, 40.9, 40.4, 40.1, 40.1, 40.1, 40.3, 40.4,
+        40.5, 40.3, 40.1, 38.9, 37.6
+      ],
+      "window_before": {
+        "from_min": 70,
+        "to_min": 180
+      },
+      "window_after": {
+        "from_min": 80,
+        "to_min": 90
+      },
+      "peak_before": {
+        "depth_cm": 50.9,
+        "at_min": 85
+      },
+      "peak_after": {
+        "depth_cm": 46.3,
+        "at_min": 85
+      },
+      "effective_from_min": 15,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 7.3,
+        "distance_m": 3502.3,
+        "max_depth_cm": 1.3,
+        "path": [
+          [72.876169, 19.074448],
+          [72.876658, 19.075109],
+          [72.877195, 19.07583],
+          [72.877275, 19.075934],
+          [72.88786, 19.099371],
+          [72.887883, 19.099979]
+        ],
+        "streets": [
+          "Lal Bahadur Shastri Marg",
+          "Magan Nathuram Road",
+          "Mathuradas Vasanji Road (Andheri Kurla Road)",
+          "90 Feet Road"
+        ],
+        "minutes_after": 15,
+        "minutes_saved": 100
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-12",
+      "capacity_m3_per_h": 600.0,
+      "depot": {
+        "name": "Wadala Depot",
+        "lon": 72.874025,
+        "lat": 19.038824
+      },
+      "target": {
+        "id": "street:Dr Charat Singh Colony Road",
+        "name": "Dr Charat Singh Colony Road",
+        "kind": "street",
+        "lon": 72.86274868498532,
+        "lat": 19.110745951440833
+      },
+      "eta_min": 27,
+      "minutes_before": 90,
+      "minutes_after": 0,
+      "minutes_saved": 90,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        1.4, 3.7, 6.4, 9.4, 12.6, 15.9, 19.1, 22.0, 24.7, 27.3, 29.9, 32.5, 35.0, 37.3, 39.4, 41.5,
+        43.2, 44.8, 46.2, 47.6, 48.9, 50.1, 51.4, 52.4, 53.2, 53.9, 54.4, 55.0, 55.5, 55.9, 56.3,
+        56.7, 57.0, 57.3, 57.6, 57.9
+      ],
+      "depth_after_cm": [
+        1.4, 3.7, 6.4, 9.4, 12.6, 15.9, 19.1, 21.9, 24.3, 26.3, 28.1, 29.9, 31.6, 33.1, 34.4, 35.8,
+        36.7, 37.5, 38.1, 38.7, 39.2, 39.6, 40.2, 40.4, 40.4, 40.8, 41.0, 41.3, 41.6, 41.7, 41.9,
+        42.2, 42.4, 42.6, 42.9, 43.2
+      ],
+      "window_before": {
+        "from_min": 95,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 57.9,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 43.2,
+        "at_min": 180
+      },
+      "effective_from_min": 30,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 23.4,
+        "distance_m": 13202.4,
+        "max_depth_cm": 9.4,
+        "path": [
+          [72.873734, 19.038828],
+          [72.873458, 19.038816],
+          [72.873101, 19.038802],
+          [72.873105, 19.038712],
+          [72.862702, 19.110916],
+          [72.862815, 19.110583]
+        ],
+        "streets": [
+          "M Ambedkar Marg",
+          "Laxmibai Kelkar Marg",
+          "Sulochana Shetty Marg",
+          "['60 Feet Road', 'Sulochana Shetty Marg']",
+          "60 Feet Road",
+          "90 Feet Road",
+          "Dharavi Main Road",
+          "Sion Bandra Link Road",
+          "Western Express Highway",
+          "Kalanagar Flyover",
+          "Western Express Highway",
+          "Kalina-Vakola Flyover"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 90
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-03",
+      "capacity_m3_per_h": 400.0,
+      "depot": {
+        "name": "BMC G South Ward Office (Elphinstone / Worli)",
+        "lon": 72.8304651,
+        "lat": 19.0083095
+      },
+      "target": {
+        "id": "street:Danda Boulevard",
+        "name": "Danda Boulevard",
+        "kind": "street",
+        "lon": 72.82537740000001,
+        "lat": 19.075163449999998
+      },
+      "eta_min": 25,
+      "minutes_before": 80,
+      "minutes_after": 0,
+      "minutes_saved": 80,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.1, 0.7, 1.4, 2.0, 3.7, 6.4, 9.3, 13.3, 17.6, 21.6, 25.5, 29.0, 32.0, 34.4, 36.5, 38.3,
+        40.0, 41.4, 42.8, 44.2, 45.5, 46.9, 48.1, 49.1, 50.0, 50.7, 51.3, 51.8, 52.2, 52.7, 53.0,
+        53.4, 53.7, 54.0, 54.2, 54.5
+      ],
+      "depth_after_cm": [
+        0.1, 0.7, 1.4, 2.0, 3.7, 6.4, 9.3, 13.2, 17.4, 21.3, 25.0, 28.3, 31.0, 33.1, 34.8, 36.3,
+        37.6, 38.5, 39.5, 40.5, 41.3, 42.3, 43.0, 43.6, 44.0, 44.3, 44.5, 44.6, 44.6, 44.8, 44.7,
+        44.7, 44.7, 44.7, 44.6, 44.6
+      ],
+      "window_before": {
+        "from_min": 105,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 54.5,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 44.8,
+        "at_min": 150
+      },
+      "effective_from_min": 25,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 17.2,
+        "distance_m": 8608.3,
+        "max_depth_cm": 1.1,
+        "path": [
+          [72.830127, 19.008021],
+          [72.8308, 19.008646],
+          [72.830779, 19.008826],
+          [72.830767, 19.008975],
+          [72.825976, 19.075044],
+          [72.825533, 19.075133]
+        ],
+        "streets": [
+          "Gokhale Road",
+          "Lady Jamshedji Road",
+          "['Mahim Causeway', 'Lady Jamshedji Road']",
+          "['Swami Vivekanand Road', 'Mahim Causeway']",
+          "Swami Vivekanand Road",
+          "Linking Road",
+          "['Chitrakar Durandhar Road (2nd Road)', 'Chitrakar Dhurandar Road']",
+          "Chitrakar Dhurandar Road",
+          "Danda Boulevard (1st Road)",
+          "Danda Boulevard"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 80
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-04",
+      "capacity_m3_per_h": 400.0,
+      "depot": {
+        "name": "BMC G South Ward Office (Elphinstone / Worli)",
+        "lon": 72.8304651,
+        "lat": 19.0083095
+      },
+      "target": {
+        "id": "street:sangharsh nagar road",
+        "name": "sangharsh nagar road",
+        "kind": "street",
+        "lon": 72.8995892992529,
+        "lat": 19.10295010444373
+      },
+      "eta_min": 43,
+      "minutes_before": 75,
+      "minutes_after": 0,
+      "minutes_saved": 75,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        1.0, 2.6, 5.1, 8.6, 12.0, 14.8, 17.4, 20.1, 22.5, 24.7, 26.7, 28.7, 31.0, 33.1, 35.1, 37.0,
+        38.9, 40.6, 42.0, 43.5, 44.8, 46.1, 47.6, 48.5, 49.3, 50.0, 50.7, 51.4, 52.0, 52.4, 52.9,
+        53.3, 53.6, 53.9, 54.2, 54.5
+      ],
+      "depth_after_cm": [
+        1.0, 2.6, 5.1, 8.6, 12.0, 14.8, 17.4, 20.1, 22.5, 24.7, 26.6, 28.3, 30.1, 31.7, 33.1, 34.5,
+        35.9, 37.1, 37.9, 38.9, 39.7, 40.5, 41.4, 41.8, 42.1, 42.3, 42.4, 42.6, 42.7, 42.6, 42.5,
+        42.4, 42.2, 42.0, 41.8, 41.5
+      ],
+      "window_before": {
+        "from_min": 110,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 54.5,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 42.7,
+        "at_min": 145
+      },
+      "effective_from_min": 45,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 29.0,
+        "distance_m": 15535.2,
+        "max_depth_cm": 8.9,
+        "path": [
+          [72.830127, 19.008021],
+          [72.8308, 19.008646],
+          [72.830779, 19.008826],
+          [72.830767, 19.008975],
+          [72.897763, 19.103306],
+          [72.899089, 19.102862]
+        ],
+        "streets": [
+          "Gokhale Road",
+          "Lady Jamshedji Road",
+          "['Mahim Causeway', 'Lady Jamshedji Road']",
+          "['Swami Vivekanand Road', 'Mahim Causeway']",
+          "Swami Vivekanand Road",
+          "Western Express Highway",
+          "['BKC Flyover', 'BKC - Sealink Road']",
+          "Bandra Kurla Complex Road",
+          "Lal Bahadur Shastri Marg",
+          "Magan Nathuram Road",
+          "Mathuradas Vasanji Road (Andheri Kurla Road)",
+          "['Mathuradas Vasanji Road (Andheri Kurla Road)', 'Baji Pasalkar Marg (Saki Vihar Road)']"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 75
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-07",
+      "capacity_m3_per_h": 400.0,
+      "depot": {
+        "name": "BMC L Ward Office (Kurla)",
+        "lon": 72.8788995,
+        "lat": 19.0705444
+      },
+      "target": {
+        "id": "street:Jijamata Road",
+        "name": "Jijamata Road",
+        "kind": "street",
+        "lon": 72.85648245,
+        "lat": 19.1255616
+      },
+      "eta_min": 22,
+      "minutes_before": 120,
+      "minutes_after": 45,
+      "minutes_saved": 75,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        1.2, 3.0, 5.8, 10.8, 15.9, 21.1, 26.7, 32.3, 37.4, 40.3, 42.2, 43.9, 45.4, 46.6, 47.7, 48.5,
+        49.3, 49.7, 50.3, 50.5, 50.8, 51.1, 51.2, 51.4, 51.3, 51.2, 51.0, 51.5, 52.2, 51.9, 52.0,
+        51.8, 51.9, 51.9, 51.6, 52.0
+      ],
+      "depth_after_cm": [
+        1.2, 3.0, 5.8, 10.8, 15.9, 21.1, 26.6, 32.1, 37.0, 39.7, 41.2, 42.6, 43.7, 44.5, 45.1, 45.4,
+        45.8, 45.7, 45.8, 45.6, 45.4, 45.3, 45.1, 44.9, 44.5, 44.1, 43.6, 43.8, 44.3, 43.7, 43.6,
+        43.2, 43.1, 42.9, 42.5, 42.7
+      ],
+      "window_before": {
+        "from_min": 65,
+        "to_min": 180
+      },
+      "window_after": {
+        "from_min": 75,
+        "to_min": 115
+      },
+      "peak_before": {
+        "depth_cm": 52.2,
+        "at_min": 145
+      },
+      "peak_after": {
+        "depth_cm": 45.8,
+        "at_min": 95
+      },
+      "effective_from_min": 25,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 18.2,
+        "distance_m": 10559.6,
+        "max_depth_cm": 4.9,
+        "path": [
+          [72.87918, 19.070053],
+          [72.879163, 19.070008],
+          [72.878047, 19.070137],
+          [72.877793, 19.069881],
+          [72.855988, 19.125305],
+          [72.856397, 19.125512]
+        ],
+        "streets": [
+          "S G Barve Marg",
+          "A H Wadia Marg",
+          "Bandra Kurla Complex Road",
+          "Santa Cruz \u2013 Chembur Link Road",
+          "Service Road",
+          "Western Express Highway",
+          "Airport Flyover",
+          "Western Express Highway",
+          "Service road",
+          "Service Road",
+          "Veer Jeejamata Bhosle Marg"
+        ],
+        "minutes_after": 25,
+        "minutes_saved": 95
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-10",
+      "capacity_m3_per_h": 400.0,
+      "depot": {
+        "name": "MCGM H/West Ward Office (Santacruz West)",
+        "lon": 72.8396565,
+        "lat": 19.0727405
+      },
+      "target": {
+        "id": "street:Danda Avenue",
+        "name": "Danda Avenue",
+        "kind": "street",
+        "lon": 72.82522285,
+        "lat": 19.075221199999998
+      },
+      "eta_min": 5,
+      "minutes_before": 85,
+      "minutes_after": 0,
+      "minutes_saved": 85,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.1, 0.7, 1.4, 2.1, 3.8, 7.0, 10.0, 14.0, 18.4, 22.4, 26.2, 29.7, 32.8, 35.2, 37.3, 39.1,
+        40.8, 42.1, 43.6, 45.0, 46.2, 47.7, 48.9, 49.9, 50.7, 51.5, 52.1, 52.5, 53.0, 53.4, 53.8,
+        54.2, 54.5, 54.8, 55.0, 55.3
+      ],
+      "depth_after_cm": [
+        0.1, 0.7, 1.4, 2.1, 3.7, 6.8, 9.7, 13.5, 17.7, 21.4, 24.9, 28.0, 30.8, 32.8, 34.4, 35.8,
+        37.1, 37.9, 38.9, 39.9, 40.7, 41.7, 42.5, 43.1, 43.5, 43.9, 44.1, 44.2, 44.3, 44.4, 44.5,
+        44.6, 44.6, 44.6, 44.6, 44.6
+      ],
+      "window_before": {
+        "from_min": 105,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 55.3,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 44.6,
+        "at_min": 180
+      },
+      "effective_from_min": 10,
+      "agrees": false,
+      "route": {
+        "profile": "truck",
+        "minutes": 5.5,
+        "distance_m": 2263.6,
+        "max_depth_cm": 0.3,
+        "path": [
+          [72.839668, 19.072255],
+          [72.839333, 19.071984],
+          [72.839731, 19.070535],
+          [72.839709, 19.070349],
+          [72.825533, 19.075133],
+          [72.825221, 19.075194]
+        ],
+        "streets": [
+          "3rd Road",
+          "Chitrakar Durandhar Road (2nd Road)",
+          "3rd Cross Road",
+          "5th Road",
+          "Ramrao Nayak Marg",
+          "Linking Road",
+          "['Chitrakar Durandhar Road (2nd Road)', 'Chitrakar Dhurandar Road']",
+          "Chitrakar Dhurandar Road",
+          "Danda Boulevard (1st Road)",
+          "Danda Boulevard"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 80
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-01",
+      "capacity_m3_per_h": 250.0,
+      "depot": {
+        "name": "F/N BMC Ward Office (Matunga)",
+        "lon": 72.8542714,
+        "lat": 19.0265628
+      },
+      "target": {
+        "id": "street:Bhakti Vendanta Swami Marg",
+        "name": "Bhakti Vendanta Swami Marg",
+        "kind": "street",
+        "lon": 72.83066085,
+        "lat": 19.116021649999993
+      },
+      "eta_min": 34,
+      "minutes_before": 70,
+      "minutes_after": 0,
+      "minutes_saved": 70,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.9, 2.0, 4.0, 6.3, 8.9, 11.5, 14.3, 17.1, 20.0, 22.7, 25.4, 28.1, 30.5, 32.4, 34.1, 35.7,
+        37.1, 38.7, 40.2, 41.5, 42.9, 44.2, 45.7, 46.8, 47.9, 48.7, 49.4, 50.0, 50.6, 51.1, 51.6,
+        52.0, 52.4, 52.7, 53.0, 53.2
+      ],
+      "depth_after_cm": [
+        0.9, 2.0, 4.0, 6.3, 8.9, 11.5, 14.3, 17.1, 19.9, 22.3, 24.7, 27.0, 29.1, 30.7, 32.0, 33.3,
+        34.4, 35.7, 36.8, 37.8, 38.9, 39.9, 41.0, 41.8, 42.6, 43.0, 43.4, 43.7, 44.0, 44.1, 44.3,
+        44.4, 44.5, 44.4, 44.4, 44.3
+      ],
+      "window_before": {
+        "from_min": 115,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 53.2,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 44.5,
+        "at_min": 165
+      },
+      "effective_from_min": 35,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 23.7,
+        "distance_m": 12578.7,
+        "max_depth_cm": 4.3,
+        "path": [
+          [72.854038, 19.026909],
+          [72.854413, 19.026111],
+          [72.85483, 19.026675],
+          [72.854823, 19.027046],
+          [72.831663, 19.116006],
+          [72.83081, 19.116016]
+        ],
+        "streets": [
+          "Dr Babasaheb Ambedkar Marg (Vincent Road)",
+          "King's Circle",
+          "Laxmibai Kelkar Marg",
+          "Sulochana Shetty Marg",
+          "['60 Feet Road', 'Sulochana Shetty Marg']",
+          "60 Feet Road",
+          "90 Feet Road",
+          "Dharavi Main Road",
+          "Sion Bandra Link Road",
+          "Western Express Highway",
+          "Kalanagar Flyover",
+          "Western Express Highway"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 70
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-02",
+      "capacity_m3_per_h": 250.0,
+      "depot": {
+        "name": "F/N BMC Ward Office (Matunga)",
+        "lon": 72.8542714,
+        "lat": 19.0265628
+      },
+      "target": {
+        "id": "street:Sheetal talao road",
+        "name": "Sheetal talao road",
+        "kind": "street",
+        "lon": 72.88209194723646,
+        "lat": 19.08355875529598
+      },
+      "eta_min": 23,
+      "minutes_before": 70,
+      "minutes_after": 0,
+      "minutes_saved": 70,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        1.5, 3.2, 5.1, 7.7, 9.9, 11.9, 13.8, 16.0, 18.5, 21.3, 24.0, 26.6, 29.2, 31.8, 34.2, 36.1,
+        37.3, 38.5, 39.8, 41.4, 43.0, 44.3, 45.4, 46.2, 46.8, 47.5, 48.1, 48.6, 49.1, 49.5, 49.9,
+        50.2, 50.5, 50.8, 51.0, 51.2
+      ],
+      "depth_after_cm": [
+        1.5, 3.2, 5.1, 7.7, 9.9, 11.9, 13.7, 15.6, 17.8, 20.3, 22.7, 24.9, 27.2, 29.5, 31.5, 33.1,
+        34.0, 34.9, 35.8, 37.1, 38.4, 39.3, 40.1, 40.6, 40.9, 41.2, 41.5, 41.7, 41.9, 41.9, 42.0,
+        42.0, 41.9, 41.9, 41.8, 41.7
+      ],
+      "window_before": {
+        "from_min": 115,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 51.2,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 42.0,
+        "at_min": 155
+      },
+      "effective_from_min": 25,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 15.7,
+        "distance_m": 9394.5,
+        "max_depth_cm": 4.1,
+        "path": [
+          [72.854038, 19.026909],
+          [72.854413, 19.026111],
+          [72.85483, 19.026675],
+          [72.854823, 19.027046],
+          [72.882585, 19.083412],
+          [72.88227, 19.0836]
+        ],
+        "streets": [
+          "Dr Babasaheb Ambedkar Marg (Vincent Road)",
+          "King's Circle",
+          "Laxmibai Kelkar Marg",
+          "['Sion Flyover', 'Sion Circle Flyover']",
+          "Sion Panvel Highway",
+          "Eastern Express Highway",
+          "S G Barve Marg (C S T Road)",
+          "S.G. Barve Marg",
+          "Mother Dairy Road",
+          "['Mother Dairy Road', 'Lokmanya Tilak Terminus Road']",
+          "Santa Cruz \u2013 Chembur Link Road",
+          "Lal Bahadur Shastri Marg"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 70
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-06",
+      "capacity_m3_per_h": 250.0,
+      "depot": {
+        "name": "BMC Ward Office (Sion / Matunga)",
+        "lon": 72.854268,
+        "lat": 19.0299554
+      },
+      "target": {
+        "id": "street:Shankar Rao Naram Path (Gowalia Chawl Lane)",
+        "name": "Shankar Rao Naram Path (Gowalia Chawl Lane)",
+        "kind": "street",
+        "lon": 72.82444503570332,
+        "lat": 19.00307076812243
+      },
+      "eta_min": 14,
+      "minutes_before": 70,
+      "minutes_after": 10,
+      "minutes_saved": 60,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.1, 1.5, 3.5, 5.3, 7.6, 10.3, 12.2, 14.3, 17.0, 20.0, 22.8, 25.5, 27.8, 29.8, 31.9, 33.6,
+        35.5, 37.4, 39.3, 41.0, 42.5, 43.9, 45.0, 46.1, 47.1, 48.0, 48.9, 49.7, 50.5, 51.3, 52.0,
+        52.7, 53.4, 54.0, 54.6, 55.2
+      ],
+      "depth_after_cm": [
+        0.1, 1.5, 3.5, 5.3, 7.6, 10.2, 11.9, 13.7, 16.0, 18.7, 21.2, 23.5, 25.5, 27.2, 29.0, 30.3,
+        31.9, 33.5, 35.1, 36.4, 37.6, 38.7, 39.4, 40.2, 40.9, 41.5, 42.0, 42.5, 43.0, 43.5, 43.8,
+        44.2, 44.6, 44.8, 45.1, 45.4
+      ],
+      "window_before": {
+        "from_min": 120,
+        "to_min": 180
+      },
+      "window_after": {
+        "from_min": 175,
+        "to_min": 180
+      },
+      "peak_before": {
+        "depth_cm": 55.2,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 45.4,
+        "at_min": 180
+      },
+      "effective_from_min": 15,
+      "agrees": false,
+      "route": {
+        "profile": "truck",
+        "minutes": 11.8,
+        "distance_m": 6559.1,
+        "max_depth_cm": 0.9,
+        "path": [
+          [72.853975, 19.030099],
+          [72.85349, 19.02906],
+          [72.854229, 19.028185],
+          [72.855024, 19.027319],
+          [72.825545, 19.000974],
+          [72.824769, 19.002721]
+        ],
+        "streets": [
+          "Telang Road",
+          "Telang Cross Road no.3",
+          "King's Circle",
+          "Dr Babasaheb Ambedkar Marg (Vincent Road)",
+          "['Jaganath Shankur Seth (Dadar TT) Flyover', 'Dadar TT flyover']",
+          "Dr Babasaheb Ambedkar Marg (Vincent Road)",
+          "Dr Babasaheb Ambedkar Marg",
+          "Mahadev Palav Marg",
+          "Currey Road Bridge",
+          "Mahadev Palav Marg",
+          "['N M Joshi Flyover', 'Delisle Road ROB']",
+          "['Ganapat flyover', 'N M Joshi Flyover', 'Delisle Road ROB']"
+        ],
+        "minutes_after": 10,
+        "minutes_saved": 55
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-09",
+      "capacity_m3_per_h": 250.0,
+      "depot": {
+        "name": "H/W Ward Office (Bandra West)",
+        "lon": 72.8355608,
+        "lat": 19.0563696
+      },
+      "target": {
+        "id": "street:Road 13",
+        "name": "Road 13",
+        "kind": "street",
+        "lon": 72.8705789,
+        "lat": 19.12106445
+      },
+      "eta_min": 27,
+      "minutes_before": 60,
+      "minutes_after": 0,
+      "minutes_saved": 60,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.7, 2.1, 4.0, 5.7, 7.7, 10.3, 12.9, 15.5, 17.9, 20.2, 22.6, 25.0, 27.2, 29.2, 31.1, 33.2,
+        35.1, 36.9, 38.4, 39.8, 41.1, 42.3, 43.4, 44.4, 45.2, 45.6, 46.0, 46.3, 46.5, 46.7, 46.9,
+        47.1, 47.2, 47.2, 47.3, 47.5
+      ],
+      "depth_after_cm": [
+        0.7, 2.1, 4.0, 5.7, 7.7, 10.3, 12.9, 15.4, 17.6, 19.5, 21.6, 23.7, 25.5, 27.2, 28.8, 30.6,
+        32.1, 33.6, 34.8, 35.9, 36.8, 37.7, 38.5, 39.1, 39.6, 39.7, 39.8, 39.7, 39.6, 39.5, 39.3,
+        39.2, 39.0, 38.7, 38.4, 38.3
+      ],
+      "window_before": {
+        "from_min": 125,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 47.5,
+        "at_min": 180
+      },
+      "peak_after": {
+        "depth_cm": 39.8,
+        "at_min": 135
+      },
+      "effective_from_min": 30,
+      "agrees": true,
+      "route": {
+        "profile": "truck",
+        "minutes": 18.4,
+        "distance_m": 11463.9,
+        "max_depth_cm": 4.2,
+        "path": [
+          [72.835576, 19.056],
+          [72.835528, 19.055918],
+          [72.836143, 19.055271],
+          [72.836336, 19.05508],
+          [72.870524, 19.121064],
+          [72.870634, 19.121064]
+        ],
+        "streets": [
+          "Hill Road",
+          "Swami Vivekanand Road",
+          "Western Express Highway",
+          "Sion Bandra Link Road",
+          "Western Express Highway",
+          "Kalanagar Flyover",
+          "Western Express Highway",
+          "Kalina-Vakola Flyover",
+          "Western Express Highway",
+          "Airport Flyover",
+          "Western Express Highway",
+          "Service road"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 60
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    },
+    {
+      "pump_id": "P-11",
+      "capacity_m3_per_h": 250.0,
+      "depot": {
+        "name": "BMC M Ward Office (Chembur)",
+        "lon": 72.8991057,
+        "lat": 19.061105
+      },
+      "target": {
+        "id": "street:Chatrapati Shivaji Road",
+        "name": "Chatrapati Shivaji Road",
+        "kind": "street",
+        "lon": 72.8462717,
+        "lat": 19.105844349999998
+      },
+      "eta_min": 25,
+      "minutes_before": 60,
+      "minutes_after": 0,
+      "minutes_saved": 60,
+      "benefit_model": "emulator",
+      "depth_before_cm": [
+        0.9, 2.2, 3.9, 6.0, 8.7, 11.6, 14.6, 17.7, 20.7, 23.5, 26.3, 28.6, 31.0, 33.3, 35.2, 36.7,
+        38.3, 39.6, 40.7, 41.7, 42.7, 43.6, 44.3, 44.7, 45.0, 45.3, 45.5, 45.7, 45.9, 46.0, 46.1,
+        46.2, 46.2, 46.3, 46.4, 46.4
+      ],
+      "depth_after_cm": [
+        0.9, 2.2, 3.9, 6.0, 8.7, 11.6, 14.4, 17.2, 19.8, 22.3, 24.8, 26.8, 28.8, 30.8, 32.4, 33.6,
+        34.8, 35.8, 36.6, 37.2, 37.9, 38.5, 38.9, 38.9, 38.9, 38.9, 38.7, 38.6, 38.7, 38.6, 38.6,
+        38.6, 38.5, 38.6, 38.6, 38.5
+      ],
+      "window_before": {
+        "from_min": 130,
+        "to_min": 180
+      },
+      "window_after": null,
+      "peak_before": {
+        "depth_cm": 46.4,
+        "at_min": 175
+      },
+      "peak_after": {
+        "depth_cm": 38.9,
+        "at_min": 120
+      },
+      "effective_from_min": 25,
+      "agrees": false,
+      "route": {
+        "profile": "truck",
+        "minutes": 21.2,
+        "distance_m": 11512.1,
+        "max_depth_cm": 6.0,
+        "path": [
+          [72.899485, 19.060447],
+          [72.899493, 19.060264],
+          [72.899407, 19.060296],
+          [72.898421, 19.060654],
+          [72.846299, 19.105798],
+          [72.846289, 19.105864]
+        ],
+        "streets": [
+          "Sharadbhau Acharya Marg",
+          "Road No 19",
+          "D K Sandu Marg",
+          "Ramakrishna Chemburkar Marg",
+          "Road No 17",
+          "Ramakrishna Chemburkar Marg",
+          "['Ghatkopar Mahul Road', 'Chembur Flyover']",
+          "Ghatkopar Mahul Road",
+          "Prakash Thorat Marg",
+          "Santa Cruz \u2013 Chembur Link Road",
+          "Flyover",
+          "Santa Cruz \u2013 Chembur Link Road"
+        ],
+        "minutes_after": 0,
+        "minutes_saved": 55
+      },
+      "route_note": null,
+      "series_model": "emulator"
+    }
+  ],
+  "depots": [
+    {
+      "name": "Municipal Garage, Worli",
+      "lon": 72.8185734,
+      "lat": 18.9950677,
+      "pump_ids": ["P-05"]
+    },
+    {
+      "name": "Kurla Depot (BEST)",
+      "lon": 72.876058,
+      "lat": 19.0745661,
+      "pump_ids": ["P-08"]
+    },
+    {
+      "name": "Wadala Depot",
+      "lon": 72.874025,
+      "lat": 19.038824,
+      "pump_ids": ["P-12"]
+    },
+    {
+      "name": "BMC G South Ward Office (Elphinstone / Worli)",
+      "lon": 72.8304651,
+      "lat": 19.0083095,
+      "pump_ids": ["P-03", "P-04"]
+    },
+    {
+      "name": "BMC L Ward Office (Kurla)",
+      "lon": 72.8788995,
+      "lat": 19.0705444,
+      "pump_ids": ["P-07"]
+    },
+    {
+      "name": "MCGM H/West Ward Office (Santacruz West)",
+      "lon": 72.8396565,
+      "lat": 19.0727405,
+      "pump_ids": ["P-10"]
+    },
+    {
+      "name": "F/N BMC Ward Office (Matunga)",
+      "lon": 72.8542714,
+      "lat": 19.0265628,
+      "pump_ids": ["P-01", "P-02"]
+    },
+    {
+      "name": "BMC Ward Office (Sion / Matunga)",
+      "lon": 72.854268,
+      "lat": 19.0299554,
+      "pump_ids": ["P-06"]
+    },
+    {
+      "name": "H/W Ward Office (Bandra West)",
+      "lon": 72.8355608,
+      "lat": 19.0563696,
+      "pump_ids": ["P-09"]
+    },
+    {
+      "name": "BMC M Ward Office (Chembur)",
+      "lon": 72.8991057,
+      "lat": 19.061105,
+      "pump_ids": ["P-11"]
+    }
+  ],
+  "unassigned": [
+    {
+      "id": "street:Sant Shitolebaba Maharaj Marg",
+      "name": "Sant Shitolebaba Maharaj Marg",
+      "minutes_above": 145,
+      "lon": 72.89574214999999,
+      "lat": 19.0957649
+    },
+    {
+      "id": "street:Datta Jagdamba Mandir Marg",
+      "name": "Datta Jagdamba Mandir Marg",
+      "minutes_above": 130,
+      "lon": 72.8606406519466,
+      "lat": 19.12346993802842
+    },
+    {
+      "id": "street:Veer Jeejamata Bhosle Marg",
+      "name": "Veer Jeejamata Bhosle Marg",
+      "minutes_above": 130,
+      "lon": 72.85619274999999,
+      "lat": 19.12540835
+    },
+    {
+      "id": "street:Mahatma Gandhi Road",
+      "name": "Mahatma Gandhi Road",
+      "minutes_above": 125,
+      "lon": 72.90439534999999,
+      "lat": 19.0811802
+    },
+    {
+      "id": "street:90 Feet Road",
+      "name": "90 Feet Road",
+      "minutes_above": 115,
+      "lon": 72.88793715,
+      "lat": 19.0999988
+    },
+    {
+      "id": "street:Shahaji raje marg",
+      "name": "Shahaji raje marg",
+      "minutes_above": 115,
+      "lon": 72.84627645,
+      "lat": 19.105811049999993
+    },
+    {
+      "id": "street:Lal Bahadur Shastri Marg",
+      "name": "Lal Bahadur Shastri Marg",
+      "minutes_above": 110,
+      "lon": 72.87558659999999,
+      "lat": 19.072377149999994
+    },
+    {
+      "id": "street:Pipeline Road",
+      "name": "Pipeline Road",
+      "minutes_above": 110,
+      "lon": 72.88422845,
+      "lat": 19.088119899999995
+    },
+    {
+      "id": "street:Mathuradas Vasanji Road (Andheri Kurla Road)",
+      "name": "Mathuradas Vasanji Road (Andheri Kurla Road)",
+      "minutes_above": 100,
+      "lon": 72.88355967843972,
+      "lat": 19.0950275437463
+    },
+    {
+      "id": "street:Sunder Nagar Road Number 2",
+      "name": "Sunder Nagar Road Number 2",
+      "minutes_above": 95,
+      "lon": 72.86594192713989,
+      "lat": 19.07464880332654
+    },
+    {
+      "id": "street:Swami Vivekanand Road",
+      "name": "Swami Vivekanand Road",
+      "minutes_above": 90,
+      "lon": 72.8368452,
+      "lat": 19.05958525
+    },
+    {
+      "id": "street:Military Road",
+      "name": "Military Road",
+      "minutes_above": 90,
+      "lon": 72.88781505,
+      "lat": 19.123794549999996
+    },
+    {
+      "id": "street:Jangaleswar Mahadeo Mandir Road",
+      "name": "Jangaleswar Mahadeo Mandir Road",
+      "minutes_above": 90,
+      "lon": 72.89901745522236,
+      "lat": 19.102825869324494
+    },
+    {
+      "id": "street:CD Barfiwala Road",
+      "name": "CD Barfiwala Road",
+      "minutes_above": 90,
+      "lon": 72.83427714999999,
+      "lat": 19.11582815
+    },
+    {
+      "id": "street:Bhakti Vedanta Swami Marg",
+      "name": "Bhakti Vedanta Swami Marg",
+      "minutes_above": 90,
+      "lon": 72.83403609756779,
+      "lat": 19.11597028819804
+    },
+    {
+      "id": "street:Krantiveer Lakhuji Salve Marg",
+      "name": "Krantiveer Lakhuji Salve Marg",
+      "minutes_above": 90,
+      "lon": 72.86329994409861,
+      "lat": 19.117897098486193
+    },
+    {
+      "id": "street:Gulmohar Road",
+      "name": "Gulmohar Road",
+      "minutes_above": 90,
+      "lon": 72.83564918522892,
+      "lat": 19.115177128362923
+    },
+    {
+      "id": "street:Sahar Road",
+      "name": "Sahar Road",
+      "minutes_above": 85,
+      "lon": 72.85009285000001,
+      "lat": 19.111260349999995
+    },
+    {
+      "id": "street:Lady Jamshedji Road",
+      "name": "Lady Jamshedji Road",
+      "minutes_above": 85,
+      "lon": 72.839279,
+      "lat": 19.044661650000002
+    },
+    {
+      "id": "street:SL Raheja Hospital Marg",
+      "name": "SL Raheja Hospital Marg",
+      "minutes_above": 85,
+      "lon": 72.8392958,
+      "lat": 19.0447698
+    }
+  ],
+  "n_unassigned": 45,
+  "withheld": [],
+  "notes": [
+    "P-10 at Danda Avenue: recounted 80 to 0 minutes above 45 cm against the plan's 85 to 0 (emulator now, emulator in the plan). The series is served as recomputed.",
+    "P-06 at Shankar Rao Naram Path (Gowalia Chawl Lane): recounted 65 to 10 minutes above 45 cm against the plan's 70 to 10 (emulator now, emulator in the plan). The series is served as recomputed.",
+    "P-11 at Chatrapati Shivaji Road: recounted 55 to 0 minutes above 45 cm against the plan's 60 to 0 (emulator now, emulator in the plan). The series is served as recomputed."
+  ],
+  "ms": 9005,
+  "route_ms": 4910
+}

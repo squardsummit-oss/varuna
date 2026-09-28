@@ -1,0 +1,100 @@
+[project]
+name = "varuna"
+version = "0.1.0"
+description = "VARUNA - street-level urban flood nowcasting digital twin (SIH 2026, PS SIH26085, MoES)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "varuna-schemas",
+  "varuna-api",
+  "varuna-city",
+  "varuna-replay",
+  "varuna-sky",
+  "varuna-twin",
+  "varuna-pulse",
+  "varuna-flash",
+  "varuna-products",
+  "varuna-route",
+  "varuna-cycle",
+  "varuna-verify",
+  "typer>=0.15",
+  "rich>=13",
+  "python-dotenv>=1.0",
+  "truststore>=0.10",
+]
+
+[project.scripts]
+varuna = "varuna_cli.main:app"
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=5",
+  "pytest-asyncio>=0.24",
+  "hypothesis>=6",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "httpx>=0.27",
+  "pre-commit>=3.8",
+  "types-PyYAML",
+  "pypdf>=5",
+  "pyswmm>=2.1",
+]
+
+[tool.uv]
+system-certs = true
+
+[tool.uv.workspace]
+members = ["packages/schemas", "services/*"]
+
+[tool.uv.sources]
+varuna-schemas = { workspace = true }
+varuna-api = { workspace = true }
+varuna-city = { workspace = true }
+varuna-replay = { workspace = true }
+varuna-sky = { workspace = true }
+varuna-twin = { workspace = true }
+varuna-pulse = { workspace = true }
+varuna-flash = { workspace = true }
+varuna-products = { workspace = true }
+varuna-route = { workspace = true }
+varuna-cycle = { workspace = true }
+varuna-verify = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tools/varuna_cli"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages", "services", "tests", "tools"]
+addopts = "-q -p no:cacheprovider --import-mode=importlib"
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning"]
+markers = [
+  # Performance budgets from SPEC.md section 14, which calls them acceptance criteria. They
+  # run with the suite; `-m "not slow"` skips them when only correctness is being checked.
+  "slow: measures a performance budget at full production configuration",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["/city", "/data", "/bundles", "node_modules", ".venv", "docs/research/_raw"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "NPY", "RUF"]
+ignore = ["E501", "RUF012", "B008"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+exclude = ["city/", "data/", "bundles/", "node_modules/"]
+
+[tool.coverage.run]
+source = ["services", "packages"]
+omit = ["*/tests/*"]

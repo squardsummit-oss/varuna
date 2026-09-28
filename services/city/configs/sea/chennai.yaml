@@ -1,0 +1,20 @@
+# Coastline settings for Chennai (varuna_city.sea). See sea/mumbai.yaml for why this file sits
+# beside, not inside, chennai.yaml.
+
+# OSM names both reaches of the estuary plainly: "Adyar River" (waterway=river) and "Adyar Creek"
+# (waterway=stream) in the AOI's osm.gpkg.
+tidal_rivers:
+  - Adyar River
+  - Adyar Creek
+
+# No coast wall. The only sourced high water in the repository is Mumbai's, and CHN-IDF-25yr has
+# no tide series, so the Twin holds Chennai's sea at mean sea level (0.0 m); a wall level would be
+# a number with nothing behind it.
+coast_wall_m: null
+
+tidal_outfall_cells: 2
+tidal_outfall_invert_m: 0.0
+
+notes:
+  tidal_outfall_invert_m: >-
+    ASSUMPTION. Mean sea level in the DEM frame; no outfall invert is sourced for Chennai.

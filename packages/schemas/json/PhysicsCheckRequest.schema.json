@@ -1,0 +1,101 @@
+{
+  "$defs": {
+    "WhatIfRequest": {
+      "additionalProperties": false,
+      "description": "Body of ``POST /v1/whatif``.",
+      "properties": {
+        "clean_top_n": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternative to cleaned_edges: clean the top N by beta.",
+          "title": "Clean Top N"
+        },
+        "cleaned_edges": {
+          "description": "Pipes set to beta = 0.05 (cleaned).",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Cleaned Edges",
+          "type": "array"
+        },
+        "pump_plan": {
+          "default": false,
+          "description": "Apply the current pump plan as extra outflow.",
+          "title": "Pump Plan",
+          "type": "boolean"
+        },
+        "rain_scale": {
+          "default": 1.0,
+          "description": "Rain multiplier 0.5-2.0.",
+          "maximum": 2.0,
+          "minimum": 0.5,
+          "title": "Rain Scale",
+          "type": "number"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base run; None = latest published.",
+          "title": "Run Id"
+        },
+        "tide_offset_m": {
+          "default": 0.0,
+          "description": "Tide stage offset in metres, -0.5 to +1.0.",
+          "maximum": 1.0,
+          "minimum": -0.5,
+          "title": "Tide Offset M",
+          "type": "number"
+        }
+      },
+      "title": "WhatIfRequest",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:PhysicsCheckRequest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of ``POST /v1/whatif/physics-check``: either a previous what-if or a fresh scenario.",
+  "properties": {
+    "request": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WhatIfRequest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "whatif_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Whatif Id"
+    }
+  },
+  "title": "PhysicsCheckRequest",
+  "type": "object"
+}

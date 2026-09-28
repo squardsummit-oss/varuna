@@ -1,0 +1,254 @@
+{
+  "id": "MUM-2019-07-02",
+  "city": "mumbai",
+  "label": "Reconstructed replay",
+  "t0": "2019-07-02T05:40:00+05:30",
+  "t1": "2019-07-02T09:40:00+05:30",
+  "cadences": {
+    "radar": 10,
+    "truth": 5,
+    "gauges": 15,
+    "tide": 15,
+    "traffic": 5,
+    "reports": 5,
+    "cycle": 5
+  },
+  "radar_domain": {
+    "center_lon": 72.86,
+    "center_lat": 19.065,
+    "size_km": 60.0,
+    "res_m": 500.0
+  },
+  "aoi": {
+    "min_lon": 72.815,
+    "min_lat": 18.995,
+    "max_lon": 72.905,
+    "max_lat": 19.135
+  },
+  "sources": [
+    {
+      "name": "IMD RMC Mumbai, highest one-day rainfall in July (Santacruz)",
+      "url": "https://mausam.imd.gov.in/mumbai/mcdata/Highest_Scz_July.gif",
+      "note": "375.2 mm for the 24 hours ending 08:30 IST on 2 July 2019. IMD-primary: the figure is IMD's own chart, cached at docs/research/_raw/imd_Highest_Scz_July.png; the chart footnote defines the 08:30-to-08:30 window.",
+      "used_for": "The only measured number the storm is calibrated to. 20% of it, 75.0 mm, is the target for 05:40-09:40 IST, 2 July 2019."
+    },
+    {
+      "name": "Scroll.in live blog, 2 July 2019",
+      "url": "https://scroll.in/latest/929092",
+      "note": "Colaba 137.88 mm and Santacruz 375.2 mm for the 24 hours ending 08:30 IST on 2 July 2019, citing The Indian Express; 183 mm in 3 hours over the Kurla-Thane belt (Central Railway's chief PRO via ANI); and the 4.92 m high water at 11:30 stated by the Additional Municipal Commissioner, who tied it to the pumps failing.",
+      "used_for": "The upper bracket on the window's rate, and the anchor of the illustrative tide curve."
+    },
+    {
+      "name": "Deccan Herald live blog, 1-3 July 2019",
+      "url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+      "note": "63 mm in the 6 hours from 23:30 IST 30 June to 05:30 IST 1 July 2019 (Skymet), and the ranking of the 375.2 mm total as the highest since 26 July 2005.",
+      "used_for": "The lower bracket on the window's rate: the last documented sub-daily rate anywhere in the event, extrapolated across the day and four hours between it and the window. Also the source of 14 of the ground-truth pins."
+    },
+    {
+      "name": "India TV live blog, 2 July 2019",
+      "url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+      "note": "The morning tide forecast of 4.59 m for 11:52, which conflicts with the 4.92 m stated afterwards. Recorded, not averaged.",
+      "used_for": "The conflicting tide figure the bundle did not use, and 9 pins."
+    },
+    {
+      "name": "Gulf News, record July rainfall",
+      "url": "https://gulfnews.com/world/asia/india/mumbai-rains-record-july-rainfall-1.65100295",
+      "note": "The Chief Minister's '300 to 400mm of rain' in the 12 hours to midday, and his tying of the flooding to the high tide that afternoon.",
+      "used_for": "A bracket showing the morning was not a lull; never a target."
+    },
+    {
+      "name": "Outlook/PTI, municipal ward rainfall averages",
+      "url": "https://www.outlookindia.com/website/story/india-news-mumbai-rains-live-updates/207195",
+      "note": "107 mm island city, 172 mm eastern suburbs, 152 mm western suburbs for the 24 hours ending 08:00 IST on 3 July 2019, and the naming of Hindmata, Dadar, Sion and Gandhi Market as inundated.",
+      "used_for": "Corroboration of the hotspot register; not a calibration input."
+    },
+    {
+      "name": "IIT Bombay Mumbai Rain platform, station roster",
+      "url": "https://www.mumbairain.org/",
+      "note": "116 municipal, IMD and IITM gauges with names, operators and platform ids, and no coordinates.",
+      "used_for": "The gauge roster the synthetic gauge network is drawn from."
+    },
+    {
+      "name": "NOAA integrated surface database station history",
+      "url": "https://www.ncei.noaa.gov/pub/data/noaa/isd-history.csv",
+      "note": "Santacruz (43003) at 19.089 N, 72.868 E and Colaba (43057) at 18.900 N, 72.817 E.",
+      "used_for": "The two IMD observatory coordinates in gauges.csv."
+    },
+    {
+      "name": "IMD Mumbai-Veravali radar, public products",
+      "url": "https://mausam.imd.gov.in/responsive/radar_animation.php?id=VRV",
+      "note": "The site at 19.1342 N, 72.8672 E and its latest-image product URLs. No dated path or archive exists, so July 2019 frames are not retrievable.",
+      "used_for": "Why radar/frames.zarr is a reconstruction, and the product the P1 decoder targets."
+    }
+  ],
+  "seed": 2019,
+  "synthetic_notes": [
+    "Reconstructed replay: the rain field, the radar frames, the gauge readings, the tide, the traffic speeds and the citizen reports are all generated. The ground-truth pins are not - every one of them carries the URL it was read from.",
+    "Window accumulation: 75.0 mm over 05:40-09:40 IST, 2 July 2019 is inferred from the IMD Santacruz 24-hour total of 375.2 mm, not measured. No hyetograph for this window exists.",
+    "Radar frames: Reconstructed, not decoded. IMD's public Mumbai radar products are latest-image endpoints overwritten in place, with no archive and no dated path, so no July 2019 frame is publicly retrievable; archived volumes go through IMD's data-supply route. These frames are rendered from the designed rain field through the Marshall-Palmer inverse and quantised to the same 5 dBZ classes the public images carry, so the P1 decoder (services/sky/decode_imd.py) reads them the way it will read the real thing.",
+    "Rain gauges: 10 synthetic stations. Synthetic readings at real sites. The values are sampled from the reconstructed rain field, so they are as inferred as the storm is; the coordinates are not. Every site is one of the ten stations in docs/research/bmc_aws_stations.json that carries a published coordinate - the two IMD observatories from NOAA's station history, and municipal gauges sited at the OpenStreetMap position of their host facility, which is an inference from the facility, not a surveyed mast. The municipal network's own coordinates sit behind a POST-only endpoint that was not called. Reading the column: mm_5min is the depth in the five minutes ending at ts, reported every fifteen minutes as SPEC.md 10.2 specifies, so a rate in mm/h is that value times twelve and a station's column does not sum to the window accumulation.",
+    "Tide: Illustrative, not measured. No tide table for Mumbai on 2 July 2019 could be sourced - Survey of India, INCOIS and Mumbai Port publish none that is publicly retrievable, and the prediction services that exist carry no 2019 archive. Two civic statements about the same midday high water survive and they disagree: 4.59 m forecast for 11:52 (ANI, that morning) and 4.92 m as stated afterwards for 11:30 by the Additional Municipal Commissioner, who tied it to the pumps failing on the central line. Both heights are above chart datum and neither source states the datum. This series is a single semi-diurnal harmonic (M2, period 12 h 25 min) whose crest is the 4.92 m statement at 11:30 - the statement of what happened, not the forecast of it - and whose trough sits at 0.00 m, because chart datum is by convention about the lowest astronomical tide. That trough is an assumption, not an observation. Everything the demo shows about the tide inside 05:40-09:40 IST - a stage rising from about 0.0 m to about 3.9 m, and the tide-locked outfall that follows from it - is a modelled consequence of that one anchor, not a record of the morning. The series runs on to 12:40, three hours past the window, because the last cycle forecasts that far ahead and the tide is its sea boundary; the same harmonic carries it through 4.92 m at 11:30 (4.918 m in the nearest 15-minute row, 11:25) to about 4.5 m at 12:40. Stopping at 09:40 held the sea flat at the 09:40 stage for the rest of every late cycle. What would settle it: the Survey of India or INCOIS tide table for Mumbai (Apollo Bandar), 2019. DATUM: tide.csv stays in chart datum, as sourced. manifest.tide_datum carries mean sea level at 2.70 m above chart datum (PSMSL station 43), which the Twin subtracts to read the stage in the DEM's frame, where the window runs from about -2.7 m to about +1.2 m and the series crests at about +2.2 m; the separation between the DEM's EGM2008 geoid and local mean sea level is not quantified.",
+    "Traffic: 9069 segments carry a synthetic feed, of which 272 carry an unrelated slowdown as a confounder. Synthetic. A weekday-morning baseline speed per road class, then a speed collapse below 5 km/h on the segment nearest each sourced ground-truth pin inside the window, for ten minutes either side of the pin's time, spreading to its neighbours; plus unrelated slowdowns on 3 % of covered segments, which no flood explains and which VARUNA-Pulse must reject. No probe or provider feed for 2 July 2019 was obtainable.",
+    "Citizen reports: 24 synthetic, plus the 13 sourced pins that fall inside the window. Two streams in one file. The synthetic citizen reports are placed at the chronic hotspots, with ankle/knee/waist chips that follow a stated rule from the reconstructed rain accumulated over the hotspot - not from a hydraulic depth. The sourced pins that fall inside the window are carried alongside them with synthetic false and their source_url, and with no depth chip at all, because no cached source states a depth in centimetres.",
+    "Ground truth: 29 pins inside the area of interest, every one with a source_url, a time uncertainty and no invented depth. depth_cm is null on all of them because no cached source states a depth in centimetres, so this event can be scored for occurrence, place and timing but not for depth error (ADR-0007)."
+  ],
+  "event_date": "2019-07-02",
+  "description": "Reconstruction of the Mumbai cloudburst of 1-2 July 2019 over MUM-CENTRAL, replayed from 05:40 to 09:40 IST on 2 July with the first cycle at 06:40 (ADR-0007). Thirteen sourced pins land inside the forecast window, 87 to 150 minutes after VARUNA flags the street. The storm is designed, not observed: it is calibrated to a share of IMD's 375.2 mm Santacruz 24-hour total and aimed at the places the pins record.",
+  "tide_source": "illustrative",
+  "tide_datum": {
+    "stage_datum": "chart_datum",
+    "stage_reference": "chart datum (assumed: the 4.92 m civic statement does not name its datum; taken as the Apollo Bandar chart datum PSMSL documents)",
+    "msl_above_chart_datum_m": 2.7,
+    "range_m": [
+      2.66,
+      2.73
+    ],
+    "derivation": "PSMSL station 43 (Bombay, Apollo Bandar): RLR(1964) is 13.0 m below BM 2(PP)(1), and BM 2PP1 is 8.522 m above chart datum for data from 1937 onwards, so RLR = chart datum - 4.478 m. Annual mean sea level in mm above RLR: 7,141 (2015), 7,154 (2017), 7,207 (2020), 7,211 (2024), which is 2.663, 2.676, 2.729 and 2.733 m above chart datum. 2019 has no annual value; interpolating 2017 and 2020 gives 2.711 m. The bundle uses 2.70 m, with the 2015-2024 span of 2.66-2.73 m as its range. The same PSMSL pages carry two caveats: in 1966 the benchmark was changed to BM 5/88, 7.44 m above chart datum, and the 2020 and 2024 annual values carry the 'Y' missing-days flag; neither changes the 2.70 m or the 2.66-2.73 m range, because the flagged means are used as PSMSL publishes them and the RLR series is PSMSL's reduction to one datum across the benchmark change.",
+    "source_urls": [
+      "https://psmsl.org/data/obtaining/stations/43.php",
+      "https://psmsl.org/data/obtaining/rlr.annual.data/43.rlrdata"
+    ],
+    "dem_datum": "Copernicus DEM GLO-30 heights are relative to the EGM2008 geoid. The product handbook: \"The vertical reference datum is the Earth Gravitational Model 2008 (EGM2008; EPSG 3855).\"",
+    "dem_datum_source_url": "https://dataspace.copernicus.eu/sites/default/files/media/files/2024-06/geo1988-copernicusdem-spe-002_producthandbook_i5.0.pdf",
+    "residual": "Not quantified: the separation between the EGM2008 geoid, the DEM's datum, and local mean sea level at Mumbai. The conversion puts the stage at mean sea level and treats that as the DEM's frame, so any geoid-to-sea-level offset stays in the tidal boundary as an unmeasured bias, as does any revision of the chart datum since PSMSL's note."
+  },
+  "ground_truth_n": 29,
+  "calibration": {
+    "window_minutes_inside_24h_total": 170.0,
+    "accumulation_before_0830_mm": 38.552,
+    "accumulation_after_0830_mm": 36.488,
+    "colaba_pixel_accumulation_mm": 31.495,
+    "santacruz_pixel_accumulation_mm": 65.598,
+    "santacruz_24h_total_mm": 375.2,
+    "santacruz_24h_mean_mm_h": 15.633,
+    "window_share_of_daily_total": 0.2,
+    "window_target_mm": 75.04,
+    "window_achieved_mm": 75.04,
+    "window_relative_error": 0.0,
+    "window_tolerance_frac": 0.05,
+    "window_mean_mm_h": 18.76,
+    "uniform_share_mm": 62.53,
+    "persistence_share_mm": 42.0,
+    "burst_share_mm": 244.0,
+    "intensity_scale": 0.748467,
+    "background_contribution_mm": 11.436,
+    "cell_peak_min_mm_h": 44.178,
+    "cell_peak_max_mm_h": 83.404,
+    "pin_accumulation_ratio": 1.1595,
+    "ground_truth_pins_fitted": 29.0,
+    "tide_high_water_m": 4.92,
+    "tide_forecast_not_used_m": 4.59
+  },
+  "calibration_basis": "Inferred, not measured. No hourly or three-hourly hyetograph exists for any Mumbai station covering 05:40-09:40 IST, 2 July 2019, so the accumulation this bundle carries for the demo window is an inference from the one IMD-primary total in hand, never a gauge reading. MEASURED: 375.2 mm at Santacruz for the 24 hours ending 08:30 IST on 2 July 2019, read off IMD Mumbai's own highest-one-day-rainfall chart (https://mausam.imd.gov.in/mumbai/mcdata/Highest_Scz_July.gif), whose footnote defines the 08:30-to-08:30 window. REPORTED SECOND-HAND, used only to bracket the rate: 183 mm in 3 hours over the Kurla-Thane belt overnight (Central Railway's chief PRO via ANI, https://scroll.in/latest/929092); 63 mm in the 6 hours from 23:30 IST 30 June to 05:30 IST 1 July 2019 - the night before the event night, a day and four hours before this window opens (Skymet via Deccan Herald, https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html); and 300-400 mm in the 12 hours to midday (the Chief Minister, https://gulfnews.com/world/asia/india/mumbai-rains-record-july-rainfall-1.65100295). INFERRED: this bundle assigns 20 % of the daily total to the four-hour window, 0.20 x 375.2 = 75.0 mm. The arithmetic behind that share, so it can be argued with: the window is 4 of the 24 hours, so a uniform rate would give 16.7 % = 62.5 mm (15.6 mm/h); OVERLAP, because the share is applied to a window that does not sit inside the total it is a fraction of: the 24-hour total closes at 08:30 and the window runs to 09:40, so 170 of its 240 minutes are inside that total and the last 70 fall in the next day's, for which the only figures in hand are the Chief Minister's 12-hour range and the ward averages. Of the designed field, 38.6 mm lands before 08:30 and 36.5 mm after, so 10.3 % of the 375.2 mm is actually placed inside the window that number describes. extrapolating the last documented sub-daily rate anywhere in the event, 63 mm / 6 h = 10.5 mm/h from the night before, would give 42.0 mm (11 % of the day); the heaviest documented burst, 183 mm / 3 h = 61 mm/h, would give 244 mm (65 %), which the same daily total cannot accommodate alongside the overnight cloudburst that dominates it. 20 % sits just above the uniform share and far below the burst, because the sourced record has the flooding starting at 08:07 and worsening until 14:28 IST and the Chief Minister put 300-400 mm in the 12 hours to midday - the rain did not hold to the previous night's rate - while the 24-hour total leaves no room for the burst to repeat. ACHIEVED: the designed area-mean accumulation over MUM-CENTRAL is 75.0 mm against the 75.0 mm target, 0.0 % away, inside the stated 5 % tolerance - met by construction, not by an independent check: the intensity multiplier is solved from the same area-mean integral the verification re-runs, so the tolerance catches a rounding residual and nothing else. POINT VERSUS AREA: the target is a share of a point total at one observatory (Santacruz, 19.089 N, 72.868 E) but is imposed as a mean over the whole area of interest, so the station the calibration is named after does not read it - the same field accumulates 65.6 mm at that observatory's own pixel and 31.5 mm at Colaba's, and gauges.csv publishes a synthetic Santacruz series sampled from it. PLACEMENT: fitted to the record rather than to a radar image - the cell tracks are aimed at the 3 latitudinal clusters of the 29 sourced ground-truth pins inside the area of interest, in proportion to the pins in each, so the heaviest rain falls over the catchments feeding the streets where water was actually reported; accumulation over the pins averages 1.16 times the area mean. Read no line of this as a measurement of the window: no gauge measured it, and until IMD's RMC Mumbai daily weather reports for 1-3 July 2019 or a MoES data request supply a sub-daily series, none can.\n\nTIDE. Illustrative, not measured. No tide table for Mumbai on 2 July 2019 could be sourced - Survey of India, INCOIS and Mumbai Port publish none that is publicly retrievable, and the prediction services that exist carry no 2019 archive. Two civic statements about the same midday high water survive and they disagree: 4.59 m forecast for 11:52 (ANI, that morning) and 4.92 m as stated afterwards for 11:30 by the Additional Municipal Commissioner, who tied it to the pumps failing on the central line. Both heights are above chart datum and neither source states the datum. This series is a single semi-diurnal harmonic (M2, period 12 h 25 min) whose crest is the 4.92 m statement at 11:30 - the statement of what happened, not the forecast of it - and whose trough sits at 0.00 m, because chart datum is by convention about the lowest astronomical tide. That trough is an assumption, not an observation. Everything the demo shows about the tide inside 05:40-09:40 IST - a stage rising from about 0.0 m to about 3.9 m, and the tide-locked outfall that follows from it - is a modelled consequence of that one anchor, not a record of the morning. The series runs on to 12:40, three hours past the window, because the last cycle forecasts that far ahead and the tide is its sea boundary; the same harmonic carries it through 4.92 m at 11:30 (4.918 m in the nearest 15-minute row, 11:25) to about 4.5 m at 12:40. Stopping at 09:40 held the sea flat at the 09:40 stage for the rest of every late cycle. What would settle it: the Survey of India or INCOIS tide table for Mumbai (Apollo Bandar), 2019. DATUM: tide.csv stays in chart datum, as sourced. manifest.tide_datum carries mean sea level at 2.70 m above chart datum (PSMSL station 43), which the Twin subtracts to read the stage in the DEM's frame, where the window runs from about -2.7 m to about +1.2 m and the series crests at about +2.2 m; the separation between the DEM's EGM2008 geoid and local mean sea level is not quantified.",
+  "storm": {
+    "kind": "convective_cells",
+    "crs": 32643,
+    "seed": 2019,
+    "background_mm_h": 2.859,
+    "wind_from_deg": 225.0,
+    "wind_speed_ms": 8.0,
+    "intensity_scale": 0.748467,
+    "cells": [
+      {
+        "id": "cell-01",
+        "birth_min": 145.775,
+        "lifetime_min": 80.928,
+        "start_x_m": 261906.1,
+        "start_y_m": 2091371.0,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 2032.9,
+        "peak_mm_h": 70.48
+      },
+      {
+        "id": "cell-02",
+        "birth_min": 28.674,
+        "lifetime_min": 57.137,
+        "start_x_m": 263109.9,
+        "start_y_m": 2095566.8,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 2627.4,
+        "peak_mm_h": 77.326
+      },
+      {
+        "id": "cell-03",
+        "birth_min": 134.663,
+        "lifetime_min": 69.581,
+        "start_x_m": 261859.9,
+        "start_y_m": 2090994.7,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 5475.5,
+        "peak_mm_h": 71.888
+      },
+      {
+        "id": "cell-04",
+        "birth_min": 160.446,
+        "lifetime_min": 76.79,
+        "start_x_m": 255914.4,
+        "start_y_m": 2090256.3,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 5672.3,
+        "peak_mm_h": 59.025
+      },
+      {
+        "id": "cell-05",
+        "birth_min": 135.217,
+        "lifetime_min": 78.416,
+        "start_x_m": 267551.0,
+        "start_y_m": 2093502.7,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 5410.0,
+        "peak_mm_h": 88.18
+      },
+      {
+        "id": "cell-06",
+        "birth_min": 43.578,
+        "lifetime_min": 31.018,
+        "start_x_m": 273868.8,
+        "start_y_m": 2102575.9,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 3844.7,
+        "peak_mm_h": 90.215
+      },
+      {
+        "id": "cell-07",
+        "birth_min": 99.044,
+        "lifetime_min": 59.844,
+        "start_x_m": 264220.8,
+        "start_y_m": 2109805.5,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 4857.5,
+        "peak_mm_h": 79.76
+      },
+      {
+        "id": "cell-08",
+        "birth_min": 144.093,
+        "lifetime_min": 50.381,
+        "start_x_m": 258269.6,
+        "start_y_m": 2105068.1,
+        "u_ms": 5.6569,
+        "v_ms": 5.6569,
+        "sigma_m": 3553.7,
+        "peak_mm_h": 111.433
+      }
+    ],
+    "coverage_radius_km": 30.0,
+    "speckle_sigma": 0.12,
+    "dbz_class_width": 5.0,
+    "min_dbz": 5.0,
+    "notes": [
+      "Reconstructed replay: the rain field is a storm-designer reconstruction, not a measurement.",
+      "Cell lifetimes are drawn from 30-90 minutes; no public gauge trace resolves them.",
+      "Cell tracks are aimed across the area of interest so the storm crosses the demo streets.",
+      "Radar frames are rendered from the rain field, quantised to 5 dBZ classes to mimic decoded imagery; no archived radar volume for this event is publicly retrievable.",
+      "Cell tracks are fitted to the ground truth: the 29 sourced pins inside the area of interest are grouped into 3 latitudinal clusters (8, 15, 6 pins) and the 8 cells are aimed at those centroids (2, 4, 2 cells each). That is a placement fitted to where water was reported, not a record of where the cells were: no radar frame for this event is publicly retrievable."
+    ]
+  },
+  "design_storm": null
+}

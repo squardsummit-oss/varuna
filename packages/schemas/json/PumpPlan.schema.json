@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "HotspotPumpBenefit": {
+      "additionalProperties": false,
+      "description": "Per-hotspot outcome of a plan: minutes above 45 cm before and after.",
+      "properties": {
+        "assigned_pumps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Assigned Pumps",
+          "type": "array"
+        },
+        "excess_volume_m3": {
+          "description": "Inflow minus drain outflow over the horizon.",
+          "minimum": 0,
+          "title": "Excess Volume M3",
+          "type": "number"
+        },
+        "hotspot_id": {
+          "minLength": 1,
+          "title": "Hotspot Id",
+          "type": "string"
+        },
+        "hotspot_name": {
+          "title": "Hotspot Name",
+          "type": "string"
+        },
+        "minutes_above_45_after": {
+          "minimum": 0,
+          "title": "Minutes Above 45 After",
+          "type": "number"
+        },
+        "minutes_above_45_before": {
+          "minimum": 0,
+          "title": "Minutes Above 45 Before",
+          "type": "number"
+        }
+      },
+      "required": [
+        "hotspot_id",
+        "hotspot_name",
+        "minutes_above_45_before",
+        "minutes_above_45_after",
+        "excess_volume_m3"
+      ],
+      "title": "HotspotPumpBenefit",
+      "type": "object"
+    },
+    "PumpAssignment": {
+      "additionalProperties": false,
+      "description": "One pump sent to one hotspot (blueprint 9.1 ``pump_assignment``).",
+      "properties": {
+        "arrive_ts": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected arrival (IST).",
+          "title": "Arrive Ts"
+        },
+        "eta_min": {
+          "description": "Travel time from the depot in minutes.",
+          "minimum": 0,
+          "title": "Eta Min",
+          "type": "integer"
+        },
+        "expected_benefit_min": {
+          "description": "Minutes above 45 cm avoided at the hotspot (emulator estimate).",
+          "minimum": 0,
+          "title": "Expected Benefit Min",
+          "type": "number"
+        },
+        "hotspot_id": {
+          "minLength": 1,
+          "title": "Hotspot Id",
+          "type": "string"
+        },
+        "hotspot_name": {
+          "title": "Hotspot Name",
+          "type": "string"
+        },
+        "order_text": {
+          "description": "Plain-language order, e.g. 'Move P-12 from Parel depot to Hindmata now; ETA 25 min; prevents about 40 min above 45 cm'.",
+          "title": "Order Text",
+          "type": "string"
+        },
+        "pump_id": {
+          "minLength": 1,
+          "title": "Pump Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "pump_id",
+        "hotspot_id",
+        "hotspot_name",
+        "eta_min",
+        "expected_benefit_min",
+        "order_text"
+      ],
+      "title": "PumpAssignment",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:PumpPlan",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``pump_plan.json`` and the response of ``POST /v1/pumps/optimise``.",
+  "properties": {
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/PumpAssignment"
+      },
+      "title": "Assignments",
+      "type": "array"
+    },
+    "benefits": {
+      "items": {
+        "$ref": "#/$defs/HotspotPumpBenefit"
+      },
+      "title": "Benefits",
+      "type": "array"
+    },
+    "dispatched": {
+      "default": false,
+      "description": "True once 'Dispatch pumps' was pressed.",
+      "title": "Dispatched",
+      "type": "boolean"
+    },
+    "dispatched_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dispatched By"
+    },
+    "dispatched_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dispatched Ts"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "solve_ms": {
+      "description": "Solver wall-clock in ms (budget 1000).",
+      "minimum": 0,
+      "title": "Solve Ms",
+      "type": "integer"
+    },
+    "solver": {
+      "description": "greedy in the prototype; milp is P1.",
+      "enum": [
+        "greedy",
+        "milp"
+      ],
+      "title": "Solver",
+      "type": "string"
+    },
+    "synthetic_inventory": {
+      "default": true,
+      "description": "Whether the inventory is synthetic (labelled in the UI).",
+      "title": "Synthetic Inventory",
+      "type": "boolean"
+    },
+    "valid_ts": {
+      "description": "Cycle time the plan was solved for (IST).",
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "valid_ts",
+    "solver",
+    "solve_ms"
+  ],
+  "title": "PumpPlan",
+  "type": "object"
+}

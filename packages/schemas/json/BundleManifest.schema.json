@@ -1,0 +1,679 @@
+{
+  "$defs": {
+    "BBox": {
+      "additionalProperties": false,
+      "description": "A WGS84 bounding box. Accepts ``[min_lon, min_lat, max_lon, max_lat]`` as well as an object.",
+      "properties": {
+        "max_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Max Lat",
+          "type": "number"
+        },
+        "max_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Max Lon",
+          "type": "number"
+        },
+        "min_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Min Lat",
+          "type": "number"
+        },
+        "min_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Min Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_lon",
+        "min_lat",
+        "max_lon",
+        "max_lat"
+      ],
+      "title": "BBox",
+      "type": "object"
+    },
+    "BundleSource": {
+      "additionalProperties": false,
+      "description": "A public source cited by the bundle (gauge totals, event timeline, tide table).",
+      "properties": {
+        "name": {
+          "description": "e.g. IMD Santacruz 24-h total, 2 July 2019",
+          "title": "Name",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What number was taken and how.",
+          "title": "Note"
+        },
+        "url": {
+          "minLength": 8,
+          "title": "Url",
+          "type": "string"
+        },
+        "used_for": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 'AOI 3-hour accumulation target 15:00-21:00 IST'.",
+          "title": "Used For"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "title": "BundleSource",
+      "type": "object"
+    },
+    "DesignStorm": {
+      "additionalProperties": false,
+      "description": "A Chicago hyetograph built from a stated design intensity (SPEC.md 10.1, P2.8).\n\nThis is **not** an intensity-duration-frequency curve. No published IDF curve for Mumbai\nor Chennai could be sourced (``docs/research/data_sources.md`` section 6), so the depth\ncomes from the drainage-norm design intensity in the city config and the shape comes from\nstated parameters. :attr:`basis` says so in UI-ready copy.",
+      "properties": {
+        "basis": {
+          "description": "Why this is not a fitted IDF curve and what would settle it (SPEC.md 0.6).",
+          "minLength": 40,
+          "title": "Basis",
+          "type": "string"
+        },
+        "duration_min": {
+          "description": "Storm duration in minutes.",
+          "exclusiveMinimum": 0,
+          "title": "Duration Min",
+          "type": "integer"
+        },
+        "hyetograph_mm_h": {
+          "description": "Block intensities in mm/h, one per step_min block.",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "title": "Hyetograph Mm H",
+          "type": "array"
+        },
+        "intensity_mm_h": {
+          "description": "The stated design intensity the depth is built from.",
+          "exclusiveMinimum": 0,
+          "title": "Intensity Mm H",
+          "type": "number"
+        },
+        "intensity_source": {
+          "description": "Where that intensity comes from, file and field.",
+          "minLength": 8,
+          "title": "Intensity Source",
+          "type": "string"
+        },
+        "kind": {
+          "const": "chicago_hyetograph",
+          "default": "chicago_hyetograph",
+          "title": "Kind",
+          "type": "string"
+        },
+        "peak_position_r": {
+          "description": "Peak position as a fraction of the duration (0.4 = 40 % in).",
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Peak Position R",
+          "type": "number"
+        },
+        "shape_b_min": {
+          "description": "Chicago shape parameter b, in minutes (stated).",
+          "exclusiveMinimum": 0,
+          "title": "Shape B Min",
+          "type": "number"
+        },
+        "shape_c": {
+          "description": "Chicago shape exponent c (stated).",
+          "exclusiveMaximum": 1,
+          "exclusiveMinimum": 0,
+          "title": "Shape C",
+          "type": "number"
+        },
+        "step_min": {
+          "description": "Hyetograph block length in minutes.",
+          "exclusiveMinimum": 0,
+          "title": "Step Min",
+          "type": "integer"
+        },
+        "total_depth_mm": {
+          "description": "intensity_mm_h * duration_min / 60, exactly.",
+          "minimum": 0,
+          "title": "Total Depth Mm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "intensity_mm_h",
+        "intensity_source",
+        "duration_min",
+        "step_min",
+        "peak_position_r",
+        "shape_b_min",
+        "shape_c",
+        "total_depth_mm",
+        "hyetograph_mm_h",
+        "basis"
+      ],
+      "title": "DesignStorm",
+      "type": "object"
+    },
+    "RadarDomain": {
+      "additionalProperties": false,
+      "description": "The Sky domain: a square centred on the AOI (60 km at 500 m for Mumbai, SPEC.md 3.3).",
+      "properties": {
+        "center_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Center Lat",
+          "type": "number"
+        },
+        "center_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Center Lon",
+          "type": "number"
+        },
+        "res_m": {
+          "description": "Pixel size in metres (500 for pySTEPS).",
+          "exclusiveMinimum": 0,
+          "title": "Res M",
+          "type": "number"
+        },
+        "size_km": {
+          "description": "Side length of the square domain in km.",
+          "exclusiveMinimum": 0,
+          "title": "Size Km",
+          "type": "number"
+        }
+      },
+      "required": [
+        "center_lon",
+        "center_lat",
+        "size_km",
+        "res_m"
+      ],
+      "title": "RadarDomain",
+      "type": "object"
+    },
+    "StormCellSpec": {
+      "additionalProperties": false,
+      "description": "One convective cell of the storm designer (SPEC.md 10.2; the ``/replay`` cell table).\n\nPositions and velocities are in :attr:`StormDesign.crs`, the city's metric CRS.\n``birth_min`` is minutes from the bundle's ``t0`` and may be negative, which means the\ncell was already alive when the replay window opened.",
+      "properties": {
+        "birth_min": {
+          "description": "Minutes from t0 at which the cell is born.",
+          "title": "Birth Min",
+          "type": "number"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lifetime_min": {
+          "description": "Minutes from birth to death; the sine envelope spans exactly this.",
+          "exclusiveMinimum": 0,
+          "title": "Lifetime Min",
+          "type": "number"
+        },
+        "peak_mm_h": {
+          "description": "Peak rain rate at the cell centre before intensity_scale is applied.",
+          "minimum": 0,
+          "title": "Peak Mm H",
+          "type": "number"
+        },
+        "sigma_m": {
+          "description": "Gaussian radius in metres (2-6 km in the demo storm).",
+          "exclusiveMinimum": 0,
+          "title": "Sigma M",
+          "type": "number"
+        },
+        "start_x_m": {
+          "description": "Cell centre at birth, easting in the design CRS.",
+          "title": "Start X M",
+          "type": "number"
+        },
+        "start_y_m": {
+          "description": "Cell centre at birth, northing in the design CRS.",
+          "title": "Start Y M",
+          "type": "number"
+        },
+        "u_ms": {
+          "description": "Eastward velocity component in m/s.",
+          "title": "U Ms",
+          "type": "number"
+        },
+        "v_ms": {
+          "description": "Northward velocity component in m/s.",
+          "title": "V Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "birth_min",
+        "lifetime_min",
+        "start_x_m",
+        "start_y_m",
+        "u_ms",
+        "v_ms",
+        "sigma_m",
+        "peak_mm_h"
+      ],
+      "title": "StormCellSpec",
+      "type": "object"
+    },
+    "StormDesign": {
+      "additionalProperties": false,
+      "description": "Storm-designer parameters for a reconstructed replay (SPEC.md 10.2, 7.8).\n\nEverything needed to regenerate ``truth/rain.zarr`` and ``radar/frames.zarr`` byte for\nbyte: the cells, the stratiform background, the wind, the calibration multiplier and the\nradar-rendering constants. The ``/replay`` storm designer renders :attr:`cells` as a table.",
+      "properties": {
+        "background_mm_h": {
+          "description": "Stratiform background rain rate (2-5 mm/h in the demo storm).",
+          "minimum": 0,
+          "title": "Background Mm H",
+          "type": "number"
+        },
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/StormCellSpec"
+          },
+          "title": "Cells",
+          "type": "array"
+        },
+        "coverage_radius_km": {
+          "default": 30.0,
+          "description": "Radar coverage circle; pixels outside it carry no echo.",
+          "exclusiveMinimum": 0,
+          "title": "Coverage Radius Km",
+          "type": "number"
+        },
+        "crs": {
+          "description": "EPSG code of the metric CRS the cell coordinates use.",
+          "maximum": 32767,
+          "minimum": 1024,
+          "title": "Crs",
+          "type": "integer"
+        },
+        "dbz_class_width": {
+          "default": 5.0,
+          "description": "Reflectivity class width in dBZ (decoded imagery is 5 dBZ).",
+          "exclusiveMinimum": 0,
+          "title": "Dbz Class Width",
+          "type": "number"
+        },
+        "intensity_scale": {
+          "default": 1.0,
+          "description": "Multiplier calibrate() applied to every cell peak.",
+          "exclusiveMinimum": 0,
+          "title": "Intensity Scale",
+          "type": "number"
+        },
+        "kind": {
+          "const": "convective_cells",
+          "default": "convective_cells",
+          "title": "Kind",
+          "type": "string"
+        },
+        "min_dbz": {
+          "default": 5.0,
+          "description": "Frames below this class read as no echo, as a decoded image does.",
+          "title": "Min Dbz",
+          "type": "number"
+        },
+        "notes": {
+          "description": "Designer choices this bundle must state out loud.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "seed": {
+          "description": "Seed of the generator (2019 for the demo bundle).",
+          "title": "Seed",
+          "type": "integer"
+        },
+        "speckle_sigma": {
+          "default": 0.12,
+          "description": "Standard deviation of the multiplicative log-normal speckle applied to Z.",
+          "minimum": 0,
+          "title": "Speckle Sigma",
+          "type": "number"
+        },
+        "wind_from_deg": {
+          "description": "Meteorological direction the cells come from (225 = south-west).",
+          "exclusiveMaximum": 360,
+          "minimum": 0,
+          "title": "Wind From Deg",
+          "type": "number"
+        },
+        "wind_speed_ms": {
+          "description": "Cell translation speed in m/s.",
+          "minimum": 0,
+          "title": "Wind Speed Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "crs",
+        "seed",
+        "background_mm_h",
+        "wind_from_deg",
+        "wind_speed_ms"
+      ],
+      "title": "StormDesign",
+      "type": "object"
+    },
+    "TideDatum": {
+      "additionalProperties": false,
+      "description": "The vertical datum of ``tide.csv`` and the offset that puts it in the DEM's frame.\n\nA tide table states heights above **chart datum**, a low-water reference, while the Twin's\nterrain is a Copernicus GLO-30 surface whose heights are relative to the EGM2008 geoid. At\nMumbai the two differ by about the whole mean tide, so a stage read in the wrong datum\nfloods the coastal boundary cells by metres. This block names the datum the series is in,\nthe offset to mean sea level with the benchmark arithmetic behind it, the sources it was\nread from, and the residual that is still not quantified.\n\nConsumers subtract :attr:`offset_to_dem_m` from ``stage_m``; a bundle without this block is\nread as written, which is what it did before the block existed.",
+      "properties": {
+        "dem_datum": {
+          "description": "The DEM's vertical datum, as its source says.",
+          "minLength": 8,
+          "title": "Dem Datum",
+          "type": "string"
+        },
+        "dem_datum_source_url": {
+          "description": "Where the DEM's datum is stated.",
+          "minLength": 8,
+          "title": "Dem Datum Source Url",
+          "type": "string"
+        },
+        "derivation": {
+          "description": "The benchmark arithmetic the offset comes from, step by step.",
+          "minLength": 20,
+          "title": "Derivation",
+          "type": "string"
+        },
+        "msl_above_chart_datum_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mean sea level above chart datum at the tide station, metres.",
+          "title": "Msl Above Chart Datum M"
+        },
+        "range_m": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The span of mean sea level above chart datum the sources support, metres.",
+          "title": "Range M"
+        },
+        "residual": {
+          "description": "What the conversion does not account for, said out loud.",
+          "minLength": 8,
+          "title": "Residual",
+          "type": "string"
+        },
+        "source_urls": {
+          "description": "Where the benchmark relation and the annual means were read.",
+          "items": {
+            "minLength": 8,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Urls",
+          "type": "array"
+        },
+        "stage_datum": {
+          "description": "The datum stage_m is written in. 'chart_datum' means a consumer in the DEM's frame subtracts msl_above_chart_datum_m; 'dem' means the stage is already in that frame.",
+          "enum": [
+            "chart_datum",
+            "dem"
+          ],
+          "title": "Stage Datum",
+          "type": "string"
+        },
+        "stage_reference": {
+          "description": "The datum in UI-ready words, including what is assumed.",
+          "minLength": 8,
+          "title": "Stage Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage_datum",
+        "stage_reference",
+        "derivation",
+        "source_urls",
+        "dem_datum",
+        "dem_datum_source_url",
+        "residual"
+      ],
+      "title": "TideDatum",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:BundleManifest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``bundles/<ID>/manifest.json``.",
+  "properties": {
+    "aoi": {
+      "$ref": "#/$defs/BBox",
+      "description": "WGS84 AOI bbox the bundle was built for."
+    },
+    "cadences": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "Stream cadences in minutes: radar, truth, gauges, tide, traffic, reports, cycle.",
+      "title": "Cadences",
+      "type": "object"
+    },
+    "calibration": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Calibration targets, e.g. {'aoi_3h_accumulation_mm': 152.0}.",
+      "title": "Calibration",
+      "type": "object"
+    },
+    "calibration_basis": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "How every number in ``calibration`` was arrived at: what a gauge measured, what was inferred from it, and which source says so. Required once ``calibration`` carries anything (SPEC.md 0.6 and 0.7).",
+      "title": "Calibration Basis"
+    },
+    "city": {
+      "description": "City slug, e.g. mumbai.",
+      "title": "City",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "design_storm": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DesignStorm"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The Chicago hyetograph, on design-storm bundles only."
+    },
+    "event_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Event Date"
+    },
+    "ground_truth_n": {
+      "default": 0,
+      "description": "Sourced pins inside the AOI.",
+      "minimum": 0,
+      "title": "Ground Truth N",
+      "type": "integer"
+    },
+    "id": {
+      "description": "e.g. MUM-2019-07-02",
+      "pattern": "^[A-Z]{3}-[A-Za-z0-9-]+$",
+      "title": "Id",
+      "type": "string"
+    },
+    "label": {
+      "enum": [
+        "Reconstructed replay",
+        "Design storm"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "radar_domain": {
+      "$ref": "#/$defs/RadarDomain"
+    },
+    "seed": {
+      "description": "Seed of every synthetic generator (2019 for the demo).",
+      "title": "Seed",
+      "type": "integer"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/BundleSource"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "storm": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StormDesign"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Storm-designer parameters behind the radar and truth cubes."
+    },
+    "synthetic_notes": {
+      "description": "What is synthetic, in UI-ready copy, e.g. 'Radar frames: storm-designer reconstruction'.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Synthetic Notes",
+      "type": "array"
+    },
+    "t0": {
+      "description": "First replay instant (IST).",
+      "format": "date-time",
+      "title": "T0",
+      "type": "string"
+    },
+    "t1": {
+      "description": "Last replay instant (IST).",
+      "format": "date-time",
+      "title": "T1",
+      "type": "string"
+    },
+    "tide_datum": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TideDatum"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The vertical datum of tide.csv and the offset into the DEM's frame."
+    },
+    "tide_source": {
+      "anyOf": [
+        {
+          "enum": [
+            "tide_table",
+            "illustrative"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tide Source"
+    }
+  },
+  "required": [
+    "id",
+    "city",
+    "label",
+    "t0",
+    "t1",
+    "cadences",
+    "radar_domain",
+    "aoi",
+    "seed"
+  ],
+  "title": "BundleManifest",
+  "type": "object"
+}

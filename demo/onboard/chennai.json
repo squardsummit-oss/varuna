@@ -1,0 +1,1430 @@
+{
+ "schema": 1,
+ "city": "chennai",
+ "last_attempt": {
+  "job_id": "onboard-chennai-0cbc126f",
+  "city": "chennai",
+  "design_storm": "CHN-IDF-25yr",
+  "status": "finished",
+  "step": "first_forecast",
+  "progress": 1.0,
+  "started_at": "2026-09-28T21:10:33.733018+05:30",
+  "finished_at": "2026-09-28T21:14:00.098344+05:30",
+  "elapsed_s": 206.4,
+  "log_total": 119,
+  "steps": {
+   "choose_area": {
+    "status": "done",
+    "ms": 20.5,
+    "detail": "CHN-SOUTH, 291 x 334 cells at 30 m, EPSG:32644",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "fetch_open_data": {
+    "status": "done",
+    "ms": 42429.9,
+    "detail": "34,410 roads, 72,573 buildings from OSM",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "condition_terrain": {
+    "status": "done",
+    "ms": 13809.1,
+    "detail": "1,851 depressions kept, 943 spurious pits breached",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "infer_drains": {
+    "status": "done",
+    "ms": 14436.3,
+    "detail": "40,731 inferred pipes, 1,425 km",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "build_graph": {
+    "status": "done",
+    "ms": 26507.5,
+    "detail": "18,626 road segments, 6,144 surface units",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "first_forecast": {
+    "status": "done",
+    "ms": 109006.7,
+    "detail": "15,454 of 18,626 streets wet",
+    "loaded_from_disk": false,
+    "progress": 1.0,
+    "stage_ms": {
+     "sky": 15413.0,
+     "twin": 51674.0,
+     "pulse": 2792.0,
+     "flash": 0.0,
+     "products": 3809.0
+    },
+    "stages": {
+     "sky": {
+      "status": "done",
+      "ms": 15413.0
+     },
+     "twin": {
+      "status": "done",
+      "ms": 51674.0
+     },
+     "pulse": {
+      "status": "done",
+      "ms": 2792.0
+     },
+     "flash": {
+      "status": "skipped",
+      "ms": 0.0
+     },
+     "products": {
+      "status": "done",
+      "ms": 3809.0
+     }
+    }
+   }
+  },
+  "forecast": {
+   "run_id": "CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+   "cycle_ts": "2026-07-01T06:10:00+05:30",
+   "n_steps": 31,
+   "step_min": 5,
+   "streets_total": 18626,
+   "wet_streets": 15454,
+   "wet_threshold_cm": 5.0,
+   "median_peak_cm": 26.0,
+   "max_peak_cm": 366.6,
+   "stage_ms": {
+    "sky": 15413,
+    "twin": 51674,
+    "pulse": 2792,
+    "flash": 0,
+    "products": 3809
+   },
+   "forecast_ms": 73688,
+   "mass_balance_err": 8.778348774191875e-16,
+   "storm": {
+    "id": "CHN-IDF-25yr",
+    "total_mm": 150.0,
+    "duration_min": 180,
+    "peak_mm_h": 448.8,
+    "source": "manifest"
+   }
+  },
+  "first_run_id": "CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+  "error": null,
+  "failed_step": null,
+  "lines": [
+   {
+    "ts": "2026-09-28T21:10:33.746+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.759+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.760+05:30",
+    "text": "Building chennai from cache.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.769+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.772+05:30",
+    "text": "cache.verified city=chennai tiles=3 bad=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.773+05:30",
+    "text": "Open data already cached: 3 tiles present. Nothing to download.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.777+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.777+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.778+05:30",
+    "text": "city.start city=chennai steps=15 out_dir=C:\\dev\\varuna\\city\\chennai force=False",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.781+05:30",
+    "text": "cache.verified city=chennai tiles=3 bad=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.781+05:30",
+    "text": "city.step city=chennai step=cache status=ok ms=2.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.788+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.789+05:30",
+    "text": "city.grid_shape_check city=chennai expected=289 x 332 actual=291 x 334 delta_cells=2 x 2 tol_cells=10 ok=True",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.985+05:30",
+    "text": "city.dem_built city=chennai shape=291 x 334 crs=EPSG:32644 res_m=30.0 min_m=-5.3 max_m=28.6 nodata_cells=0 path=C:\\dev\\varuna\\city\\chennai\\dem.tif stage_ms=196.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:34.030+05:30",
+    "text": "city.hillshade_written path=C:\\dev\\varuna\\city\\chennai\\hillshade.png shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:34.030+05:30",
+    "text": "city.step city=chennai step=dem status=ok ms=248.2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:01.410+05:30",
+    "text": "osm.layer city=chennai layer=buildings features=72573",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.104+05:30",
+    "text": "osm.layer city=chennai layer=waterways features=54",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.505+05:30",
+    "text": "osm.layer city=chennai layer=culverts features=314",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.701+05:30",
+    "text": "osm.layer city=chennai layer=stations features=45",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.857+05:30",
+    "text": "osm.layer city=chennai layer=hospitals features=200",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.992+05:30",
+    "text": "osm.layer city=chennai layer=fire_stations features=5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:03.162+05:30",
+    "text": "osm.layer city=chennai layer=shelters features=201",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:06.389+05:30",
+    "text": "osm.gpkg_written city=chennai path=C:\\dev\\varuna\\city\\chennai\\osm.gpkg",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:06.420+05:30",
+    "text": "city.step city=chennai step=osm status=ok ms=32388.8",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.062+05:30",
+    "text": "landcover.built city=chennai stage_ms=9630.2 cells=97194 class_cells={10: 21815, 20: 34, 30: 2440, 40: 1115, 50: 60067, 60: 1150, 80: 10252, 90: 321} imperviousness_mean=0.7383 imperviousness_p90=0.95 buildings_burned_cells=17346 roads_burned_cells=38981 cn_mean=95.92 cn_range=[90, 98]",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.067+05:30",
+    "text": "city.step city=chennai step=landcover status=ok ms=9645.5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.070+05:30",
+    "text": "city.hotspots_uncurated city=chennai reason=No hotspot register for chennai: expected C:\\dev\\varuna\\docs\\research\\hotspots_chennai.draft.geojson. Run the research step or point load_register(source=...) at a curated GeoJSON.",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.087+05:30",
+    "text": "city.step city=chennai step=hotspots status=ok ms=19.1",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.089+05:30",
+    "text": "city.assets_uncurated city=chennai reason=No curated infrastructure for chennai: expected C:\\dev\\varuna\\services\\city\\assets\\chennai_infra.json",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.153+05:30",
+    "text": "assets.written path=C:\\dev\\varuna\\city\\chennai\\assets.geojson count=444 synthetic=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.201+05:30",
+    "text": "city.step city=chennai step=assets status=ok ms=112.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:21.040+05:30",
+    "text": "sea.mask cells=9524 km2=8.572 open_cells=9123 creek_cells=401 blocked_removed=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:21.051+05:30",
+    "text": "city.step city=chennai step=sea status=ok ms=4847.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:26.985+05:30",
+    "text": "condition.flattened_land flattened_cells=2 flattened_repaired=2 flattened_unrepaired=0 flattened_repair_radius_m=150.0 flattened_rise_m={'median': 2.139, 'max': 2.344}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:28.612+05:30",
+    "text": "condition.whitebox_unavailable reason=binary not downloaded",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.506+05:30",
+    "text": "condition_dem.done cells_burned=17345 building_burn_m=5.0 cells_carved=38981 road_carve_m=0.15 sinks_protected=20 sinks_cleared_of_building=1 min_pit_area_m2=900.0 seed=2019 stage_ms=8443.3 culvert_ways_breached=313 culvert_cells_breached=1200 culvert_ends_on_sea_ignored=5 culvert_ways_with_no_land_end=1 pits_before=2818 pits_spurious=943 pits_protected=0 pits_breached=932 breach_cells=1503 breach_method=python_least_cost pits_large=1875 flattened_cells=2 flattened_repaired=2 flattened_unrepaired=0 flattened_repair_radius_m=150.0 flattened_rise_m={'median': 2.139, 'max': 2.344}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.563+05:30",
+    "text": "city.step city=chennai step=condition status=ok ms=8509.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.569+05:30",
+    "text": "manning_n.done cells=97194 blocked=17345 roads=38981 stage_ms=3.2 cells_asphalt=49057 cells_open_ground=4156 cells_vegetation=16451 cells_water=10185 cells_building=17345",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.599+05:30",
+    "text": "city.step city=chennai step=roughness status=ok ms=36.2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.861+05:30",
+    "text": "find_depressions.done pits=1865 min_area_m2=900.0 stage_ms=261.5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.864+05:30",
+    "text": "depressions.water_dropped dropped=14 kept=1851",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:30.016+05:30",
+    "text": "city.step city=chennai step=depressions status=ok ms=415.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:34.255+05:30",
+    "text": "segments.built segments=18626 classes=6 wards=0 stage_ms=4236.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:34.330+05:30",
+    "text": "city.step city=chennai step=segments status=ok ms=4312.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfall_dropped outfall_id=CHN-OUTFALL-ADYAR nearest_tidal_outfall_m=748.5 nearest_node_m=209.6 nearest_node_sea_distance_cells=2",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfall_dropped outfall_id=CHN-OUTFALL-BUCKINGHAM nearest_tidal_outfall_m=4176.9 nearest_node_m=804.3 nearest_node_sea_distance_cells=1",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfalls tidal=7 snapped=0 dropped=2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:39.151+05:30",
+    "text": "drains.invert_clamped_to_cover nodes=37243 of=40766 mean_excess_m=8.995 max_excess_m=162.865",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:42.193+05:30",
+    "text": "drains.built city=chennai nodes=40766 edges=40731 outfalls=35 trunk_edges=1493 repaired_edges=0 pipe_length_km=1424.52 seed=2019 stage_ms=7856.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:44.455+05:30",
+    "text": "city.step city=chennai step=drains status=ok ms=10123.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:46.753+05:30",
+    "text": "units.built units=6144 method=d8_watershed stage_ms=2281.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:47.056+05:30",
+    "text": "city.step city=chennai step=units status=ok ms=2600.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:56.909+05:30",
+    "text": "export.layer_empty city=chennai layer=hotspots",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:06.390+05:30",
+    "text": "export.done city=chennai written=18 missing=['hotspots'] counts={'segments': 18626, 'drains': 40731, 'drain_nodes': 40766, 'units': 6144, 'assets': 444, 'buildings': 72573, 'depressions': 1851, 'graph/nodes': 40766, 'graph/edges': 40731, 'graph/inlet_links': 39203}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:06.392+05:30",
+    "text": "city.step city=chennai step=export status=ok ms=19333.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.965+05:30",
+    "text": "report.written path=C:\\dev\\varuna\\city\\chennai\\REPORT.md overlap_share=0.0 sourced_share=0.0 maps=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.966+05:30",
+    "text": "city.step city=chennai step=report status=ok ms=4573.1",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.972+05:30",
+    "text": "city.done city=chennai ok=True total_ms=97169.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.092+05:30",
+    "text": "City built. Running the first cycle on CHN-IDF-25yr.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.131+05:30",
+    "text": "Forecasting from 06:10 IST, the design storm's median frame - the intensity it sustains rather than its instantaneous peak.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.678+05:30",
+    "text": "sky.no_gauges bundle=CHN-IDF-25yr note=Z-R falls back to Marshall-Palmer",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.691+05:30",
+    "text": "sky.aoi_grid path=C:\\dev\\varuna\\city\\chennai\\pipeline.json crs=EPSG:32644 res_m=30.0 shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.694+05:30",
+    "text": "sky.qc latest_ts=2026-07-01T06:10:00+05:30 n_frames=3 variance_frames=3 coverage_fraction=0.785 clutter_fraction=0.753681 attenuation_flag=none",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.694+05:30",
+    "text": "sky.zr.pairs n_rows=0 n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.695+05:30",
+    "text": "sky.zr.fallback reason=too few pairs n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.695+05:30",
+    "text": "sky.merge method=none n_gauges=0 mfb=1.0 n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:12.435+05:30",
+    "text": "motion.lucas_kanade u_mean=-1.624 v_mean=-0.383 interval_min=10.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:12.519+05:30",
+    "text": "sky.pool.warming workers=4 this_cycle=sequential",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.343+05:30",
+    "text": "steps.mass_factor_clamped lead_index=0 members=20 max_factor=27.012",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.383+05:30",
+    "text": "steps.mass_factor_clamped lead_index=2 members=20 max_factor=5.714",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.386+05:30",
+    "text": "steps.mass_factor_clamped lead_index=4 members=20 max_factor=6.396",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.389+05:30",
+    "text": "steps.mass_factor_clamped lead_index=6 members=20 max_factor=14.779",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.392+05:30",
+    "text": "steps.mass_factor_clamped lead_index=8 members=17 max_factor=73.586",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.395+05:30",
+    "text": "steps.mass_factor_clamped lead_index=10 members=12 max_factor=23.809",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.397+05:30",
+    "text": "steps.mass_factor_clamped lead_index=12 members=8 max_factor=12.467",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.400+05:30",
+    "text": "steps.mass_factor_clamped lead_index=14 members=6 max_factor=11.139",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.402+05:30",
+    "text": "steps.mass_factor_clamped lead_index=16 members=5 max_factor=14.41",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.404+05:30",
+    "text": "steps.mass_factor_clamped lead_index=18 members=3 max_factor=58.721",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.407+05:30",
+    "text": "steps.mass_factor_clamped lead_index=20 members=3 max_factor=4.057",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.410+05:30",
+    "text": "steps.mass_factor_clamped lead_index=22 members=3 max_factor=5.847",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.413+05:30",
+    "text": "steps.mass_factor_clamped lead_index=24 members=1 max_factor=4.241",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.417+05:30",
+    "text": "steps.mass_factor_clamped lead_index=26 members=3 max_factor=7.852",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.425+05:30",
+    "text": "steps.mass_factor_clamped lead_index=28 members=2 max_factor=3.693",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.431+05:30",
+    "text": "steps.mass_factor_clamped lead_index=30 members=2 max_factor=22.138",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.436+05:30",
+    "text": "steps.mass_factor_clamped lead_index=32 members=2 max_factor=3.768",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.438+05:30",
+    "text": "steps.mass_factor_clamped lead_index=34 members=2 max_factor=6.429",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.448+05:30",
+    "text": "steps.pysteps members=20 steps=36 groups=1 interpolated_leads_corrected=18 max_mm_h=38.81 motion=lucas_kanade",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.752+05:30",
+    "text": "sky.products n_members=20 n_steps=36 aoi_shape=291 x 334 aoi_peak_mm_h=0.24 aoi_mean_mm_h=0.02 p90_max_mm_h=4.79 mean_max_mm_h=2.27 source=pysteps_steps",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.764+05:30",
+    "text": "sky.cycle cycle_ts=2026-07-01T06:10:00+05:30 total_ms=15065 members=20 steps=36 nowcaster=pysteps_steps zr=marshall_palmer merge=none max_mm_h=38.81 ms_qc=3 ms_zr=1 ms_merge=1 ms_motion=742 ms_nowcast=14019 ms_products=299",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.764+05:30",
+    "text": "cycle.sky_computed bundle=CHN-IDF-25yr city=chennai cycle_ts=2026-07-01T06:10:00+05:30 radar_frames=3 gauge_rows=0 total_ms=15065 nowcaster=pysteps_steps",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.765+05:30",
+    "text": "sky.aoi_grid path=C:\\dev\\varuna\\city\\chennai\\pipeline.json crs=EPSG:32644 res_m=30.0 shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.831+05:30",
+    "text": "cycle.design_storm_forcing bundle=CHN-IDF-25yr city=chennai steps=31 total_mm=142.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.056+05:30",
+    "text": "twin.terrain_loaded city=chennai shape=334 x 291 res_m=30.0 crs=EPSG:32644 blocked_fraction=0.1785 sea_cells=9524",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.116+05:30",
+    "text": "twin.crown_depth circular=38136 box=2595",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.253+05:30",
+    "text": "twin.network_loaded city=chennai n_nodes=40766 n_edges=40731 n_tidal=7 n_free=28 n_flap=0 mean_beta=0.1959",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.256+05:30",
+    "text": "twin.no_tide bundle=CHN-IDF-25yr path=C:\\dev\\varuna\\bundles\\CHN-IDF-25yr\\tide.csv",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.256+05:30",
+    "text": "twin.run.start n_steps=31 step_min=5 grid=(334, 291) n_nodes=40766 n_edges=40731 sync_s=5.0 inner_dt_s=1.0 start=cold",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.260+05:30",
+    "text": "hydrology state initialised shape=(334, 291) depression_storage_mm=1.5 mean_imperviousness=0.7382678956139179 mean_retention_mm=10.998992185077082 blocked_fraction=0.17845751795378315",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.448+05:30",
+    "text": "drain1d.coloured n_edges=40731 n_colours=14 largest_colour=17143",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.449+05:30",
+    "text": "drain1d.prepared n_nodes=40766 n_edges=40731 n_tidal=7 n_free=28 n_flap=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:18.650+05:30",
+    "text": "twin.run.ledger residual_m3=0.0 surface_residual_m3=-0.0 drain_residual_m3=0.0 inlet_gap_m3=-0.0 surcharge_gap_m3=0.0 clamp_created_m3=0.0 rain_in_m3=8487451.1 tide_in_m3=167.6 tide_out_m3=542845.4 sea_to_land_m3=-542677.8 sea_stored_start_m3=21318.1 sea_stored_end_m3=21318.1 outfall_m3=179400.7 drain_inlet_m3=3874079.2 drain_surcharge_m3=3591132.9 surface_inlet_m3=3874079.2 surface_surcharge_m3=3591132.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:18.666+05:30",
+    "text": "twin.run.done n_steps=31 elapsed_ms=51393 mass_balance_error=0.0 surface_stored_m3=7683145.1 drain_stored_m3=103545.5 outfall_m3=179400.7 peak_depth_m=4.993 hydrology_ms=153 surface_ms=12571 drain_ms=29205 coupling_ms=5659 total_ms=51393",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.019+05:30",
+    "text": "products.segment_index_built segments=18626 cells=168784 mean_cells=9.1 segments_sha256=93a0e9698331 sea_sha256=1dac3e221945 intertidal_sha256=none cache=C:\\dev\\varuna\\city\\chennai\\segment_cells.npz",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.027+05:30",
+    "text": "pulse.reports.other_city city=chennai kept=0 dropped=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.027+05:30",
+    "text": "pulse.reports raw=0 observations=0 merged=0 undated=0 until=2026-07-01 06:10:00+05:30",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:54.811+05:30",
+    "text": "pulse.drain_health run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked edges=40731 updated=0 mean_beta=0.1959 max_beta=0.35 operator=capacity_deficit",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:54.812+05:30",
+    "text": "pulse.cycle run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked traffic=0 reports=0 assimilated=0 edges_updated=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.170+05:30",
+    "text": "products.segment_forecast segments=18626 steps=31 rows=577406 members=1 max_cm=366.6 wet_segments=15454 max_band_cm=0.0 max_p50_shift_cm=0.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.314+05:30",
+    "text": "products.attribution attempted=0 named=0 blockage=posterior ms=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.317+05:30",
+    "text": "products.hotspots_ranked n=0 wet=0 impassable=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:57.339+05:30",
+    "text": "products.alerts run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked n=60 final=False pending=0 cleared=0 severe=60 moderate=0 watch=0 hotspot_scoped=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:57.408+05:30",
+    "text": "products.pump_plan run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked pumps=0 assignable=0 assigned=0 candidates=998 benefit_model=emulator minutes_saved=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:58.626+05:30",
+    "text": "products.surcharge run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked surcharging=12326 stored=500 of=40766 reversed_edges=20698 at_tidal=0 without_path=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:58.845+05:30",
+    "text": "products.rasters stat=p50 steps=31 dir=C:\\dev\\varuna\\data\\runs\\.CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked.tmp-2f1258df\\depth",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.758+05:30",
+    "text": "products.wet_segments run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked wet=15454 of=18626 p_gt=False uncertain_series=0 bytes=2473270",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.934+05:30",
+    "text": "registry.run_written run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked path=C:\\dev\\varuna\\data\\runs\\CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.948+05:30",
+    "text": "cycle.published run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked total_ms=108515 flash_ms=0 ensemble_n=1 peak_cm=499.3 wet_segments=15454 mass_balance=0.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:14:00.098+05:30",
+    "text": "First forecast published: CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked, deepest street 366.6 cm on 15454 wet segments.",
+    "level": "info"
+   }
+  ],
+  "recorded_at": "2026-09-28T21:14:00.099+05:30"
+ },
+ "last_finished": {
+  "job_id": "onboard-chennai-0cbc126f",
+  "city": "chennai",
+  "design_storm": "CHN-IDF-25yr",
+  "status": "finished",
+  "step": "first_forecast",
+  "progress": 1.0,
+  "started_at": "2026-09-28T21:10:33.733018+05:30",
+  "finished_at": "2026-09-28T21:14:00.098344+05:30",
+  "elapsed_s": 206.4,
+  "log_total": 119,
+  "steps": {
+   "choose_area": {
+    "status": "done",
+    "ms": 20.5,
+    "detail": "CHN-SOUTH, 291 x 334 cells at 30 m, EPSG:32644",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "fetch_open_data": {
+    "status": "done",
+    "ms": 42429.9,
+    "detail": "34,410 roads, 72,573 buildings from OSM",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "condition_terrain": {
+    "status": "done",
+    "ms": 13809.1,
+    "detail": "1,851 depressions kept, 943 spurious pits breached",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "infer_drains": {
+    "status": "done",
+    "ms": 14436.3,
+    "detail": "40,731 inferred pipes, 1,425 km",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "build_graph": {
+    "status": "done",
+    "ms": 26507.5,
+    "detail": "18,626 road segments, 6,144 surface units",
+    "loaded_from_disk": false,
+    "progress": 1.0
+   },
+   "first_forecast": {
+    "status": "done",
+    "ms": 109006.7,
+    "detail": "15,454 of 18,626 streets wet",
+    "loaded_from_disk": false,
+    "progress": 1.0,
+    "stage_ms": {
+     "sky": 15413.0,
+     "twin": 51674.0,
+     "pulse": 2792.0,
+     "flash": 0.0,
+     "products": 3809.0
+    },
+    "stages": {
+     "sky": {
+      "status": "done",
+      "ms": 15413.0
+     },
+     "twin": {
+      "status": "done",
+      "ms": 51674.0
+     },
+     "pulse": {
+      "status": "done",
+      "ms": 2792.0
+     },
+     "flash": {
+      "status": "skipped",
+      "ms": 0.0
+     },
+     "products": {
+      "status": "done",
+      "ms": 3809.0
+     }
+    }
+   }
+  },
+  "forecast": {
+   "run_id": "CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+   "cycle_ts": "2026-07-01T06:10:00+05:30",
+   "n_steps": 31,
+   "step_min": 5,
+   "streets_total": 18626,
+   "wet_streets": 15454,
+   "wet_threshold_cm": 5.0,
+   "median_peak_cm": 26.0,
+   "max_peak_cm": 366.6,
+   "stage_ms": {
+    "sky": 15413,
+    "twin": 51674,
+    "pulse": 2792,
+    "flash": 0,
+    "products": 3809
+   },
+   "forecast_ms": 73688,
+   "mass_balance_err": 8.778348774191875e-16,
+   "storm": {
+    "id": "CHN-IDF-25yr",
+    "total_mm": 150.0,
+    "duration_min": 180,
+    "peak_mm_h": 448.8,
+    "source": "manifest"
+   }
+  },
+  "first_run_id": "CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+  "error": null,
+  "failed_step": null,
+  "lines": [
+   {
+    "ts": "2026-09-28T21:10:33.746+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.759+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.760+05:30",
+    "text": "Building chennai from cache.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.769+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.772+05:30",
+    "text": "cache.verified city=chennai tiles=3 bad=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.773+05:30",
+    "text": "Open data already cached: 3 tiles present. Nothing to download.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.777+05:30",
+    "text": "city.config_loaded city=chennai aoi=CHN-SOUTH path=C:\\dev\\varuna\\services\\city\\configs\\chennai.yaml",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.777+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.778+05:30",
+    "text": "city.start city=chennai steps=15 out_dir=C:\\dev\\varuna\\city\\chennai force=False",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.781+05:30",
+    "text": "cache.verified city=chennai tiles=3 bad=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.781+05:30",
+    "text": "city.step city=chennai step=cache status=ok ms=2.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.788+05:30",
+    "text": "city.grid city=chennai crs=EPSG:32644 res_m=30.0 width=291 height=334 cells=97194",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.789+05:30",
+    "text": "city.grid_shape_check city=chennai expected=289 x 332 actual=291 x 334 delta_cells=2 x 2 tol_cells=10 ok=True",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:33.985+05:30",
+    "text": "city.dem_built city=chennai shape=291 x 334 crs=EPSG:32644 res_m=30.0 min_m=-5.3 max_m=28.6 nodata_cells=0 path=C:\\dev\\varuna\\city\\chennai\\dem.tif stage_ms=196.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:34.030+05:30",
+    "text": "city.hillshade_written path=C:\\dev\\varuna\\city\\chennai\\hillshade.png shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:10:34.030+05:30",
+    "text": "city.step city=chennai step=dem status=ok ms=248.2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:01.410+05:30",
+    "text": "osm.layer city=chennai layer=buildings features=72573",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.104+05:30",
+    "text": "osm.layer city=chennai layer=waterways features=54",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.505+05:30",
+    "text": "osm.layer city=chennai layer=culverts features=314",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.701+05:30",
+    "text": "osm.layer city=chennai layer=stations features=45",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.857+05:30",
+    "text": "osm.layer city=chennai layer=hospitals features=200",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:02.992+05:30",
+    "text": "osm.layer city=chennai layer=fire_stations features=5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:03.162+05:30",
+    "text": "osm.layer city=chennai layer=shelters features=201",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:06.389+05:30",
+    "text": "osm.gpkg_written city=chennai path=C:\\dev\\varuna\\city\\chennai\\osm.gpkg",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:06.420+05:30",
+    "text": "city.step city=chennai step=osm status=ok ms=32388.8",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.062+05:30",
+    "text": "landcover.built city=chennai stage_ms=9630.2 cells=97194 class_cells={10: 21815, 20: 34, 30: 2440, 40: 1115, 50: 60067, 60: 1150, 80: 10252, 90: 321} imperviousness_mean=0.7383 imperviousness_p90=0.95 buildings_burned_cells=17346 roads_burned_cells=38981 cn_mean=95.92 cn_range=[90, 98]",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.067+05:30",
+    "text": "city.step city=chennai step=landcover status=ok ms=9645.5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.070+05:30",
+    "text": "city.hotspots_uncurated city=chennai reason=No hotspot register for chennai: expected C:\\dev\\varuna\\docs\\research\\hotspots_chennai.draft.geojson. Run the research step or point load_register(source=...) at a curated GeoJSON.",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.087+05:30",
+    "text": "city.step city=chennai step=hotspots status=ok ms=19.1",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.089+05:30",
+    "text": "city.assets_uncurated city=chennai reason=No curated infrastructure for chennai: expected C:\\dev\\varuna\\services\\city\\assets\\chennai_infra.json",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.153+05:30",
+    "text": "assets.written path=C:\\dev\\varuna\\city\\chennai\\assets.geojson count=444 synthetic=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:16.201+05:30",
+    "text": "city.step city=chennai step=assets status=ok ms=112.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:21.040+05:30",
+    "text": "sea.mask cells=9524 km2=8.572 open_cells=9123 creek_cells=401 blocked_removed=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:21.051+05:30",
+    "text": "city.step city=chennai step=sea status=ok ms=4847.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:26.985+05:30",
+    "text": "condition.flattened_land flattened_cells=2 flattened_repaired=2 flattened_unrepaired=0 flattened_repair_radius_m=150.0 flattened_rise_m={'median': 2.139, 'max': 2.344}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:28.612+05:30",
+    "text": "condition.whitebox_unavailable reason=binary not downloaded",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.506+05:30",
+    "text": "condition_dem.done cells_burned=17345 building_burn_m=5.0 cells_carved=38981 road_carve_m=0.15 sinks_protected=20 sinks_cleared_of_building=1 min_pit_area_m2=900.0 seed=2019 stage_ms=8443.3 culvert_ways_breached=313 culvert_cells_breached=1200 culvert_ends_on_sea_ignored=5 culvert_ways_with_no_land_end=1 pits_before=2818 pits_spurious=943 pits_protected=0 pits_breached=932 breach_cells=1503 breach_method=python_least_cost pits_large=1875 flattened_cells=2 flattened_repaired=2 flattened_unrepaired=0 flattened_repair_radius_m=150.0 flattened_rise_m={'median': 2.139, 'max': 2.344}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.563+05:30",
+    "text": "city.step city=chennai step=condition status=ok ms=8509.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.569+05:30",
+    "text": "manning_n.done cells=97194 blocked=17345 roads=38981 stage_ms=3.2 cells_asphalt=49057 cells_open_ground=4156 cells_vegetation=16451 cells_water=10185 cells_building=17345",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.599+05:30",
+    "text": "city.step city=chennai step=roughness status=ok ms=36.2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.861+05:30",
+    "text": "find_depressions.done pits=1865 min_area_m2=900.0 stage_ms=261.5",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:29.864+05:30",
+    "text": "depressions.water_dropped dropped=14 kept=1851",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:30.016+05:30",
+    "text": "city.step city=chennai step=depressions status=ok ms=415.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:34.255+05:30",
+    "text": "segments.built segments=18626 classes=6 wards=0 stage_ms=4236.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:34.330+05:30",
+    "text": "city.step city=chennai step=segments status=ok ms=4312.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfall_dropped outfall_id=CHN-OUTFALL-ADYAR nearest_tidal_outfall_m=748.5 nearest_node_m=209.6 nearest_node_sea_distance_cells=2",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfall_dropped outfall_id=CHN-OUTFALL-BUCKINGHAM nearest_tidal_outfall_m=4176.9 nearest_node_m=804.3 nearest_node_sea_distance_cells=1",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:38.555+05:30",
+    "text": "drains.tidal_outfalls tidal=7 snapped=0 dropped=2",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:39.151+05:30",
+    "text": "drains.invert_clamped_to_cover nodes=37243 of=40766 mean_excess_m=8.995 max_excess_m=162.865",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:11:42.193+05:30",
+    "text": "drains.built city=chennai nodes=40766 edges=40731 outfalls=35 trunk_edges=1493 repaired_edges=0 pipe_length_km=1424.52 seed=2019 stage_ms=7856.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:44.455+05:30",
+    "text": "city.step city=chennai step=drains status=ok ms=10123.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:46.753+05:30",
+    "text": "units.built units=6144 method=d8_watershed stage_ms=2281.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:47.056+05:30",
+    "text": "city.step city=chennai step=units status=ok ms=2600.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:11:56.909+05:30",
+    "text": "export.layer_empty city=chennai layer=hotspots",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:06.390+05:30",
+    "text": "export.done city=chennai written=18 missing=['hotspots'] counts={'segments': 18626, 'drains': 40731, 'drain_nodes': 40766, 'units': 6144, 'assets': 444, 'buildings': 72573, 'depressions': 1851, 'graph/nodes': 40766, 'graph/edges': 40731, 'graph/inlet_links': 39203}",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:06.392+05:30",
+    "text": "city.step city=chennai step=export status=ok ms=19333.7",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.965+05:30",
+    "text": "report.written path=C:\\dev\\varuna\\city\\chennai\\REPORT.md overlap_share=0.0 sourced_share=0.0 maps=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.966+05:30",
+    "text": "city.step city=chennai step=report status=ok ms=4573.1",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:10.972+05:30",
+    "text": "city.done city=chennai ok=True total_ms=97169.4",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.092+05:30",
+    "text": "City built. Running the first cycle on CHN-IDF-25yr.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.131+05:30",
+    "text": "Forecasting from 06:10 IST, the design storm's median frame - the intensity it sustains rather than its instantaneous peak.",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.678+05:30",
+    "text": "sky.no_gauges bundle=CHN-IDF-25yr note=Z-R falls back to Marshall-Palmer",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.691+05:30",
+    "text": "sky.aoi_grid path=C:\\dev\\varuna\\city\\chennai\\pipeline.json crs=EPSG:32644 res_m=30.0 shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.694+05:30",
+    "text": "sky.qc latest_ts=2026-07-01T06:10:00+05:30 n_frames=3 variance_frames=3 coverage_fraction=0.785 clutter_fraction=0.753681 attenuation_flag=none",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.694+05:30",
+    "text": "sky.zr.pairs n_rows=0 n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.695+05:30",
+    "text": "sky.zr.fallback reason=too few pairs n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:11.695+05:30",
+    "text": "sky.merge method=none n_gauges=0 mfb=1.0 n_pairs=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:12.435+05:30",
+    "text": "motion.lucas_kanade u_mean=-1.624 v_mean=-0.383 interval_min=10.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:12.519+05:30",
+    "text": "sky.pool.warming workers=4 this_cycle=sequential",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.343+05:30",
+    "text": "steps.mass_factor_clamped lead_index=0 members=20 max_factor=27.012",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.383+05:30",
+    "text": "steps.mass_factor_clamped lead_index=2 members=20 max_factor=5.714",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.386+05:30",
+    "text": "steps.mass_factor_clamped lead_index=4 members=20 max_factor=6.396",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.389+05:30",
+    "text": "steps.mass_factor_clamped lead_index=6 members=20 max_factor=14.779",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.392+05:30",
+    "text": "steps.mass_factor_clamped lead_index=8 members=17 max_factor=73.586",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.395+05:30",
+    "text": "steps.mass_factor_clamped lead_index=10 members=12 max_factor=23.809",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.397+05:30",
+    "text": "steps.mass_factor_clamped lead_index=12 members=8 max_factor=12.467",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.400+05:30",
+    "text": "steps.mass_factor_clamped lead_index=14 members=6 max_factor=11.139",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.402+05:30",
+    "text": "steps.mass_factor_clamped lead_index=16 members=5 max_factor=14.41",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.404+05:30",
+    "text": "steps.mass_factor_clamped lead_index=18 members=3 max_factor=58.721",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.407+05:30",
+    "text": "steps.mass_factor_clamped lead_index=20 members=3 max_factor=4.057",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.410+05:30",
+    "text": "steps.mass_factor_clamped lead_index=22 members=3 max_factor=5.847",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.413+05:30",
+    "text": "steps.mass_factor_clamped lead_index=24 members=1 max_factor=4.241",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.417+05:30",
+    "text": "steps.mass_factor_clamped lead_index=26 members=3 max_factor=7.852",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.425+05:30",
+    "text": "steps.mass_factor_clamped lead_index=28 members=2 max_factor=3.693",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.431+05:30",
+    "text": "steps.mass_factor_clamped lead_index=30 members=2 max_factor=22.138",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.436+05:30",
+    "text": "steps.mass_factor_clamped lead_index=32 members=2 max_factor=3.768",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.438+05:30",
+    "text": "steps.mass_factor_clamped lead_index=34 members=2 max_factor=6.429",
+    "level": "warning"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.448+05:30",
+    "text": "steps.pysteps members=20 steps=36 groups=1 interpolated_leads_corrected=18 max_mm_h=38.81 motion=lucas_kanade",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.752+05:30",
+    "text": "sky.products n_members=20 n_steps=36 aoi_shape=291 x 334 aoi_peak_mm_h=0.24 aoi_mean_mm_h=0.02 p90_max_mm_h=4.79 mean_max_mm_h=2.27 source=pysteps_steps",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.764+05:30",
+    "text": "sky.cycle cycle_ts=2026-07-01T06:10:00+05:30 total_ms=15065 members=20 steps=36 nowcaster=pysteps_steps zr=marshall_palmer merge=none max_mm_h=38.81 ms_qc=3 ms_zr=1 ms_merge=1 ms_motion=742 ms_nowcast=14019 ms_products=299",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.764+05:30",
+    "text": "cycle.sky_computed bundle=CHN-IDF-25yr city=chennai cycle_ts=2026-07-01T06:10:00+05:30 radar_frames=3 gauge_rows=0 total_ms=15065 nowcaster=pysteps_steps",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.765+05:30",
+    "text": "sky.aoi_grid path=C:\\dev\\varuna\\city\\chennai\\pipeline.json crs=EPSG:32644 res_m=30.0 shape=291 x 334",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:26.831+05:30",
+    "text": "cycle.design_storm_forcing bundle=CHN-IDF-25yr city=chennai steps=31 total_mm=142.6",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.056+05:30",
+    "text": "twin.terrain_loaded city=chennai shape=334 x 291 res_m=30.0 crs=EPSG:32644 blocked_fraction=0.1785 sea_cells=9524",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.116+05:30",
+    "text": "twin.crown_depth circular=38136 box=2595",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.253+05:30",
+    "text": "twin.network_loaded city=chennai n_nodes=40766 n_edges=40731 n_tidal=7 n_free=28 n_flap=0 mean_beta=0.1959",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.256+05:30",
+    "text": "twin.no_tide bundle=CHN-IDF-25yr path=C:\\dev\\varuna\\bundles\\CHN-IDF-25yr\\tide.csv",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.256+05:30",
+    "text": "twin.run.start n_steps=31 step_min=5 grid=(334, 291) n_nodes=40766 n_edges=40731 sync_s=5.0 inner_dt_s=1.0 start=cold",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.260+05:30",
+    "text": "hydrology state initialised shape=(334, 291) depression_storage_mm=1.5 mean_imperviousness=0.7382678956139179 mean_retention_mm=10.998992185077082 blocked_fraction=0.17845751795378315",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.448+05:30",
+    "text": "drain1d.coloured n_edges=40731 n_colours=14 largest_colour=17143",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:12:27.449+05:30",
+    "text": "drain1d.prepared n_nodes=40766 n_edges=40731 n_tidal=7 n_free=28 n_flap=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:18.650+05:30",
+    "text": "twin.run.ledger residual_m3=0.0 surface_residual_m3=-0.0 drain_residual_m3=0.0 inlet_gap_m3=-0.0 surcharge_gap_m3=0.0 clamp_created_m3=0.0 rain_in_m3=8487451.1 tide_in_m3=167.6 tide_out_m3=542845.4 sea_to_land_m3=-542677.8 sea_stored_start_m3=21318.1 sea_stored_end_m3=21318.1 outfall_m3=179400.7 drain_inlet_m3=3874079.2 drain_surcharge_m3=3591132.9 surface_inlet_m3=3874079.2 surface_surcharge_m3=3591132.9",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:18.666+05:30",
+    "text": "twin.run.done n_steps=31 elapsed_ms=51393 mass_balance_error=0.0 surface_stored_m3=7683145.1 drain_stored_m3=103545.5 outfall_m3=179400.7 peak_depth_m=4.993 hydrology_ms=153 surface_ms=12571 drain_ms=29205 coupling_ms=5659 total_ms=51393",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.019+05:30",
+    "text": "products.segment_index_built segments=18626 cells=168784 mean_cells=9.1 segments_sha256=93a0e9698331 sea_sha256=1dac3e221945 intertidal_sha256=none cache=C:\\dev\\varuna\\city\\chennai\\segment_cells.npz",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.027+05:30",
+    "text": "pulse.reports.other_city city=chennai kept=0 dropped=3",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:52.027+05:30",
+    "text": "pulse.reports raw=0 observations=0 merged=0 undated=0 until=2026-07-01 06:10:00+05:30",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:54.811+05:30",
+    "text": "pulse.drain_health run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked edges=40731 updated=0 mean_beta=0.1959 max_beta=0.35 operator=capacity_deficit",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:54.812+05:30",
+    "text": "pulse.cycle run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked traffic=0 reports=0 assimilated=0 edges_updated=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.170+05:30",
+    "text": "products.segment_forecast segments=18626 steps=31 rows=577406 members=1 max_cm=366.6 wet_segments=15454 max_band_cm=0.0 max_p50_shift_cm=0.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.314+05:30",
+    "text": "products.attribution attempted=0 named=0 blockage=posterior ms=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:55.317+05:30",
+    "text": "products.hotspots_ranked n=0 wet=0 impassable=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:57.339+05:30",
+    "text": "products.alerts run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked n=60 final=False pending=0 cleared=0 severe=60 moderate=0 watch=0 hotspot_scoped=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:57.408+05:30",
+    "text": "products.pump_plan run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked pumps=0 assignable=0 assigned=0 candidates=998 benefit_model=emulator minutes_saved=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:58.626+05:30",
+    "text": "products.surcharge run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked surcharging=12326 stored=500 of=40766 reversed_edges=20698 at_tidal=0 without_path=0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:58.845+05:30",
+    "text": "products.rasters stat=p50 steps=31 dir=C:\\dev\\varuna\\data\\runs\\.CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked.tmp-2f1258df\\depth",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.758+05:30",
+    "text": "products.wet_segments run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked wet=15454 of=18626 p_gt=False uncertain_series=0 bytes=2473270",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.934+05:30",
+    "text": "registry.run_written run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked path=C:\\dev\\varuna\\data\\runs\\CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:13:59.948+05:30",
+    "text": "cycle.published run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked total_ms=108515 flash_ms=0 ensemble_n=1 peak_cm=499.3 wet_segments=15454 mass_balance=0.0",
+    "level": "info"
+   },
+   {
+    "ts": "2026-09-28T21:14:00.098+05:30",
+    "text": "First forecast published: CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked, deepest street 366.6 cm on 15454 wet segments.",
+    "level": "info"
+   }
+  ],
+  "recorded_at": "2026-09-28T21:14:00.099+05:30"
+ }
+}

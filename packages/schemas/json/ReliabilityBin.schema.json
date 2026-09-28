@@ -1,0 +1,46 @@
+{
+  "$id": "urn:varuna:schema:ReliabilityBin",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One bin of the reliability diagram for P(> 30 cm).",
+  "properties": {
+    "forecast_p_mean": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Forecast P Mean",
+      "type": "number"
+    },
+    "n": {
+      "minimum": 0,
+      "title": "N",
+      "type": "integer"
+    },
+    "observed_freq": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Observed Freq",
+      "type": "number"
+    },
+    "p_hi": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Hi",
+      "type": "number"
+    },
+    "p_lo": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Lo",
+      "type": "number"
+    }
+  },
+  "required": [
+    "p_lo",
+    "p_hi",
+    "forecast_p_mean",
+    "observed_freq",
+    "n"
+  ],
+  "title": "ReliabilityBin",
+  "type": "object"
+}

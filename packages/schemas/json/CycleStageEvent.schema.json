@@ -1,0 +1,97 @@
+{
+  "$id": "urn:varuna:schema:CycleStageEvent",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Payload of the WebSocket ``cycle.stage`` event (one per stage start and finish).",
+  "properties": {
+    "budget_ms": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Ms"
+    },
+    "cycle_ts": {
+      "format": "date-time",
+      "title": "Cycle Ts",
+      "type": "string"
+    },
+    "message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Message"
+    },
+    "ms": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Set on finished/failed.",
+      "title": "Ms"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    },
+    "stage": {
+      "enum": [
+        "decode",
+        "sky",
+        "twin",
+        "flash",
+        "pulse",
+        "products",
+        "route",
+        "alerts",
+        "publish",
+        "idle"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "started",
+        "finished",
+        "failed",
+        "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cycle_ts",
+    "stage",
+    "status"
+  ],
+  "title": "CycleStageEvent",
+  "type": "object"
+}

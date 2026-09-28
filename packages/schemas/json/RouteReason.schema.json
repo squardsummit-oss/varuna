@@ -1,0 +1,183 @@
+{
+  "$id": "urn:varuna:schema:RouteReason",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One structured reason. **Never prose** - the frontend words it (TECH_SPEC 3.2).\n\nFields not relevant to a ``kind`` are absent. A reason whose number is missing is not\nemitted at all, so a screen never has to soften one into \"this road may flood\".",
+  "properties": {
+    "at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The instant the number belongs to.",
+      "title": "At"
+    },
+    "depth_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Depth Cm"
+    },
+    "design_intensity_mm_h": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "design: what the drain under this street was sized for.",
+      "title": "Design Intensity Mm H"
+    },
+    "dry_below_cm": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dry Below Cm"
+    },
+    "dry_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "timing: last step under 5 cm on the road actually taken.",
+      "title": "Dry Until"
+    },
+    "forecast_peak_mm_h": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "design: this run's peak AOI-mean rain, not local rain.",
+      "title": "Forecast Peak Mm H"
+    },
+    "kind": {
+      "enum": [
+        "avoided",
+        "design",
+        "timing",
+        "closure"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "probability": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Probability"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "closure: the officer's own words.",
+      "title": "Reason"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "threshold_cm": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Threshold Cm"
+    },
+    "until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "closure: expiry, if one was set.",
+      "title": "Until"
+    },
+    "user": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "closure: who entered it.",
+      "title": "User"
+    }
+  },
+  "required": [
+    "kind",
+    "segment_id",
+    "name"
+  ],
+  "title": "RouteReason",
+  "type": "object"
+}

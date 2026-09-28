@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "PhysicsCheckHotspot": {
+      "additionalProperties": false,
+      "description": "Emulator versus Twin peak depth at one hotspot.",
+      "properties": {
+        "emulator_cm": {
+          "minimum": 0,
+          "title": "Emulator Cm",
+          "type": "number"
+        },
+        "hotspot_id": {
+          "minLength": 1,
+          "title": "Hotspot Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "twin_cm": {
+          "minimum": 0,
+          "title": "Twin Cm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "hotspot_id",
+        "name",
+        "emulator_cm",
+        "twin_cm"
+      ],
+      "title": "PhysicsCheckHotspot",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:PhysicsCheckResponse",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Agreement report shown as a small bar; disagreement is displayed, never hidden.",
+  "properties": {
+    "hotspots": {
+      "items": {
+        "$ref": "#/$defs/PhysicsCheckHotspot"
+      },
+      "title": "Hotspots",
+      "type": "array"
+    },
+    "mass_balance_err": {
+      "minimum": 0,
+      "title": "Mass Balance Err",
+      "type": "number"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "tolerance_cm": {
+      "default": 5.0,
+      "exclusiveMinimum": 0,
+      "title": "Tolerance Cm",
+      "type": "number"
+    },
+    "twin_ms": {
+      "description": "Twin wall-clock (budget 10 s).",
+      "minimum": 0,
+      "title": "Twin Ms",
+      "type": "integer"
+    },
+    "valid_ts": {
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    },
+    "whatif_id": {
+      "title": "Whatif Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "whatif_id",
+    "valid_ts",
+    "twin_ms",
+    "mass_balance_err"
+  ],
+  "title": "PhysicsCheckResponse",
+  "type": "object"
+}

@@ -1,0 +1,6 @@
+{
+ "type": "FeatureCollection",
+ "name": "CHN-IDF-25yr ground truth",
+ "description": "Empty on purpose: a design storm is a synthetic scenario, not an event that happened, so there is nothing to observe and nothing to source.",
+ "features": []
+}

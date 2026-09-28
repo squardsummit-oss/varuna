@@ -1,0 +1,56 @@
+{
+  "$id": "urn:varuna:schema:LineString",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "coordinates": {
+      "items": {
+        "anyOf": [
+          {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          }
+        ]
+      },
+      "minItems": 2,
+      "title": "Coordinates",
+      "type": "array"
+    },
+    "type": {
+      "const": "LineString",
+      "default": "LineString",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "coordinates"
+  ],
+  "title": "LineString",
+  "type": "object"
+}

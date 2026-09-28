@@ -1,0 +1,19 @@
+CAP-v1.2.xsd - OASIS Common Alerting Protocol Version 1.2, XML schema
+
+source_url: https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.xsd
+standard:   https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.html
+retrieved:  2026-09-14
+sha256:     b7798ef25868b068c97b268bda02d067c7d4ba9373adc5638bf37105804ee723
+size:       10098 bytes, LF line endings (.gitattributes pins eol=lf, so the hash survives checkout)
+copyright:  "Copyright OASIS Open 2010 All Rights Reserved" (retained in the file header)
+
+Vendored byte-for-byte, unmodified. The http:// URL redirects to the https:// one and served
+identical bytes on the retrieval date.
+
+Why it is vendored rather than fetched: the test suite runs with VARUNA_OFFLINE=1, which blocks
+every outbound connection, and SPEC.md 7.5 requires a test that validates VARUNA's CAP XML
+against this schema. The schema imports nothing; its one <any> (the xmldsig Signature slot) is
+processContents="lax", so validation needs no other file and no network.
+
+services/products/tests/test_cap_schema.py recomputes the sha256 above and fails if the vendored
+file has drifted from what was retrieved.

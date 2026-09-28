@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "LineString": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "items": {
+            "anyOf": [
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              }
+            ]
+          },
+          "minItems": 2,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "LineString",
+          "default": "LineString",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "LineString",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:RouteResult",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One route with its forecast-aware summary.",
+  "properties": {
+    "arrival_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Arrival Ts"
+    },
+    "distance_km": {
+      "minimum": 0,
+      "title": "Distance Km",
+      "type": "number"
+    },
+    "eta_min": {
+      "description": "Travel time in minutes under the forecast.",
+      "minimum": 0,
+      "title": "Eta Min",
+      "type": "number"
+    },
+    "geometry": {
+      "$ref": "#/$defs/LineString"
+    },
+    "label": {
+      "default": "VARUNA",
+      "enum": [
+        "VARUNA",
+        "Naive (shortest)",
+        "Alternate"
+      ],
+      "title": "Label",
+      "type": "string"
+    },
+    "max_expected_depth_cm": {
+      "description": "Max p50 depth met along the route.",
+      "minimum": 0,
+      "title": "Max Expected Depth Cm",
+      "type": "number"
+    },
+    "max_p_exceed": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Highest P(impassable) on any segment of the route.",
+      "title": "Max P Exceed"
+    },
+    "safe_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Latest departure for which the route stays passable; None = horizon.",
+      "title": "Safe Until"
+    },
+    "segment_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Segment Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "geometry",
+    "eta_min",
+    "distance_km",
+    "max_expected_depth_cm"
+  ],
+  "title": "RouteResult",
+  "type": "object"
+}

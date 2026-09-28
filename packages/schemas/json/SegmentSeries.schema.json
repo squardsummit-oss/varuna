@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "SafeUntilEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "enum": [
+            "ambulance",
+            "fire_tender",
+            "bus",
+            "car",
+            "two_wheeler",
+            "pedestrian"
+          ],
+          "title": "Profile",
+          "type": "string"
+        },
+        "risk_tolerance": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Risk Tolerance",
+          "type": "number"
+        },
+        "safe_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None = passable through the forecast horizon.",
+          "title": "Safe Until"
+        },
+        "threshold_cm": {
+          "exclusiveMinimum": 0,
+          "title": "Threshold Cm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "profile",
+        "threshold_cm",
+        "risk_tolerance"
+      ],
+      "title": "SafeUntilEntry",
+      "type": "object"
+    },
+    "SeriesPoint": {
+      "additionalProperties": false,
+      "description": "One time step of a fan chart (depth in cm).",
+      "properties": {
+        "lead_min": {
+          "description": "Minutes from the cycle time; negative = observed half.",
+          "title": "Lead Min",
+          "type": "integer"
+        },
+        "observed": {
+          "default": false,
+          "description": "True for the observed (analysed) half.",
+          "title": "Observed",
+          "type": "boolean"
+        },
+        "p10_cm": {
+          "minimum": 0,
+          "title": "P10 Cm",
+          "type": "number"
+        },
+        "p50_cm": {
+          "minimum": 0,
+          "title": "P50 Cm",
+          "type": "number"
+        },
+        "p90_cm": {
+          "minimum": 0,
+          "title": "P90 Cm",
+          "type": "number"
+        },
+        "valid_ts": {
+          "format": "date-time",
+          "title": "Valid Ts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "valid_ts",
+        "lead_min",
+        "p10_cm",
+        "p50_cm",
+        "p90_cm"
+      ],
+      "title": "SeriesPoint",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:SegmentSeries",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Fan-chart series and safe-until table for one segment (or hotspot).",
+  "properties": {
+    "name": {
+      "description": "Street or junction name, e.g. Hindmata junction.",
+      "title": "Name",
+      "type": "string"
+    },
+    "points": {
+      "items": {
+        "$ref": "#/$defs/SeriesPoint"
+      },
+      "title": "Points",
+      "type": "array"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "safe_until": {
+      "items": {
+        "$ref": "#/$defs/SafeUntilEntry"
+      },
+      "title": "Safe Until",
+      "type": "array"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "valid_ts": {
+      "description": "Cycle time of the run (IST).",
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "valid_ts",
+    "segment_id",
+    "name"
+  ],
+  "title": "SegmentSeries",
+  "type": "object"
+}

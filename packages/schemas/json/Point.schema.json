@@ -1,0 +1,52 @@
+{
+  "$id": "urn:varuna:schema:Point",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "coordinates": {
+      "anyOf": [
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        }
+      ],
+      "title": "Coordinates"
+    },
+    "type": {
+      "const": "Point",
+      "default": "Point",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "coordinates"
+  ],
+  "title": "Point",
+  "type": "object"
+}

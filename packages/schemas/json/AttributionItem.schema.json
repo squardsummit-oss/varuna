@@ -1,0 +1,52 @@
+{
+  "$id": "urn:varuna:schema:AttributionItem",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One responsible pipe from the finite-difference cleaning sensitivity (SPEC.md 11.7).",
+  "properties": {
+    "beta": {
+      "description": "Posterior mean blockage of the pipe.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Beta",
+      "type": "number"
+    },
+    "depth_explained_cm": {
+      "description": "Peak-depth reduction at the hotspot if this pipe alone were cleaned.",
+      "minimum": 0,
+      "title": "Depth Explained Cm",
+      "type": "number"
+    },
+    "edge_id": {
+      "minLength": 1,
+      "title": "Edge Id",
+      "type": "string"
+    },
+    "rank": {
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "street": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Street the pipe runs under.",
+      "title": "Street"
+    }
+  },
+  "required": [
+    "rank",
+    "edge_id",
+    "beta",
+    "depth_explained_cm"
+  ],
+  "title": "AttributionItem",
+  "type": "object"
+}

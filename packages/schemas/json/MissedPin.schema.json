@@ -1,0 +1,67 @@
+{
+  "$id": "urn:varuna:schema:MissedPin",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A ground-truth pin the model missed, with the likely reason ('Where we are wrong').",
+  "properties": {
+    "forecast_p50_cm": {
+      "minimum": 0,
+      "title": "Forecast P50 Cm",
+      "type": "number"
+    },
+    "forecast_p_gt_30": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Forecast P Gt 30",
+      "type": "number"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "observed_depth_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Observed Depth Cm"
+    },
+    "pin_id": {
+      "minLength": 1,
+      "title": "Pin Id",
+      "type": "string"
+    },
+    "reason": {
+      "description": "e.g. 'Drain outfall not in the inferred graph'.",
+      "title": "Reason",
+      "type": "string"
+    },
+    "source_url": {
+      "minLength": 8,
+      "title": "Source Url",
+      "type": "string"
+    },
+    "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pin_id",
+    "name",
+    "ts",
+    "forecast_p50_cm",
+    "forecast_p_gt_30",
+    "reason",
+    "source_url"
+  ],
+  "title": "MissedPin",
+  "type": "object"
+}

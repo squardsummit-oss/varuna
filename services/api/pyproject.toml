@@ -1,0 +1,27 @@
+[project]
+name = "varuna-api"
+version = "0.1.0"
+description = "VARUNA api service"
+requires-python = ">=3.12,<3.13"
+dependencies = ["varuna-schemas", "fastapi>=0.115", "uvicorn[standard]>=0.30", "websockets>=13", "python-multipart>=0.0.12", "structlog>=24", "orjson>=3.10", "httpx>=0.27", "varuna-cycle", "varuna-replay", "varuna-products", "varuna-route", "varuna-verify", "varuna-city", "varuna-pulse", "varuna-flash"]
+
+[tool.uv.sources]
+varuna-schemas = { workspace = true }
+varuna-api = { workspace = true }
+varuna-city = { workspace = true }
+varuna-replay = { workspace = true }
+varuna-sky = { workspace = true }
+varuna-twin = { workspace = true }
+varuna-pulse = { workspace = true }
+varuna-flash = { workspace = true }
+varuna-products = { workspace = true }
+varuna-route = { workspace = true }
+varuna-cycle = { workspace = true }
+varuna-verify = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["varuna_api"]

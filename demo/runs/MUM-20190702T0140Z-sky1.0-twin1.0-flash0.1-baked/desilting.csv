@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,MUM-E000382,Dr Babasaheb Ambedkar Marg (Vincent Road),,0.3831,0.1925,55.3,1,,inferred
+2,MUM-E001193,Senapati Bapat Marg,,0.3734,0.1754,54.1,1,,inferred
+3,MUM-E020504,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1425,52.9,0,,inferred
+4,MUM-E020505,off Sion Panvel Highway,near Chunabhatti railway station,0.3637,0.1437,52.9,0,,inferred
+5,MUM-E020507,off Sion Panvel Highway,near Chunabhatti railway station,0.3636,0.1402,52.9,0,,inferred
+6,MUM-E020508,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1427,52.9,0,,inferred
+7,MUM-E020506,off Sion Panvel Highway,near Chunabhatti railway station,0.3616,0.1416,52.7,0,,inferred
+8,MUM-E000218,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+9,MUM-E000219,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+10,MUM-E000220,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+11,MUM-E000221,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred
+12,MUM-E000222,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+13,MUM-E000223,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+14,MUM-E000224,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+15,MUM-E000225,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+16,MUM-E000226,Bandra Bus Station (E),,0.35,0.15,51.2,0,,inferred
+17,MUM-E000275,off Anant Kanekar Marg,,0.35,0.15,51.2,0,,inferred
+18,MUM-E000965,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+19,MUM-E000966,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+20,MUM-E000967,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+21,MUM-E000968,off Sahar Elevated Road,,0.35,0.15,51.2,0,,inferred
+22,MUM-E000969,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+23,MUM-E000970,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+24,MUM-E000971,Cubic mall parking exit,,0.35,0.15,51.2,0,,inferred
+25,MUM-E000972,Cubic mall parking entrance,,0.35,0.15,51.2,0,,inferred

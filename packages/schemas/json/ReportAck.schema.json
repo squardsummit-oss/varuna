@@ -1,0 +1,83 @@
+{
+  "$id": "urn:varuna:schema:ReportAck",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Response to ``POST /v1/reports``. The feedback count arrives after the next cycle.",
+  "properties": {
+    "duplicate_of": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Existing observation within 50 m and 10 min, if any.",
+      "title": "Duplicate Of"
+    },
+    "id": {
+      "description": "Observation id assigned to the report.",
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "improved_segments": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Segments whose forecast changed by more than 3 cm; None until assimilated.",
+      "title": "Improved Segments"
+    },
+    "message": {
+      "description": "Plain-language status, e.g. 'Thanks. Your report is queued for the next cycle.'",
+      "title": "Message",
+      "type": "string"
+    },
+    "queued_for_run": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Run id it will enter, if known.",
+      "title": "Queued For Run"
+    },
+    "received_ts": {
+      "format": "date-time",
+      "title": "Received Ts",
+      "type": "string"
+    },
+    "status": {
+      "default": "queued",
+      "enum": [
+        "queued",
+        "assimilated",
+        "duplicate",
+        "rejected"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "received_ts",
+    "message"
+  ],
+  "title": "ReportAck",
+  "type": "object"
+}

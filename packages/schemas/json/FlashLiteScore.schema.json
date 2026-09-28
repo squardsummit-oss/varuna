@@ -1,0 +1,51 @@
+{
+  "$id": "urn:varuna:schema:FlashLiteScore",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Emulator skill versus held-out Twin runs (``docs/verification/flash_lite.json``).",
+  "properties": {
+    "csi_30": {
+      "description": "CSI at 30 cm versus Twin.",
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Csi 30",
+      "type": "number"
+    },
+    "fitted_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fitted At"
+    },
+    "n_heldout_runs": {
+      "minimum": 0,
+      "title": "N Heldout Runs",
+      "type": "integer"
+    },
+    "n_train_runs": {
+      "minimum": 0,
+      "title": "N Train Runs",
+      "type": "integer"
+    },
+    "rmse_cm": {
+      "minimum": 0,
+      "title": "Rmse Cm",
+      "type": "number"
+    }
+  },
+  "required": [
+    "rmse_cm",
+    "csi_30",
+    "n_train_runs",
+    "n_heldout_runs"
+  ],
+  "title": "FlashLiteScore",
+  "type": "object"
+}

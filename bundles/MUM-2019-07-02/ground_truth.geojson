@@ -1,0 +1,858 @@
+{
+ "type": "FeatureCollection",
+ "name": "MUM-2019-07-02 ground truth",
+ "description": "29 sourced pins inside MUM-CENTRAL, curated in docs/research/ground_truth_MUM-2019-07-02.draft.geojson and audited in docs/research/REVIEW.md. Every pin carries the URL it was read from and the time uncertainty of its source; depth_cm is null on all of them because no cached source states a depth in centimetres.",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8421396,
+     19.010099
+    ]
+   },
+   "properties": {
+    "id": "MUM19-01",
+    "ts": "2019-07-01T10:44:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Hindmata flyover / Hindmata junction, Dadar East-Parel",
+    "lon": 72.8421396,
+    "lat": 19.010099,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC deployed de-watering pumps at the low-lying Hindmata flyover; visuals of water on the road below the flyover.",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/9739425792 (Hindmata Cinema bus stop); Hindmata Flyover ways 100841069/102170846 lie 19.0055-19.0110, 72.8398-72.8429",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "Blog entry: 'BMC has deployed de-watering equipment at Hindmata flyover. It is a low-lying and is prone to water-logging.'"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8501467,
+     19.0274356
+    ]
+   },
+   "properties": {
+    "id": "MUM19-02",
+    "ts": "2019-07-01T10:41:00+05:30",
+    "ts_uncertainty_min": 720,
+    "name": "Matunga police station",
+    "lon": 72.8501467,
+    "lat": 19.0274356,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "'Waterlogging at Matunga police station' (Deccan Herald live-blog entry).",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/4264457295 (Matunga railway station) used as the anchor; the police station itself is not in the cached geocodes",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The DH live blog interleaves 1 July and 2 July stamps around this entry; the stamp printed immediately after it is 1 Jul 10:41 IST, hence the +-12 h uncertainty. Do not use this pin for timing verification."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.863491,
+     19.0427327
+    ]
+   },
+   "properties": {
+    "id": "MUM19-03",
+    "ts": "2019-07-01T11:23:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Sion (junction area)",
+    "lon": 72.863491,
+    "lat": 19.0427327,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "news",
+    "text": "'Mumbai: Heavy traffic jam in Sion area after rainfall in the region.'",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM way/1235473849 (Sion Circle)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8632834,
+     19.0465213
+    ]
+   },
+   "properties": {
+    "id": "MUM19-04",
+    "ts": "2019-07-01T11:35:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Sion railway station",
+    "lon": 72.8632834,
+    "lat": 19.0465213,
+    "depth_cm": null,
+    "depth_phrase": "water logging at the station",
+    "kind": "news",
+    "text": "'Water logging at Sion Railway Station after rainfall in the region.'",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/2663263713 (Sion station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The research draft records this pin's kind as 'rail' (railway waterlogging); the bundle contract names the medium a pin came from, and this one came from a news live blog, so it is carried as 'news'."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8775722,
+     19.028972
+    ]
+   },
+   "properties": {
+    "id": "MUM19-05",
+    "ts": "2019-07-01T11:52:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Bhakti Park / Eastern Freeway, Wadala",
+    "lon": 72.8775722,
+    "lat": 19.028972,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "news",
+    "text": "'Mumbai: Heavy traffic jam in Bhakti Park area, Eastern Freeway.'",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/632340589 (Bhakti Park station)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8577375,
+     19.0316822
+    ]
+   },
+   "properties": {
+    "id": "MUM19-06",
+    "ts": "2019-07-01T08:00:00+05:30",
+    "ts_uncertainty_min": 490,
+    "name": "King's Circle / Maheshwari Udyan, Matunga",
+    "lon": 72.8577375,
+    "lat": 19.0316822,
+    "depth_cm": null,
+    "depth_phrase": "vehicles submerged",
+    "kind": "news",
+    "text": "Photo caption: 'Vehicles submerged at the waterlogged King's Circle after heavy rains in Mumbai on Monday' (KA Viswanathan/IANS).",
+    "source_url": "https://scroll.in/latest/929041/in-photos-rain-wreaks-havoc-in-mumbai-more-expected-in-next-two-days",
+    "source_title": "In photos: Rain wreaks havoc in Mumbai, more expected in next two days (Scroll.in, 1 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929041.txt",
+    "geocode": "OSM node/1650694464 (King's Circle station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The source gives only 'Monday'; ts set to the midpoint of 00:00-16:17 IST (publication time), uncertainty widened to +-490 min."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8868461,
+     19.0679196
+    ]
+   },
+   "properties": {
+    "id": "MUM19-07",
+    "ts": "2019-07-02T08:07:00+05:30",
+    "ts_uncertainty_min": 30,
+    "name": "Kranti Nagar, Kurla East",
+    "lon": 72.8868461,
+    "lat": 19.0679196,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC on Twitter: about 1,000 people evacuated from Kranti Nagar, Kurla, because of an overflowing Mithi river; NDRF, Navy (INS Tanaji), fire brigade and volunteers assisted.",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/2930720778 (Kranti Nagar, Kurla East)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8590161,
+     19.0325417
+    ]
+   },
+   "properties": {
+    "id": "MUM19-08",
+    "ts": "2019-07-02T08:47:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Gandhi Market, Sion / Matunga",
+    "lon": 72.8590161,
+    "lat": 19.0325417,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Traffic advisory relayed by the live blog: traffic moving slow due to waterlogging at Gandhi Market (and Sion, LBS Nayak Nagar, Everard Nagar, Kherwadi flyover, Amar Mahal, Khar Subway, Milan Subway, Andheri, Jogeshwari JVLR, Malad chowky subway).",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/9788462276 (Gandhi Market Matunga bus stop)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.863491,
+     19.0427327
+    ]
+   },
+   "properties": {
+    "id": "MUM19-09",
+    "ts": "2019-07-02T08:47:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Sion (junction area)",
+    "lon": 72.863491,
+    "lat": 19.0427327,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same traffic advisory: waterlogging slowing traffic at Sion.",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM way/1235473849 (Sion Circle)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.842833,
+     19.0904503
+    ]
+   },
+   "properties": {
+    "id": "MUM19-10",
+    "ts": "2019-07-02T08:47:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Milan Subway, Santacruz",
+    "lon": 72.842833,
+    "lat": 19.0904503,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same traffic advisory: waterlogging slowing traffic at Milan Subway. BEST later diverted the Milan Subway route via the Milan flyover (BMC tweet, 13:16 IST).",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM way/39532540 (Milan Subway)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8469019,
+     19.0531775
+    ]
+   },
+   "properties": {
+    "id": "MUM19-11",
+    "ts": "2019-07-02T08:47:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Kherwadi flyover / Kalanagar, Bandra East",
+    "lon": 72.8469019,
+    "lat": 19.0531775,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same traffic advisory: waterlogging slowing traffic at Kherwadi flyover.",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/9739950327 (Kalanagar bus stop, Sion Bandra Link Road)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The flyover itself is not separately geocoded in the cache; the Kalanagar/Kherwadi bus stop is used as the anchor."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8464205,
+     19.1196976
+    ]
+   },
+   "properties": {
+    "id": "MUM19-12",
+    "ts": "2019-07-02T08:47:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Andheri (locality named in the advisory)",
+    "lon": 72.8464205,
+    "lat": 19.1196976,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same traffic advisory: waterlogging slowing traffic at Andheri.",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/5696928866 (Andheri station)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The advisory names 'Andheri' only, not a specific junction."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.84693,
+     19.0803926
+    ]
+   },
+   "properties": {
+    "id": "MUM19-15",
+    "ts": "2019-07-02T08:31:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Vakola junction, Santacruz East",
+    "lon": 72.84693,
+    "lat": 19.0803926,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC tweet relayed by the live blog: 'Areas like Vakola junction, Vakola, Postal Colony, Chunabhatti railway station, Vakola road are waterlogged.'",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/10265662169 (Vakola Junction)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8690974,
+     19.0517703
+    ]
+   },
+   "properties": {
+    "id": "MUM19-16",
+    "ts": "2019-07-02T08:31:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Chunabhatti railway station",
+    "lon": 72.8690974,
+    "lat": 19.0517703,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same BMC tweet: Chunabhatti railway station waterlogged.",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/2663219988 (Chuna Bhatti station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8949685,
+     19.0607418
+    ]
+   },
+   "properties": {
+    "id": "MUM19-17",
+    "ts": "2019-07-02T08:31:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Postal Colony, Chembur",
+    "lon": 72.8949685,
+    "lat": 19.0607418,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "Same BMC tweet: Postal Colony waterlogged.",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/245666110 (Postal Colony, Chembur)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8577375,
+     19.0316822
+    ]
+   },
+   "properties": {
+    "id": "MUM19-18",
+    "ts": "2019-07-02T09:10:00+05:30",
+    "ts_uncertainty_min": 60,
+    "name": "King's Circle / Maheshwari Udyan, Matunga",
+    "lon": 72.8577375,
+    "lat": 19.0316822,
+    "depth_cm": null,
+    "depth_phrase": "waterlogged streets",
+    "kind": "news",
+    "text": "ANI: '#MumbaiRains: Waterlogged streets in King Circle area, following heavy rainfall.'",
+    "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+    "source_title": "Mumbai rains live blog: at least 16 killed overnight in rain-related incidents (Scroll.in, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+    "geocode": "OSM node/1650694464 (King's Circle station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "Timestamp is the live-blog entry (9.10 am) that carried the ANI tweet; the tweet itself may be slightly earlier."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8825604,
+     19.0628944
+    ]
+   },
+   "properties": {
+    "id": "MUM19-19",
+    "ts": "2019-07-02T09:10:00+05:30",
+    "ts_uncertainty_min": 60,
+    "name": "Kailash Parbat Society, Kurla East",
+    "lon": 72.8825604,
+    "lat": 19.0628944,
+    "depth_cm": null,
+    "depth_phrase": "ground floor submerged",
+    "kind": "news",
+    "text": "ANI: 'Ground floor of Kailash Parbat Society in Kurla East submerged, after intense spell of rain in the area.'",
+    "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+    "source_title": "Mumbai rains live blog: at least 16 killed overnight in rain-related incidents (Scroll.in, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+    "geocode": "OSM node/1640248215 (Kurla East) used as the anchor; the society is not geocoded",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8632834,
+     19.0465213
+    ]
+   },
+   "properties": {
+    "id": "MUM19-20",
+    "ts": "2019-07-02T09:10:00+05:30",
+    "ts_uncertainty_min": 60,
+    "name": "Sion railway station",
+    "lon": 72.8632834,
+    "lat": 19.0465213,
+    "depth_cm": null,
+    "depth_phrase": "railway tracks submerged",
+    "kind": "news",
+    "text": "ANI: 'Railway tracks submerge at Sion railway station, after heavy rains in the area.'",
+    "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+    "source_title": "Mumbai rains live blog: at least 16 killed overnight in rain-related incidents (Scroll.in, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+    "geocode": "OSM node/2663263713 (Sion station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The research draft records this pin's kind as 'rail' (railway waterlogging); the bundle contract names the medium a pin came from, and this one came from a news live blog, so it is carried as 'news'."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8471366,
+     19.0798578
+    ]
+   },
+   "properties": {
+    "id": "MUM19-21",
+    "ts": "2019-07-02T09:10:00+05:30",
+    "ts_uncertainty_min": 60,
+    "name": "Vakola police station, Santacruz East",
+    "lon": 72.8471366,
+    "lat": 19.0798578,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "ANI: 'Water logging inside Vakola police station in Mumbai following heavy rainfall in the city.'",
+    "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+    "source_title": "Mumbai rains live blog: at least 16 killed overnight in rain-related incidents (Scroll.in, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+    "geocode": "OSM node/9741160315 (Vakola Police Station bus stop)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8632834,
+     19.0465213
+    ]
+   },
+   "properties": {
+    "id": "MUM19-22",
+    "ts": "2019-07-02T10:33:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Sion station / Sion police station surroundings",
+    "lon": 72.8632834,
+    "lat": 19.0465213,
+    "depth_cm": null,
+    "depth_phrase": "massive waterlogging",
+    "kind": "news",
+    "text": "'Massive water logging outside Sion Station ... massive waterlogging has occurred outside Sion police station.'",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/2663263713 (Sion station) used as the anchor; the police station is not geocoded",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8809552,
+     19.098858
+    ]
+   },
+   "properties": {
+    "id": "MUM19-23",
+    "ts": "2019-07-02T12:02:00+05:30",
+    "ts_uncertainty_min": 90,
+    "name": "Sakinaka police station, Andheri East",
+    "lon": 72.8809552,
+    "lat": 19.098858,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "'Waterlogging at Sakinaka Police Station' (DH, 12:02 IST); ANI reported water entering Sakinaka police station (Scroll live-blog entry at 1.17 pm).",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "Nominatim 'Sakinaka, Mumbai' -> OSM way/790337874 (Sakinaka Tele Exchange Lane); the police station is not geocoded",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "Two sources give 12:02 and 13:17 IST for the same event; the uncertainty covers both."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8470336,
+     19.1192749
+    ]
+   },
+   "properties": {
+    "id": "MUM19-24",
+    "ts": "2019-07-02T12:09:00+05:30",
+    "ts_uncertainty_min": 15,
+    "name": "Andheri subway",
+    "lon": 72.8470336,
+    "lat": 19.1192749,
+    "depth_cm": null,
+    "depth_phrase": "closed due to flooding",
+    "kind": "news",
+    "text": "ANI: 'Andheri Subway in Mumbai is closed due to flooding in the area.' India TV logged the closure at 12:18 IST.",
+    "source_url": "https://scroll.in/latest/929092/mumbai-at-least-16-people-killed-overnight-in-rain-related-incidents-schools-colleges-shut-today",
+    "source_title": "Mumbai rains live blog: at least 16 killed overnight in rain-related incidents (Scroll.in, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/scroll_929092.txt",
+    "geocode": "OSM node/1646774126 (Andheri railway-subway connection)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.876583,
+     19.0686026
+    ]
+   },
+   "properties": {
+    "id": "MUM19-25",
+    "ts": "2019-07-02T12:25:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Kurla West (near a school)",
+    "lon": 72.876583,
+    "lat": 19.0686026,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "news",
+    "text": "'Waterlogging near school in Kurla west.'",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/1366008926 (Kurla West)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8979713,
+     19.054818
+    ]
+   },
+   "properties": {
+    "id": "MUM19-26",
+    "ts": "2019-07-02T13:39:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Chembur (playground)",
+    "lon": 72.8979713,
+    "lat": 19.054818,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "news",
+    "text": "'Chembur playground flooded.'",
+    "source_url": "https://www.deccanherald.com/archives/mumbai-rains-live-mumbai-limps-back-to-normalcy-as-rains-subside-744003.html",
+    "source_title": "Mumbai rains LIVE (Deccan Herald live blog, 1-3 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/dh_744003.txt",
+    "geocode": "OSM node/632314632 (Chembur)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8669504,
+     19.0301805
+    ]
+   },
+   "properties": {
+    "id": "MUM19-27",
+    "ts": "2019-07-02T13:16:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Antop Hill (BEST route curtailed)",
+    "lon": 72.8669504,
+    "lat": 19.0301805,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC bus-diversion tweet: 'Antop Hill Sector 7 curtailed at Antop Hill bus stand.'",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/13284781018 (Antop Hill station)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8693,
+     19.0396
+    ]
+   },
+   "properties": {
+    "id": "MUM19-28",
+    "ts": "2019-07-02T13:16:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Pratiksha Nagar, Sion (BEST route diverted)",
+    "lon": 72.8693,
+    "lat": 19.0396,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC bus-diversion tweet: 'Sunder Vihar Pratiksha Nagar via Kokari Agar.'",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/245663124 (Pratiksha Nagar)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8468051,
+     19.074542
+    ]
+   },
+   "properties": {
+    "id": "MUM19-29",
+    "ts": "2019-07-02T13:16:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Vakola flyover, Western Express Highway",
+    "lon": 72.8468051,
+    "lat": 19.074542,
+    "depth_cm": null,
+    "depth_phrase": null,
+    "kind": "log",
+    "text": "BMC bus-diversion tweet: 'Maratha Colony WEH via Vakola flyover.'",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM node/619211066 (Vakola Flyover)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8802836,
+     19.0658169
+    ]
+   },
+   "properties": {
+    "id": "MUM19-30",
+    "ts": "2019-07-02T14:28:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Kurla railway station",
+    "lon": 72.8802836,
+    "lat": 19.0658169,
+    "depth_cm": null,
+    "depth_phrase": "heavy waterlogging on tracks",
+    "kind": "news",
+    "text": "'Heavy waterlogging on railway tracks at Kurla station' (video item in the live blog).",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM way/122303852 (Kurla railway station)",
+    "geocode_precision": "osm_exact",
+    "inside_aoi": true,
+    "synthetic": false,
+    "note": "The research draft records this pin's kind as 'rail' (railway waterlogging); the bundle contract names the medium a pin came from, and this one came from a news live blog, so it is carried as 'news'."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.8401435,
+     19.0550693
+    ]
+   },
+   "properties": {
+    "id": "MUM19-31",
+    "ts": "2019-07-02T14:22:00+05:30",
+    "ts_uncertainty_min": 20,
+    "name": "Bandra (streets)",
+    "lon": 72.8401435,
+    "lat": 19.0550693,
+    "depth_cm": null,
+    "depth_phrase": "waterlogged streets",
+    "kind": "news",
+    "text": "'Mumbai rains: Waterlogged streets of Bandra, following heavy rainfall' (video item).",
+    "source_url": "https://www.indiatvnews.com/news/india-mumbai-rains-live-updates-wall-collapse-local-trains-flight-cancelled-pune-531812",
+    "source_title": "Mumbai rains live updates (India TV live blog, 2 Jul 2019)",
+    "cached_path": "docs/research/_raw/pages/indiatv_531812.txt",
+    "geocode": "OSM way/434887908 (Bandra railway station)",
+    "geocode_precision": "locality_approx",
+    "inside_aoi": true,
+    "synthetic": false
+   }
+  }
+ ]
+}

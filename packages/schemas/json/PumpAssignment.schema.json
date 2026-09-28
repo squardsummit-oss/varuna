@@ -1,0 +1,68 @@
+{
+  "$id": "urn:varuna:schema:PumpAssignment",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One pump sent to one hotspot (blueprint 9.1 ``pump_assignment``).",
+  "properties": {
+    "arrive_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Expected arrival (IST).",
+      "title": "Arrive Ts"
+    },
+    "eta_min": {
+      "description": "Travel time from the depot in minutes.",
+      "minimum": 0,
+      "title": "Eta Min",
+      "type": "integer"
+    },
+    "expected_benefit_min": {
+      "description": "Minutes above 45 cm avoided at the hotspot (emulator estimate).",
+      "minimum": 0,
+      "title": "Expected Benefit Min",
+      "type": "number"
+    },
+    "hotspot_id": {
+      "minLength": 1,
+      "title": "Hotspot Id",
+      "type": "string"
+    },
+    "hotspot_name": {
+      "title": "Hotspot Name",
+      "type": "string"
+    },
+    "order_text": {
+      "description": "Plain-language order, e.g. 'Move P-12 from Parel depot to Hindmata now; ETA 25 min; prevents about 40 min above 45 cm'.",
+      "title": "Order Text",
+      "type": "string"
+    },
+    "pump_id": {
+      "minLength": 1,
+      "title": "Pump Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "pump_id",
+    "hotspot_id",
+    "hotspot_name",
+    "eta_min",
+    "expected_benefit_min",
+    "order_text"
+  ],
+  "title": "PumpAssignment",
+  "type": "object"
+}

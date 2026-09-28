@@ -1,0 +1,24 @@
+{
+  "$id": "urn:varuna:schema:SegmentDelta",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Per-segment change of peak p50 depth for the diff layer.",
+  "properties": {
+    "delta_p50_cm": {
+      "description": "after - before in cm (negative = improved).",
+      "title": "Delta P50 Cm",
+      "type": "number"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "segment_id",
+    "delta_p50_cm"
+  ],
+  "title": "SegmentDelta",
+  "type": "object"
+}

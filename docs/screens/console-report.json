@@ -1,0 +1,90 @@
+{
+  "capturedAt": "2026-09-06T09:22:02.994Z",
+  "baseUrl": "http://localhost:3000",
+  "screens": [
+    {
+      "route": "/console",
+      "file": "C:\\dev\\varuna\\docs\\screens\\console.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/design",
+      "file": "C:\\dev\\varuna\\docs\\screens\\design.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/",
+      "file": "C:\\dev\\varuna\\docs\\screens\\landing.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/drains",
+      "file": "C:\\dev\\varuna\\docs\\screens\\drains.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/route",
+      "file": "C:\\dev\\varuna\\docs\\screens\\route.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/alerts",
+      "file": "C:\\dev\\varuna\\docs\\screens\\alerts.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/pumps",
+      "file": "C:\\dev\\varuna\\docs\\screens\\pumps.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/whatif",
+      "file": "C:\\dev\\varuna\\docs\\screens\\whatif.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/replay",
+      "file": "C:\\dev\\varuna\\docs\\screens\\replay.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/onboard",
+      "file": "C:\\dev\\varuna\\docs\\screens\\onboard.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/verify",
+      "file": "C:\\dev\\varuna\\docs\\screens\\verify.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/api",
+      "file": "C:\\dev\\varuna\\docs\\screens\\api.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/map",
+      "file": "C:\\dev\\varuna\\docs\\screens\\map-390.png",
+      "status": 200,
+      "problems": []
+    },
+    {
+      "route": "/report",
+      "file": "C:\\dev\\varuna\\docs\\screens\\report-390.png",
+      "status": 200,
+      "problems": []
+    }
+  ]
+}

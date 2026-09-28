@@ -1,0 +1,83 @@
+{
+  "$id": "urn:varuna:schema:RunSummary",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One row of ``GET /v1/runs``.",
+  "properties": {
+    "bundle": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bundle"
+    },
+    "city": {
+      "title": "City",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "cycle_ts": {
+      "format": "date-time",
+      "title": "Cycle Ts",
+      "type": "string"
+    },
+    "ensemble_n": {
+      "minimum": 1,
+      "title": "Ensemble N",
+      "type": "integer"
+    },
+    "mass_balance_err": {
+      "minimum": 0,
+      "title": "Mass Balance Err",
+      "type": "number"
+    },
+    "mode": {
+      "enum": [
+        "baked",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "replay_mode": {
+      "enum": [
+        "replay",
+        "live",
+        "degraded"
+      ],
+      "title": "Replay Mode",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "total_ms": {
+      "minimum": 0,
+      "title": "Total Ms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run_id",
+    "city",
+    "cycle_ts",
+    "mode",
+    "replay_mode",
+    "created_at",
+    "total_ms",
+    "mass_balance_err",
+    "ensemble_n"
+  ],
+  "title": "RunSummary",
+  "type": "object"
+}

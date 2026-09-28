@@ -1,0 +1,26 @@
+/*
+ * Hindi and Marathi text on /map and /report (SPEC.md 6.3). The token stacks are inlined - by
+ * Tailwind's `@theme inline` for font-sans and font-display, and by every type-* utility, each of
+ * which names its own family - so no variable can be overridden. These rules re-state the three
+ * stacks with Noto Sans Devanagari after the Latin face, only under a Devanagari provider.
+ *
+ * They are deliberately unlayered: Tailwind's utilities live in a cascade layer, and an unlayered
+ * rule beats a layered one whatever the specificity, so no utility class can put a Devanagari
+ * glyph back on the system fallback.
+ *
+ * Geist stays first, so numbers, units and times ("45 cm", "09:25") keep their Latin face and their
+ * tabular figures; only Devanagari code points fall through to Noto, whose file is fetched the
+ * first time one is drawn.
+ */
+[data-script="deva"],
+[data-script="deva"] * {
+  font-family: var(--font-geist-sans), var(--font-devanagari), system-ui, sans-serif;
+}
+
+[data-script="deva"] :is(.font-display, .type-h1, .type-display, .type-hero) {
+  font-family: var(--font-bricolage), var(--font-devanagari), system-ui, sans-serif;
+}
+
+[data-script="deva"] :is(.font-mono, .type-mono) {
+  font-family: var(--font-geist-mono), var(--font-devanagari), ui-monospace, monospace;
+}

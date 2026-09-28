@@ -1,0 +1,168 @@
+{
+  "$id": "urn:varuna:schema:CycleStatus",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What the orchestrator is doing now, with the per-stage budget for the budget bar.",
+  "properties": {
+    "budget_ms": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "Per-stage budgets in ms (SPEC.md 11.11).",
+      "title": "Budget Ms",
+      "type": "object"
+    },
+    "bundle": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bundle"
+    },
+    "cycle_ts": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Simulation time of the cycle.",
+      "title": "Cycle Ts"
+    },
+    "degraded_feeds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Degraded Feeds",
+      "type": "array"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "What failed and what to do, e.g. 'Twin exceeded 8 s; using Flash-lite'.",
+      "title": "Error"
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished At"
+    },
+    "mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "baked",
+            "live"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "baked or live.",
+      "title": "Mode"
+    },
+    "replay_mode": {
+      "anyOf": [
+        {
+          "enum": [
+            "replay",
+            "live",
+            "degraded"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replay Mode"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Run being produced or last published.",
+      "title": "Run Id"
+    },
+    "stage": {
+      "default": "idle",
+      "enum": [
+        "decode",
+        "sky",
+        "twin",
+        "flash",
+        "pulse",
+        "products",
+        "route",
+        "alerts",
+        "publish",
+        "idle"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "stage_ms": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "Completed stages and their wall-clock in ms.",
+      "title": "Stage Ms",
+      "type": "object"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At"
+    },
+    "total_budget_ms": {
+      "default": 15000,
+      "exclusiveMinimum": 0,
+      "title": "Total Budget Ms",
+      "type": "integer"
+    }
+  },
+  "title": "CycleStatus",
+  "type": "object"
+}

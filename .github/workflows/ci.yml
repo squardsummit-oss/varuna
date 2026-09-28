@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VARUNA_OFFLINE: "1"
+  NEXT_TELEMETRY_DISABLED: "1"
+  PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
+
+jobs:
+  web:
+    name: Web (lint, typecheck, test, design lint, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tokens:build
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm lint:design
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000/v1/live
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: next-build
+          path: apps/command/.next
+          retention-days: 3
+          include-hidden-files: true
+
+  python:
+    name: Python (ruff, pytest with coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
+      # The 70 % coverage floor (SPEC.md section 14) is enforced once the engines land in
+      # Phase 5. Until then the gate reports but does not fail the workflow.
+      - name: Coverage threshold (advisory until Phase 5)
+        continue-on-error: true
+        run: uv run pytest -q --cov=services --cov=packages --cov-report=term --cov-fail-under=70
+
+  e2e:
+    name: Playwright smoke
+    runs-on: ubuntu-latest
+    needs: [web]
+    # Bounded (ADR-0043). With no limit this job inherited GitHub's 360 minutes and its first run
+    # sat for 40 of them: three /route tests each waited the full 360 s test timeout, twice, on a
+    # "Find route" button that cannot enable without a built city. The suite itself is about ten
+    # minutes; the step stops at 20 so the report still uploads, the job at 30.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tokens:build
+      - run: uv sync --all-groups
+      - name: Playwright version
+        id: playwright
+        run: echo "version=$(pnpm --filter @varuna/command exec playwright --version | tr -d 'Version ')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter @varuna/command exec playwright install --with-deps chromium
+      - if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter @varuna/command exec playwright install-deps chromium
+      # A clean clone: no city/mumbai (gitignored, `make city`), and only the demo/runs the API
+      # seeds. Tests tagged @needs-city skip with the command that builds it; everything else runs
+      # and must pass. `make e2e` on a machine with the city runs the whole script (ADR-0043).
+      - run: pnpm --filter @varuna/command exec playwright test --config ../../playwright.config.ts
+        timeout-minutes: 20
+        env:
+          CI: "1"
+      - name: Summarise what passed, failed and did not run
+        if: always()
+        run: node tests/e2e/summary.mjs playwright-results.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+            playwright-results.json
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse CI on /
+    runs-on: ubuntu-latest
+    needs: [web]
+    # Performance >= 0.9 and accessibility >= 0.95 (SPEC.md section 14) become blocking when
+    # the landing page ships in Phase 9. Until then the audit runs but cannot fail the workflow.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tokens:build
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000/v1/live
+      - run: pnpm exec lhci autorun --config=lighthouserc.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse
+          path: .lighthouseci
+          retention-days: 7

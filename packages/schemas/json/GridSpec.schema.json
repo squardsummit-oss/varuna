@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "BBox": {
+      "additionalProperties": false,
+      "description": "A WGS84 bounding box. Accepts ``[min_lon, min_lat, max_lon, max_lat]`` as well as an object.",
+      "properties": {
+        "max_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Max Lat",
+          "type": "number"
+        },
+        "max_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Max Lon",
+          "type": "number"
+        },
+        "min_lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Min Lat",
+          "type": "number"
+        },
+        "min_lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Min Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min_lon",
+        "min_lat",
+        "max_lon",
+        "max_lat"
+      ],
+      "title": "BBox",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:GridSpec",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The computational grid of the 2D solver (SPEC.md 3.3).",
+  "properties": {
+    "bounds": {
+      "$ref": "#/$defs/BBox",
+      "description": "WGS84 extent of the grid for the map BitmapLayer."
+    },
+    "crs": {
+      "description": "Computation CRS, e.g. EPSG:32643 (UTM 43N).",
+      "title": "Crs",
+      "type": "string"
+    },
+    "dx_m": {
+      "description": "Cell size in metres (30 for the city grid).",
+      "exclusiveMinimum": 0,
+      "title": "Dx M",
+      "type": "number"
+    },
+    "nx": {
+      "description": "Columns.",
+      "exclusiveMinimum": 0,
+      "title": "Nx",
+      "type": "integer"
+    },
+    "ny": {
+      "description": "Rows.",
+      "exclusiveMinimum": 0,
+      "title": "Ny",
+      "type": "integer"
+    },
+    "transform": {
+      "anyOf": [
+        {
+          "maxItems": 6,
+          "minItems": 6,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Affine (a, b, c, d, e, f) in CRS units for raster writers; optional.",
+      "title": "Transform"
+    }
+  },
+  "required": [
+    "dx_m",
+    "nx",
+    "ny",
+    "crs",
+    "bounds"
+  ],
+  "title": "GridSpec",
+  "type": "object"
+}

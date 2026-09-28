@@ -1,0 +1,471 @@
+{
+  "$defs": {
+    "AttributionItem": {
+      "additionalProperties": false,
+      "description": "One responsible pipe from the finite-difference cleaning sensitivity (SPEC.md 11.7).",
+      "properties": {
+        "beta": {
+          "description": "Posterior mean blockage of the pipe.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Beta",
+          "type": "number"
+        },
+        "depth_explained_cm": {
+          "description": "Peak-depth reduction at the hotspot if this pipe alone were cleaned.",
+          "minimum": 0,
+          "title": "Depth Explained Cm",
+          "type": "number"
+        },
+        "edge_id": {
+          "minLength": 1,
+          "title": "Edge Id",
+          "type": "string"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Street the pipe runs under.",
+          "title": "Street"
+        }
+      },
+      "required": [
+        "rank",
+        "edge_id",
+        "beta",
+        "depth_explained_cm"
+      ],
+      "title": "AttributionItem",
+      "type": "object"
+    },
+    "CleanTopNEffect": {
+      "additionalProperties": false,
+      "description": "Combined effect of cleaning the top N pipes by attribution (the demo's 'clean 14').",
+      "properties": {
+        "depth_after_cm": {
+          "minimum": 0,
+          "title": "Depth After Cm",
+          "type": "number"
+        },
+        "depth_before_cm": {
+          "minimum": 0,
+          "title": "Depth Before Cm",
+          "type": "number"
+        },
+        "edge_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Edge Ids",
+          "type": "array"
+        },
+        "minutes_impassable_after": {
+          "minimum": 0,
+          "title": "Minutes Impassable After",
+          "type": "number"
+        },
+        "minutes_impassable_before": {
+          "description": "Minutes above the car threshold.",
+          "minimum": 0,
+          "title": "Minutes Impassable Before",
+          "type": "number"
+        },
+        "n": {
+          "minimum": 1,
+          "title": "N",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "n",
+        "depth_before_cm",
+        "depth_after_cm",
+        "minutes_impassable_before",
+        "minutes_impassable_after"
+      ],
+      "title": "CleanTopNEffect",
+      "type": "object"
+    },
+    "Hotspot": {
+      "additionalProperties": false,
+      "description": "One ranked hotspot at a selected valid time.",
+      "properties": {
+        "attribution": {
+          "description": "Responsible pipes, best first.",
+          "items": {
+            "$ref": "#/$defs/AttributionItem"
+          },
+          "title": "Attribution",
+          "type": "array"
+        },
+        "clean_top_n_effect": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CleanTopNEffect"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "depth_p50_cm": {
+          "description": "Median depth at the selected time in cm.",
+          "minimum": 0,
+          "title": "Depth P50 Cm",
+          "type": "number"
+        },
+        "expected_impact": {
+          "description": "P(impassable at peak) times exposure weight (ranking key).",
+          "minimum": 0,
+          "title": "Expected Impact",
+          "type": "number"
+        },
+        "exposure": {
+          "$ref": "#/$defs/HotspotExposure"
+        },
+        "id": {
+          "description": "Hotspot register id, e.g. hindmata.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "impassable_threshold_cm": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Impassable Threshold Cm",
+          "type": "integer"
+        },
+        "lat": {
+          "maximum": 90.0,
+          "minimum": -90.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180.0,
+          "minimum": -180.0,
+          "title": "Lon",
+          "type": "number"
+        },
+        "minutes_impassable": {
+          "default": 0.0,
+          "description": "Minutes above the threshold over the horizon.",
+          "minimum": 0,
+          "title": "Minutes Impassable",
+          "type": "number"
+        },
+        "name": {
+          "description": "e.g. Hindmata junction.",
+          "title": "Name",
+          "type": "string"
+        },
+        "p_impassable": {
+          "description": "P(depth > car threshold) at the peak.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "P Impassable",
+          "type": "number"
+        },
+        "peak_depth_cm": {
+          "description": "Peak median depth over the horizon in cm.",
+          "minimum": 0,
+          "title": "Peak Depth Cm",
+          "type": "number"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "segment_ids": {
+          "description": "Segments forming the hotspot.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "selected_ts": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Valid time the p50 depth refers to (None = peak).",
+          "title": "Selected Ts"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Register source for the chronic-spot location.",
+          "title": "Source Url"
+        },
+        "sparkline": {
+          "description": "3-hour p10/p50/p90 series for the hotspot row.",
+          "items": {
+            "$ref": "#/$defs/SeriesPoint"
+          },
+          "title": "Sparkline",
+          "type": "array"
+        },
+        "surcharging_nodes": {
+          "description": "Manholes predicted to surcharge at this hotspot.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Surcharging Nodes",
+          "type": "array"
+        },
+        "time_to_peak": {
+          "description": "When the peak is reached (IST).",
+          "format": "date-time",
+          "title": "Time To Peak",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rank",
+        "id",
+        "name",
+        "lon",
+        "lat",
+        "depth_p50_cm",
+        "peak_depth_cm",
+        "time_to_peak",
+        "p_impassable",
+        "expected_impact",
+        "exposure"
+      ],
+      "title": "Hotspot",
+      "type": "object"
+    },
+    "HotspotExposure": {
+      "additionalProperties": false,
+      "description": "What is at stake around a hotspot (blueprint 6.8: traffic, hospitals, transit, population).",
+      "properties": {
+        "facilities": {
+          "description": "Icon set shown on the hotspot row.",
+          "items": {
+            "enum": [
+              "hospital",
+              "fire_station",
+              "station",
+              "transit",
+              "school",
+              "shelter"
+            ],
+            "type": "string"
+          },
+          "title": "Facilities",
+          "type": "array"
+        },
+        "nearest_hospital": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. KEM Hospital, Parel.",
+          "title": "Nearest Hospital"
+        },
+        "nearest_hospital_m": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nearest Hospital M"
+        },
+        "nearest_station": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. Dadar station.",
+          "title": "Nearest Station"
+        },
+        "nearest_station_m": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nearest Station M"
+        },
+        "population_300m": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Population 300M"
+        },
+        "traffic_volume_proxy": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Relative traffic volume proxy by road class.",
+          "title": "Traffic Volume Proxy"
+        },
+        "transit_lines": {
+          "description": "Bus and rail lines affected.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Transit Lines",
+          "type": "array"
+        },
+        "weight": {
+          "description": "Exposure weight from the city pipeline (dimensionless).",
+          "minimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "weight"
+      ],
+      "title": "HotspotExposure",
+      "type": "object"
+    },
+    "SeriesPoint": {
+      "additionalProperties": false,
+      "description": "One time step of a fan chart (depth in cm).",
+      "properties": {
+        "lead_min": {
+          "description": "Minutes from the cycle time; negative = observed half.",
+          "title": "Lead Min",
+          "type": "integer"
+        },
+        "observed": {
+          "default": false,
+          "description": "True for the observed (analysed) half.",
+          "title": "Observed",
+          "type": "boolean"
+        },
+        "p10_cm": {
+          "minimum": 0,
+          "title": "P10 Cm",
+          "type": "number"
+        },
+        "p50_cm": {
+          "minimum": 0,
+          "title": "P50 Cm",
+          "type": "number"
+        },
+        "p90_cm": {
+          "minimum": 0,
+          "title": "P90 Cm",
+          "type": "number"
+        },
+        "valid_ts": {
+          "format": "date-time",
+          "title": "Valid Ts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "valid_ts",
+        "lead_min",
+        "p10_cm",
+        "p50_cm",
+        "p90_cm"
+      ],
+      "title": "SeriesPoint",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:HotspotList",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "``hotspots.json``: ranked hotspots for one run.",
+  "properties": {
+    "attribution_label": {
+      "default": "Reduced-order emulator calibrated to VARUNA-Twin",
+      "description": "Honesty label for the attribution method.",
+      "title": "Attribution Label",
+      "type": "string"
+    },
+    "hotspots": {
+      "items": {
+        "$ref": "#/$defs/Hotspot"
+      },
+      "title": "Hotspots",
+      "type": "array"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "valid_ts": {
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "valid_ts"
+  ],
+  "title": "HotspotList",
+  "type": "object"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@varuna/tokens",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VARUNA design tokens: tokens.json is the single source of truth for CSS, TypeScript and Python",
+  "type": "module",
+  "main": "./dist/tokens.js",
+  "types": "./dist/tokens.d.ts",
+  "exports": {
+    ".": { "types": "./dist/tokens.d.ts", "import": "./dist/tokens.js", "default": "./dist/tokens.js" },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./tokens.json"
+  },
+  "files": ["dist", "tokens.json"],
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "lint": "node build.mjs --check",
+    "typecheck": "node build.mjs --check"
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "$defs": {
+    "ObservationEffect": {
+      "additionalProperties": true,
+      "description": "What assimilating one observation changed. Extra keys are allowed so Pulse can add detail.",
+      "properties": {
+        "assimilated_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run in which the observation was assimilated.",
+          "title": "Assimilated Run Id"
+        },
+        "beta_changes": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "edge_id -> change in posterior mean beta.",
+          "title": "Beta Changes",
+          "type": "object"
+        },
+        "hotspot_depth_deltas_cm": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "hotspot_id -> change in peak p50 depth in cm.",
+          "title": "Hotspot Depth Deltas Cm",
+          "type": "object"
+        },
+        "innovation_cm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Observation minus model depth before the update, in cm.",
+          "title": "Innovation Cm"
+        },
+        "segments_changed": {
+          "default": 0,
+          "description": "Segments whose p50 moved by more than 3 cm.",
+          "minimum": 0,
+          "title": "Segments Changed",
+          "type": "integer"
+        }
+      },
+      "title": "ObservationEffect",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:Observation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A single depth observation (``observations.parquet``, ``GET /v1/observations``).",
+  "properties": {
+    "effect": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ObservationEffect"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Filled once assimilated; None while pending."
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "quality": {
+      "default": "medium",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "rejected"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "sd_cm": {
+      "description": "Standard deviation of the depth in cm.",
+      "exclusiveMinimum": 0,
+      "title": "Sd Cm",
+      "type": "number"
+    },
+    "segment_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Nearest road segment, if snapped.",
+      "title": "Segment Id"
+    },
+    "source": {
+      "description": "Feed or reporter, e.g. 'synthetic traffic' or 'BMC log'.",
+      "title": "Source",
+      "type": "string"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Mandatory for real ground truth; None for synthetic.",
+      "title": "Source Url"
+    },
+    "synthetic": {
+      "description": "True for generated streams; the UI labels these.",
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Free text from a report or a log line.",
+      "title": "Text"
+    },
+    "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "traffic",
+        "report",
+        "sensor",
+        "cctv",
+        "sar"
+      ],
+      "title": "Type",
+      "type": "string"
+    },
+    "value_cm": {
+      "description": "Inferred water depth in cm.",
+      "minimum": 0,
+      "title": "Value Cm",
+      "type": "number"
+    },
+    "weight": {
+      "default": 1.0,
+      "description": "Reporter trust weight.",
+      "minimum": 0,
+      "title": "Weight",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "ts",
+    "type",
+    "lon",
+    "lat",
+    "value_cm",
+    "sd_cm",
+    "source",
+    "synthetic"
+  ],
+  "title": "Observation",
+  "type": "object"
+}

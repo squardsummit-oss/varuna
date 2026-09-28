@@ -1,0 +1,42 @@
+{
+  "$id": "urn:varuna:schema:ContingencyTable",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Hits / misses / false alarms / correct negatives for one threshold.",
+  "properties": {
+    "correct_negatives": {
+      "minimum": 0,
+      "title": "Correct Negatives",
+      "type": "integer"
+    },
+    "false_alarms": {
+      "minimum": 0,
+      "title": "False Alarms",
+      "type": "integer"
+    },
+    "hits": {
+      "minimum": 0,
+      "title": "Hits",
+      "type": "integer"
+    },
+    "misses": {
+      "minimum": 0,
+      "title": "Misses",
+      "type": "integer"
+    },
+    "threshold_cm": {
+      "default": 30,
+      "exclusiveMinimum": 0,
+      "title": "Threshold Cm",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "hits",
+    "misses",
+    "false_alarms",
+    "correct_negatives"
+  ],
+  "title": "ContingencyTable",
+  "type": "object"
+}

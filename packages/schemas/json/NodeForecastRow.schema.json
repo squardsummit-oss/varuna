@@ -1,0 +1,65 @@
+{
+  "$id": "urn:varuna:schema:NodeForecastRow",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One (drain node, valid time) row (blueprint 9.1 ``node_forecast``).",
+  "properties": {
+    "head_p50_m": {
+      "description": "Median hydraulic head at the node in metres above datum.",
+      "title": "Head P50 M",
+      "type": "number"
+    },
+    "node_id": {
+      "minLength": 1,
+      "title": "Node Id",
+      "type": "string"
+    },
+    "p_surcharge": {
+      "description": "P(head above ground level).",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Surcharge",
+      "type": "number"
+    },
+    "q_surcharge_p50_m3s": {
+      "description": "Median surcharge discharge onto the street in m^3/s.",
+      "minimum": 0,
+      "title": "Q Surcharge P50 M3S",
+      "type": "number"
+    },
+    "responsible_edges": {
+      "description": "Pipes ranked by attribution for this node's surcharge.",
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Responsible Edges",
+      "type": "array"
+    },
+    "reversed_flow": {
+      "default": false,
+      "description": "True when the downstream trunk carries negative flow (tide lock).",
+      "title": "Reversed Flow",
+      "type": "boolean"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "valid_ts": {
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "node_id",
+    "valid_ts",
+    "head_p50_m",
+    "p_surcharge",
+    "q_surcharge_p50_m3s"
+  ],
+  "title": "NodeForecastRow",
+  "type": "object"
+}

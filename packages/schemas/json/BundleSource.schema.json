@@ -1,0 +1,50 @@
+{
+  "$id": "urn:varuna:schema:BundleSource",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A public source cited by the bundle (gauge totals, event timeline, tide table).",
+  "properties": {
+    "name": {
+      "description": "e.g. IMD Santacruz 24-h total, 2 July 2019",
+      "title": "Name",
+      "type": "string"
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "What number was taken and how.",
+      "title": "Note"
+    },
+    "url": {
+      "minLength": 8,
+      "title": "Url",
+      "type": "string"
+    },
+    "used_for": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "e.g. 'AOI 3-hour accumulation target 15:00-21:00 IST'.",
+      "title": "Used For"
+    }
+  },
+  "required": [
+    "name",
+    "url"
+  ],
+  "title": "BundleSource",
+  "type": "object"
+}

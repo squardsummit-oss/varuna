@@ -1,0 +1,110 @@
+{
+  "$id": "urn:varuna:schema:Asset",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A facility on the map (hospital, fire station, pumping station, holding tank, depot).\n\nReal assets carry a ``source_url``; the mobile-pump depots of the prototype are synthetic\nand say so (SPEC.md 3.3, 10.1 step 8).",
+  "properties": {
+    "capacity_m3h": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Pumping stations: rated discharge in m^3/h.",
+      "title": "Capacity M3H"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "hospital",
+        "fire_station",
+        "station",
+        "shelter",
+        "pumping_station",
+        "holding_tank",
+        "depot"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Lat",
+      "type": "number"
+    },
+    "lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Lon",
+      "type": "number"
+    },
+    "name": {
+      "description": "e.g. KEM Hospital, Parel",
+      "title": "Name",
+      "type": "string"
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Note"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Public source for the location; required unless synthetic.",
+      "title": "Source Url"
+    },
+    "synthetic": {
+      "default": false,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "volume_m3": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Holding tanks: storage volume in m^3.",
+      "title": "Volume M3"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "lon",
+    "lat"
+  ],
+  "title": "Asset",
+  "type": "object"
+}

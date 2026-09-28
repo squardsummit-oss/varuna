@@ -1,0 +1,69 @@
+{
+  "$id": "urn:varuna:schema:LiveEvent",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Envelope of every message on ``WS /v1/live``.",
+  "properties": {
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    },
+    "seq": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Monotonic sequence for reconnects.",
+      "title": "Seq"
+    },
+    "topic": {
+      "enum": [
+        "runs.published",
+        "cycle.stage",
+        "alert.raised",
+        "alert.acknowledged",
+        "alert.escalated",
+        "alert.cleared",
+        "obs.assimilated",
+        "replay.clock",
+        "onboard.progress",
+        "pumps.dispatched",
+        "reports.ack",
+        "whatif.progress"
+      ],
+      "title": "Topic",
+      "type": "string"
+    },
+    "ts": {
+      "description": "Wall-clock send time (IST).",
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "topic",
+    "ts"
+  ],
+  "title": "LiveEvent",
+  "type": "object"
+}

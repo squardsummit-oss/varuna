@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,MUM-E019546,Lady Jehangir Road,,0.3835,0.1516,55.3,1,,inferred
+2,MUM-E004450,Sahar Road,,0.3824,0.2243,55.2,0,,inferred
+3,MUM-E028786,off Kalina-Vakola Flyover,,0.3666,0.1706,53.3,1,,inferred
+4,MUM-E001756,off Laxmibai Kelkar Marg,near Sion Subway 1,0.3633,0.1456,52.9,0,,inferred
+5,MUM-E013524,Sant Rohidas Marg,,0.3631,0.2003,52.9,1,,inferred
+6,MUM-E016481,off Laxmibai Kelkar Marg,near King's Circle / Maheshwari Udyan junction,0.3636,0.1431,52.9,0,,inferred
+7,MUM-E017671,off 60 Feet Road,near Dharavi T-junction,0.3635,0.1422,52.9,0,,inferred
+8,MUM-E017672,off 60 Feet Road,near Dharavi T-junction,0.3633,0.1445,52.9,1,,inferred
+9,MUM-E017673,off 60 Feet Road,near Dharavi T-junction,0.3637,0.1423,52.9,0,,inferred
+10,MUM-E020504,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1425,52.9,0,,inferred
+11,MUM-E020505,off Sion Panvel Highway,near Chunabhatti railway station,0.3637,0.1437,52.9,0,,inferred
+12,MUM-E020507,off Sion Panvel Highway,near Chunabhatti railway station,0.3636,0.1402,52.9,0,,inferred
+13,MUM-E020508,off Sion Panvel Highway,near Chunabhatti railway station,0.3632,0.1427,52.9,0,,inferred
+14,MUM-E008541,off Road No 28A,near Sion Koliwada,0.3623,0.1404,52.8,0,,inferred
+15,MUM-E008544,off Road No 28A,near Sion Koliwada,0.3627,0.1423,52.8,1,,inferred
+16,MUM-E008542,off Road No 28A,near Sion Koliwada,0.3622,0.1455,52.7,0,,inferred
+17,MUM-E008543,off Road No 28A,near Sion Koliwada,0.3622,0.1445,52.7,0,,inferred
+18,MUM-E020506,off Sion Panvel Highway,near Chunabhatti railway station,0.3616,0.1416,52.7,0,,inferred
+19,MUM-E046647,off Jawaharlal Nehru Road,near Kalina,0.3619,0.1434,52.7,0,,inferred
+20,MUM-E042093,Laxmibai Kelkar Marg,near Gandhi Market,0.3614,0.1751,52.6,1,,inferred
+21,MUM-E003882,off Jeejeebhoy Lane,near Parel / Bharat Mata Cinema,0.3588,0.1857,52.3,1,,inferred
+22,MUM-E003911,off Sewri Fort Road,,0.3573,0.1429,52.1,0,,inferred
+23,MUM-E000218,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+24,MUM-E000219,off Sharada Devi Road,,0.35,0.15,51.2,0,,inferred
+25,MUM-E000220,off JL Shirshekar Marg,,0.35,0.15,51.2,0,,inferred

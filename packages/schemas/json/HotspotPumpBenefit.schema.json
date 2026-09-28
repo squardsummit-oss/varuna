@@ -1,0 +1,50 @@
+{
+  "$id": "urn:varuna:schema:HotspotPumpBenefit",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Per-hotspot outcome of a plan: minutes above 45 cm before and after.",
+  "properties": {
+    "assigned_pumps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Assigned Pumps",
+      "type": "array"
+    },
+    "excess_volume_m3": {
+      "description": "Inflow minus drain outflow over the horizon.",
+      "minimum": 0,
+      "title": "Excess Volume M3",
+      "type": "number"
+    },
+    "hotspot_id": {
+      "minLength": 1,
+      "title": "Hotspot Id",
+      "type": "string"
+    },
+    "hotspot_name": {
+      "title": "Hotspot Name",
+      "type": "string"
+    },
+    "minutes_above_45_after": {
+      "minimum": 0,
+      "title": "Minutes Above 45 After",
+      "type": "number"
+    },
+    "minutes_above_45_before": {
+      "minimum": 0,
+      "title": "Minutes Above 45 Before",
+      "type": "number"
+    }
+  },
+  "required": [
+    "hotspot_id",
+    "hotspot_name",
+    "minutes_above_45_before",
+    "minutes_above_45_after",
+    "excess_volume_m3"
+  ],
+  "title": "HotspotPumpBenefit",
+  "type": "object"
+}

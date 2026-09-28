@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "LineString": {
+      "additionalProperties": false,
+      "properties": {
+        "coordinates": {
+          "items": {
+            "anyOf": [
+              {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              }
+            ]
+          },
+          "minItems": 2,
+          "title": "Coordinates",
+          "type": "array"
+        },
+        "type": {
+          "const": "LineString",
+          "default": "LineString",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coordinates"
+      ],
+      "title": "LineString",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:RoadSegment",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One road segment split at intersections (blueprint 9.1 ``road_segment``).",
+  "properties": {
+    "exposure_weight": {
+      "description": "f(class, hospital or station within 300 m, building density); ranks hotspots.",
+      "minimum": 0,
+      "title": "Exposure Weight",
+      "type": "number"
+    },
+    "geometry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LineString"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "highway": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Raw OSM highway tag.",
+      "title": "Highway"
+    },
+    "hotspot_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Register hotspot the segment belongs to, if any.",
+      "title": "Hotspot Id"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lanes": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lanes"
+    },
+    "length_m": {
+      "exclusiveMinimum": 0,
+      "title": "Length M",
+      "type": "number"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Street name, e.g. Dr Ambedkar Road.",
+      "title": "Name"
+    },
+    "oneway": {
+      "default": false,
+      "title": "Oneway",
+      "type": "boolean"
+    },
+    "osm_way_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Source OSM way, if any.",
+      "title": "Osm Way Id"
+    },
+    "road_class": {
+      "enum": [
+        "motorway",
+        "trunk",
+        "primary",
+        "secondary",
+        "tertiary",
+        "residential",
+        "unclassified",
+        "living_street",
+        "service"
+      ],
+      "title": "Road Class",
+      "type": "string"
+    },
+    "speed_kmh": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Free-flow speed by class for the routing graph.",
+      "title": "Speed Kmh"
+    },
+    "underpass": {
+      "default": false,
+      "description": "Subway or underpass kept as a sink in the conditioned DEM.",
+      "title": "Underpass",
+      "type": "boolean"
+    },
+    "ward_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Municipal ward, e.g. F/North.",
+      "title": "Ward Id"
+    },
+    "z_mean_m": {
+      "description": "Mean DEM elevation along the segment, m above datum.",
+      "title": "Z Mean M",
+      "type": "number"
+    },
+    "z_min_m": {
+      "description": "Lowest DEM elevation along the segment, m above datum.",
+      "title": "Z Min M",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "road_class",
+    "length_m",
+    "z_min_m",
+    "z_mean_m",
+    "exposure_weight"
+  ],
+  "title": "RoadSegment",
+  "type": "object"
+}

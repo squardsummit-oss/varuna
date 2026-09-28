@@ -1,0 +1,27 @@
+{
+  "status": "draft",
+  "note": "Draft Hindi and Marathi terms written by the build team, not by native speakers. Every message file uses these terms; messages.test.ts checks that each Hindi and Marathi message containing the English term's concept uses the term given here. Product names (VARUNA, Pulse) and units (cm) stay in Latin script, and every number and time is printed in Latin digits (hi-IN-u-nu-latn, mr-IN-u-nu-latn).",
+  "keepLatin": ["VARUNA", "Pulse", "cm"],
+  "terms": {
+    "forecast": { "hi": "पूर्वानुमान", "mr": "अंदाज" },
+    "run": { "hi": "रन", "mr": "रन" },
+    "street": { "hi": "सड़क", "mr": "रस्ता" },
+    "passable": { "hi": "पार करने योग्य", "mr": "पार करण्यायोग्य" },
+    "impassable": { "hi": "पार करने योग्य नहीं", "mr": "पार करण्यायोग्य नाही" },
+    "caution": { "hi": "सावधान", "mr": "सावधान" },
+    "report": { "hi": "रिपोर्ट", "mr": "नोंद" },
+    "cycle": { "hi": "चक्र", "mr": "चक्र" },
+    "observation": { "hi": "अवलोकन", "mr": "निरीक्षण" },
+    "blockage": { "hi": "रुकावट", "mr": "अडथळा" },
+    "assimilated": { "hi": "शामिल", "mr": "समाविष्ट" },
+    "drain X-ray": { "hi": "ड्रेन एक्स-रे", "mr": "ड्रेन एक्स-रे" },
+    "depth": { "hi": "गहराई", "mr": "खोली" },
+    "map": { "hi": "नक्शा", "mr": "नकाशा" },
+    "location": { "hi": "स्थान", "mr": "ठिकाण" },
+    "two-wheeler": { "hi": "दोपहिया", "mr": "दुचाकी" },
+    "pedestrian": { "hi": "पैदल यात्री", "mr": "पादचारी" },
+    "ankle": { "hi": "टखना", "mr": "घोटा" },
+    "knee": { "hi": "घुटना", "mr": "गुडघा" },
+    "waist": { "hi": "कमर", "mr": "कंबर" }
+  }
+}

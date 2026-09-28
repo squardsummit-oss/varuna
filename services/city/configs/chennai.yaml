@@ -1,0 +1,65 @@
+# VARUNA city-in-a-box configuration - Chennai south AOI (SPEC.md 3.3, 10.4).
+# This is the on-stage onboarding city: every tile below is pre-cached so the wizard
+# runs offline in minutes (VARUNA_OFFLINE=1).
+id: chennai
+code: CHN
+name: Chennai
+aoi_id: CHN-SOUTH
+
+# Velachery - Adyar - T. Nagar; lon 80.20 -> 80.28, lat 12.96 -> 13.05.
+bbox: [80.20, 12.96, 80.28, 13.05]
+crs: 32644 # UTM 44N
+grid_m: 30.0
+
+# No nests: Chennai is onboarded uncalibrated on stage.
+nests: []
+
+# Adyar river mouth and the Buckingham canal are the tidal boundaries on the east edge.
+tidal_outfalls:
+  - id: CHN-OUTFALL-ADYAR
+    name: Adyar river mouth (east edge)
+    lon: 80.2760
+    lat: 13.0060
+    flap_gate: false
+    stage_source: illustrative
+    note: East domain edge, Bay of Bengal. Tide-locked river mouth.
+  - id: CHN-OUTFALL-BUCKINGHAM
+    name: Buckingham canal outfall (east edge)
+    lon: 80.2740
+    lat: 12.9750
+    flap_gate: false
+    stage_source: illustrative
+    note: Canal boundary; backs up on a high tide.
+
+design_intensity_mm_h:
+  legacy: 25.0
+  upgraded: 50.0
+
+hotspots_path: hotspots.geojson
+infra_path: null
+
+# Sky domain: 60 km square at 500 m centred on the AOI.
+radar_domain:
+  center_lon: 80.24
+  center_lat: 13.005
+  size_km: 60.0
+  res_m: 500.0
+
+dem_tiles:
+  - Copernicus_DSM_COG_10_N12_00_E080_00_DEM.tif
+  - Copernicus_DSM_COG_10_N13_00_E080_00_DEM.tif
+landcover_tiles:
+  - ESA_WorldCover_10m_2021_v200_N12E078_Map.tif
+
+manning_n:
+  asphalt: 0.016
+  open_ground: 0.04
+  vegetation: 0.07
+  water: 0.03
+
+cn_range: [90, 98]
+depression_min_area_m2: 900.0
+building_burn_m: 5.0
+road_carve_m: 0.15
+min_drain_slope: 0.003
+inlet_spacing_m: 40.0

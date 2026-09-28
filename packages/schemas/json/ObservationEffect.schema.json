@@ -1,0 +1,59 @@
+{
+  "$id": "urn:varuna:schema:ObservationEffect",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "description": "What assimilating one observation changed. Extra keys are allowed so Pulse can add detail.",
+  "properties": {
+    "assimilated_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Run in which the observation was assimilated.",
+      "title": "Assimilated Run Id"
+    },
+    "beta_changes": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "edge_id -> change in posterior mean beta.",
+      "title": "Beta Changes",
+      "type": "object"
+    },
+    "hotspot_depth_deltas_cm": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "hotspot_id -> change in peak p50 depth in cm.",
+      "title": "Hotspot Depth Deltas Cm",
+      "type": "object"
+    },
+    "innovation_cm": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Observation minus model depth before the update, in cm.",
+      "title": "Innovation Cm"
+    },
+    "segments_changed": {
+      "default": 0,
+      "description": "Segments whose p50 moved by more than 3 cm.",
+      "minimum": 0,
+      "title": "Segments Changed",
+      "type": "integer"
+    }
+  },
+  "title": "ObservationEffect",
+  "type": "object"
+}

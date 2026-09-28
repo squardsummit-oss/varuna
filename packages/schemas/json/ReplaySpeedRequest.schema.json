@@ -1,0 +1,19 @@
+{
+  "$id": "urn:varuna:schema:ReplaySpeedRequest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Body of ``POST /v1/replay/speed``.",
+  "properties": {
+    "speed": {
+      "exclusiveMinimum": 0,
+      "maximum": 600,
+      "title": "Speed",
+      "type": "number"
+    }
+  },
+  "required": [
+    "speed"
+  ],
+  "title": "ReplaySpeedRequest",
+  "type": "object"
+}

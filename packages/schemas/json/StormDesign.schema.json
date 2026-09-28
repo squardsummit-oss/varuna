@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "StormCellSpec": {
+      "additionalProperties": false,
+      "description": "One convective cell of the storm designer (SPEC.md 10.2; the ``/replay`` cell table).\n\nPositions and velocities are in :attr:`StormDesign.crs`, the city's metric CRS.\n``birth_min`` is minutes from the bundle's ``t0`` and may be negative, which means the\ncell was already alive when the replay window opened.",
+      "properties": {
+        "birth_min": {
+          "description": "Minutes from t0 at which the cell is born.",
+          "title": "Birth Min",
+          "type": "number"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lifetime_min": {
+          "description": "Minutes from birth to death; the sine envelope spans exactly this.",
+          "exclusiveMinimum": 0,
+          "title": "Lifetime Min",
+          "type": "number"
+        },
+        "peak_mm_h": {
+          "description": "Peak rain rate at the cell centre before intensity_scale is applied.",
+          "minimum": 0,
+          "title": "Peak Mm H",
+          "type": "number"
+        },
+        "sigma_m": {
+          "description": "Gaussian radius in metres (2-6 km in the demo storm).",
+          "exclusiveMinimum": 0,
+          "title": "Sigma M",
+          "type": "number"
+        },
+        "start_x_m": {
+          "description": "Cell centre at birth, easting in the design CRS.",
+          "title": "Start X M",
+          "type": "number"
+        },
+        "start_y_m": {
+          "description": "Cell centre at birth, northing in the design CRS.",
+          "title": "Start Y M",
+          "type": "number"
+        },
+        "u_ms": {
+          "description": "Eastward velocity component in m/s.",
+          "title": "U Ms",
+          "type": "number"
+        },
+        "v_ms": {
+          "description": "Northward velocity component in m/s.",
+          "title": "V Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "birth_min",
+        "lifetime_min",
+        "start_x_m",
+        "start_y_m",
+        "u_ms",
+        "v_ms",
+        "sigma_m",
+        "peak_mm_h"
+      ],
+      "title": "StormCellSpec",
+      "type": "object"
+    }
+  },
+  "$id": "urn:varuna:schema:StormDesign",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Storm-designer parameters for a reconstructed replay (SPEC.md 10.2, 7.8).\n\nEverything needed to regenerate ``truth/rain.zarr`` and ``radar/frames.zarr`` byte for\nbyte: the cells, the stratiform background, the wind, the calibration multiplier and the\nradar-rendering constants. The ``/replay`` storm designer renders :attr:`cells` as a table.",
+  "properties": {
+    "background_mm_h": {
+      "description": "Stratiform background rain rate (2-5 mm/h in the demo storm).",
+      "minimum": 0,
+      "title": "Background Mm H",
+      "type": "number"
+    },
+    "cells": {
+      "items": {
+        "$ref": "#/$defs/StormCellSpec"
+      },
+      "title": "Cells",
+      "type": "array"
+    },
+    "coverage_radius_km": {
+      "default": 30.0,
+      "description": "Radar coverage circle; pixels outside it carry no echo.",
+      "exclusiveMinimum": 0,
+      "title": "Coverage Radius Km",
+      "type": "number"
+    },
+    "crs": {
+      "description": "EPSG code of the metric CRS the cell coordinates use.",
+      "maximum": 32767,
+      "minimum": 1024,
+      "title": "Crs",
+      "type": "integer"
+    },
+    "dbz_class_width": {
+      "default": 5.0,
+      "description": "Reflectivity class width in dBZ (decoded imagery is 5 dBZ).",
+      "exclusiveMinimum": 0,
+      "title": "Dbz Class Width",
+      "type": "number"
+    },
+    "intensity_scale": {
+      "default": 1.0,
+      "description": "Multiplier calibrate() applied to every cell peak.",
+      "exclusiveMinimum": 0,
+      "title": "Intensity Scale",
+      "type": "number"
+    },
+    "kind": {
+      "const": "convective_cells",
+      "default": "convective_cells",
+      "title": "Kind",
+      "type": "string"
+    },
+    "min_dbz": {
+      "default": 5.0,
+      "description": "Frames below this class read as no echo, as a decoded image does.",
+      "title": "Min Dbz",
+      "type": "number"
+    },
+    "notes": {
+      "description": "Designer choices this bundle must state out loud.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    },
+    "seed": {
+      "description": "Seed of the generator (2019 for the demo bundle).",
+      "title": "Seed",
+      "type": "integer"
+    },
+    "speckle_sigma": {
+      "default": 0.12,
+      "description": "Standard deviation of the multiplicative log-normal speckle applied to Z.",
+      "minimum": 0,
+      "title": "Speckle Sigma",
+      "type": "number"
+    },
+    "wind_from_deg": {
+      "description": "Meteorological direction the cells come from (225 = south-west).",
+      "exclusiveMaximum": 360,
+      "minimum": 0,
+      "title": "Wind From Deg",
+      "type": "number"
+    },
+    "wind_speed_ms": {
+      "description": "Cell translation speed in m/s.",
+      "minimum": 0,
+      "title": "Wind Speed Ms",
+      "type": "number"
+    }
+  },
+  "required": [
+    "crs",
+    "seed",
+    "background_mm_h",
+    "wind_from_deg",
+    "wind_speed_ms"
+  ],
+  "title": "StormDesign",
+  "type": "object"
+}

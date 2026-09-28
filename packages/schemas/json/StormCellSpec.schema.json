@@ -1,0 +1,69 @@
+{
+  "$id": "urn:varuna:schema:StormCellSpec",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One convective cell of the storm designer (SPEC.md 10.2; the ``/replay`` cell table).\n\nPositions and velocities are in :attr:`StormDesign.crs`, the city's metric CRS.\n``birth_min`` is minutes from the bundle's ``t0`` and may be negative, which means the\ncell was already alive when the replay window opened.",
+  "properties": {
+    "birth_min": {
+      "description": "Minutes from t0 at which the cell is born.",
+      "title": "Birth Min",
+      "type": "number"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "lifetime_min": {
+      "description": "Minutes from birth to death; the sine envelope spans exactly this.",
+      "exclusiveMinimum": 0,
+      "title": "Lifetime Min",
+      "type": "number"
+    },
+    "peak_mm_h": {
+      "description": "Peak rain rate at the cell centre before intensity_scale is applied.",
+      "minimum": 0,
+      "title": "Peak Mm H",
+      "type": "number"
+    },
+    "sigma_m": {
+      "description": "Gaussian radius in metres (2-6 km in the demo storm).",
+      "exclusiveMinimum": 0,
+      "title": "Sigma M",
+      "type": "number"
+    },
+    "start_x_m": {
+      "description": "Cell centre at birth, easting in the design CRS.",
+      "title": "Start X M",
+      "type": "number"
+    },
+    "start_y_m": {
+      "description": "Cell centre at birth, northing in the design CRS.",
+      "title": "Start Y M",
+      "type": "number"
+    },
+    "u_ms": {
+      "description": "Eastward velocity component in m/s.",
+      "title": "U Ms",
+      "type": "number"
+    },
+    "v_ms": {
+      "description": "Northward velocity component in m/s.",
+      "title": "V Ms",
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "birth_min",
+    "lifetime_min",
+    "start_x_m",
+    "start_y_m",
+    "u_ms",
+    "v_ms",
+    "sigma_m",
+    "peak_mm_h"
+  ],
+  "title": "StormCellSpec",
+  "type": "object"
+}

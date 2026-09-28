@@ -1,0 +1,72 @@
+{
+  "$id": "urn:varuna:schema:AvoidedSegment",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A segment the naive route uses that VARUNA avoids, with why.",
+  "properties": {
+    "closed_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Set when an authority closed the street rather than the forecast refusing it; the officer's own words, never a sentence composed by the API.",
+      "title": "Closed Reason"
+    },
+    "depth_p50_cm": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Depth P50 Cm"
+    },
+    "name": {
+      "description": "e.g. Hindmata junction",
+      "title": "Name",
+      "type": "string"
+    },
+    "p_exceed": {
+      "description": "P(depth > threshold) at reached_ts.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Exceed",
+      "type": "number"
+    },
+    "reached_ts": {
+      "description": "When the naive route would have reached it (IST).",
+      "format": "date-time",
+      "title": "Reached Ts",
+      "type": "string"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "threshold_cm": {
+      "description": "Profile threshold applied.",
+      "exclusiveMinimum": 0,
+      "title": "Threshold Cm",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "segment_id",
+    "name",
+    "reached_ts",
+    "threshold_cm",
+    "p_exceed"
+  ],
+  "title": "AvoidedSegment",
+  "type": "object"
+}

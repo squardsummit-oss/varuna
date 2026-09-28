@@ -1,0 +1,30 @@
+# Coastline settings for Mumbai (varuna_city.sea). Kept beside, not inside, mumbai.yaml until the
+# city schema carries a `sea` block: CityConfig forbids unknown keys, and the API lists cities by
+# globbing configs/*.yaml, so a file next to mumbai.yaml would appear as a city.
+
+# The Mithi carries the tide 7.2 km inland at flat DSM steps of 0.5-2.0 m, behind a 2.6-3.4 m
+# ridge the open-sea rule cannot cross. It is the one OSM river in the AOI.
+tidal_rivers:
+  - Mithi River
+
+# The land fronting the sea - behind the mangroves and wetland the tide may cover - is raised to
+# at least this level (DEM frame, metres); varuna_city.condition.raise_coast_wall.
+coast_wall_m: 2.72
+
+# Every outfall within this many cells of the sea is tidal, with its invert at this level.
+tidal_outfall_cells: 2
+tidal_outfall_invert_m: 0.0
+
+notes:
+  coast_wall_m: >-
+    ASSUMPTION. 4.92 m high water at 11:30 on 2 July 2019, stated by the Additional Municipal
+    Commissioner (https://scroll.in/latest/929092), taken on chart datum, less mean sea level
+    2.70 m above chart datum (PSMSL station 43, https://psmsl.org/data/obtaining/stations/43.php;
+    ADR-0055) is +2.22 m in the DEM frame; plus 0.5 m freeboard. It stands in for the sea walls
+    and promenades the 30 m DSM smooths away, and is not a surveyed wall height.
+  tidal_outfall_invert_m: >-
+    ASSUMPTION. Mean sea level in the DEM frame. No BMC outfall invert is sourced in the
+    repository; at mean sea level an outfall is submerged about 6 h of every 12.4 h tidal cycle,
+    the blueprint's own description (section 2).
+  tidal_rivers: >-
+    OSM name "Mithi River" (waterway=river), the only river in the AOI's osm.gpkg.

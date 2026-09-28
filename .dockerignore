@@ -1,0 +1,46 @@
+# Build context for the API image (see Dockerfile, docs/DEPLOY.md).
+#
+# Without this file the context was 1.3 GB - node_modules alone is 1.1 GB - and every build
+# uploaded all of it before running a single instruction. The image only needs the Python
+# workspace, the small research data files the pipelines read, and the bundle manifests.
+
+# The console is a separate Vercel deployment; none of it belongs in the API image.
+apps/
+node_modules/
+**/node_modules/
+**/.next/
+**/.turbo/
+*.tsbuildinfo
+
+# Version control and local Python environments.
+.git/
+.github/
+.venv/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Generated at runtime into the mounted volume, never baked into the image: the entrypoint
+# builds the city on first boot and runs write into data/.
+city/
+data/
+docs/screens/
+
+# Evidence screenshots and raw captures - 19 MB of the 21 MB in docs/. The pipelines read the
+# curated files beside them (hotspots_*.geojson, ground_truth_*.geojson, bmc_aws_stations.json,
+# data_sources.md), which are kilobytes and must stay.
+docs/research/_raw/
+docs/*.pdf
+
+# Local tooling and secrets.
+.env
+.env.*
+!.env.example
+.vercel/
+*.log
+
+# The Rust routing service's build output (P8.12): 167 MB that the image never runs, since
+# the API serves the Python router. The crate's source is small and stays.
+services/route-rs/target/

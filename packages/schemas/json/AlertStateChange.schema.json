@@ -1,0 +1,47 @@
+{
+  "$id": "urn:varuna:schema:AlertStateChange",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One entry of the alert's audit log (acknowledge and escalate are logged with user and time).",
+  "properties": {
+    "note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Note"
+    },
+    "state": {
+      "enum": [
+        "raised",
+        "acknowledged",
+        "escalated",
+        "cleared"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    },
+    "user": {
+      "description": "Operator id or 'system'.",
+      "title": "User",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ts",
+    "state",
+    "user"
+  ],
+  "title": "AlertStateChange",
+  "type": "object"
+}

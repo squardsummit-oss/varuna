@@ -1,0 +1,40 @@
+{
+  "$id": "urn:varuna:schema:BBox",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A WGS84 bounding box. Accepts ``[min_lon, min_lat, max_lon, max_lat]`` as well as an object.",
+  "properties": {
+    "max_lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Max Lat",
+      "type": "number"
+    },
+    "max_lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Max Lon",
+      "type": "number"
+    },
+    "min_lat": {
+      "maximum": 90.0,
+      "minimum": -90.0,
+      "title": "Min Lat",
+      "type": "number"
+    },
+    "min_lon": {
+      "maximum": 180.0,
+      "minimum": -180.0,
+      "title": "Min Lon",
+      "type": "number"
+    }
+  },
+  "required": [
+    "min_lon",
+    "min_lat",
+    "max_lon",
+    "max_lat"
+  ],
+  "title": "BBox",
+  "type": "object"
+}

@@ -1,0 +1,27 @@
+[project]
+name = "varuna-flash"
+version = "0.1.0"
+description = "VARUNA flash service"
+requires-python = ">=3.12,<3.13"
+dependencies = ["varuna-schemas", "numpy>=2", "scipy>=1.14", "scikit-learn>=1.5", "pandas>=2.2", "pyarrow>=17", "networkx>=3.3", "numba>=0.60", "varuna-twin"]
+
+[tool.uv.sources]
+varuna-schemas = { workspace = true }
+varuna-api = { workspace = true }
+varuna-city = { workspace = true }
+varuna-replay = { workspace = true }
+varuna-sky = { workspace = true }
+varuna-twin = { workspace = true }
+varuna-pulse = { workspace = true }
+varuna-flash = { workspace = true }
+varuna-products = { workspace = true }
+varuna-route = { workspace = true }
+varuna-cycle = { workspace = true }
+varuna-verify = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["varuna_flash"]

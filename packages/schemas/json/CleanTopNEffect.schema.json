@@ -1,0 +1,51 @@
+{
+  "$id": "urn:varuna:schema:CleanTopNEffect",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Combined effect of cleaning the top N pipes by attribution (the demo's 'clean 14').",
+  "properties": {
+    "depth_after_cm": {
+      "minimum": 0,
+      "title": "Depth After Cm",
+      "type": "number"
+    },
+    "depth_before_cm": {
+      "minimum": 0,
+      "title": "Depth Before Cm",
+      "type": "number"
+    },
+    "edge_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Edge Ids",
+      "type": "array"
+    },
+    "minutes_impassable_after": {
+      "minimum": 0,
+      "title": "Minutes Impassable After",
+      "type": "number"
+    },
+    "minutes_impassable_before": {
+      "description": "Minutes above the car threshold.",
+      "minimum": 0,
+      "title": "Minutes Impassable Before",
+      "type": "number"
+    },
+    "n": {
+      "minimum": 1,
+      "title": "N",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "n",
+    "depth_before_cm",
+    "depth_after_cm",
+    "minutes_impassable_before",
+    "minutes_impassable_after"
+  ],
+  "title": "CleanTopNEffect",
+  "type": "object"
+}

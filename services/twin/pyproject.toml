@@ -1,0 +1,27 @@
+[project]
+name = "varuna-twin"
+version = "0.1.0"
+description = "VARUNA twin service"
+requires-python = ">=3.12,<3.13"
+dependencies = ["varuna-schemas", "numpy>=2", "numba>=0.60", "scipy>=1.14", "xarray>=2024.7", "zarr>=2.18", "networkx>=3.3", "pandas>=2.2", "pyarrow>=17", "rasterio>=1.4", "pyyaml>=6"]
+
+[tool.uv.sources]
+varuna-schemas = { workspace = true }
+varuna-api = { workspace = true }
+varuna-city = { workspace = true }
+varuna-replay = { workspace = true }
+varuna-sky = { workspace = true }
+varuna-twin = { workspace = true }
+varuna-pulse = { workspace = true }
+varuna-flash = { workspace = true }
+varuna-products = { workspace = true }
+varuna-route = { workspace = true }
+varuna-cycle = { workspace = true }
+varuna-verify = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["varuna_twin"]

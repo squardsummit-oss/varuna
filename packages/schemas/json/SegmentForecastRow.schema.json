@@ -1,0 +1,123 @@
+{
+  "$id": "urn:varuna:schema:SegmentForecastRow",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One (segment, valid time) row: depth quantiles in cm, exceedance probabilities and\nsafe-until per profile (blueprint 9.1 ``segment_forecast``).",
+  "properties": {
+    "depth_p10_cm": {
+      "description": "10th percentile depth in cm.",
+      "minimum": 0,
+      "title": "Depth P10 Cm",
+      "type": "number"
+    },
+    "depth_p50_cm": {
+      "description": "Median depth in cm.",
+      "minimum": 0,
+      "title": "Depth P50 Cm",
+      "type": "number"
+    },
+    "depth_p90_cm": {
+      "description": "90th percentile depth in cm.",
+      "minimum": 0,
+      "title": "Depth P90 Cm",
+      "type": "number"
+    },
+    "p_gt_15": {
+      "description": "P(depth > 15 cm): two-wheelers impassable.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Gt 15",
+      "type": "number"
+    },
+    "p_gt_30": {
+      "description": "P(depth > 30 cm): cars impassable.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Gt 30",
+      "type": "number"
+    },
+    "p_gt_45": {
+      "description": "P(depth > 45 cm): buses and trucks impassable.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Gt 45",
+      "type": "number"
+    },
+    "p_gt_60": {
+      "description": "P(depth > 60 cm): rescue vehicles only.",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "P Gt 60",
+      "type": "number"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "safe_until": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "First time P(depth > profile threshold) exceeds the risk tolerance; None = passable through the horizon.",
+      "propertyNames": {
+        "enum": [
+          "ambulance",
+          "fire_tender",
+          "bus",
+          "car",
+          "two_wheeler",
+          "pedestrian"
+        ]
+      },
+      "title": "Safe Until",
+      "type": "object"
+    },
+    "segment_id": {
+      "minLength": 1,
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "valid_ts": {
+      "description": "Forecast valid time (IST).",
+      "format": "date-time",
+      "title": "Valid Ts",
+      "type": "string"
+    },
+    "velocity_p50_ms": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Median flow speed in m/s (pedestrian h*v hazard).",
+      "title": "Velocity P50 Ms"
+    }
+  },
+  "required": [
+    "run_id",
+    "segment_id",
+    "valid_ts",
+    "depth_p10_cm",
+    "depth_p50_cm",
+    "depth_p90_cm",
+    "p_gt_15",
+    "p_gt_30",
+    "p_gt_45",
+    "p_gt_60"
+  ],
+  "title": "SegmentForecastRow",
+  "type": "object"
+}

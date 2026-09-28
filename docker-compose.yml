@@ -1,0 +1,69 @@
+# P0 needs none of these. The prototype stores run artifacts as files under data/runs/ and
+# uses an in-process asyncio bus (SPEC.md section 4.2, ADR-0005). The services below are
+# the P1 sinks: PostGIS + Timescale for the blueprint's tables, Redis Streams as the bus
+# swap-in, MinIO as an S3-compatible artifact store for a hosted demo.
+#
+#   docker compose --profile p1 up -d
+#   docker compose --profile p1 down -v     # also drops the volumes
+#
+# Ports match SPEC.md section 4.5 (5432 PostGIS, 6379 Redis); MinIO is on 9000/9001.
+
+name: varuna
+
+services:
+  postgis:
+    image: timescale/timescaledb-ha:pg16
+    profiles: ["p1"]
+    environment:
+      POSTGRES_USER: varuna
+      POSTGRES_PASSWORD: varuna
+      POSTGRES_DB: varuna
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis-data:/home/postgres/pgdata/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U varuna -d varuna"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["p1"]
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    profiles: ["p1"]
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: varuna
+      MINIO_ROOT_PASSWORD: varuna-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgis-data:
+  redis-data:
+  minio-data:
