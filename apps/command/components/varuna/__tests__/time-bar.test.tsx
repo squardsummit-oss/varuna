@@ -223,7 +223,7 @@ describe("TimeBar", () => {
       vi.fn(stubFetch({ "/v1/cycle/compute": { ...COMPUTE_ON, enabled: false, reason: "Off." } })),
     );
     renderTimeBar();
-    await screen.findByText("Off on this server; the map shows baked runs");
+    await screen.findByText("Off on this server; live runs arrive every 30 minutes");
     // Until the bundle list answers, the bundle is named by its id rather than guessed.
     expect(screen.getByText("Live compute on bundle MUM-2019-07-02")).toBeInTheDocument();
   });
@@ -327,7 +327,7 @@ describe("computeLiveCopy", () => {
       ...base,
       info: { ...COMPUTE_ON, enabled: false, reason: "Compute live is off on this server." },
     });
-    expect(note).toBe("Off on this server; the map shows baked runs");
+    expect(note).toBe("Off on this server; live runs arrive every 30 minutes");
     expect(tooltip).toBe("Compute live is off on this server.");
   });
 

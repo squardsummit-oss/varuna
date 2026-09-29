@@ -454,7 +454,7 @@ export function computeLiveCopy({
         ? "The API did not say whether it can compute"
         : "Asking the server how long a cycle takes"
       : !info.enabled
-        ? "Off on this server; the map shows baked runs"
+        ? "Off on this server; live runs arrive every 30 minutes"
         : median !== null
           ? `About ${formatMs(median)} a cycle here, against ${budget}`
           : "No cycle timed on this server yet";

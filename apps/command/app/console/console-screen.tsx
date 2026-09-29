@@ -1077,7 +1077,7 @@ function ConsoleView() {
         </MapOverlayContext.Provider>
 
         {liveRun && livePeakCm !== null && livePeakCm < 15 && !inFullView ? (
-          <div className="rounded-panel border-line bg-deep absolute top-4 left-1/2 z-30 w-[min(30rem,calc(100%-2rem))] -translate-x-1/2 border p-3 text-center">
+          <div className="rounded-panel border-line bg-deep absolute bottom-10 left-1/2 z-30 w-[min(24rem,calc(100%-2rem))] -translate-x-1/2 border p-3 text-center">
             <p className="type-small text-text font-medium">
               No street is forecast above 15 cm in the next 3 hours.
             </p>
