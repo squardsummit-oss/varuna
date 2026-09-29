@@ -339,14 +339,23 @@ def _city_streets(city: str) -> _Streets:
     if kept is not None and kept[0] == mtime:
         return kept[1]
     import pandas as pd
+    import pyarrow.parquet as pq
 
-    frame = pd.read_parquet(path, columns=["segment_id", "name"])
+    # A city built before OSM names were exported (the hosted volume's, on 2026-09-30) has no
+    # `name` column. Its streets still have display names from `street_names` below, so the
+    # outlook reads what is there rather than failing the whole card.
+    columns = set(pq.read_schema(path).names)
+    frame = pd.read_parquet(path, columns=[c for c in ("segment_id", "name") if c in columns])
     ids = [str(s) for s in frame["segment_id"]]
-    names = {
-        str(sid): str(name).strip()
-        for sid, name in zip(frame["segment_id"], frame["name"], strict=True)
-        if isinstance(name, str) and name.strip()
-    }
+    names = (
+        {
+            str(sid): str(name).strip()
+            for sid, name in zip(frame["segment_id"], frame["name"], strict=True)
+            if isinstance(name, str) and name.strip()
+        }
+        if "name" in frame.columns
+        else {}
+    )
     shown = street_names.street_names(city)
     streets = _Streets(
         ids=frozenset(ids),

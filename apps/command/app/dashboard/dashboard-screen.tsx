@@ -458,7 +458,8 @@ export function DashboardScreen() {
   // run is on the way once a reasonable wait has passed without one.
   useEffect(() => {
     if (run) return;
-    const timer = window.setTimeout(() => setRunFailed(true), 15_000);
+    // 60 s: a cold load of a hosted run is 36 depth frames and took about 40 s on 2026-09-30.
+    const timer = window.setTimeout(() => setRunFailed(true), 60_000);
     return () => window.clearTimeout(timer);
   }, [run]);
 

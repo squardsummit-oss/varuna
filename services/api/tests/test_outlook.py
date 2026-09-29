@@ -405,3 +405,21 @@ def test_the_shipped_emulator_paints_nothing_on_a_dry_day(
     assert body["segments"] == []
     assert body["baseline_removed"]["n_ge_5"] > 1000
     assert body["blockage"]["kind"] == "city_prior"
+
+
+def test_a_city_built_without_street_names_still_has_streets(tmp_path, monkeypatch):
+    """The hosted volume's Mumbai has no `name` column; the outlook must not 500 on it."""
+    import pandas as pd
+    from varuna_api.routers import outlook
+
+    city = tmp_path / "mumbai"
+    city.mkdir()
+    pd.DataFrame({"segment_id": ["S1-000", "S2-000"], "u": [1, 2]}).to_parquet(
+        city / "segments.parquet"
+    )
+    monkeypatch.setattr(outlook, "city_dir", lambda slug: city)
+    monkeypatch.setattr(outlook.street_names, "street_names", lambda slug: None)
+    outlook._streets.clear()
+    streets = REAL[1]("mumbai")  # the real loader, not the autouse stand-in
+    assert streets.ids == frozenset({"S1-000", "S2-000"})
+    assert streets.names == {}
