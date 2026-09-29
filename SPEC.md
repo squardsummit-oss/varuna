@@ -87,12 +87,12 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - **Gates:** vitest 1,925/1,925, tokens 41/41, ESLint clean, design lint clean.
 
 **2026-09-30 later (ADR-0094): the flood map is live.**
-- Every 30 minutes the API host runs a full cycle on today's weather: DWD ICON-EPS rain through Open-Meteo (20 members, NWP, no radar), live sea level, and the citizen reports in the inbox, through the same Twin, Flash-lite, Pulse and products as the replay.
+- A full cycle runs on today's weather: DWD ICON-EPS rain through Open-Meteo (20 members, NWP, no radar), live sea level, and the citizen reports in the inbox, through the same Twin, Flash-lite, Pulse and products as the replay.
 - Measured on the laptop at 44 s per cycle; the hosted time is recorded per run.
 - Drishti, the public map and the citizen dashboard open on the live run while it is under 3 hours old.
 - A dry forecast says "No street is forecast above 15 cm in the next 3 hours" and links to 2 July 2019 at its peak (08:40, scrubbed to the most flooded step).
 - `/console?bundle=MUM-2019-07-02` still opens the demo's 06:40.
-- **Where it runs (ADR-0095):** the hosted API's trial container cannot fit a 1.5 GB cycle beside the API, and the first attempt restarted it. The cycle runs on GitHub Actions (`.github/workflows/live.yml`, twice an hour) and is uploaded to `POST /v1/runs/upload` behind a token.
+- **Where it runs (ADR-0095):** the hosted API's trial container cannot fit a 1.5 GB cycle beside the API, and the first attempt restarted it. The cycle runs on GitHub Actions (`.github/workflows/live.yml`, scheduled every 15 minutes, which GitHub runs late or skips) and is uploaded to `POST /v1/runs/upload` behind a token.
 
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 

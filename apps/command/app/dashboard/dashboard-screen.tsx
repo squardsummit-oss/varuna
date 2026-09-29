@@ -613,7 +613,7 @@ export function DashboardScreen() {
         <LiveOutlookCard city={city} collapsible={false} />
         <p className="type-micro text-text-2">
           {shownLive
-            ? "The map shows today's live forecast, run every 30 minutes from today's rain."
+            ? "The map shows today's live forecast, run on today's rain forecast."
             : "The map stays on the 2 July 2019 replay."}
         </p>
       </section>

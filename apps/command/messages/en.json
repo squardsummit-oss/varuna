@@ -27,7 +27,7 @@
     "handle": "{title}, {state}. Tap to expand or collapse"
   },
   "map": {
-    "honesty": "Forecast from the last VARUNA run at {time}; a new run every 30 minutes",
+    "honesty": "Forecast from the last VARUNA run at {time}",
     "honestyEmpty": "No VARUNA run yet; the map fills after the first run",
     "honestyError": "The forecast did not load; check the connection and reload",
     "honestyLoading": "Loading the forecast from the last VARUNA run",

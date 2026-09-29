@@ -1083,7 +1083,7 @@ function ConsoleView() {
             </p>
             <p className="type-micro text-text-2 mt-0.5">
               Live forecast from {run ? formatStep(run.provenance.cycleTs ?? undefined) : ""} IST,
-              updated every 30 minutes from today&apos;s rain forecast.
+              from today&apos;s rain forecast.
             </p>
             <Button size="sm" variant="outline" className="mt-2" onClick={openReplayPeak}>
               See 2 July 2019 at its peak

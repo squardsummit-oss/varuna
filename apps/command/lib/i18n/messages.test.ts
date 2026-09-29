@@ -61,7 +61,6 @@ describe("public messages", () => {
       const term = (name: keyof typeof glossary.terms) => glossary.terms[name][locale];
       expect(t["map.honesty"]).toContain("VARUNA");
       expect(t["map.honesty"]).toContain(term("forecast"));
-      expect(t["map.honesty"]).toContain("30");
       expect(t["report.honesty"]).toContain("Pulse");
       expect(t["report.honesty"]).toContain(term("cycle"));
       expect(t["report.savedOfflineBody"]).toContain("VARUNA");
