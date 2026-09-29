@@ -21,10 +21,12 @@ export interface LayerToggles {
    * optional so a caller that still passes it type-checks; the panel ignores it. */
   buildings?: boolean;
   hotspots: boolean;
-  /** The reachability bands of the facility picked in the Reachability tab. */
+  /** The reachability bands of the facility picked in the Reachability tab. Keyboard only (I). */
   isochrones: boolean;
-  /** The demo ambulance trip, naive against VARUNA, at the scrub time. */
+  /** The demo ambulance trip, naive against VARUNA, at the scrub time. Keyboard only (R). */
   routes: boolean;
+  /** Citizen reports from `/report`, polled live and drawn as pins. */
+  reports: boolean;
   /** Google's photorealistic city, with every VARUNA layer draped on it (task P6.15). */
   threeD: boolean;
   /** The inferred drains drawn at their invert depth beneath the streets (motion M28). */
@@ -36,11 +38,8 @@ export type LayerKey = keyof LayerToggles;
 export interface LayerPanelProps {
   value: LayerToggles;
   onChange: (key: LayerKey, next: boolean) => void;
-  /** Counts from the current run, so a row says what it would draw before you turn it on. */
-  counts?: Partial<Record<LayerKey, number>>;
-  /** A sentence under a row, shown whether or not the layer is on: what the run holds that the row
-   * draws only in part (the surcharge row quotes the run's reversed-pipe total, which is a fact
-   * about the run and does not depend on the toggle). */
+  /** A sentence under a row, for a layer that cannot draw what it was asked for (the 3D city
+   * without a Map Tiles key, say). Nothing else is printed under a row. */
   details?: Partial<Record<LayerKey, string>>;
 }
 
@@ -52,8 +51,7 @@ const ROWS: readonly {
   /** Shown only while this layer is on, indented under it. */
   under?: LayerKey;
 }[] = [
-  { key: "segments", label: "Streets (depth)", hint: "Road segments coloured by depth" },
-  { key: "raster", label: "Depth raster", hint: "30 m surface depth from the Twin" },
+  { key: "segments", label: "Flooded streets", hint: "Streets coloured by forecast depth" },
   {
     key: "probability",
     label: "Probability",
@@ -63,32 +61,21 @@ const ROWS: readonly {
   {
     key: "surcharge",
     label: "Surcharge",
-    hint: "Manholes pushing water up; pipes running backwards",
+    hint: "Manholes pushing water up",
     shortcut: "S",
   },
-  { key: "drains", label: "Drains", hint: "Inferred graph, coloured by blockage", shortcut: "D" },
+  { key: "drains", label: "Drains", hint: "Inferred drains, coloured by blockage", shortcut: "D" },
   {
     key: "hotspots",
     label: "Ground truth",
-    hint: "Chronic spots and sourced reports",
+    hint: "Chronic flood spots and sourced reports",
     shortcut: "G",
   },
-  {
-    key: "isochrones",
-    label: "Isochrones",
-    hint: "5, 10 and 15 minute reach of a facility",
-    shortcut: "I",
-  },
-  {
-    key: "routes",
-    label: "Routes",
-    hint: "KEM to Sion by ambulance, naive against VARUNA",
-    shortcut: "R",
-  },
+  { key: "reports", label: "Citizen reports", hint: "Water reported by people, live" },
   {
     key: "threeD",
     label: "3D city",
-    hint: "Google's photorealistic Mumbai with the water draped on it",
+    hint: "Photorealistic Mumbai with the water draped on it",
     shortcut: "3",
   },
   {
@@ -128,7 +115,7 @@ const ROWS: readonly {
  * rule carries the X-ray: a drain layer exported before the invert elevations landed carries
  * none, and the row then names `make city CITY=mumbai` instead of drawing a sewer at sea level.
  */
-export function LayerPanel({ value, onChange, counts = {}, details = {} }: LayerPanelProps) {
+export function LayerPanel({ value, onChange, details = {} }: LayerPanelProps) {
   const [open, setOpen] = useState(true);
 
   // No `overflow-hidden` on the root: it clipped the rows when the column ran out of room
@@ -155,7 +142,6 @@ export function LayerPanel({ value, onChange, counts = {}, details = {} }: Layer
         <ul className="rounded-b-panel border-line border-t p-1">
           {ROWS.filter((row) => !row.under || value[row.under]).map((row) => {
             const on = Boolean(value[row.key]);
-            const count = counts[row.key];
             const detail = details[row.key];
             return (
               <li key={row.key} className={row.under ? "pl-4" : undefined}>
@@ -182,11 +168,6 @@ export function LayerPanel({ value, onChange, counts = {}, details = {} }: Layer
                     />
                   </span>
                   <span className="type-small text-text min-w-0 flex-1 truncate">{row.label}</span>
-                  {count !== undefined ? (
-                    <span className="num type-micro text-text-3 shrink-0">
-                      {count.toLocaleString("en-IN")}
-                    </span>
-                  ) : null}
                   {row.shortcut ? <Kbd>{row.shortcut}</Kbd> : null}
                 </button>
                 {detail ? (

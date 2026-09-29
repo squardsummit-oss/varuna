@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Maximize2, Minimize2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { FloodMap } from "@/components/map/flood-map";
@@ -15,7 +16,6 @@ import { loadDrainHealth, type DrainHealth } from "@/lib/api/drains";
 import { loadHotspots, type Hotspot, type HotspotSet } from "@/lib/api/hotspots";
 import type { MapFocus } from "@/components/map/city-map";
 import { loadSurcharge, type SurchargeSet } from "@/lib/api/surcharge";
-import { reversedFlowSummary } from "@/components/map/layers/reversed-flow";
 import { MapOverlayContext, type MapOverlay } from "@/components/map/layers/overlay-context";
 import {
   drainXraySummary,
@@ -26,6 +26,10 @@ import { usePhotorealTileset, type PhotorealState } from "@/lib/maps/photoreal";
 import { AppShell } from "@/components/varuna/app-shell";
 import { MapSlot } from "@/components/varuna/map-slot";
 import { ReplayPanel } from "@/components/varuna/replay-panel";
+import { CitizenReportsCard } from "@/components/varuna/citizen-reports-card";
+import { LiveNowCard } from "@/components/varuna/live-now-card";
+import { usePublicReports } from "@/components/citizen/use-report-feeds";
+import { reportToPin, type ReportPin } from "@/lib/api/reports";
 import { HotspotDrawer } from "@/components/varuna/hotspot-drawer";
 import { CyclePicker } from "@/components/varuna/cycle-picker";
 import { LayerPanel, type LayerToggles, type LayerKey } from "@/components/varuna/layer-panel";
@@ -42,7 +46,7 @@ import { useTruthPins } from "@/lib/hooks/use-truth-pins";
 import { RightRail } from "@/components/varuna/right-rail";
 import { TimeBar } from "@/components/varuna/time-bar";
 import { edgeFadeStyle, useScrollEdges } from "./use-scroll-edges";
-import { useConsoleRoutes, type ConsoleRouteState } from "./use-console-routes";
+import { useConsoleRoutes } from "./use-console-routes";
 import { WhatIfDrawer, type WhatIfDiff } from "./whatif-drawer";
 import { fetchOpeningRunId } from "@/lib/opening-run";
 import { minutesBetween } from "@/lib/format";
@@ -65,23 +69,6 @@ function formatStep(iso: string | undefined): string {
         hour12: false,
         timeZone: "Asia/Kolkata",
       });
-}
-
-/** What the Routes row says: the trip it drew, with its numbers, or why there is none. */
-function routeDetail(state: ConsoleRouteState): string | undefined {
-  if (state.kind === "off") return undefined;
-  if (state.kind === "loading") return "Planning KEM to Sion by ambulance.";
-  if (state.kind === "error") return state.message;
-  const { plan } = state;
-  const varuna = plan.varuna;
-  if (!varuna) return "No safe ambulance route from KEM to Sion now.";
-  const avoided = plan.avoided.length;
-  return (
-    `KEM to Sion at ${formatStep(plan.departAt)}: ${varuna.minutes.toFixed(1)} min, ` +
-    (avoided === 0
-      ? "nothing to avoid."
-      : `around ${avoided} impassable street${avoided === 1 ? "" : "s"}.`)
-  );
 }
 
 /**
@@ -237,6 +224,9 @@ const LIVE_RUN_TOPICS = ["runs.published"] as const;
 
 /** Stable empty bands, for when I has hidden the isochrones. */
 const NO_ISOCHRONES: Isochrone[] = [];
+
+/** Stable empty pins, for when the citizen-reports layer is off. */
+const NO_REPORT_PINS: ReportPin[] = [];
 
 /**
  * The stretches the X-ray offers, as whole multiples so `exaggerationLabel` reads as a sentence.
@@ -408,7 +398,9 @@ function ConsoleView() {
     // Off by default: the depth ramp is what an operator reads first, and probability is the
     // question they ask second (SPEC.md 7.2 puts it behind a toggle, not in front of one).
     probability: false,
-    raster: true,
+    // Off, and no longer offered in the panel: the 30 m depth squares read as noise to an officer
+    // next to the streets coloured by the same depth.
+    raster: false,
     segments: true,
     surcharge: true,
     // Off by default (SPEC.md 6.7); it is also the largest layer VARUNA serves.
@@ -424,7 +416,41 @@ function ConsoleView() {
     threeD: false,
     // Off: the X-ray is a second 18 MB network plus 9 MB of nodes, asked for rather than assumed.
     xray: false,
+    // On: a complaint raised at /report lands on this map within one poll (30 s).
+    reports: true,
   });
+  // Citizen reports, polled every 30 s: a complaint raised at /report is pinned here within one
+  // poll, and a report that arrives while the console is open is announced once.
+  const reportFeed = usePublicReports(city);
+  const reportPins = useMemo(() => reportFeed.reports.map(reportToPin), [reportFeed.reports]);
+  const [pickedReportId, setPickedReportId] = useState<string | null>(null);
+  const seenReports = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    if (!reportFeed.loaded) return;
+    const ids = new Set(reportPins.map((pin) => pin.id));
+    if (seenReports.current === null) {
+      seenReports.current = ids;
+      return;
+    }
+    const fresh = reportPins.filter(
+      (pin) => pin.origin === "citizen" && !seenReports.current?.has(pin.id),
+    );
+    seenReports.current = ids;
+    for (const pin of fresh.slice(0, 3)) {
+      toast(`New citizen report${pin.place ? ` at ${pin.place}` : ""}`, {
+        description: pin.text ?? undefined,
+      });
+    }
+  }, [reportFeed.loaded, reportPins]);
+  const pickReport = useCallback((report: ReportPin) => {
+    setPickedReportId(report.id);
+    setFocus({
+      lon: report.lon,
+      lat: report.lat,
+      key: `report-${report.id}-${Date.now()}`,
+      zoom: 15,
+    });
+  }, []);
   /**
    * How far the X-ray stretches each pipe's cover, so a 1.5 m sewer under a photographed street
    * is visible at all from a 55 degree camera. 1 is the truth and the default; the control says
@@ -840,15 +866,13 @@ function ConsoleView() {
     ],
   );
 
+  // Only a layer that cannot draw what was asked for says so under its switch.
   const layerDetails: Partial<Record<LayerKey, string>> = {
-    surcharge: surcharge?.set ? reversedFlowSummary(surcharge.set) : undefined,
-    isochrones:
-      layers.isochrones && isochrones.length === 0
-        ? "Pick a facility under Reachability."
+    threeD: photoreal.kind === "unavailable" ? photorealDetail(photoreal) : undefined,
+    xray:
+      xrayState.kind !== "off" && xrayState.kind !== "ready"
+        ? xrayDetail(xrayState, photoreal.kind === "ready", xrayExaggeration)
         : undefined,
-    routes: routeDetail(routeState),
-    threeD: photorealDetail(photoreal),
-    xray: xrayDetail(xrayState, photoreal.kind === "ready", xrayExaggeration),
   };
   const caption = run
     ? frameCaption(frame, run, inFullView, inFullView ? fullViewStep : null)
@@ -969,6 +993,9 @@ function ConsoleView() {
             showSatellite
             probabilityThresholdCm={layers.probability ? probabilityThresholdCm : undefined}
             truthPins={layers.hotspots ? truth.dropping : undefined}
+            reports={layers.reports ? reportPins : NO_REPORT_PINS}
+            selectedReportId={pickedReportId}
+            onPickReport={setPickedReportId}
             onSegmentPick={setPick}
             attribution={false}
           />
@@ -1081,19 +1108,23 @@ function ConsoleView() {
             />
           ) : null}
           {inFullView ? null : segmentPopover}
-          <LayerPanel
-            value={layers}
-            onChange={toggleLayer}
-            counts={{
-              surcharge: surcharge?.set?.nodes.length,
-              hotspots: hotspots?.hotspots.length,
-            }}
-            details={layerDetails}
-          />
+          <LayerPanel value={layers} onChange={toggleLayer} details={layerDetails} />
           {/* Below the panel, never over it (UI_SPEC 8): the legend used to be positioned
               absolutely at a fixed offset from the map's top-left, which put it on top of the
               layer rows as soon as probability mode was on. */}
           {inFullView ? null : probabilityLegend}
+          {inFullView ? null : (
+            <LiveNowCard city={city} cityLabel={city.charAt(0).toUpperCase() + city.slice(1)} />
+          )}
+          {inFullView || !layers.reports ? null : (
+            <CitizenReportsCard
+              reports={reportPins}
+              loaded={reportFeed.loaded}
+              error={reportFeed.error}
+              selectedId={pickedReportId}
+              onPick={pickReport}
+            />
+          )}
           {/* The X-ray's one control. A 1.5 m cover under a photographed street is about four
               pixels at the zoom this view is read at, so stretching it is what makes the network
               legible - and the label says what the stretch is doing, every time it is not 1

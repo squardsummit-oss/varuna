@@ -113,7 +113,6 @@ describe("detailLines", () => {
       "Streets above 5 cm: 15,472 of 18,622",
       "Median street peak: 26 cm",
       "Forecast computed in 46.5 s; Sky, Twin, Pulse and products took 46.4 s of it",
-      "VARUNA learns Chennai's drains from the next monsoon.",
     ]);
   });
 
@@ -132,7 +131,7 @@ describe("OnboardFinishCard", () => {
     expect(card.getByText("Design storm")).toBeInTheDocument();
     expect(card.getByText("Uncalibrated")).toBeInTheDocument();
     expect(
-      card.getByText("Chennai's street depths appear here when the build finishes."),
+      card.getByText("Press Start onboarding to generate Chennai's flood forecast."),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Open Chennai console" })).toBeDisabled();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();

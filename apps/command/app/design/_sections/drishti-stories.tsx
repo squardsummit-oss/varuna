@@ -6,13 +6,15 @@ import { Button } from "@/components/ui/button";
 import { PlaceGauge } from "@/components/pumps/place-gauges";
 import { BundleCard, type BundleSummary } from "@/components/varuna/bundle-card";
 import { CapViewer } from "@/components/varuna/cap-viewer";
-import { CycleLog, type CycleLogRow } from "@/components/varuna/cycle-log";
+import { CitizenReportsCard } from "@/components/varuna/citizen-reports-card";
+import { CycleLog, CycleLogState, type CycleLogRow } from "@/components/varuna/cycle-log";
 import { CyclePicker } from "@/components/varuna/cycle-picker";
 import { DeliveryLog, type DeliveryLogRow } from "@/components/varuna/delivery-log";
 import { DispatchOrder, type DispatchOrderPlan } from "@/components/varuna/dispatch-order";
 import { EscalationMatrix } from "@/components/varuna/escalation-matrix";
 import { LayerPanel, type LayerKey, type LayerToggles } from "@/components/varuna/layer-panel";
 import { LimitationsList } from "@/components/varuna/limitations-list";
+import { LiveNowCard } from "@/components/varuna/live-now-card";
 import { LiveOutlookCard, LiveOutlookView } from "@/components/varuna/live-outlook-card";
 import { MapAttribution } from "@/components/varuna/map-attribution";
 import { MapSlot } from "@/components/varuna/map-slot";
@@ -32,6 +34,7 @@ import { SegmentPopover } from "@/components/varuna/segment-popover";
 import { Skeleton } from "@/components/varuna/skeleton";
 import { Sparkline } from "@/components/varuna/sparkline";
 import { TopBar } from "@/components/varuna/top-bar";
+import { WhatIfDetails } from "@/components/varuna/whatif-details";
 import { ServedVerificationChip } from "@/components/varuna/verification-chip";
 import {
   VerificationThresholdChart,
@@ -39,6 +42,7 @@ import {
 } from "@/components/varuna/verification-threshold-chart";
 import type { SegmentPick } from "@/components/map/city-map";
 import type { Hotspot, HotspotSet } from "@/lib/api/hotspots";
+import type { ReportPin } from "@/lib/api/reports";
 import { OutlookSchema, type Outlook, type OutlookState } from "@/lib/api/outlook";
 import { outlookBody } from "@/lib/api/outlook.fixture";
 import type { PhysicsCheckResult } from "@/lib/api/whatif";
@@ -138,7 +142,48 @@ const LAYERS: LayerToggles = {
   routes: false,
   threeD: false,
   xray: false,
+  reports: true,
 };
+
+/** Two reports as the console's card draws them: one a citizen sent, one from the demo seed. */
+const REPORT_PINS: ReportPin[] = [
+  {
+    id: "R-demo-1",
+    lon: 72.8412,
+    lat: 19.0125,
+    depthHint: "knee",
+    depthCm: 45,
+    status: "received",
+    statusLabel: "Received",
+    statusSeeded: false,
+    ts: "2019-07-02T08:47:00+05:30",
+    text: "Water above the knee under the flyover",
+    place: "Hindmata junction",
+    thumbUrl: null,
+    photoUrl: null,
+    credit: null,
+    synthetic: true,
+    origin: "citizen",
+  },
+  {
+    id: "R-demo-2",
+    lon: 72.8575,
+    lat: 19.027,
+    depthHint: "ankle",
+    depthCm: 10,
+    status: "crew_sent",
+    statusLabel: "Crew sent (demo status)",
+    statusSeeded: true,
+    ts: "2019-07-02T08:20:00+05:30",
+    text: null,
+    place: "King's Circle",
+    thumbUrl: null,
+    photoUrl: null,
+    credit: null,
+    synthetic: true,
+    origin: "seed",
+  },
+];
 
 /** Two bakes of the 08:10 cycle, from the cycle-log test: same time, a factor of three apart. */
 const CYCLE_ROWS: CycleLogRow[] = [
@@ -385,7 +430,7 @@ export default function DrishtiStories() {
               <TopBar />
             </div>
           </Demo>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
             <Demo label="Layer panel" bare>
               <LayerPanel
                 value={layers}
@@ -393,6 +438,51 @@ export default function DrishtiStories() {
                   setLayers((current) => ({ ...current, [key]: next }))
                 }
               />
+            </Demo>
+            <Demo
+              label="Citizen reports"
+              note="Newest first; a report sent from the public map lands here within one 30 s poll."
+              bare
+            >
+              <div className="flex flex-col gap-3">
+                <CitizenReportsCard reports={REPORT_PINS} loaded />
+                <CitizenReportsCard reports={[]} loaded />
+                <CitizenReportsCard reports={[]} loaded={false} />
+              </div>
+            </Demo>
+            <Demo
+              label="Right now"
+              note="Live rain from GET /v1/weather and sea level from Open-Meteo's marine model; neither changes the replayed forecast."
+              bare
+            >
+              <div className="flex flex-col gap-3">
+                <LiveNowCard
+                  city="mumbai"
+                  cityLabel="Mumbai"
+                  weather={{
+                    kind: "unavailable",
+                    reason:
+                      "The live weather source could not be reached. The flood forecast does not depend on it.",
+                  }}
+                  tide={{
+                    kind: "ready",
+                    tide: {
+                      point: { lon: 72.8, lat: 18.95, label: "off Colaba" },
+                      now: { ts: "2026-09-30T02:00:00+05:30", m: 0.84 },
+                      nextHigh: { ts: "2026-09-30T04:00:00+05:30", m: 1.31 },
+                      nextLow: { ts: "2026-09-30T10:00:00+05:30", m: -1.22 },
+                      rising: true,
+                      series: [],
+                    },
+                  }}
+                />
+                <LiveNowCard
+                  city="mumbai"
+                  cityLabel="Mumbai"
+                  weather={{ kind: "loading" }}
+                  tide={{ kind: "loading" }}
+                />
+              </div>
             </Demo>
             <Demo label="Probability legend" note="Opacity is P(above the threshold).">
               <ProbabilityLegend thresholdCm={threshold} onThresholdChange={setThreshold} />
@@ -588,6 +678,32 @@ export default function DrishtiStories() {
             </Demo>
             <Demo label="Cycle log, empty">
               <CycleLog rows={[]} />
+            </Demo>
+            <Demo label="Cycle log, loading">
+              <CycleLogState
+                bundleId="MUM-2019-07-02"
+                log={{ rows: [], isPending: true, isError: false, error: null, refetch: IGNORE }}
+              />
+            </Demo>
+            <Demo label="Cycle log, failed">
+              <CycleLogState
+                bundleId="MUM-2019-07-02"
+                log={{
+                  rows: [],
+                  isPending: false,
+                  isError: true,
+                  error: {
+                    message: "The run registry did not answer. Start the API with make dev.",
+                  },
+                  refetch: IGNORE,
+                }}
+              />
+            </Demo>
+            <Demo label="What-if details" note="Kalpana keeps the method one click away.">
+              <WhatIfDetails>
+                <p>Flash-lite, a reduced-order emulator calibrated to VARUNA-Twin.</p>
+                <p>Rain scale multiplies every member of the 08:40 cycle&apos;s rain.</p>
+              </WhatIfDetails>
             </Demo>
           </div>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

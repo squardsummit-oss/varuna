@@ -262,7 +262,7 @@ export function rgbaCss(hex: string, opacity = 1): string {
  * The depth ramp for deck.gl, with the one band that moves between themes resolved per theme.
  *
  * The water is the same pixels in both themes (UI_UX.md 2); only the dry band is not. `< 5 cm` is
- * `#2B3A55` on the night map and `#C5CEDC` on the day one, because a dry street is a thin line
+ * `#2B3A55` on the night map and `#B3C4D1` on the day one, because a dry street is a thin line
  * that has to recede. The generated `depthColorRgba` knows one table, the dark one, so on a light
  * map every street a run carried at 0-5 cm was drawn as a thick navy line, the heaviest thing on
  * the page (seen on /console at 06:45, 2026-09-29). Read at call time, so a layer rebuilt after a

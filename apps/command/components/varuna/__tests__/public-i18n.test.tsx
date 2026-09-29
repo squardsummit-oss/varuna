@@ -143,7 +143,7 @@ describe("report confirmation", () => {
     expect(
       await screen.findByRole("heading", { name: "Report saved on this phone" }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/will be sent when the phone is back online/)).toBeInTheDocument();
+    expect(screen.getByText(/sends when you are back online/)).toBeInTheDocument();
     expect(container.textContent).not.toContain("improved the forecast");
     expect(container.textContent).not.toContain("Report sent");
   });

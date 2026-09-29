@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DepthChip } from "@/components/varuna/depth-chip";
 import { CityMap } from "@/components/map/city-map";
 import { AppShell } from "@/components/varuna/app-shell";
 import { LogStream, type LogLine } from "@/components/varuna/log-stream";
@@ -56,6 +57,7 @@ import type { LiveEvent } from "@/lib/api/schemas";
 import { DEFAULT_CITY, cityFromSearch } from "@/lib/city";
 import { useLayerFade } from "@/lib/hooks/use-layer-fade";
 import { affectedFrame, useSettledBounds } from "@/lib/map/affected-bounds";
+import { depthBand } from "@/lib/ramps";
 import {
   formatCount,
   formatDateTime,
@@ -458,6 +460,71 @@ export function streetsMatchRun(layerCount: number | null, runTotal: number | nu
   return layerCount === runTotal;
 }
 
+/** One row of the deepest-streets list: a named street, its depth and what that depth stops. */
+export interface DeepStreet {
+  id: string;
+  name: string;
+  cm: number;
+  meaning: string;
+}
+
+/**
+ * The deepest streets at one step of the forecast, one row per street name, deepest first.
+ *
+ * OSM splits a road at every junction, so the same street can hold several segments; the deepest
+ * stands for it. Streets under 15 cm are left out: nothing is closed by them. A street with no name
+ * of its own reads "Road", as the rest of the app prints it.
+ */
+export function deepestStreets(wet: GeoSegment[], step: number, limit = 5): DeepStreet[] {
+  const rows = wet
+    .map((segment) => ({
+      id: segment.id,
+      name: segment.displayName ?? segment.name ?? "Road",
+      cm: segment.depthCm[step] ?? 0,
+    }))
+    .filter((row) => row.cm >= 15)
+    .sort((a, b) => b.cm - a.cm || a.name.localeCompare(b.name));
+  const seen = new Set<string>();
+  const out: DeepStreet[] = [];
+  for (const row of rows) {
+    if (seen.has(row.name)) continue;
+    seen.add(row.name);
+    const meaning = depthBand(row.cm).meaning;
+    out.push({ ...row, meaning: meaning.charAt(0).toUpperCase() + meaning.slice(1) });
+    if (out.length === limit) break;
+  }
+  return out;
+}
+
+/** The list an officer reads before the map: which streets, how deep, and what cannot pass. */
+function DeepestStreets({ rows, at }: { rows: DeepStreet[]; at: string | null }) {
+  return (
+    <section aria-labelledby="onboard-deepest-title" className="shrink-0 space-y-2">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="onboard-deepest-title" className="type-small text-text font-medium">
+          Deepest streets
+        </h2>
+        {at ? <span className="num type-micro text-text-2">{at}</span> : null}
+      </div>
+      {rows.length === 0 ? (
+        <p className="type-small text-text-2">No street is above 15 cm at this time.</p>
+      ) : (
+        <ol className="border-line divide-line rounded-control divide-y border">
+          {rows.map((row) => (
+            <li key={row.id} className="flex items-center gap-3 px-3 py-2">
+              <div className="min-w-0 flex-1">
+                <p className="type-small text-text truncate">{row.name}</p>
+                <p className="type-micro text-text-2">{row.meaning}</p>
+              </div>
+              <DepthChip cm={row.cm} size="sm" />
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
+
 /**
  * City-in-a-box wizard (SPEC.md 7.9, tasks P9.5, P9.6 and D-21), behind the Suspense boundary
  * `useSearchParams` needs.
@@ -769,6 +836,29 @@ function OnboardView({ city }: { city: string }) {
     roads?.features.length ?? null,
     shownDepth?.nSegmentsTotal ?? null,
   );
+  // A server whose city layer predates the forecast's street ids cannot colour one street. The web
+  // app ships the layer the forecast was made on (`tools/onboard_streets.py`); it is swapped in
+  // when its count matches, so an officer reads named, coloured streets rather than depth squares.
+  const runTotal = shownDepth?.nSegmentsTotal ?? null;
+  const needFallback = shownDepth !== null && roads !== null && !streetsMatch;
+  const fallbackAsked = useRef<string | null>(null);
+  useEffect(() => {
+    const key = `${city}:${runTotal}`;
+    if (!needFallback || fallbackAsked.current === key) return;
+    fallbackAsked.current = key;
+    const controller = new AbortController();
+    fetch(`/onboard/${city}-streets.json`, { signal: controller.signal })
+      .then((response) => (response.ok ? (response.json() as Promise<SegmentCollection>) : null))
+      .then((layer) => {
+        if (layer && streetsMatchRun(layer.features.length, runTotal)) setRoads(layer);
+      })
+      .catch(() => {
+        if (controller.signal.aborted) fallbackAsked.current = null;
+      });
+    return () => controller.abort();
+  }, [needFallback, city, runTotal]);
+  // Streets carry the forecast's colours only when they are the streets it scored.
+  const colourStreets = roads !== null && streetsMatch;
   // The first forecast's own wet streets, coloured by its depth.
   const wet = useMemo(
     () => (shownDepth && roads && streetsMatch ? joinSegments(roads, shownDepth.depthCm) : []),
@@ -843,6 +933,10 @@ function OnboardView({ city }: { city: string }) {
     floodedNow !== null
       ? `${formatCount(floodedNow)} streets above ${FLOOD_THRESHOLD_CM} cm`
       : null;
+  // The five deepest named streets at the scrubbed time, each with what it stops: the list an
+  // officer reads before the map. One row per street name, since OSM splits a road at every
+  // junction.
+  const deepestNow = useMemo(() => deepestStreets(wet, depthStep), [wet, depthStep]);
 
   // Where the map opens once the first forecast is drawn: on the city's wet streets at their peak
   // (15 cm or more, else 5 cm), by the console's densest-7-km rule - not on the whole AOI. At the
@@ -861,6 +955,7 @@ function OnboardView({ city }: { city: string }) {
     setError(null);
     try {
       asked.current.clear();
+      fallbackAsked.current = null;
       setRoads(null);
       setStreetsFailed(false);
       setBuildings(null);
@@ -1020,6 +1115,12 @@ function OnboardView({ city }: { city: string }) {
             />
           </PanelErrorBoundary>
 
+          {shownDepth && colourStreets ? (
+            <PanelErrorBoundary title="Deepest streets">
+              <DeepestStreets rows={deepestNow} at={atLabel} />
+            </PanelErrorBoundary>
+          ) : null}
+
           <PanelErrorBoundary title="Onboarding steps">
             <section aria-labelledby="onboard-steps-title" className="shrink-0 space-y-1">
               <div className="space-y-0.5">
@@ -1059,8 +1160,10 @@ function OnboardView({ city }: { city: string }) {
                 <MapSlot replayChip={false} emptyState={null} />
                 <CityMap
                   attribution={false}
-                  frames={shownDepth && show.depth ? shownDepth.frames : []}
-                  rasterBounds={shownDepth && show.depth ? shownDepth.bounds : null}
+                  frames={shownDepth && show.depth && !colourStreets ? shownDepth.frames : []}
+                  rasterBounds={
+                    shownDepth && show.depth && !colourStreets ? shownDepth.bounds : null
+                  }
                   baseSegments={show.streets ? (segments ?? []) : []}
                   segments={show.depth ? wet : []}
                   surcharge={[]}
@@ -1070,7 +1173,7 @@ function OnboardView({ city }: { city: string }) {
                   bounds={cityBox}
                   fitBounds={wetFrame}
                   showDrains={(drains?.length ?? 0) > 0 && showDrains}
-                  showRaster={shownDepth !== null && show.depth}
+                  showRaster={shownDepth !== null && show.depth && !colourStreets}
                   showSurcharge={false}
                   showBuildings={(buildings?.length ?? 0) > 0 && show.buildings}
                   step={depthStep}
@@ -1093,8 +1196,8 @@ function OnboardView({ city }: { city: string }) {
                 </div>
                 {shownDepth && roads && !streetsMatch ? (
                   <p className="rounded-control border-line bg-deep type-micro text-text-2 absolute top-4 right-4 z-10 max-w-[280px] border px-3 py-2">
-                    Streets not coloured: this server&apos;s {name} streets differ from the
-                    forecast&apos;s.
+                    Coloured squares show the water depth: this server&apos;s {name} streets do not
+                    match the forecast, so they could not be coloured.
                   </p>
                 ) : null}
               </>

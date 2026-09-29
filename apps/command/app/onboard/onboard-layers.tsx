@@ -30,19 +30,12 @@ export interface OnboardLayersProps {
   onChange: (key: WizardLayerId, next: boolean) => void;
 }
 
-const ROWS: readonly { key: WizardLayerId; label: string; step: string }[] = [
-  { key: "streets", label: "Streets", step: "written by Fetch open data" },
-  { key: "buildings", label: "Buildings", step: "written by Fetch open data" },
-  { key: "drains", label: "Drains", step: "written by Infer drains" },
-  { key: "depth", label: "First forecast", step: "written by First forecast" },
+// Two switches an officer understands at a glance: the city's streets, and the ones the forecast
+// floods. Buildings and drains stay off this panel - they hid the water rather than explain it.
+const ROWS: readonly { key: WizardLayerId; label: string }[] = [
+  { key: "streets", label: "Streets" },
+  { key: "depth", label: "Flooded streets" },
 ];
-
-function rowNote(state: WizardLayerState, step: string): string | null {
-  if (state.count !== undefined) return state.detail ?? null;
-  if (state.loading) return "Loading";
-  if (state.lazy) return "Loads when switched on";
-  return `Not yet, ${step}`;
-}
 
 /**
  * The wizard's layer panel, scoped to what this build has produced (task D-21).
@@ -64,7 +57,6 @@ export function OnboardLayers({ value, onChange }: OnboardLayersProps) {
           const state = value[row.key];
           const ready = state.count !== undefined;
           const switchable = ready || Boolean(state.lazy);
-          const note = rowNote(state, row.step);
           return (
             <li key={row.key} className="px-2 py-1.5">
               <div className="flex items-center gap-2.5">
@@ -80,13 +72,7 @@ export function OnboardLayers({ value, onChange }: OnboardLayersProps) {
                 >
                   {row.label}
                 </label>
-                {ready ? (
-                  <span className="num type-micro text-text-3 shrink-0">
-                    {state.count?.toLocaleString("en-IN")}
-                  </span>
-                ) : null}
               </div>
-              {note ? <p className="num type-micro text-text-3 pl-[42px]">{note}</p> : null}
             </li>
           );
         })}

@@ -78,6 +78,14 @@ This file is the single source of truth for building the VARUNA prototype. The b
   - Pramana's rain tab works on the deployed site from `demo/verification/MUM-2019-07-02.rain-skill.json.gz`, which `varuna verify` writes and the API serves only when its run ids and run.json digests match the seeded runs.
 - **Gates:** vitest 1,806/1,806, ESLint clean, design lint clean, Playwright design-QA 34/34.
 
+**2026-09-30 (ADR-0093).**
+- Pravesh draws Chennai's streets coloured by depth instead of 30 m squares, from a shipped copy of the street layer when the server's is older. Two layer switches, no helper text, and a "Deepest streets" list.
+- Drishti's layer panel drops the depth raster, isochrones and routes rows and every count. R and I still work from the keyboard.
+- Citizen reports reach Drishti within one 30 s poll, as pins, a list and a toast.
+- A "right now" card shows live weather and live sea level from Open-Meteo, labelled live, not the replay.
+- Light mode is monsoon mist, a blue-grey tint rather than white, with every text pair at 4.5:1 or better.
+- **Gates:** vitest 1,925/1,925, tokens 41/41, ESLint clean, design lint clean.
+
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
 - [ ] R1 A Mumbai replay streams through the same pipeline as live data; the mode banner reads "Replay 30×" and the run stamp says "baked" or "live".

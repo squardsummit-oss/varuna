@@ -8,11 +8,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { OnboardJob, OnboardSteps } from "@/lib/api/onboard";
-import type { RunDepth } from "@/lib/api/run-depth";
+import type { GeoSegment, RunDepth } from "@/lib/api/run-depth";
 import { formatDateTime } from "@/lib/format";
 import {
   cityName,
   consoleHref,
+  deepestStreets,
   finishFacts,
   leadStepIndex,
   previousBuildLabel,
@@ -438,5 +439,33 @@ describe("streetsMatchRun", () => {
     expect(streetsMatchRun(null, 18_626)).toBe(true);
     expect(streetsMatchRun(18_626, null)).toBe(true);
     expect(streetsMatchRun(18_626, 0)).toBe(true);
+  });
+});
+
+describe("deepestStreets", () => {
+  function seg(id: string, name: string | undefined, depth: number[]): GeoSegment {
+    return { id, path: [], depthCm: depth, width: 2, displayName: name };
+  }
+
+  it("lists the deepest named streets once each, with what their depth stops", () => {
+    const rows = deepestStreets(
+      [
+        seg("a", "Velachery Main Road", [10, 62]),
+        seg("b", "Velachery Main Road", [10, 40]),
+        seg("c", "100 Feet Road", [0, 33]),
+        seg("d", "off Taramani Link Road", [0, 12]),
+        seg("e", undefined, [0, 47]),
+      ],
+      1,
+    );
+    expect(rows.map((r) => [r.name, r.cm, r.meaning])).toEqual([
+      ["Velachery Main Road", 62, "Rescue vehicles only"],
+      ["Road", 47, "Buses and trucks impassable"],
+      ["100 Feet Road", 33, "Cars impassable"],
+    ]);
+  });
+
+  it("returns nothing when no street is 15 cm deep", () => {
+    expect(deepestStreets([seg("a", "Anna Salai", [5, 14])], 1)).toEqual([]);
   });
 });

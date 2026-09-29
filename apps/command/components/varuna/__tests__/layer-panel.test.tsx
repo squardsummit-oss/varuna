@@ -29,23 +29,27 @@ const ALL_OFF: LayerToggles = {
   routes: false,
   threeD: false,
   xray: false,
+  reports: false,
 };
 
 describe("LayerPanel", () => {
-  it("offers section 7.2's layers and no others", () => {
+  it("offers the layers an officer reads, and no others", () => {
     render(<LayerPanel value={ALL_OFF} onChange={() => undefined} />);
     const names = screen.getAllByRole("switch").map((el) => el.textContent?.replace(/\s+/g, " "));
     expect(names.map((n) => n?.replace(/\s*[A-Z0-9]$/, "").trim())).toEqual([
-      "Streets (depth)",
-      "Depth raster",
+      "Flooded streets",
       "Probability",
       "Surcharge",
       "Drains",
       "Ground truth",
-      "Isochrones",
-      "Routes",
+      "Citizen reports",
       "3D city",
     ]);
+    // Removed 2026-09-30: the depth squares, and two layers that need a pick elsewhere first
+    // (a facility, a trip). R and I still toggle them from the keyboard.
+    expect(screen.queryByRole("switch", { name: /Depth raster/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("switch", { name: /Isochrones/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("switch", { name: /Routes/ })).not.toBeInTheDocument();
     // Removed: the imagery is the basemap and always on, and the footprints only greyed the roofs.
     expect(screen.queryByRole("switch", { name: /Satellite/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("switch", { name: /Buildings/ })).not.toBeInTheDocument();
@@ -81,6 +85,13 @@ describe("LayerPanel", () => {
       />,
     );
     expect(screen.getByText(/Map Tiles API is not enabled/)).toBeInTheDocument();
+  });
+
+  it("prints no counts beside the switches", () => {
+    render(<LayerPanel value={ALL_OFF} onChange={() => undefined} />);
+    for (const row of screen.getAllByRole("switch")) {
+      expect(row.textContent ?? "").not.toMatch(/[0-9]{2,}/);
+    }
   });
 
   it("marks each switch's state for a reader who cannot see the toggle", () => {

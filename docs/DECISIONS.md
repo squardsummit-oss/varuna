@@ -747,3 +747,11 @@ Five lines each: context, decision, alternatives, consequence, date. Newest at t
 - Alternatives: animating the kanban (still unreadable); straight-line lorries (every road route was shorter than the plan's straight line at 18 km/h).
 - Consequence: before the re-bake, 12 pumps at 08:40 saved 915 minutes above 45 cm, summed across places from 985 to 70. The inventory stays labelled synthetic and the benefit an emulator estimate.
 - Date: 2026-09-28
+
+## ADR-0093 Screens an authority reads in seconds: streets not squares, live complaints and tide, a tinted day theme
+
+- Context: the deployed Pravesh drew 30 m depth squares because the server's Chennai layer (18,622 streets) predates the forecast's ids (18,626), and officers could not read it. The console's layer panel listed ten switches with counts and notes, citizen complaints never reached it, nothing said whether it was raining or the tide was in, and the light theme read as white paper.
+- Decision: `tools/onboard_streets.py` ships the layer the forecast was made on as `public/onboard/<city>-streets.json`, and Pravesh swaps it in when the server's does not match. Pravesh offers two switches, Streets and Flooded streets, draws no depth squares when streets carry the colour, and lists the five deepest named streets with what each stops. The console panel keeps Flooded streets, Probability, Surcharge, Drains, Ground truth, Citizen reports and 3D, with no counts; the raster is off; R and I stay on the keyboard. Drishti polls `GET /v1/reports` every 30 s, pins them, lists the newest and announces a new citizen report. A "right now" card shows `GET /v1/weather` and the sea level from Open-Meteo's marine API (free, no key, from public-apis), labelled live, not the replay. The light theme is monsoon mist: #DDE8EF ground, #EBF2F6 panels, #065650 teal, every text pair at 4.5:1 or better.
+- Alternatives: rebuilding Chennai on the deployed volume (a 339 MB cache on a 500 MB volume, ADR-0038); a server-side tide endpoint (a contract change and a redeploy for data the browser can ask for directly).
+- Consequence: the static street file is 4.8 MB and has to be regenerated whenever a city is rebuilt. The sea level is a model forecast at one grid cell, not a gauge, and the card says so. Neither live source changes a forecast.
+- Date: 2026-09-30

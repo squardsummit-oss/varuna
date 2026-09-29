@@ -22,6 +22,7 @@ import { LogStream, type LogLine } from "@/components/varuna/log-stream";
 import { ModeBanner } from "@/components/varuna/mode-banner";
 import {
   IDLE_ONBOARDING_STEPS,
+  OnboardingStepDetails,
   OnboardingSteps,
   type OnboardingStepState,
 } from "@/components/varuna/onboarding-steps";
@@ -1002,7 +1003,10 @@ export function ComponentsSection() {
             title="Onboarding steps"
             description="Chennai from cache: six steps with elapsed time."
           >
-            <OnboardingSteps steps={SAMPLE_ONBOARD_STEPS} />
+            <div className="flex flex-col gap-4">
+              <OnboardingSteps steps={SAMPLE_ONBOARD_STEPS} />
+              <OnboardingStepDetails steps={SAMPLE_ONBOARD_STEPS} />
+            </div>
           </Panel>
           <Panel title="Log stream" description="Real pipeline lines only; mono is allowed here.">
             <div className="flex flex-col gap-4">

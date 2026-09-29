@@ -527,7 +527,7 @@ describe("light theme", () => {
       assert.equal(vars[`--color-${k}`], v.value, `--color-${k}`);
     }
     assert.equal(vars["--focus-ring-color"], raw.theme.light.focus.ring_color);
-    assert.equal(vars["--glass-bg"], "rgb(245 247 251 / 0.82)");
+    assert.equal(vars["--glass-bg"], "rgb(221 232 239 / 0.82)");
   });
 
   it("never moves the water: depth 1-5 and the rain ramp keep their hex", () => {
@@ -600,7 +600,7 @@ describe("light theme", () => {
     assert.equal(THEME_STORAGE_KEY, "varuna-theme");
     assert.equal(THEME_ATTRIBUTE, "data-theme");
     for (const [name, hex] of Object.entries(colors)) assert.equal(themeColors.dark[name], hex, `dark ${name} is the :root value`);
-    assert.equal(colorsFor("light").ink, "#F5F7FB");
+    assert.equal(colorsFor("light").ink, "#DDE8EF");
     assert.equal(colorsFor("sepia").ink, colors.ink, "an unknown theme reads as dark");
     assert.equal(isTheme("light"), true);
     assert.equal(isTheme("Light"), false);

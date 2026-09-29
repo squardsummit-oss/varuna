@@ -465,7 +465,7 @@ export function ContingencyPour({
                                 key={s}
                                 offset={adjustedOffset}
                                 style={{
-                                  stopColor: "#ffffff",
+                                  stopColor: "var(--truth)",
                                   stopOpacity: s % 2 === 0 ? 0 : 0.12,
                                 }}
                               />

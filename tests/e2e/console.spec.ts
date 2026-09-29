@@ -101,8 +101,9 @@ test.describe("P6.13 the keyboard path", () => {
   });
 
   // X is offered under the 3D city and switches 3D on with it, so its switch is not in the panel
-  // until pressed; it has its own test below.
-  for (const { key, label } of LAYER_KEYS.filter((k) => k.key !== "x")) {
+  // until pressed; it has its own test below. R and I are keyboard-only since 2026-09-30: their
+  // rows left the panel, which offers only what an officer reads without a pick elsewhere.
+  for (const { key, label } of LAYER_KEYS.filter((k) => !["x", "r", "i"].includes(k.key))) {
     test(`"${key}" toggles its layer and the panel reports it`, async ({ page }) => {
       await page.goto("/console");
       await waitForRun(page);

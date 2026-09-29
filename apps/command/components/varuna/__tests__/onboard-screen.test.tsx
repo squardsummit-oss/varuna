@@ -475,7 +475,6 @@ describe("OnboardScreen once a build has finished", () => {
     expect(card).toHaveTextContent(
       "Forecast computed in 46.5 s; Sky, Twin, Pulse and products took 46.4 s of it",
     );
-    expect(card).toHaveTextContent("VARUNA learns Chennai's drains from the next monsoon.");
     expect(screen.getByText("Built in 51 s in this session.")).toBeInTheDocument();
     expect(stepRows()[5]).toHaveTextContent("Done 46.5 s");
     expect(screen.getByLabelText("Step details")).toHaveTextContent(

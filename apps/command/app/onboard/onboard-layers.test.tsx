@@ -1,10 +1,9 @@
 /**
- * The wizard's layer panel says what the pipeline wrote, not what the map happens to draw: a
- * capped drain layer reads its full count with the drawn share beside it, and buildings - off by
- * default and fetched only when asked for - can be switched on before they have arrived.
+ * The wizard's layer panel offers two plain switches, Streets and Flooded streets, and nothing
+ * under them: an officer reading the map should not have to parse counts or pipeline step names.
  */
 
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { OnboardLayers, type WizardLayerId, type WizardLayerState } from "./onboard-layers";
@@ -19,42 +18,33 @@ function state(over: Partial<Record<WizardLayerId, WizardLayerState>> = {}) {
   } satisfies Record<WizardLayerId, WizardLayerState>;
 }
 
-function row(label: string): HTMLElement {
-  // The label element itself: Base UI's switch also carries a hidden input the label names.
-  const item = screen.getByText(label, { selector: "label" }).closest("li");
-  if (!item) throw new Error(`no row for ${label}`);
-  return item;
-}
-
 /** Base UI marks a disabled switch with `data-disabled` and `aria-disabled`, not `disabled`. */
 function disabled(toggle: HTMLElement): boolean {
   return toggle.hasAttribute("data-disabled") || toggle.getAttribute("aria-disabled") === "true";
 }
 
 describe("OnboardLayers", () => {
-  it("prints every pipe the pipeline wrote, and how many of them the map draws", () => {
+  it("offers only streets and flooded streets", () => {
     render(<OnboardLayers value={state()} onChange={vi.fn()} />);
-    const drains = within(row("Drains"));
-    expect(drains.getByText("40,731")).toBeTruthy();
-    expect(drains.getByText("4,000 drawn")).toBeTruthy();
+    expect(screen.getAllByRole("switch")).toHaveLength(2);
+    expect(screen.getByRole("switch", { name: "Streets" })).toBeTruthy();
+    expect(screen.getByRole("switch", { name: "Flooded streets" })).toBeTruthy();
+    expect(screen.queryByText("Buildings")).toBeNull();
+    expect(screen.queryByText("Drains")).toBeNull();
   });
 
-  it("lets buildings be switched on before they are fetched, and says they load then", () => {
+  it("prints no counts or helper text under the switches", () => {
+    render(<OnboardLayers value={state()} onChange={vi.fn()} />);
+    expect(screen.queryByText("18,626")).toBeNull();
+    expect(screen.queryByText(/Loads when switched on/)).toBeNull();
+    expect(screen.queryByText(/Not yet/)).toBeNull();
+  });
+
+  it("keeps flooded streets switched off until the forecast has arrived", () => {
     const onChange = vi.fn();
     render(<OnboardLayers value={state()} onChange={onChange} />);
-    const buildings = within(row("Buildings"));
-    expect(buildings.getByText("Loads when switched on")).toBeTruthy();
-    const toggle = screen.getByRole("switch", { name: "Buildings" });
-    expect(disabled(toggle)).toBe(false);
-    fireEvent.click(toggle);
-    expect(onChange).toHaveBeenCalledWith("buildings", true);
-  });
-
-  it("says which step writes a layer that has not arrived, and keeps it switched off", () => {
-    render(<OnboardLayers value={state()} onChange={vi.fn()} />);
-    expect(
-      within(row("First forecast")).getByText("Not yet, written by First forecast"),
-    ).toBeTruthy();
-    expect(disabled(screen.getByRole("switch", { name: "First forecast" }))).toBe(true);
+    expect(disabled(screen.getByRole("switch", { name: "Flooded streets" }))).toBe(true);
+    fireEvent.click(screen.getByRole("switch", { name: "Streets" }));
+    expect(onChange).toHaveBeenCalledWith("streets", false);
   });
 });
