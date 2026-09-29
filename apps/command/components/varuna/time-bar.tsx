@@ -21,7 +21,7 @@ import {
   type StageId,
   type StageTiming,
 } from "@/components/varuna/cycle-budget-bar";
-import { useReplayBundles, useReplayControls } from "@/lib/api";
+import { useReplayBundles, useReplayClock } from "@/lib/api";
 import { apiUrl } from "@/lib/api/client";
 import { useLive } from "@/lib/api/live";
 import type { LiveEvent } from "@/lib/api/schemas";
@@ -33,16 +33,21 @@ import {
   LEAD_MAX,
   LEAD_MIN,
   LEAD_TICK,
-  REPLAY_SPEEDS,
-  isReplaySpeed,
-  selectLeadLabel,
   selectSimDateLabel,
   selectSimTimeLabel,
-  selectValidTimeLabel,
   useReplayStore,
 } from "@/lib/stores/replay";
 import { registerPlayToggle } from "@/lib/shortcuts";
 import { useRunStore } from "@/lib/stores/run";
+import {
+  PLAY_RATES,
+  PLAY_RATE_LABELS,
+  isPlayRate,
+  snapLead,
+  useScrubStore,
+} from "@/lib/stores/scrub";
+import { addMinutesIso, formatIstDate, formatLead, formatValidTime } from "@/lib/stores/time";
+import { RunStamp } from "@/components/varuna/run-stamp";
 
 const LEAD_SPAN = LEAD_MAX - LEAD_MIN;
 const TICKS = Array.from({ length: LEAD_SPAN / LEAD_TICK + 1 }, (_, i) => LEAD_MIN + i * LEAD_TICK);
@@ -64,11 +69,14 @@ const BAND_HEIGHT = 10;
 function bandPaths(
   band: { p10: number[]; p50: number[]; p90: number[] },
   stepMin: number,
+  leads: readonly number[] | null = null,
 ): { area: string; median: string; widestCm: number; atLead: number } | null {
   const n = Math.min(band.p10.length, band.p50.length, band.p90.length);
   if (n < 2) return null;
   const top = Math.max(...band.p90.slice(0, n), 1e-6);
-  const x = (i: number) => leadToPercent(Math.min(i * stepMin, LEAD_MAX));
+  // Each point sits at its step's own lead when the run says what that is (+5 for step 0).
+  const leadOf = (i: number) => leads?.[i] ?? i * stepMin;
+  const x = (i: number) => leadToPercent(Math.min(leadOf(i), LEAD_MAX));
   const y = (cm: number) => BAND_HEIGHT - (cm / top) * BAND_HEIGHT;
   const upper = Array.from({ length: n }, (_, i) => `${x(i)},${y(band.p90[i])}`);
   const lower = Array.from({ length: n }, (_, i) => `${x(n - 1 - i)},${y(band.p10[n - 1 - i])}`);
@@ -78,7 +86,7 @@ function bandPaths(
     const width = band.p90[i] - band.p10[i];
     if (width > widest) {
       widest = width;
-      atLead = i * stepMin;
+      atLead = leadOf(i);
     }
   }
   return {
@@ -89,39 +97,50 @@ function bandPaths(
   };
 }
 
-function speedLabel(speed: number): string {
-  return `${speed}×`;
-}
-
 /**
- * The console time bar (SPEC.md sections 6.5 and 7.2): play, speed, the scrub from -60 to +180 min,
- * the valid time and lead, and the live-compute controls. It is the one glass element in the product.
- * Arrow keys, Shift and Space are handled globally by `useGlobalShortcuts`.
+ * The console time bar (SPEC.md sections 6.5 and 7.2): play, playback speed, the scrub from -60
+ * to +180 min, the valid time and lead, the run stamp and Compute live. It is the one glass
+ * element in the product. Arrow keys, Shift and Space are handled globally by
+ * `useGlobalShortcuts`.
+ *
+ * It is the map's clock. The scrub writes the replay store's `leadMin`, which the console reads as
+ * its step, and Play steps the map through the loaded run (motion M7) from `useScrubStore`. It
+ * used to drive the API's shared replay clock instead, so Play moved a clock the map never read,
+ * the readout here disagreed with the one on the map, and Space drove both at once.
  */
 export function TimeBar() {
-  const playing = useReplayStore((s) => s.playing);
-  const speed = useReplayStore((s) => s.speed);
+  const playing = useScrubStore((s) => s.playing);
+  const togglePlaying = useScrubStore((s) => s.toggle);
+  const rate = useScrubStore((s) => s.rate);
+  const setRate = useScrubStore((s) => s.setRate);
   const leadMin = useReplayStore((s) => s.leadMin);
   const setLeadMin = useReplayStore((s) => s.setLeadMin);
-  const validLabel = useReplayStore(selectValidTimeLabel);
-  const leadLabel = useReplayStore(selectLeadLabel);
+  const simTime = useReplayStore((s) => s.simTime);
   const cycleTimeLabel = useReplayStore(selectSimTimeLabel);
   const cycleDateLabel = useReplayStore(selectSimDateLabel);
   // `POST /v1/cycle/compute` runs the shared clock's bundle, which /replay can switch, so the copy
-  // names that bundle by its manifest label rather than assuming the 2019 reconstruction.
+  // names that bundle by its manifest label rather than assuming the 2019 reconstruction. Read
+  // only: the time bar never moves the shared clock.
+  useReplayClock();
   const bundleId = useReplayStore((s) => s.bundleId);
   const bundles = useReplayBundles();
   const bundleLabel = bundles.data?.find((b) => b.id === bundleId)?.label ?? null;
   const hasRun = useRunStore((s) => s.currentRun !== null);
+  // The readout is the map's valid time: the loaded run's cycle plus the scrub, not the shared
+  // clock, which can sit on another cycle than the one the cycle picker chose.
+  const cycleTs = useRunStore((s) => s.currentRun?.cycle_ts) || simTime;
+  const leads = useRunStore((s) => s.currentRun?.step_leads) ?? null;
   const band = useRunStore((s) => s.currentRun?.aoi_depth_band ?? null);
   const stepMin = useRunStore((s) => s.currentRun?.step_min ?? 5);
-  const spread = band ? bandPaths(band, stepMin) : null;
-  const controls = useReplayControls();
+  const spread = band ? bandPaths(band, stepMin, leads) : null;
+  const validLabel = formatValidTime(cycleTs, leadMin);
+  // The date beside the time, so a judge reads "2 Jul 2019" without opening anything.
+  const validDate = cycleTs ? formatIstDate(addMinutesIso(cycleTs, leadMin)) : "";
+  const leadLabel = formatLead(leadMin);
   const { reduced } = useMotionPref();
 
-  // Space is a global shortcut; while the time bar is on screen it drives the API's clock.
-  const toggle = controls.toggle;
-  useEffect(() => registerPlayToggle(toggle), [toggle]);
+  // Space is a global shortcut; while the time bar is on screen it plays the map.
+  useEffect(() => registerPlayToggle(togglePlaying), [togglePlaying]);
 
   const handleTransition = reduced ? { duration: 0 } : SPRING;
 
@@ -138,6 +157,9 @@ export function TimeBar() {
     cycleTimeLabel,
     cycleDateLabel,
   });
+  // The stage bar is drawn only where a cycle can run or has run: on a server with Compute live
+  // off it would be an empty bar under a disabled button.
+  const showBudget = Boolean(info?.enabled) || compute.active || compute.totalMs !== null;
 
   return (
     <div
@@ -157,18 +179,16 @@ export function TimeBar() {
                 aria-disabled={!hasRun}
                 aria-pressed={playing}
                 className={cn(!hasRun && "opacity-60")}
-                onClick={() => controls.toggle()}
+                onClick={() => {
+                  if (hasRun) togglePlaying();
+                }}
               />
             }
           >
             {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
           </TooltipTrigger>
           <TooltipContent>
-            {hasRun
-              ? playing
-                ? "Pause (Space)"
-                : "Play (Space)"
-              : "Press Play once a bundle is baked"}
+            {hasRun ? (playing ? "Pause (Space)" : "Play (Space)") : "Plays once a run has loaded"}
           </TooltipContent>
         </Tooltip>
 
@@ -178,24 +198,27 @@ export function TimeBar() {
               <Button
                 variant="outline"
                 size="sm"
-                aria-label={`Replay speed ${speedLabel(speed)}`}
+                aria-label={`Playback speed: ${PLAY_RATE_LABELS[rate].toLowerCase()}`}
               />
             }
           >
-            <span className="num">{speedLabel(speed)}</span>
+            <span>{PLAY_RATE_LABELS[rate]}</span>
             <ChevronDown aria-hidden="true" data-icon="inline-end" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuRadioGroup
-              value={String(speed)}
+              value={String(rate)}
               onValueChange={(value) => {
                 const next = Number(value);
-                if (isReplaySpeed(next)) controls.setSpeed(next);
+                if (isPlayRate(next)) setRate(next);
               }}
             >
-              {REPLAY_SPEEDS.map((s) => (
-                <DropdownMenuRadioItem key={s} value={String(s)}>
-                  <span className="num">{speedLabel(s)}</span>
+              {PLAY_RATES.map((r) => (
+                <DropdownMenuRadioItem key={r} value={String(r)}>
+                  {PLAY_RATE_LABELS[r]}
+                  <span className="num text-text-3 ml-2">
+                    {r} {r === 1 ? "step" : "steps"} a second
+                  </span>
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -239,16 +262,21 @@ export function TimeBar() {
           />
 
           <Slider
-            aria-label="Scrub the forecast, minutes from the cycle time"
+            aria-label="Scrub the forecast"
             min={LEAD_MIN}
             max={LEAD_MAX}
             step={LEAD_FINE}
             value={leadMin}
             onValueChange={(value) => {
               const next = Array.isArray(value) ? value[0] : value;
-              if (typeof next === "number") setLeadMin(next);
+              if (typeof next !== "number") return;
+              // A drag takes the scrub from Play, as a scrub card's does.
+              useScrubStore.getState().pause();
+              // A run has forecast steps only (+5 to +180 on every cycle so far): the scrub stops
+              // on them, so the readout never names a time the map is not showing.
+              setLeadMin(leads && leads.length > 0 ? snapLead(leads, next) : next);
             }}
-            className="[&_[data-slot=slider-thumb]]:border-tide absolute inset-x-0 top-1/2 z-20 -translate-y-1/2 [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:bg-transparent [&_[data-slot=slider-track]]:bg-transparent"
+            className="absolute inset-x-0 top-1/2 z-20 -translate-y-1/2 [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:border-transparent [&_[data-slot=slider-thumb]]:bg-transparent [&_[data-slot=slider-track]]:bg-transparent"
           />
         </div>
 
@@ -294,10 +322,15 @@ export function TimeBar() {
         </div>
       </div>
 
-      {/* Right: valid time, compute live, cycle budget */}
-      <div className="flex shrink-0 flex-col items-end gap-1">
+      {/* Right: valid time, compute live, run stamp */}
+      <div className="flex w-80 shrink-0 flex-col items-end gap-1">
         <div className="flex items-center gap-3">
-          <span className="num type-h3 text-text" aria-live="polite">
+          {validDate ? (
+            <span className="num type-small text-text-2" data-testid="time-bar-date">
+              {validDate}
+            </span>
+          ) : null}
+          <span className="num type-h3 text-text" aria-live="polite" data-testid="time-bar-valid">
             {validLabel}
           </span>
           <span className="sr-only">Lead {leadLabel}</span>
@@ -317,22 +350,21 @@ export function TimeBar() {
             <TooltipContent className="max-w-80">{copy.tooltip}</TooltipContent>
           </Tooltip>
         </div>
-        {/* Two short lines rather than one long one: what Compute live runs, then how long it
-            takes here. With the budget bar under them the column is 90 px of the bar's 96
-            (measured at 1366 x 768 and 1440 x 900), so the gaps stay at 4 and 2 px. */}
-        <div className="flex w-72 flex-col gap-0.5">
-          <p id="compute-live-note" className="type-micro leading-tight">
-            <span className="text-text-2 block truncate">{copy.label}</span>
-            {/* Keeps the two lines apart when read as one description. */}{" "}
-            <span className="num text-text-3 block truncate">{copy.note}</span>
-          </p>
+        <RunStamp className="max-w-full" />
+        {/* What Compute live runs is the tooltip's and the screen reader's; on screen one short
+            line says whether it can run here and how long it takes. */}
+        <p id="compute-live-note" className="type-micro w-full truncate text-right leading-tight">
+          <span className="sr-only">{copy.label}</span>{" "}
+          <span className="num text-text-3">{copy.note}</span>
+        </p>
+        {showBudget ? (
           <CycleBudgetBar
             compact
             stages={compute.stages}
             running={compute.running}
             totalMs={compute.totalMs}
           />
-        </div>
+        ) : null}
       </div>
     </div>
   );
@@ -415,7 +447,7 @@ export function computeLiveCopy({
         ? "The API did not say whether it can compute"
         : "Asking the server how long a cycle takes"
       : !info.enabled
-        ? "Off on this server"
+        ? "Off on this server; the map shows baked runs"
         : median !== null
           ? `About ${formatMs(median)} a cycle here, against ${budget}`
           : "No cycle timed on this server yet";

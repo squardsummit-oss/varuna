@@ -1,11 +1,14 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+
+import { colorsFor, hexToRgba } from "@varuna/tokens";
 
 import {
   DEPTH_THRESHOLDS_CM,
   MIN_PROBABILITY_OPACITY,
   bandFill,
+  chartColor,
   colors,
   depthBand,
   depthColor,
@@ -22,6 +25,7 @@ import {
   rainLegendStops,
   rgbaCss,
 } from "./ramps";
+import { __resetThemeForTests, setTheme } from "./theme";
 
 /** The rain group as committed, so the legend is checked against tokens.json and not against itself. */
 const rainTokens = JSON.parse(
@@ -168,5 +172,62 @@ describe("css helpers", () => {
   });
   it("fills chart bands at the token opacity", () => {
     expect(bandFill(colors["chart-2"])).toBe("rgb(96 165 250 / 0.2)");
+  });
+  it("mixes a theme-following chart colour toward transparent at the same opacity", () => {
+    expect(bandFill("var(--chart-1)")).toBe(
+      "color-mix(in srgb, var(--chart-1) 20%, transparent)",
+    );
+  });
+  it("names chart colours as CSS variables, so charts follow the theme", () => {
+    expect(chartColor(0)).toBe("var(--chart-1)");
+    expect(chartColor(4)).toBe("var(--chart-5)");
+    expect(chartColor(5)).toBe("var(--chart-1)");
+    expect(chartColor(-1)).toBe("var(--chart-5)");
+    expect(chartColor(Number.NaN)).toBe("var(--chart-1)");
+  });
+});
+
+describe("deck colours in the light theme", () => {
+  afterEach(() => {
+    __resetThemeForTests();
+    document.documentElement.removeAttribute("data-theme");
+    try {
+      window.localStorage.clear();
+    } catch {
+      // Storage blocked in this environment: nothing was stored.
+    }
+  });
+
+  const light = colorsFor("light");
+
+  it("draws a dry street in the light dry band, not the dark one", () => {
+    setTheme("light");
+    expect(depthRgba(0)).toEqual(hexToRgba(light["depth-dry"], 255));
+    expect(depthRgba(4.9, 0.5)).toEqual(hexToRgba(light["depth-dry"], 128));
+    expect(probabilityRgba(2, 0)).toEqual(
+      hexToRgba(light["depth-dry"], Math.round(MIN_PROBABILITY_OPACITY * 255)),
+    );
+  });
+
+  it("keeps every water band the same pixels in both themes", () => {
+    setTheme("light");
+    for (const cm of [5, 15, 30, 45, 60, 90]) {
+      expect(depthRgba(cm)).toEqual(hexToRgba(depthColor(cm), 255));
+      expect(probabilityRgba(cm, 1)).toEqual(hexToRgba(depthColor(cm), 255));
+    }
+  });
+
+  it("draws a clear pipe in the light clear band and keeps the blockage ramp", () => {
+    setTheme("light");
+    expect(drainRgba(0.1)).toEqual(hexToRgba(light["drain-0"], 255));
+    for (const beta of [0.3, 0.6, 0.9]) {
+      expect(drainRgba(beta)).toEqual(hexToRgba(drainColor(beta), 255));
+    }
+  });
+
+  it("is unchanged in the dark theme", () => {
+    setTheme("dark");
+    expect(depthRgba(0)).toEqual(hexToRgba(colors["depth-dry"], 255));
+    expect(drainRgba(0.1)).toEqual(hexToRgba(colors["drain-0"], 255));
   });
 });

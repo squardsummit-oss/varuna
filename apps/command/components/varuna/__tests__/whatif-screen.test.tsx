@@ -133,10 +133,10 @@ describe("WhatIfScreen", () => {
       "Rain 1.0x, tide +0.0 m, top 14 pipes cleaned, pump plan on.",
     );
     // The tide note says what happens now, before Run: the tide is not refused, it runs on the
-    // full physics, because the emulator has no sea level to move.
-    expect(screen.getByText(/^Tide runs the full physics/)).toHaveTextContent(
-      "The emulator cannot move the sea.",
-    );
+    // full-city Twin, because the emulator has no sea level to move.
+    expect(
+      screen.getByText("Runs the full-city Twin; the bar shows the time left."),
+    ).toBeInTheDocument();
     // With the tide at the run's own, there is nothing to reset it to.
     expect(screen.getByRole("button", { name: "Reset the tide offset to +0.0 m" })).toBeDisabled();
   });
@@ -189,7 +189,14 @@ describe("WhatIfScreen", () => {
       expect(screen.getByText(/^Drawn:/)).toHaveTextContent(
         "Drawn: 4 of 5. 1 changed segment has no geometry in the served street layer",
       );
-      // Tide, clean-top and pump lines, in the endpoint's words.
+      // Tide, clean-top and pump lines, in the endpoint's words, one click away under Details.
+      const details = screen.getByText("Details").closest("details") as HTMLDetailsElement;
+      expect(
+        screen.getByText(/not in this answer: the emulator has no sea level/),
+      ).not.toBeVisible();
+      act(() => {
+        details.open = true;
+      });
       expect(screen.getByText(/not in this answer: the emulator has no sea level/)).toBeVisible();
       expect(screen.getByText(/^Top 1 pipe by learned blockage, city-wide: 1 pipe/)).toBeVisible();
       expect(screen.getByText(/^Pump plan: 3 segments drained/)).toHaveTextContent(

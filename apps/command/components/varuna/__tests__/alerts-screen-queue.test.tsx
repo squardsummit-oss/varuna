@@ -249,9 +249,7 @@ describe("AlertsScreen queue", () => {
     fireEvent.click(watching);
     // The listed entry that steps a row up is counted, not listed a second time.
     expect(
-      screen.getByText(
-        "This run lists 2 of the 175 places waiting to raise or go up a level. 1 of them already has a row above at a lower level, which says so.",
-      ),
+      screen.getByText("2 of 175 waiting places listed. 1 already has a lower-level row above."),
     ).toBeVisible();
   });
 
@@ -428,9 +426,7 @@ describe("AlertsScreen on a capped queue", () => {
     const filters = within(strip).getByRole("group", { name: "Filter by level" });
     expect(within(filters).getByRole("button", { name: /Severe.*13.*1 listed/ })).toBeVisible();
     expect(within(filters).getByRole("button", { name: /Watch.*165.*2 listed/ })).toBeVisible();
-    expect(strip).toHaveTextContent(
-      "The queue lists the worst 10 of the 213 alerts this cycle raised, worst level first.",
-    );
+    expect(strip).toHaveTextContent("Worst 10 of 213 alerts listed. Filters cover the 10 listed.");
     // The earliest window over all 213, which the listed ten do not hold.
     expect(strip).toHaveTextContent("First street over its threshold 08:45 (+5 min), Step Marg");
     expect(strip).toHaveTextContent("109 new places raise at 09:10 if they hold");

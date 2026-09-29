@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { PumpCycles, PumpMap, PumpPlan } from "@/lib/api/pumps";
@@ -92,6 +92,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // Unmount before the mocks are reset: an effect still in flight would otherwise call a mock
+  // with no implementation and fail whichever test the machine happened to be slow in.
+  cleanup();
   loadPumpPlan.mockReset();
   loadPumpCycles.mockReset();
   loadPumpMap.mockReset();
@@ -132,7 +135,7 @@ describe("Jalayantra's dispatch map view", () => {
     const strip = screen.getByRole("region", { name: "What the plan buys" });
     expect(within(strip).getByText("Not sent")).toBeInTheDocument();
     expect(within(strip).getByText("205 min")).toBeInTheDocument();
-    expect(strip).toHaveTextContent(/2 of 2 pumps assigned; 180 min avoided at 2 places\./);
+    expect(strip).toHaveTextContent(/2 of 2 pumps assigned; 180 min avoided\./);
 
     await act(async () => {
       fireEvent.click(optimise);
@@ -213,7 +216,7 @@ describe("Jalayantra's dispatch map view", () => {
     expect(loadPumpPlan).toHaveBeenCalledWith(BUSIEST);
     expect(
       screen.getByText(
-        "Opened on the 08:40 cycle: of the baked cycles, its plan avoids the most minutes above 45 cm (915 min, 12 pumps). Pick another cycle to compare.",
+        "Opened on the 08:40 cycle, the storm's busiest: 12 pumps avoid 915 min above 45 cm.",
       ),
     ).toBeInTheDocument();
   });

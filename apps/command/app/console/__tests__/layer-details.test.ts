@@ -98,7 +98,7 @@ describe("xrayDetail", () => {
   });
 
   it("points a flat reader at the view the pipes are meant to be read in", () => {
-    expect(xrayDetail(ready(), false, 1)).toMatch(/Switch the photorealistic city on/);
+    expect(xrayDetail(ready(), false, 1)).toMatch(/Switch the 3D city on/);
   });
 
   it("admits the vertical datum has not been reconciled once the tiles are the ground", () => {
@@ -106,7 +106,7 @@ describe("xrayDetail", () => {
     // and a screen that stayed quiet about it would present a guess as a placement.
     const line = xrayDetail(ready(), true, 1);
     expect(line).toMatch(/has not been measured/);
-    expect(line).not.toMatch(/Switch the photorealistic city on/);
+    expect(line).not.toMatch(/Switch the 3D city on/);
   });
 
   it("labels a stretched depth every time it is not the real one", () => {

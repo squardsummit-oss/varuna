@@ -104,7 +104,11 @@ export interface VerificationGridProps {
  * Headline verification scores as a grid of tiles. Every value is computed by `services/verify`
  * from run artifacts; a tile without one says "Not scored yet" rather than showing a placeholder.
  */
-export function VerificationGrid({ tiles, groundTruthCount = null, className }: VerificationGridProps) {
+export function VerificationGrid({
+  tiles,
+  groundTruthCount = null,
+  className,
+}: VerificationGridProps) {
   return (
     <div className={cn("space-y-3", className)}>
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-label="Verification scores">
@@ -114,14 +118,14 @@ export function VerificationGrid({ tiles, groundTruthCount = null, className }: 
           return (
             <li
               key={tile.id}
-              className="flex flex-col gap-1 rounded-panel border border-line bg-deep p-4"
+              className="rounded-panel border-line bg-deep flex flex-col gap-1 border p-4"
             >
-              <p className="type-small font-medium text-text">{tile.label}</p>
+              <p className="type-small text-text font-medium">{tile.label}</p>
+              {/* Not cn(): its merge reads text-h2 and text-text as the same utility and drops the size. */}
               <p
-                className={cn(
-                  "num font-display text-h2 font-semibold tracking-display",
-                  scored ? "text-text" : "text-text-3",
-                )}
+                className={`num font-display text-h2 tracking-display font-semibold ${
+                  scored ? "text-text" : "text-text-3"
+                }`}
               >
                 {scored ? formatted : "Not scored yet"}
               </p>

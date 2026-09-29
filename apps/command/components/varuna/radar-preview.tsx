@@ -483,12 +483,12 @@ export function RadarPreview({
               </li>
             ))}
           </ul>
-          {preview ? <p className="type-micro text-text-3">{preview.accumulation.note}</p> : null}
-          <p className="type-micro text-text-3">
-            {reduced
-              ? "Reduced motion: the middle frame is shown, the loop is off."
-              : "The loop pauses while the pointer or focus is on the preview."}
+          <p className="type-micro text-text-3" title={preview?.accumulation.note}>
+            Rain rate in mm/h. The accumulation uses the same band edges in mm.
           </p>
+          {reduced ? (
+            <p className="type-micro text-text-3">Reduced motion: the middle frame is shown.</p>
+          ) : null}
         </>
       )}
     </div>
@@ -517,12 +517,15 @@ export function wholeInFrame(cubeWidth: number, cubeHeight: number, frame: CubeR
   return rectInFrame({ left: 0, top: 0, width: cubeWidth, height: cubeHeight }, frame);
 }
 
-/** The forecast area drawn over a cube image: 1 px of `--line-strong`, never a fill. */
+/**
+ * The forecast area drawn over a cube image: 1 px of `--text-2`, never a fill. It was
+ * `--line-strong`, which vanished against the rain ramp's blues on the radar frames.
+ */
 function AoiOutline({ aoi, frame }: AoiOutlineProps) {
   return (
     <div
       aria-hidden="true"
-      className="border-line-strong pointer-events-none absolute border"
+      className="border-text-2 pointer-events-none absolute border"
       style={rectInFrame(aoi, frame)}
     />
   );

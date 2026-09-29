@@ -14,7 +14,7 @@
  * the only fonts that cost nothing to send.
  */
 
-import { colors, depthColor, tokens } from "@varuna/tokens";
+import { colorsFor, depthColor, tokens, type ThemeColorTable } from "@varuna/tokens";
 
 import type { RuralAdvisory, RuralVehicle } from "@/lib/rural";
 // The vehicle's name in a sentence comes from `lib/rural`, which takes it from `lib/explain` -
@@ -89,6 +89,11 @@ export function esc(value: string): string {
     .replace(QUOT, "&quot;");
 }
 
+/** The page's colour variables from one theme's token table, so no hex is written here. */
+function rootVars(c: ThemeColorTable): string {
+  return `:root{--ink:${c.ink};--deep:${c.deep};--line:${c.line};--text:${c.text};--text-2:${c["text-2"]};--text-3:${c["text-3"]};--tide:${c.tide};--on-tide:${c["on-tide"]}}`;
+}
+
 /**
  * The stylesheet, built from the tokens rather than written in hex.
  *
@@ -98,7 +103,7 @@ export function esc(value: string): string {
 export function styles(): string {
   const font = `${tokens.font.sans.fallback}`;
   return [
-    `:root{--ink:${colors.ink};--deep:${colors.deep};--line:${colors.line};--text:${colors.text};--text-2:${colors["text-2"]};--text-3:${colors["text-3"]};--tide:${colors.tide}}`,
+    rootVars(colorsFor("dark")),
     "*{box-sizing:border-box}",
     // `font` is `tokens.font.sans.fallback` - the token set's own system stack, "system-ui,
     // -apple-system, Segoe UI, sans-serif". The rule looks for a literal token class and cannot
@@ -118,12 +123,17 @@ export function styles(): string {
     ".sub{color:var(--text-2);font-size:14px;margin:4px 0 0}",
     ".muted{color:var(--text-3);font-size:14px}",
     ".lead{font-size:17px;font-weight:600}",
-    ".depth{font-weight:600}",
+    ".depth{font-weight:600;color:var(--d)}",
     ".share{display:inline-block;min-height:44px;line-height:28px;padding:8px 0;word-break:break-all}",
     "label{display:block;margin:0 0 12px;color:var(--text-2);font-size:14px}",
     "input,select,button{display:block;width:100%;min-height:44px;margin-top:4px;padding:8px 10px;font:inherit;font-size:16px;color:var(--text);background:var(--deep);border:1px solid var(--line);border-radius:8px}",
-    "button{background:var(--tide);color:var(--ink);font-weight:600;border-color:var(--tide);cursor:pointer}",
+    "button{background:var(--tide);color:var(--on-tide);font-weight:600;border-color:var(--tide);cursor:pointer}",
     ":focus-visible{outline:2px solid var(--tide);outline-offset:2px}",
+    // No script means no theme toggle, so the page follows the reader's system setting into the
+    // token set's light palette. It comes after the base rules so it wins at equal specificity.
+    // The depth ramp is too pale for text on paper, so there the number is ink and the ramp
+    // colour is its underline: the colour still reads, and the text clears 4.5:1.
+    `@media (prefers-color-scheme:light){${rootVars(colorsFor("light"))}.depth{color:var(--text);text-decoration:underline 3px var(--d);text-underline-offset:3px}}`,
     // Paper is white and ink is black; neither is a token, because the design system is a dark
     // screen and this rule exists for the officer who prints the page and reads it aloud.
     "@media print{body{background:white;color:black}a{color:black}.muted,.sub,h2{color:black}input,select,button{display:none}label{display:none}}",
@@ -195,9 +205,8 @@ function ask(message: string | null): string {
     "<section>",
     "<h2>On your road</h2>",
     note,
-    "<p>Name where you start and where you are going, pick your vehicle, and this page answers",
-    " in words: which road, until when it stays passable, what stops you after that, and the",
-    " safer way.</p>",
+    "<p>Enter start, destination and vehicle to see which road, until when, and the safer way.",
+    "</p>",
     "</section>",
   ].join("");
 }
@@ -221,8 +230,8 @@ function unknown(field: "from" | "to", typed: string, suggestions: string[]): st
   return [
     "<section>",
     "<h2>We do not know that place</h2>",
-    `<p>VARUNA holds no ${which} called ${esc(typed)}. Use a name from its register - a hospital,`,
-    " a fire station or a chronic junction - or two numbers, longitude then latitude.</p>",
+    `<p>VARUNA holds no ${which} called ${esc(typed)}. Use a hospital, fire station or junction`,
+    " name, or longitude then latitude.</p>",
     list,
     "</section>",
   ].join("");
@@ -256,7 +265,7 @@ function roadLine(advisory: RuralAdvisory): string {
 function passableLine(advisory: RuralAdvisory): string {
   const stop = advisory.stopper;
   const after = stop
-    ? ` After that: <span class="depth" style="color:${depthColor(stop.depthCm)}">${stop.depthCm} cm</span>` +
+    ? ` After that: <span class="depth" style="--d:${depthColor(stop.depthCm)}">${stop.depthCm} cm</span>` +
       ` at ${esc(stop.street)} at ${esc(stop.at)} - ${esc(tooDeepPhrase(advisory.vehicle))}.`
     : ` On this cycle nothing on it rises above the depth that ${esc(stopsPhrase(advisory.vehicle))}.`;
   switch (advisory.passable.kind) {
@@ -325,8 +334,8 @@ function dontKnow(page: RuralPage): string {
   return [
     "<section>",
     "<h2>What we do not know here</h2>",
-    `<p>This advisory covers the built ${esc(page.city.name)} area. Outside it we have no drain map`,
-    " and no forecast, and we will say so rather than guess.</p>",
+    `<p>Only the built ${esc(page.city.name)} area: outside it we have no drain map and no`,
+    " forecast.</p>",
     "</section>",
   ].join("");
 }

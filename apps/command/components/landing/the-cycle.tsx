@@ -77,14 +77,14 @@ function makeNodeRefs(): Record<CycleNodeId, RefObject<HTMLLIElement | null>> {
   ) as Record<CycleNodeId, RefObject<HTMLLIElement | null>>;
 }
 
+/**
+ * The line under the diagram: the total against its budget, and whether the timings are live or
+ * the copy committed with the page. Which run they were measured on is provenance for an expert,
+ * so it sits in a collapsed "Details".
+ */
 function Caption({ timings }: { timings: CycleTimings | null }) {
   if (!timings) {
-    return (
-      <>
-        No run has been timed yet, so every stage reads not timed. Bake a cycle or compute one live
-        and its timings appear here.
-      </>
-    );
+    return <p>No run has been timed yet. Bake a cycle or compute one live.</p>;
   }
   const total = cycleTotalMs(timings.stageMs);
   const when = timings.cycleTs
@@ -92,17 +92,23 @@ function Caption({ timings }: { timings: CycleTimings | null }) {
     : "";
   return (
     <>
-      {timings.source === "committed"
-        ? "The API is not reachable, so these are the timings committed with this page, from run "
-        : "Measured on run "}
-      <span className="font-mono break-all">{timings.runId}</span>
-      {when}. {total !== null ? `The timed stages add up to ${formatMs(total)}` : null}
-      {total !== null && timings.totalBudgetMs !== null
-        ? ` against a ${formatMs(timings.totalBudgetMs)} budget. `
-        : total !== null
-          ? ". "
-          : null}
-      A stage the run did not time says so instead of showing a number.
+      {timings.source === "committed" ? (
+        <p>API offline: these timings were committed with this page.</p>
+      ) : null}
+      {total !== null ? (
+        <p className="num">
+          {timings.totalBudgetMs !== null
+            ? `Total ${formatMs(total)} against a ${formatMs(timings.totalBudgetMs)} budget.`
+            : `Total ${formatMs(total)}.`}
+        </p>
+      ) : null}
+      <details className="mt-1">
+        <summary className="text-text-2 cursor-pointer">Details</summary>
+        <p className="mt-1">
+          Measured on run <span className="font-mono break-all">{timings.runId}</span>
+          {when}. A stage the run did not time says so instead of showing a number.
+        </p>
+      </details>
     </>
   );
 }
@@ -142,9 +148,7 @@ export function TheCycle() {
           Every five minutes, the whole city again
         </h2>
         <p className={LEAD}>
-          A cycle is a pipeline with a budget. Under each stage is its measured time on the newest
-          run, next to what it is allowed, because a forecast that arrives late is a forecast nobody
-          used.
+          Each stage&apos;s measured time on the newest run, beside its budget.
         </p>
 
         <div ref={diagramRef} className="relative mt-10">
@@ -199,9 +203,13 @@ export function TheCycle() {
           </ol>
         </div>
 
-        <p className="text-small text-text-3 mt-8 max-w-[72ch]" aria-live="polite">
-          {done ? <Caption timings={timings} /> : "Reading the newest run's stage timings."}
-        </p>
+        <div className="text-small text-text-3 mt-8 max-w-[72ch]" aria-live="polite">
+          {done ? (
+            <Caption timings={timings} />
+          ) : (
+            <p>Reading the newest run&apos;s stage timings.</p>
+          )}
+        </div>
       </div>
     </section>
   );

@@ -36,6 +36,8 @@ export interface RunMeta {
   step_min?: number;
   /** p10/p50/p90 of mean street depth per step across members: the time bar's band (7.2). */
   aoi_depth_band?: { p10: number[]; p50: number[]; p90: number[] } | null;
+  /** Minutes from the cycle to each step's valid time (5, 10, ... 180): the scrub's stops. */
+  step_leads?: number[] | null;
 }
 
 export interface RunState {

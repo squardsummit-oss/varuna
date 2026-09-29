@@ -2,7 +2,7 @@
  * Citizen reports with photos and the desk's status (`/v1/reports`, `/v1/ops/reports`).
  *
  * The API side is `services/api/varuna_api/routers/reports.py`; the schemas here are hand-written
- * against it until the lead regenerates `types.ts`, and loose so an added field does not break a
+ * against it until the team regenerates `types.ts`, and loose so an added field does not break a
  * screen.
  *
  * **Three things a screen must not get wrong.**

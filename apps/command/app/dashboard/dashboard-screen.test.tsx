@@ -214,10 +214,11 @@ function run(cycleTs: string | null): CitizenRun {
 }
 
 describe("runLine", () => {
-  it("names the run and the time it is for", () => {
+  it("names the cycle the map is for, and leaves the run id to the line's title", () => {
     const line = runLine(run("2019-07-02T06:40:00+05:30"), false);
     expect(line).toContain("06:40 IST");
-    expect(line).toContain("MUM-");
+    expect(line).toContain("2 Jul 2019");
+    expect(line).not.toContain("MUM-");
   });
 
   it("says the load failed rather than claiming a run is still coming", () => {

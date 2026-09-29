@@ -315,22 +315,14 @@ export function reversedFlowSummary(
   set: Pick<SurchargeSet, "reversedTotal" | "reversedEdges">,
 ): string {
   const total = set.reversedTotal;
-  const stored = set.reversedEdges.length;
   const withPath = set.reversedEdges.filter((edge) => edge.path && hasLength(edge.path)).length;
   const n = (value: number) => value.toLocaleString("en-IN");
   if (total !== null && total <= 0) return "No pipe runs backwards in this run.";
-  if (total === null && withPath <= 0) {
-    return "This run reports no reversed-pipe total and stores no pipe geometry, so none are drawn.";
-  }
+  if (total === null && withPath <= 0) return "No reversed-pipe count or geometry in this run.";
   const lead =
     total === null
-      ? "This run does not report how many pipes run backwards."
-      : `${n(total)} ${total === 1 ? "pipe runs" : "pipes run"} backwards in this run.`;
-  if (withPath <= 0) {
-    return `${lead} This run stores no pipe geometry, so they are counted here but not drawn.`;
-  }
-  return (
-    `${lead} ${n(withPath)} of the ${n(stored)} it stored can be drawn: tide-locked outfalls at ` +
-    `every zoom, inland pipes from zoom ${INLAND_MIN_ZOOM} and in view.`
-  );
+      ? "Reversed-pipe count not reported"
+      : `${n(total)} ${total === 1 ? "pipe runs" : "pipes run"} backwards`;
+  if (withPath <= 0) return `${lead}; none stored with geometry, so none drawn.`;
+  return `${lead}; ${n(withPath)} drawn, inland ones from zoom ${INLAND_MIN_ZOOM}.`;
 }

@@ -44,6 +44,14 @@ It is copied to ``city/<city>/onboard_last.json`` only when that file is absent 
 built on the volume, and it carries ``seeded: true`` so the wizard says it is a build recorded
 elsewhere rather than presenting another machine's log as this one's. A build on this machine
 writes its own record, which is then never overwritten.
+
+**So does the first forecast that record names.** ``demo/onboard/runs/<run_id>`` is the run the
+recorded build made, shipped like the demo runs (no ``segment_forecast.parquet``, no rain cubes)
+and seeded by the same rules, so Pravesh on a deployment draws the forecast the record describes
+instead of saying the run "is not on this API". It lives beside the record rather than in
+``demo/runs``, which is the replay's seven cycles and is audited as exactly those. It is seeded
+only into a city built on the volume, for the record's reason: a forecast for streets that are not
+there describes nothing.
 """
 
 from __future__ import annotations
@@ -64,6 +72,7 @@ __all__ = [
     "LOCAL_PRODUCT",
     "MARKER",
     "demo_onboard_dir",
+    "demo_onboard_runs_dir",
     "demo_runs_dir",
     "run_fingerprint",
     "seed_demo_runs",
@@ -86,6 +95,55 @@ def demo_runs_dir() -> Path:
 def demo_onboard_dir() -> Path:
     """Where committed onboarding records live: beside the demo runs, ``demo/onboard``."""
     return demo_runs_dir().parent / "onboard"
+
+
+def demo_onboard_runs_dir() -> Path:
+    """Where an onboarded city's shipped first forecast lives: ``demo/onboard/runs``."""
+    return demo_onboard_dir() / "runs"
+
+
+def _city_built(city: str) -> bool:
+    """The API's own test for a built city: its segment table is on disk."""
+    return (city_dir(city) / "segments.parquet").is_file()
+
+
+def _run_city(run: Path) -> str | None:
+    """The ``city`` a shipped run's ``run.json`` names, or None when it names none or is unreadable."""
+    try:
+        payload = json.loads((run / "run.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    city = payload.get("city") if isinstance(payload, dict) else None
+    return city if isinstance(city, str) and city else None
+
+
+def _shipped_runs() -> list[Path]:
+    """Every run to seed: the replay's ``demo/runs``, then each onboarded city's first forecast.
+
+    An onboarding run is included only when its city is built here (see the module docstring); the
+    replay's runs always are.
+    """
+    runs: list[Path] = []
+    replay = demo_runs_dir()
+    if replay.is_dir():
+        runs.extend(
+            run for run in sorted(replay.iterdir()) if run.is_dir() and (run / "run.json").is_file()
+        )
+    onboarded = demo_onboard_runs_dir()
+    if onboarded.is_dir():
+        for run in sorted(onboarded.iterdir()):
+            if not run.is_dir() or not (run / "run.json").is_file():
+                continue
+            city = _run_city(run)
+            try:
+                built = city is not None and _city_built(city)
+            except ValueError:
+                built = False
+            if not built:
+                log.info("api.onboard_run_city_not_built", run=run.name, city=city)
+                continue
+            runs.append(run)
+    return runs
 
 
 def _seeded_record(payload: dict[str, Any]) -> dict[str, Any]:
@@ -127,7 +185,7 @@ def seed_onboard_records() -> int:
         target = folder / RECORD_FILE
         if target.exists():
             continue
-        if not (folder / "segments.parquet").is_file():
+        if not _city_built(city):
             log.info("api.onboard_record_city_not_built", city=city)
             continue
         tmp = target.with_name(f".{target.name}.seed.tmp")
@@ -189,7 +247,8 @@ def seed_demo_runs() -> int:
         log.warning("api.onboard_records_not_seeded", error=str(error))
 
     source = demo_runs_dir()
-    if not source.is_dir():
+    runs = _shipped_runs()
+    if not runs:
         return 0
 
     target = runs_dir()
@@ -199,9 +258,7 @@ def seed_demo_runs() -> int:
     skipped_local = 0
     current = 0
     shipped: set[str] = set()
-    for run in sorted(source.iterdir()):
-        if not run.is_dir() or not (run / "run.json").is_file():
-            continue
+    for run in runs:
         shipped.add(run.name)
 
         destination = target / run.name

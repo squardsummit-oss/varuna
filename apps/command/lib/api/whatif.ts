@@ -434,7 +434,7 @@ export async function runPhysicsCheck(
 //
 // `POST /v1/whatif/twin` runs one full-city coupled Twin at the cycle's own inputs with the
 // scenario applied - the only engine that has a sea level - as a job of about a minute. The
-// schemas are hand-written against `services/api/varuna_api/routers/whatif.py` until the lead
+// schemas are hand-written against `services/api/varuna_api/routers/whatif.py` until the team
 // regenerates `types.ts`; they are loose so an added field does not break the console.
 
 const MinutesAbove = z.record(z.string(), z.number());
@@ -600,6 +600,93 @@ export function startTwinScenario(
   });
 }
 
+/**
+ * `GET /v1/whatif/twin?run_id=`: whether this API runs the full-city Twin, and the stored answers
+ * it can serve for a run. A cache-only API (`VARUNA_WHATIF_TWIN=0`, the deployed one) answers only
+ * `answers`; `tide_offsets_m` are the tides it can give at rain 1.0x with nothing cleaned.
+ */
+export const TwinOfferSchema = z.looseObject({
+  run_id: z.string(),
+  enabled: z.boolean(),
+  answers: z.array(
+    z.looseObject({
+      rain_scale: z.number(),
+      tide_offset_m: z.number(),
+      cleaned: z.boolean(),
+      source: z.string(),
+    }),
+  ),
+  tide_offsets_m: z.array(z.number()),
+  elsewhere: z
+    .array(
+      z.looseObject({
+        run_id: z.string(),
+        cycle: z.string(),
+        tide_offsets_m: z.array(z.number()),
+      }),
+    )
+    .optional(),
+  message: z.string(),
+});
+
+export type TwinOffer = z.infer<typeof TwinOfferSchema>;
+
+/** What this API's Twin what-if can answer for a run. Throws when the API predates the route. */
+export function getTwinOffer(runId: string | undefined, signal?: AbortSignal): Promise<TwinOffer> {
+  return apiFetch("/v1/whatif/twin", {
+    signal,
+    query: runId ? { run_id: runId } : undefined,
+    schema: TwinOfferSchema,
+  });
+}
+
+/**
+ * Whether a cache-only API holds the Twin's answer to this exact question: its rain and tide, and
+ * nothing cleaned by name. Null means it does; otherwise the one line the lab prints instead of
+ * starting a Twin run the API would refuse. An API that runs the Twin answers everything.
+ */
+export function twinCannotAnswer(
+  offer: TwinOffer | null,
+  scenario: Pick<WhatIfScenario, "rainScale" | "tideOffsetM" | "cleanedSegments">,
+): string | null {
+  if (!offer || offer.enabled || scenario.tideOffsetM === 0) return null;
+  const same = (a: number, b: number) => Math.abs(a - b) < 1e-9;
+  // Stored answers with streets cleaned are keyed on the pipes, which the lab cannot match from
+  // here, so only a question with nothing cleaned is offered from the store.
+  const cleanedNone = (scenario.cleanedSegments ?? []).length === 0;
+  const held =
+    cleanedNone &&
+    offer.answers.some(
+      (answer) =>
+        !answer.cleaned &&
+        same(answer.rain_scale, scenario.rainScale) &&
+        same(answer.tide_offset_m, scenario.tideOffsetM),
+    );
+  if (held) return null;
+  return offer.tide_offsets_m.length > 0
+    ? "The tide is answered here only at rain 1.0x with no pipes cleaned."
+    : offer.message;
+}
+
+/**
+ * The tide offsets a lab offers on this API: every one when it runs the Twin (null: the slider),
+ * else the run's own tide and the stored answers for this cycle.
+ */
+export function tideStopsFor(offer: TwinOffer | null): number[] | null {
+  if (!offer || offer.enabled) return null;
+  return [0, ...offer.tide_offsets_m.filter((metres) => metres !== 0)].sort((a, b) => a - b);
+}
+
+/** The tide lever's one line on a cache-only API, or undefined for the Twin's own note. */
+export function tideOfferNote(offer: TwinOffer | null): string | undefined {
+  if (!offer || offer.enabled) return undefined;
+  if (offer.tide_offsets_m.length > 0) return "Stored Twin answers on this server, at rain 1.0x.";
+  const elsewhere = (offer.elsewhere ?? []).map((row) => `${row.cycle} IST`);
+  return elsewhere.length > 0
+    ? `Tide answers are stored for ${elsewhere.join(", ")} only.`
+    : "This server cannot run the Twin for the tide.";
+}
+
 /** One poll of a running scenario: its stage, step `k` of `n`, and the result once done. */
 export function getTwinScenario(jobId: string, signal?: AbortSignal): Promise<TwinScenarioJob> {
   return apiFetch(`/v1/whatif/twin/${encodeURIComponent(jobId)}`, {
@@ -658,6 +745,10 @@ export function formatSecondsLeft(seconds: number): string {
 export function twinProgressLine(job: TwinScenarioJob, mark: TwinStepMark | null): string {
   const base = job.baseline_steps ?? 0;
   const own = job.n_steps - base;
+  if (job.state === "done" && job.cache && job.cache.source !== "computed") {
+    // Served from a store rather than run now: said as that, not as a run that just finished.
+    return `Stored Twin answer: ${job.n_steps - base} steps, not rerun.`;
+  }
   if (job.state === "done") {
     return base > 0
       ? `Twin finished: ${own} of ${own} steps, after the same run with nothing changed.`

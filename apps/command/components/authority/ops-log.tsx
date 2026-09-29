@@ -41,7 +41,7 @@ export function OpsLog({ entries, total = 0, error, className }: OpsLogProps) {
     <Panel
       className={className}
       title="Ops log"
-      description="Every authority edit, newest first. Nothing is ever removed: a closure is lifted by appending a reopening."
+      description="Every desk edit, newest first. Nothing is ever removed."
       actions={
         total > 0 ? <span className="num type-micro text-text-3">{total} entries</span> : null
       }
@@ -54,7 +54,7 @@ export function OpsLog({ entries, total = 0, error, className }: OpsLogProps) {
         <EmptyState
           size="sm"
           title="Nothing has been done at this desk"
-          description="Close a street or set a pump's status; the row appears here with your name and the time."
+          description="Close a street or set a pump's status; it appears here."
         />
       ) : (
         <ul className="max-h-96 space-y-1.5 overflow-y-auto" aria-label="Ops log">

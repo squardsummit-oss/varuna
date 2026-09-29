@@ -171,7 +171,7 @@ export function RouteForm({
       }}
     >
       <div className="space-y-2">
-        <label htmlFor={originId} className="block type-small font-medium text-text">
+        <label htmlFor={originId} className="type-small text-text block font-medium">
           Origin
         </label>
         <select
@@ -185,7 +185,7 @@ export function RouteForm({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={destinationId} className="block type-small font-medium text-text">
+        <label htmlFor={destinationId} className="type-small text-text block font-medium">
           Destination
         </label>
         <select
@@ -199,7 +199,7 @@ export function RouteForm({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={departId} className="block type-small font-medium text-text">
+        <label htmlFor={departId} className="type-small text-text block font-medium">
           Departure time
         </label>
         <div className="flex items-center gap-2">
@@ -209,7 +209,10 @@ export function RouteForm({
             className={cn(FIELD, "num")}
             value={clock}
             onChange={(event) =>
-              onChange({ ...value, departAt: withDepartureTime(value.departAt, event.target.value) })
+              onChange({
+                ...value,
+                departAt: withDepartureTime(value.departAt, event.target.value),
+              })
             }
           />
           <Button
@@ -229,7 +232,7 @@ export function RouteForm({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={profileId} className="block type-small font-medium text-text">
+        <label htmlFor={profileId} className="type-small text-text block font-medium">
           Vehicle profile
         </label>
         <select
@@ -251,7 +254,7 @@ export function RouteForm({
 
       <div className="space-y-3">
         <div className="flex items-baseline justify-between gap-3">
-          <label htmlFor={toleranceId} className="type-small font-medium text-text">
+          <label htmlFor={toleranceId} className="type-small text-text font-medium">
             Risk tolerance
           </label>
           <output htmlFor={toleranceId} className="num type-small text-text-2">
@@ -268,12 +271,11 @@ export function RouteForm({
           onValueChange={(next) => onChange({ ...value, riskTolerance: firstValue(next) })}
         />
         <p className="type-micro text-text-3">
-          A segment is avoided once P(impassable for this profile) passes this number. Changing the
-          profile resets it to that profile default.
+          Avoid a street once P(impassable) passes this. Each profile has its default.
         </p>
       </div>
 
-      <div className="space-y-1 border-t border-line pt-4">
+      <div className="border-line space-y-1 border-t pt-4">
         <Button
           type="submit"
           className="w-full"

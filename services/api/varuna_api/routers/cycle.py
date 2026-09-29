@@ -243,9 +243,8 @@ def compute_info(state: Annotated[AppState, Depends(get_state)]) -> JSONResponse
             "reason": None
             if enabled
             else (
-                f"Compute live is off on this server ({COMPUTE_ENV} is not set): a cycle holds "
-                "most of its memory for a minute or more and it serves every screen. Run it on "
-                "the demo laptop, or read the baked runs."
+                f"Off on this server ({COMPUTE_ENV} is not set). The map shows the baked runs; "
+                "run it on the demo laptop."
             ),
             "busy": bool(job and job.running) or _LIVE_CYCLE.locked(),
             "budget_ms": TOTAL_CYCLE_BUDGET_MS,

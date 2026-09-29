@@ -3,16 +3,20 @@
 @import "shadcn/tailwind.css";
 @import "@varuna/tokens/tokens.css";
 
-/* The console is dark only; the variant stays so shadcn primitives keep their dark branches. */
-@custom-variant dark (&:is(.dark *));
+/*
+ * Two themes, one attribute: <html data-theme="dark"> (the default) or "light". The tokens css
+ * writes the light values under :root[data-theme="light"], so everything below follows it.
+ * shadcn's dark: variant keys off the same attribute, so vendor dark branches apply only in dark.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 
 /*
  * shadcn semantic variables mapped onto the VARUNA tokens (SPEC.md section 6.2).
  * Vendor primitives in components/ui read these; VARUNA components use the tokens directly.
- * The values are identical in :root and .dark because there is no light theme.
+ * They are references, so both themes resolve through the same names.
  */
-:root,
-.dark {
+:root {
   --background: var(--ink);
   --foreground: var(--text);
   --card: var(--deep);
@@ -20,7 +24,7 @@
   --popover: var(--deep);
   --popover-foreground: var(--text);
   --primary: var(--tide);
-  --primary-foreground: var(--ink);
+  --primary-foreground: var(--on-tide);
   --secondary: var(--well);
   --secondary-foreground: var(--text);
   --muted: var(--well);
@@ -35,7 +39,7 @@
   --sidebar: var(--deep);
   --sidebar-foreground: var(--text);
   --sidebar-primary: var(--tide);
-  --sidebar-primary-foreground: var(--ink);
+  --sidebar-primary-foreground: var(--on-tide);
   --sidebar-accent: var(--well);
   --sidebar-accent-foreground: var(--text);
   --sidebar-border: var(--line);
@@ -79,7 +83,8 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* No drop shadows in the dark UI (SPEC.md section 6.4). Vendor shadow utilities become no-ops. */
+/* No drop shadows in either theme (SPEC.md section 6.4): depth is --deep on --ink and a 1 px
+   --line border. Vendor shadow utilities become no-ops. */
 @theme {
   --shadow-2xs: 0 0 0 0 transparent;
   --shadow-xs: 0 0 0 0 transparent;
@@ -102,6 +107,11 @@
     height: 100%;
     color-scheme: dark;
     background-color: var(--ink);
+  }
+
+  /* Native controls, scrollbars and form autofill follow the theme too. */
+  html[data-theme="light"] {
+    color-scheme: light;
   }
 
   body {

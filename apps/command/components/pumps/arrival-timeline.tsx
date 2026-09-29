@@ -86,7 +86,7 @@ export function raceSentence(leg: PumpLeg, cycleTs: string | null, thresholdCm: 
   const at = arrives
     ? `${arrives} (+${formatMinutes(leg.etaMin)})`
     : `+${formatMinutes(leg.etaMin)}`;
-  if (r.kind === "dry") return `Arrives ${at}.`;
+  if (r.kind === "dry" || r.kind === "unknown") return `Arrives ${at}.`;
   const crosses = leg.windowBefore ? clockAt(cycleTs, leg.windowBefore.fromMin) : null;
   const when = crosses ? ` at ${crosses}` : "";
   return r.kind === "early"
@@ -302,9 +302,11 @@ function TimelineRow({
         aria-hidden="true"
         className={cn("num type-micro self-center", late ? "text-text" : "text-text-2")}
       >
-        {r.kind === "dry"
-          ? "Never above the line"
-          : `${formatMinutes(r.marginMin)} ${late ? "after" : "before"} the water`}
+        {r.kind === "unknown"
+          ? "No depth series"
+          : r.kind === "dry"
+            ? "Never above the line"
+            : `${formatMinutes(r.marginMin)} ${late ? "after" : "before"} the water`}
       </span>
     </div>
   );

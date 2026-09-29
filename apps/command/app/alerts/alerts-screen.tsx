@@ -86,8 +86,7 @@ const PHONE_MESSAGES = 4;
  * raised on the second consecutive cycle that says so. The raise P is 0 or 1 on a deterministic
  * run, so "P >= 0.6" described a probability the queue never used.
  */
-const RULE =
-  "Raised when the Twin's forecast depth on a street or hotspot stays above the level's threshold for two 5-minute steps in a row, on two consecutive cycles; cleared on the first cycle it no longer does. Each level is ordered by when the water arrives.";
+const RULE = "Raised over a level for two 5-minute steps in a row, on two consecutive cycles.";
 
 const ALERTS_ROUTE = "/alerts";
 
@@ -596,18 +595,13 @@ function AlertCentre() {
     <AppShell>
       <div className="h-full min-h-0 overflow-y-auto">
         <div className="flex flex-col gap-4 p-6">
-          <PageHeader
-            title={navItem("alerts").label}
-            screen={navItem("alerts")}
-            description="Every alert VARUNA raises, what to do about it, who has been told, and the message the ward officer receives."
-          />
+          <PageHeader title={navItem("alerts").label} screen={navItem("alerts")} />
 
           {cityQuery ? null : <CyclePicker currentRunId={set?.runId ?? runId} onPick={pickCycle} />}
 
           {set && !set.crossCycle ? (
             <p className="type-small text-text-2">
-              This cycle was baked before alerts needed two consecutive cycles: its queue raised on
-              this cycle alone, and persistence is counted in forecast steps.
+              Older bake: this queue raised on one cycle, not two.
             </p>
           ) : null}
 
@@ -659,8 +653,8 @@ function AlertCentre() {
             {capped ? (
               <p className="num type-small text-text-2 max-w-[72ch]">
                 {nRaised !== null
-                  ? `The queue lists the worst ${raised.length} of the ${nRaised} alerts this cycle raised, worst level first. The level counts are all ${nRaised}; the filters and Unacknowledged cover the ${raised.length} listed.`
-                  : `The queue lists at most ${MAX_LISTED} alerts, worst level first, and this run does not say how many more it raised. Every count here is of the ${raised.length} listed.`}
+                  ? `Worst ${raised.length} of ${nRaised} alerts listed. Filters cover the ${raised.length} listed.`
+                  : `At most ${MAX_LISTED} alerts listed; this run does not say how many more.`}
               </p>
             ) : null}
             <div className="type-small text-text-2 flex flex-wrap gap-x-6 gap-y-1">
@@ -732,7 +726,7 @@ function AlertCentre() {
                   size="sm"
                   icon={BellOff}
                   title="No alert product for this run"
-                  description="This run was baked before alerts were written. Bake the cycle again, or pick another cycle above."
+                  description="Pick another cycle above, or bake this one again."
                 />
               ) : (
                 <div className="flex flex-col gap-4">
@@ -740,8 +734,8 @@ function AlertCentre() {
                     <div className="flex flex-col items-start gap-2">
                       <p className="type-body text-text max-w-[72ch]">
                         {nPending > 0
-                          ? `${cycleTime} raises nothing yet: ${nPending} ${plural(nPending, "place", "places")} crossed a threshold for the first time and ${plural(nPending, "raises", "raise")} ${nextAt} if ${plural(nPending, "it holds", "they hold")}.`
-                          : `${cycleTime} raises nothing: no street or hotspot stays over a threshold for two forecast steps in a row this cycle.`}
+                          ? `${cycleTime} raises nothing yet: ${nPending} new ${plural(nPending, "place raises", "places raise")} ${nextAt} if ${plural(nPending, "it holds", "they hold")}.`
+                          : `${cycleTime} raises nothing: no street stays over a threshold.`}
                       </p>
                       {peak && peak.runId !== set.runId ? (
                         <Button variant="outline" size="sm" onClick={() => pickCycle(peak.runId)}>
@@ -846,7 +840,7 @@ function AlertCentre() {
             <div className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-6 lg:self-start">
               <Panel
                 title="Ward officer's phone"
-                description="The WhatsApp card as the ward officer receives it: the open alert first, then what this cycle brought. On-screen mock."
+                description="On-screen mock of the WhatsApp card."
               >
                 <PhoneMock
                   messages={phoneMessages}
@@ -866,21 +860,25 @@ function AlertCentre() {
                       Send to my phone
                     </Button>
                     <p className="type-micro text-text-3">
-                      A real {sender.channel === "sms" ? "SMS" : "WhatsApp message"} through{" "}
-                      {sender.provider === "twilio" ? "Twilio" : "WhatsApp Cloud"} to{" "}
-                      {sender.toMasked}, the number configured where the API runs.
+                      A real {sender.channel === "sms" ? "SMS" : "WhatsApp message"} to{" "}
+                      {sender.toMasked}.
                     </p>
                   </div>
                 ) : null}
                 {deliveryError ? (
                   <p className="type-micro text-text-3 mt-3">{deliveryError}</p>
-                ) : (
-                  delivery?.notes.map((note) => (
-                    <p key={note} className="type-micro text-text-3 mt-3">
-                      {note}
-                    </p>
-                  ))
-                )}
+                ) : delivery && delivery.notes.length > 0 ? (
+                  <details className="type-micro text-text-3 mt-3">
+                    <summary className="text-text-2 hover:text-text focus-visible:outline-tide cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+                      Details
+                    </summary>
+                    {delivery.notes.map((note) => (
+                      <p key={note} className="mt-1">
+                        {note}
+                      </p>
+                    ))}
+                  </details>
+                ) : null}
               </Panel>
             </div>
           </div>
@@ -967,16 +965,16 @@ function PendingGroups({
           line={(p) =>
             `First crossed ${formatIst(p.sinceTs)}; raises or goes up a level ${nextAt} if it holds`
           }
-          note={`This run does not say which of these are already raised at a lower level: the queue lists ${listedAlerts} alerts and may hold more.`}
+          note={`May already be raised below; the queue lists ${listedAlerts} alerts.`}
         />
       ) : null}
       {pendingCapped || onRows > 0 ? (
         <p className="num type-micro text-text-3">
           {pendingCapped
-            ? `This run lists ${listedPending} of the ${total} places waiting to raise or go up a level.`
-            : `This run lists all ${listedPending} places waiting to raise or go up a level.`}
+            ? `${listedPending} of ${total} waiting places listed.`
+            : `All ${listedPending} waiting places listed.`}
           {onRows > 0
-            ? ` ${onRows} of them already ${plural(onRows, "has", "have")} a row above at a lower level, which says so.`
+            ? ` ${onRows} already ${plural(onRows, "has", "have")} a lower-level row above.`
             : ""}
         </p>
       ) : null}
@@ -1052,7 +1050,7 @@ function EscalationPanel({
   return (
     <Panel
       title="Who is told at each level"
-      description="The escalation matrix from config/escalation.yaml, ward officer to public."
+      description="Ward officer to public."
       actions={
         <Button
           variant="outline"
@@ -1086,11 +1084,7 @@ export function AlertsScreen() {
       fallback={
         <AppShell>
           <div className="flex flex-col gap-4 p-6">
-            <PageHeader
-              title={navItem("alerts").label}
-              screen={navItem("alerts")}
-              description="Every alert VARUNA raises, what to do about it, who has been told, and the message the ward officer receives."
-            />
+            <PageHeader title={navItem("alerts").label} screen={navItem("alerts")} />
             <SkeletonRows rows={6} />
           </div>
         </AppShell>

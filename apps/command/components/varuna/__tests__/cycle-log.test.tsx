@@ -60,13 +60,11 @@ describe("CycleLog", () => {
     expect(screen.getAllByText("08:10")).toHaveLength(2);
   });
 
-  it("states the stage list once instead of repeating it on every row", () => {
+  it("prints no stage caption, since the registry summary cannot say which stages ran", () => {
     render(<CycleLog rows={SAME_CYCLE} />);
-    // The registry gives a run's total, not its per-stage split, so a Stages column printed the
-    // same string on every row and pushed the table past the console panel's width.
-    expect(
-      screen.getByText(/Stages each run: decode, sky, twin, pulse, products\./),
-    ).toBeInTheDocument();
+    // The caption was a constant naming a decode stage no baked run reports and omitting Flash,
+    // which every run does; the per-stage split is the budget bar's, from the run itself.
+    expect(screen.queryByText(/Stages each run/)).not.toBeInTheDocument();
     expect(screen.getAllByRole("columnheader").map((h) => h.textContent)).toEqual([
       "Time",
       "Run",
@@ -75,11 +73,24 @@ describe("CycleLog", () => {
     ]);
   });
 
-  it("lists every distinct stage list, so it never speaks for a run it does not describe", () => {
-    render(<CycleLog rows={[SAME_CYCLE[0], { ...SAME_CYCLE[1], stages: "decode, sky, twin" }]} />);
-    expect(
-      screen.getByText("Stages each run: decode, sky, twin, pulse, products / decode, sky, twin."),
-    ).toBeInTheDocument();
+  it("is read-only without onSelect, and picks a run by its time when given one", () => {
+    const { rerender } = render(<CycleLog rows={SAME_CYCLE} />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+
+    const picked: string[] = [];
+    rerender(
+      <CycleLog
+        rows={SAME_CYCLE}
+        selectedId={SAME_CYCLE[1].id}
+        onSelect={(row) => picked.push(row.id)}
+      />,
+    );
+    const buttons = screen.getAllByRole("button", { name: /08:10 run/ });
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toHaveAttribute("aria-pressed", "false");
+    expect(buttons[1]).toHaveAttribute("aria-pressed", "true");
+    buttons[0].click();
+    expect(picked).toEqual([SAME_CYCLE[0].id]);
   });
 
   it("says so plainly when there are no runs, rather than drawing an empty table", () => {

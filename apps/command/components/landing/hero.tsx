@@ -35,6 +35,7 @@ const FloodMap = dynamic(
   },
 );
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
 import { BrandLockup } from "@/components/varuna/wordmark";
 import { apiUrl } from "@/lib/api/client";
 import type { RunDepth } from "@/lib/api/run-depth";
@@ -297,11 +298,12 @@ export function Hero() {
       {/* The copy needs a readable ground without hiding the map: a one-sided wash from the left,
           which is where the text is, gone by the middle. Stopping it at 60 % rather than letting
           it run to the right edge is what leaves the aerial imagery visible - a gradient that is
-          80 % ink across the whole width is just a dark rectangle over a photograph. */}
+          80 % ink across the whole width is just a dark rectangle over a photograph. On a phone the
+          copy spans the whole width, so there the wash does too, at a third of ink by the edge. */}
       <div
         aria-hidden="true"
         data-hero-wash=""
-        className="from-ink via-ink/70 absolute inset-0 bg-gradient-to-r from-15% via-40% to-transparent to-60%"
+        className="from-ink via-ink/70 max-sm:to-ink/35 absolute inset-0 bg-gradient-to-r from-15% via-40% to-transparent to-60% max-sm:to-100%"
       />
 
       <div
@@ -332,32 +334,19 @@ export function Hero() {
               <Button size="lg" render={<Link href="/console" />} nativeButton={false}>
                 Open the console
               </Button>
+              {/* The way in for everybody who is not an operator (UI_SPEC 1), where the replay
+                  button used to be: the console's own replay panel already opens the replay. */}
               <Button
                 size="lg"
                 variant="outline"
-                render={<Link href="/console?bundle=MUM-2019-07-02&autoplay=1" />}
+                render={<Link href="/dashboard" />}
                 nativeButton={false}
               >
-                Watch the 2 July 2019 replay
+                Open the citizen dashboard
               </Button>
             </div>
           </BlurFade>
-          {/* UI_SPEC 1: the way in for everybody who is not an operator. Underlined as well as
-              tinted, because colour alone is not a link (SPEC.md 6.10). */}
           <BlurFade index={4}>
-            <p className="text-small text-text-2">
-              Are you not an operator?{" "}
-              <Link
-                href="/dashboard"
-                className="text-tide underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tide)]"
-              >
-                Open the citizen dashboard
-              </Link>
-            </p>
-          </BlurFade>
-          {/* Index 5, not 4: the dashboard link above is a new step in M2's 60 ms stagger, and
-              two lines sharing an index would enter together rather than in order. */}
-          <BlurFade index={5}>
             <p className="text-small text-text-3">
               SIH 2026 · PS SIH26085 · Ministry of Earth Sciences
             </p>
@@ -365,9 +354,15 @@ export function Hero() {
         </div>
       </div>
 
+      {/* The theme switch, in the hero's corner so a visitor can read the public site in either
+          theme. A token panel behind it, because it sits over the map. */}
+      <div className="absolute top-4 right-4 z-20 sm:top-6 sm:right-6">
+        <ThemeToggle size="md" className="border-line bg-deep/80 border" />
+      </div>
+
       {/* The readout and the depth legend, so the loop is legibly a forecast and its colours
-          legibly depths. With no API the panel also says the frames are a recording, and of
-          which run. */}
+          legibly depths. With no API the panel also says the frames are a recording; which run
+          they are is on the map layer's `data-run-id`, not in the copy. */}
       <div
         hidden={!handedOver}
         data-hero-readout=""
@@ -377,8 +372,8 @@ export function Hero() {
         <HeroLegend />
         {recorded && !liveRun ? (
           <p className="text-micro text-text-3 max-w-[44ch] text-right">
-            Pre-rendered frames of run {recorded.run_id}. The live map needs the API. Roads:
-            OpenStreetMap · Terrain: Copernicus GLO-30
+            Pre-rendered frames of a baked run. Roads from OpenStreetMap, terrain from Copernicus
+            GLO-30.
           </p>
         ) : null}
       </div>

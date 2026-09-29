@@ -25,7 +25,6 @@ import {
 import { usePhotorealTileset, type PhotorealState } from "@/lib/maps/photoreal";
 import { AppShell } from "@/components/varuna/app-shell";
 import { MapSlot } from "@/components/varuna/map-slot";
-import { PanelErrorBoundary } from "@/components/varuna/panel-error-boundary";
 import { ReplayPanel } from "@/components/varuna/replay-panel";
 import { HotspotDrawer } from "@/components/varuna/hotspot-drawer";
 import { CyclePicker } from "@/components/varuna/cycle-picker";
@@ -41,29 +40,19 @@ import { Skeleton } from "@/components/varuna/skeleton";
 import type { SegmentPick } from "@/components/map/city-map";
 import { useTruthPins } from "@/lib/hooks/use-truth-pins";
 import { RightRail } from "@/components/varuna/right-rail";
-import { SkyPanel } from "@/components/varuna/sky-panel";
-import { LiveOutlookCard } from "@/components/varuna/live-outlook-card";
 import { TimeBar } from "@/components/varuna/time-bar";
 import { edgeFadeStyle, useScrollEdges } from "./use-scroll-edges";
 import { useConsoleRoutes, type ConsoleRouteState } from "./use-console-routes";
 import { WhatIfDrawer, type WhatIfDiff } from "./whatif-drawer";
 import { fetchOpeningRunId } from "@/lib/opening-run";
-import { formatMassBalance, minutesBetween } from "@/lib/format";
+import { minutesBetween } from "@/lib/format";
 import { DEFAULT_CITY, cityFromSearch } from "@/lib/city";
 import { MIN_AREA_M, type AffectedFrame } from "@/lib/map/affected-bounds";
-import { DEFAULT_SIM_TIME } from "@/lib/stores/replay";
+import { DEFAULT_SIM_TIME, useReplayStore } from "@/lib/stores/replay";
 import { useRunStore } from "@/lib/stores/run";
+import { nearestStep, playIntervalMs, useScrubStore } from "@/lib/stores/scrub";
 import { useUiStore } from "@/lib/stores/ui";
 
-/**
- * The command console (SPEC.md section 7.2). The map slot, the replay panel, the right rail and
- * the time bar are the Phase 0 shell; `CityMap`, the real time bar and the hotspot drawer land in
- * Phase 6.
- *
- * The rain panel on the left is Phase 3 scaffolding (task P3.8): it proves the Sky cube is real and
- * readable from the browser before there is a map to draw it on. Phase 6 deletes it - the panel, its
- * toggle and these three lines - and keeps `FanChart`, which the hotspot drawer needs anyway.
- */
 /** IST clock time of a step, or a dash before the run has loaded. */
 function formatStep(iso: string | undefined): string {
   if (!iso) return "--:--";
@@ -81,17 +70,17 @@ function formatStep(iso: string | undefined): string {
 /** What the Routes row says: the trip it drew, with its numbers, or why there is none. */
 function routeDetail(state: ConsoleRouteState): string | undefined {
   if (state.kind === "off") return undefined;
-  if (state.kind === "loading") return "Planning KEM Hospital to Sion Hospital by ambulance.";
+  if (state.kind === "loading") return "Planning KEM to Sion by ambulance.";
   if (state.kind === "error") return state.message;
   const { plan } = state;
   const varuna = plan.varuna;
-  if (!varuna) return "No safe ambulance route between KEM and Sion at this time.";
+  if (!varuna) return "No safe ambulance route from KEM to Sion now.";
   const avoided = plan.avoided.length;
   return (
-    `KEM to Sion, departing ${formatStep(plan.departAt)}: ${varuna.minutes.toFixed(1)} min, ` +
+    `KEM to Sion at ${formatStep(plan.departAt)}: ${varuna.minutes.toFixed(1)} min, ` +
     (avoided === 0
-      ? "nothing on the way predicted impassable for an ambulance."
-      : `around ${avoided} street${avoided === 1 ? "" : "s"} an ambulance cannot pass.`)
+      ? "nothing to avoid."
+      : `around ${avoided} impassable street${avoided === 1 ? "" : "s"}.`)
   );
 }
 
@@ -155,12 +144,12 @@ export function frameCaption(
   const back = " F or Esc goes back.";
   if (frame.basis === "aoi") {
     return fullView
-      ? `Full view: nothing in this run is wet, so it shows the whole city.${back}`
+      ? `Full view: nothing is wet, so the whole city.${back}`
       : "Nothing in this run is wet, so the map shows the whole city.";
   }
   if (frame.basis === "hotspots") {
     return fullView
-      ? `Full view: no street reaches 5 cm in this run, so it frames the chronic spots.${back}`
+      ? `Full view: no street reaches 5 cm, so the chronic spots.${back}`
       : "No street reaches 5 cm in this run, so the map opened on its chronic spots.";
   }
   const km = (frame.lengthM / 1000).toLocaleString("en-IN", {
@@ -176,10 +165,7 @@ export function frameCaption(
     const held = pct >= 100 ? `all ${km} km of ${what}` : `${pct} % of the ${km} km of ${what}`;
     if (askedStep !== null && askedStep !== step && run.validTs[askedStep]) {
       const asked = `${formatStep(run.validTs[askedStep])} (+${leadMin(run, askedStep)} min)`;
-      return (
-        `Full view: less than ${MIN_AREA_M} m of street is 5 cm deep at ${asked}, ` +
-        `so it frames the peak: ${held}.${back}`
-      );
+      return `Full view: under ${MIN_AREA_M} m wet at ${asked}, so the peak: ${held}.${back}`;
     }
     return `Full view: ${held}.${back}`;
   }
@@ -212,9 +198,9 @@ export type FullViewMode = "off" | "screen" | "layout";
  */
 export function photorealDetail(state: PhotorealState): string | undefined {
   if (state.kind === "off") return undefined;
-  if (state.kind === "loading") return "Asking Google for the photorealistic city.";
+  if (state.kind === "loading") return "Asking Google for the 3D city.";
   if (state.kind === "unavailable") return state.message;
-  return "Google's photorealistic Mumbai, with the water, the routes and the markers draped on it.";
+  return "Google's photorealistic Mumbai, with the water draped on it.";
 }
 
 /**
@@ -234,15 +220,15 @@ export function xrayDetail(
   exaggeration: number,
 ): string | undefined {
   if (result.kind === "off") return undefined;
-  const parts = [drainXraySummary(result)];
-  if (result.kind === "ready") {
-    if (exaggeration !== 1) parts.push(`${exaggerationLabel(exaggeration)}.`);
-    parts.push(
-      threeD
-        ? "Depths are in the DEM's vertical frame; its offset from Google's ellipsoidal ground has not been measured, so the network may sit high or low as a whole."
-        : "Switch the photorealistic city on to look along them under the street.",
-    );
-  }
+  if (result.kind !== "ready") return drainXraySummary(result);
+  const n = result.pipesDrawn.toLocaleString("en-IN");
+  const parts = [`${n} inferred ${result.pipesDrawn === 1 ? "pipe" : "pipes"} at invert depth.`];
+  if (exaggeration !== 1) parts.push(`${exaggerationLabel(exaggeration)}.`);
+  parts.push(
+    threeD
+      ? "Offset from Google's ground has not been measured."
+      : "Switch the 3D city on to look under the street.",
+  );
   return parts.join(" ");
 }
 
@@ -263,9 +249,6 @@ const NO_ISOCHRONES: Isochrone[] = [];
  * rather than for reading the network. Both are labelled on screen as stretches.
  */
 const XRAY_EXAGGERATIONS = [1, 4, 8] as const;
-
-/** Motion M7: 5-minute steps advance about three a second while playing. */
-const PLAY_INTERVAL_MS = 320;
 
 /** How many learned pipes to ask for. The cycle writes the 6,000 worst by blockage, which is what
  * `/drains` asks for too, so the console's Drains mode and the X-ray colour the same set. */
@@ -310,7 +293,6 @@ function ConsoleView() {
   // Mumbai and a client's `?city=` can never disagree on screen.
   const city = cityFromSearch(search);
   const replayPanelOpen = useUiStore((s) => s.replayPanelOpen);
-  const [skyPanelOpen, setSkyPanelOpen] = useState(false);
   const [run, setRun] = useState<RunDepth | null>(null);
   // Stable identity: `FloodMap` keys its load effect on this, so an inline arrow here re-ran
   // the whole run + city-layer fetch on every render of the console.
@@ -339,6 +321,7 @@ function ConsoleView() {
         bundle: p.bundle,
         step_min: p.stepMin,
         aoi_depth_band: p.aoiDepthBand,
+        step_leads: loaded.validTs.map((_, i) => leadMin(loaded, i)),
       });
       // The replay panel is open on an empty console because it holds the command that fixes
       // that (P0.12). Once a run has landed the map is the screen, so the panel gets out of its
@@ -374,8 +357,23 @@ function ConsoleView() {
   // from a lookup that ran before they said it must not outrank them.
   const runParam = pinnedRun ?? (opening?.city === city ? opening.runId : undefined);
   const mapReady = pinnedRun !== undefined || opening?.city === city;
-  const [step, setStep] = useState(0);
-  const [playing, setPlaying] = useState(false);
+  // One clock for the map: the scrub is the replay store's `leadMin`, which the time bar's slider
+  // and the arrow keys write, and the step is the run's step nearest to it. Play is
+  // `useScrubStore`. There used to be two: this screen kept its own step and Play inside the map,
+  // while the time bar under it drove the API's shared clock, so the two readouts disagreed and
+  // the time bar's Play moved nothing on the map.
+  const scrubLead = useReplayStore((s) => s.leadMin);
+  const playing = useScrubStore((s) => s.playing);
+  const playRate = useScrubStore((s) => s.rate);
+  const stepLeads = useMemo(() => (run ? run.validTs.map((_, i) => leadMin(run, i)) : []), [run]);
+  const step = nearestStep(stepLeads, scrubLead);
+  const setStep = useCallback(
+    (next: number) => {
+      const lead = stepLeads[Math.max(0, Math.min(next, stepLeads.length - 1))];
+      if (lead !== undefined) useReplayStore.getState().setLeadMin(lead);
+    },
+    [stepLeads],
+  );
   // The loaded set is stamped with the run it belongs to, which is what lets "loading" be
   // derived rather than tracked: a rail whose stamp does not match the map's run is, by
   // definition, still catching up. One state, no flag to fall out of step with it.
@@ -403,8 +401,10 @@ function ConsoleView() {
   // draws the clocks and the map draws the polygons, and the rail is unmounted whenever the
   // hotspot drawer is open.
   const [isochrones, setIsochrones] = useState<Isochrone[]>([]);
+  // Section 7.2's layers and no others. Satellite and Buildings were removed from the panel: the
+  // imagery is the basemap, always on, and the footprints are the same buildings the photograph
+  // already shows, so drawing them only greyed every roof.
   const [layers, setLayers] = useState<LayerToggles>({
-    satellite: true,
     // Off by default: the depth ramp is what an operator reads first, and probability is the
     // question they ask second (SPEC.md 7.2 puts it behind a toggle, not in front of one).
     probability: false,
@@ -413,10 +413,6 @@ function ConsoleView() {
     surcharge: true,
     // Off by default (SPEC.md 6.7); it is also the largest layer VARUNA serves.
     drains: false,
-    // Off when the imagery is on: the footprints are the *same buildings* the photograph already
-    // shows, so drawing both puts a grey polygon over every roof and loses the texture that makes
-    // the basemap worth having. The toggle brings them back for anyone who wants the derived GIS.
-    buildings: false,
     hotspots: true,
     // On: the bands appear only once a facility is picked under Reachability, which is itself
     // the operator asking for them. I hides them without losing the pick.
@@ -521,8 +517,15 @@ function ConsoleView() {
   // reaches a `ref` prop is a ref, and then reads of its siblings during render are ref reads.
   const { attach: attachColumn, above: columnAbove, below: columnBelow } = useScrollEdges();
 
+  // The X-ray is read under Google's 3D ground and is offered under the 3D row, so leaving 3D
+  // takes the X-ray with it rather than leaving it on behind a hidden switch.
   const toggleLayer = useCallback(
-    (key: LayerKey, next: boolean) => setLayers((current) => ({ ...current, [key]: next })),
+    (key: LayerKey, next: boolean) =>
+      setLayers((current) => ({
+        ...current,
+        [key]: next,
+        ...(key === "threeD" && !next ? { xray: false } : {}),
+      })),
     [],
   );
 
@@ -610,8 +613,10 @@ function ConsoleView() {
   const pickCycle = useCallback(
     (runId: string) => {
       setSelectedHotspotId(null);
-      setStep(0);
-      setPlaying(false);
+      // Back to the first step: the new run's leads are the same five minutes apart on every
+      // cycle, and the scrub snaps onto them once it loads.
+      useReplayStore.getState().setLeadMin(0);
+      useScrubStore.getState().pause();
       // Through the router, not `window.history`: the run the map loads is now derived from
       // `useSearchParams`, so the address bar is the single place a cycle is chosen and the back
       // button means what it says.
@@ -638,42 +643,48 @@ function ConsoleView() {
     setFocus({ lon: hotspot.lon, lat: hotspot.lat, key: `${hotspot.id}-${Date.now()}`, zoom: 14 });
   }, []);
 
-  // Play advances the same `step` the slider and the keyboard write, so there is one clock and
-  // no way for the readout to disagree with the map.
+  // The scrub rests on one of the run's steps. The arrow keys move it 15 or 60 minutes from
+  // wherever it is (SPEC.md 6.10), and the store opens at +0, which no run has a step at; both
+  // land here and are put on the nearest step, so the readout always names what the map shows.
   useEffect(() => {
-    if (!playing || !run) return;
-    const id = window.setInterval(() => {
-      setStep((current) => {
-        if (current >= run.provenance.nSteps - 1) {
-          setPlaying(false);
-          return current;
-        }
-        return current + 1;
-      });
-    }, PLAY_INTERVAL_MS);
-    return () => window.clearInterval(id);
-  }, [playing, run]);
+    if (stepLeads.length === 0) return;
+    const on = stepLeads[nearestStep(stepLeads, scrubLead)];
+    if (on !== undefined && on !== scrubLead) useReplayStore.getState().setLeadMin(on);
+  }, [stepLeads, scrubLead]);
 
-  // Space plays, the arrows scrub (SPEC.md 6.10). Ignored while the operator is typing.
+  // Play steps the map through the run (motion M7), from where the scrub is, and stops on the
+  // last step. Pressed on the last step, it starts again from the first.
   useEffect(() => {
-    if (!run) return;
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
-      if (event.key === " ") {
-        event.preventDefault();
-        setPlaying((p) => !p);
-      } else if (event.key === "ArrowLeft") {
-        setPlaying(false);
-        setStep((s) => Math.max(0, s - 1));
-      } else if (event.key === "ArrowRight") {
-        setPlaying(false);
-        setStep((s) => Math.min(run.provenance.nSteps - 1, s + 1));
+    if (!playing || stepLeads.length === 0) return;
+    const replay = useReplayStore.getState();
+    if (nearestStep(stepLeads, replay.leadMin) >= stepLeads.length - 1) {
+      replay.setLeadMin(stepLeads[0]);
+    }
+    const id = window.setInterval(() => {
+      const store = useReplayStore.getState();
+      const at = nearestStep(stepLeads, store.leadMin);
+      const next = stepLeads[at + 1];
+      if (next === undefined) {
+        useScrubStore.getState().pause();
+        return;
       }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [run]);
+      store.setLeadMin(next);
+    }, playIntervalMs(playRate));
+    return () => window.clearInterval(id);
+  }, [playing, playRate, stepLeads]);
+
+  // Nothing plays on a screen that is not showing the map.
+  useEffect(() => () => useScrubStore.getState().pause(), []);
+
+  // `?autoplay=1` (the "watch the replay" links) presses Play once, when the first run's steps
+  // are known, and never again: a pause after that is the reader's.
+  const autoplay = searchParams.get("autoplay") === "1";
+  const autoplayed = useRef(false);
+  useEffect(() => {
+    if (!autoplay || autoplayed.current || stepLeads.length === 0) return;
+    autoplayed.current = true;
+    useScrubStore.getState().play();
+  }, [autoplay, stepLeads]);
 
   // SPEC.md 7.2's layer shortcuts, registered rather than handled locally. The registry in
   // lib/shortcuts.ts exists so the `?` overlay can ask which keys actually do something: it
@@ -691,11 +702,23 @@ function ConsoleView() {
       r: "routes",
       i: "isochrones",
       "3": "threeD",
-      x: "xray",
     };
     const unsubscribes = Object.entries(toggles).map(([key, layer]) =>
       registerLayerShortcut(key as ShortcutLayerKey, () =>
-        setLayers((current) => ({ ...current, [layer]: !current[layer] })),
+        setLayers((current) => ({
+          ...current,
+          [layer]: !current[layer],
+          ...(layer === "threeD" && current.threeD ? { xray: false } : {}),
+        })),
+      ),
+    );
+    // X is the X-ray, which is read under the 3D city: switching it on switches 3D on with it, so
+    // the key always does something and its row (offered under 3D) is always there to report it.
+    unsubscribes.push(
+      registerLayerShortcut("x", () =>
+        setLayers((current) =>
+          current.xray ? { ...current, xray: false } : { ...current, xray: true, threeD: true },
+        ),
       ),
     );
     // W opens the what-if drawer over the rail, and closes it again (SPEC.md 7.2, 7.7).
@@ -821,7 +844,7 @@ function ConsoleView() {
     surcharge: surcharge?.set ? reversedFlowSummary(surcharge.set) : undefined,
     isochrones:
       layers.isochrones && isochrones.length === 0
-        ? "Pick a facility under Reachability to draw its 5, 10 and 15 minute reach."
+        ? "Pick a facility under Reachability."
         : undefined,
     routes: routeDetail(routeState),
     threeD: photorealDetail(photoreal),
@@ -941,9 +964,9 @@ function ConsoleView() {
             showSurcharge={layers.surcharge}
             showDrains={layers.drains}
             drains={learnedDrains}
-            showBuildings={layers.buildings}
+            showBuildings={false}
             showHotspots={layers.hotspots}
-            showSatellite={layers.satellite}
+            showSatellite
             probabilityThresholdCm={layers.probability ? probabilityThresholdCm : undefined}
             truthPins={layers.hotspots ? truth.dropping : undefined}
             onSegmentPick={setPick}
@@ -982,28 +1005,19 @@ function ConsoleView() {
           </div>
         ) : null}
 
-        {/* The scrub. Owned here so the map, the readout and the keyboard share one step.
-
-            It sits between the "Reconstructed replay" chip (16 px in, 154 px wide) and the depth
-            legend (16 px in, 288 px wide), both of which `MapSlot` draws at the map's foot. Centred
-            on the map, as it was, it covered the legend's three deepest rows at 1440 x 900 - the
-            thresholds a judge reads first - and the legend is always visible (SPEC.md 6.7). With
-            the replay panel open the legend moves inboard past where the card could fit, so the
-            card stays centred there, as before. */}
-        {run ? (
+        {/* The scrub, in full view only. Full view covers the time bar, so the map carries its own
+            Play and scrub there; both write the same scrub as the time bar, so there is still one
+            clock. Outside full view the time bar is the map's clock and nothing duplicates it. */}
+        {run && inFullView ? (
           <div
             data-testid="console-scrub"
-            className={`pointer-events-auto absolute bottom-4 z-30 rounded-xl border border-[var(--line)] bg-[var(--ink)]/80 p-3 backdrop-blur-[12px] ${
-              replayPanelOpen && !inFullView
-                ? "left-1/2 w-[min(680px,calc(100%-2rem))] -translate-x-1/2"
-                : "right-[20rem] left-[12rem] mx-auto max-w-[680px]"
-            }`}
+            className="pointer-events-auto absolute right-[20rem] bottom-4 left-[12rem] z-30 mx-auto max-w-[680px] rounded-xl border border-[var(--line)] bg-[var(--ink)]/80 p-3 backdrop-blur-[12px]"
           >
             <div className="flex items-center gap-3">
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setPlaying((p) => !p)}
+                onClick={() => useScrubStore.getState().toggle()}
                 aria-label={playing ? "Pause" : "Play"}
               >
                 {playing ? "Pause" : "Play"}
@@ -1014,7 +1028,7 @@ function ConsoleView() {
                 max={Math.max(run.provenance.nSteps - 1, 0)}
                 value={step}
                 onChange={(event) => {
-                  setPlaying(false);
+                  useScrubStore.getState().pause();
                   setStep(Number(event.target.value));
                 }}
                 className="h-1 flex-1 cursor-pointer accent-[var(--tide)]"
@@ -1029,15 +1043,6 @@ function ConsoleView() {
                 {caption}
               </p>
             ) : null}
-            <p className="num mt-2 text-[12px] text-[var(--text-3)]">
-              run {run.provenance.runId} · {run.provenance.mode} ·{" "}
-              {run.provenance.ensembleN === 1
-                ? "1 member (deterministic)"
-                : `${run.provenance.ensembleN} members`}
-              {run.provenance.massBalanceErr != null
-                ? ` · mass balance ${formatMassBalance(run.provenance.massBalanceErr)}`
-                : ""}
-            </p>
           </div>
         ) : null}
 
@@ -1109,6 +1114,12 @@ function ConsoleView() {
                   </Button>
                 ))}
               </div>
+              {xrayState.kind === "ready" ? (
+                <details className="type-micro text-text-3 mt-2">
+                  <summary className="text-text-2 cursor-pointer">Details</summary>
+                  <p className="num mt-1">{drainXraySummary(xrayState)}</p>
+                </details>
+              ) : null}
             </div>
           ) : null}
           {/* What the Drains layer is actually showing. An honesty label, not fine print
@@ -1122,46 +1133,33 @@ function ConsoleView() {
                   <Skeleton className="mt-2" lines={2} />
                 </>
               ) : learned ? (
-                // Three numbers, all from the run's own product, and the last clause is load
-                // bearing: the cycle writes the worst 6,000 pipes, so a pipe the filter moved
-                // that ranks below them is on the map at its prior. Saying "275 pipes moved" and
-                // stopping there would claim a re-colouring the map does not draw.
-                <p className="type-small text-text-2">
-                  Inferred graph. Pulse moved{" "}
-                  <span className="num">{learned.nUpdated.toLocaleString("en-IN")}</span> of{" "}
-                  <span className="num">{learned.nEdges.toLocaleString("en-IN")}</span> pipes; the{" "}
-                  <span className="num">{learned.edges.length.toLocaleString("en-IN")}</span> worst
-                  are drawn at their posterior and the rest at the pipeline&apos;s prior.
-                </p>
+                <>
+                  <span className="rounded-chip border-line text-text-2 type-micro inline-flex h-5 items-center border px-2">
+                    Inferred drain graph
+                  </span>
+                  <p className="type-small text-text-2 mt-2">
+                    Pulse moved{" "}
+                    <span className="num">{learned.nUpdated.toLocaleString("en-IN")}</span> of{" "}
+                    <span className="num">{learned.nEdges.toLocaleString("en-IN")}</span> pipes.
+                  </p>
+                  {/* The cycle writes the worst 6,000 pipes by blockage, so a pipe the filter
+                      moved that ranks below them is drawn at its prior: said, not implied. */}
+                  <details className="type-micro text-text-3 mt-1">
+                    <summary className="text-text-2 cursor-pointer">Details</summary>
+                    <p className="num mt-1">
+                      The {learned.edges.length.toLocaleString("en-IN")} worst are drawn at their
+                      posterior; the rest at the pipeline&apos;s prior.
+                    </p>
+                  </details>
+                </>
               ) : (
                 <p className="type-small text-text-2">
-                  This run has no learned drain map, so every pipe is drawn at the pipeline&apos;s
-                  prior. Bake a cycle with Pulse to give them a posterior.
+                  Inferred drain graph, drawn at its prior: this run has no learned drain map.
                 </p>
               )}
             </div>
           ) : null}
-          {/* Today's outlook, on today's clock: the one forecast here that is not the replay. It
-              loads when opened, reads nothing from the replay and writes nothing to it, so the
-              scrub, the map and the run above never move because of it. */}
-          {/* 248 px like the layer panel above it: at 1366 x 768 with the replay panel open the
-              depth legend reaches to x = 327 over the column's lower edge, and a full-width card
-              ran under it. */}
-          <PanelErrorBoundary title="Today, next 3 h">
-            <LiveOutlookCard city={city} className="w-[248px]" />
-          </PanelErrorBoundary>
-          <Button size="sm" variant="outline" onClick={() => setSkyPanelOpen((open) => !open)}>
-            {skyPanelOpen ? "Hide the rain nowcast" : "Show the rain nowcast"}
-          </Button>
-          {skyPanelOpen ? (
-            <div className="min-h-0 w-full overflow-y-auto">
-              <PanelErrorBoundary title="Rain nowcast">
-                <SkyPanel />
-              </PanelErrorBoundary>
-            </div>
-          ) : null}
         </div>
-
         {inFullView && (segmentPopover || probabilityLegend) ? (
           <div
             data-testid="console-full-view-overlays"

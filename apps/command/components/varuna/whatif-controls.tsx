@@ -6,6 +6,7 @@ import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { WhatIfDetails } from "@/components/varuna/whatif-details";
 import { cn } from "@/lib/utils";
 
 /** The four levers of a what-if scenario (SPEC.md section 7.7). */
@@ -27,37 +28,30 @@ export interface WhatIfValues {
 }
 
 /**
- * What cleaning can move at all, measured rather than asserted (ADR-0042).
- *
- * Cleaning **every** one of the city's 21,296 segments at once - the largest cleaning scenario
- * that exists - moves the deepest street by 3.5 cm on the 08:40 cycle. The fit is element-wise
- * per segment, so a segment's own cleaning is the only cleaning that reaches it. The operator
- * reads this before pressing Run, not after wondering why the map barely changed.
+ * What cleaning can move at all, measured rather than asserted (ADR-0042): cleaning **every** one
+ * of the city's 21,296 segments at once moves the deepest street by 3.5 cm on the 08:40 cycle. The
+ * fit is element-wise per segment, so a segment's own cleaning is the only cleaning that reaches
+ * it. Kept in the chips' Details, where the operator can read it before pressing Run.
  */
 export const CLEANING_CEILING_NOTE =
   "Cleaning is element-wise per segment, so these streets change and no others. Measured " +
   "ceiling: cleaning all 21,296 segments at once moves the deepest street 3.5 cm (ADR-0042).";
 
 /**
- * What the tide slider does, said before Run rather than discovered after it.
- *
- * Flash-lite has no sea level: it is a perturbation around a base state measured at one tide
- * series, so a tide cancels out of every difference it computes (ADR-0025). A different sea level
- * is answered by one full-city coupled Twin run (`POST /v1/whatif/twin`); the emulator's answer
- * for the other levers shows at once, labelled as leaving the tide out, until the Twin's lands.
+ * What the tide lever does, said before Run rather than discovered after it. Flash-lite has no sea
+ * level (ADR-0025), so a tide runs on one full-city coupled Twin (`POST /v1/whatif/twin`).
  */
-export const TIDE_OFFSET_NOTE =
-  "Tide runs the full physics (about a minute). The emulator cannot move the sea.";
+export const TIDE_OFFSET_NOTE = "Runs the full-city Twin; the bar shows the time left.";
 
 /** The pump lever, as the endpoint prices it (SPEC.md 7.7; a lower bound, labelled). */
 export const PUMP_PLAN_NOTE =
-  "Runs this cycle's pump plan from each pump's arrival. A lower bound: the emulator prices a " +
-  "pump against local rain only. Synthetic pump inventory.";
+  "This cycle's plan, from each pump's arrival. A lower bound. Synthetic pump inventory.";
 
 /** Section 7.7's "Clean top 14 by blockage", said as what the endpoint does. */
-export const CLEAN_TOP_NOTE =
-  "Cleans the 14 pipes with the highest learned blockage, city-wide, to 0.05. A street under " +
-  "one runs at its next-worst pipe.";
+export const CLEAN_TOP_NOTE = "The 14 pipes with the highest learned blockage, cleaned to 0.05.";
+
+/** The rain lever's one line: the demo's moment, as a number. */
+export const RAIN_SCALE_NOTE = "1.3x is rain plus 30 %.";
 
 export const RAIN_SCALE_MIN = 0.5;
 export const RAIN_SCALE_MAX = 2.0;
@@ -92,6 +86,15 @@ export function formatTideOffset(metres: number): string {
 function firstValue(value: number | readonly number[]): number {
   const raw = Array.isArray(value) ? Number(value[0]) : Number(value);
   return Math.round(raw / WHATIF_STEP) / Math.round(1 / WHATIF_STEP);
+}
+
+/**
+ * The tide on a lever that offers only some values (a cache-only API): the value itself when it
+ * is one of them, else the run's own tide. With no stops, any value in range stands.
+ */
+export function snapTide(metres: number, stops: readonly number[] | null | undefined): number {
+  if (!stops) return metres;
+  return stops.some((stop) => Math.abs(stop - metres) < 1e-9) ? metres : 0;
 }
 
 interface SwitchRowProps {
@@ -149,17 +152,18 @@ interface CleanedSegmentsProps {
   onRemove: (segmentId: string) => void;
   /** Where the ids came from, e.g. the hotspot the deep link was pressed on. */
   source?: string;
+  /** A segment's street name for its chip; the id is shown when there is none. */
+  segmentLabel?: (segmentId: string) => string | undefined;
 }
 
 /**
- * The segments this scenario cleans, as removable chips.
+ * The segments this scenario cleans, as removable chips named by their street.
  *
- * They arrive from a hotspot's "Clean in what-if" rather than being typed: an id is a road
- * segment (`S100841069-000`), and there is no way to pick one by hand that is not a deep link or
- * the map. With none picked the section says where they come from instead of showing an empty
- * box (SPEC.md 6.8 - an empty state says what to do).
+ * They arrive from a hotspot's "Clean in what-if" rather than being typed. With none picked the
+ * section says where they come from instead of showing an empty box (SPEC.md 6.8). The measured
+ * ceiling sits in Details beside the chips (ADR-0042).
  */
-function CleanedSegments({ segmentIds, onRemove, source }: CleanedSegmentsProps) {
+function CleanedSegments({ segmentIds, onRemove, source, segmentLabel }: CleanedSegmentsProps) {
   const uid = useId();
   const labelId = `${uid}-cleaned`;
 
@@ -175,33 +179,83 @@ function CleanedSegments({ segmentIds, onRemove, source }: CleanedSegmentsProps)
       </div>
       {segmentIds.length === 0 ? (
         <p className="type-micro text-text-3">
-          None picked. Open a hotspot on the console and press &ldquo;Clean in what-if&rdquo; to
-          carry its segments here.
+          None picked. Press &ldquo;Clean in what-if&rdquo; on a console hotspot.
         </p>
       ) : (
         <>
           <ul className="flex flex-wrap gap-1.5">
-            {segmentIds.map((segmentId) => (
-              <li key={segmentId}>
-                <span className="rounded-chip border-line bg-well inline-flex items-center gap-1 border py-0.5 pr-1 pl-2">
-                  <span className="num type-micro text-text-2">{segmentId}</span>
-                  <button
-                    type="button"
-                    aria-label={`Remove segment ${segmentId}`}
-                    onClick={() => onRemove(segmentId)}
-                    className="rounded-chip text-text-3 hover:text-text focus-visible:ring-tide p-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            {segmentIds.map((segmentId) => {
+              const label = segmentLabel?.(segmentId) ?? segmentId;
+              return (
+                <li key={segmentId}>
+                  <span
+                    title={segmentId}
+                    className="rounded-chip border-line bg-well inline-flex max-w-full items-center gap-1 border py-0.5 pr-1 pl-2"
                   >
-                    <X size={12} strokeWidth={1.75} />
-                  </button>
-                </span>
-              </li>
-            ))}
+                    <span className="type-micro text-text-2 truncate">{label}</span>
+                    <button
+                      type="button"
+                      aria-label={`Remove segment ${segmentId}`}
+                      onClick={() => onRemove(segmentId)}
+                      className="rounded-chip text-text-3 hover:text-text focus-visible:ring-tide p-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                      <X size={12} strokeWidth={1.75} />
+                    </button>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
           {source ? <p className="type-micro text-text-3">From {source}.</p> : null}
-          <p className="type-micro text-text-3">{CLEANING_CEILING_NOTE}</p>
+          <WhatIfDetails>
+            <p>{CLEANING_CEILING_NOTE}</p>
+          </WhatIfDetails>
         </>
       )}
     </section>
+  );
+}
+
+interface TideStopsProps {
+  labelId: string;
+  stops: readonly number[];
+  value: number;
+  onChange: (metres: number) => void;
+}
+
+/**
+ * The tide as the values a cache-only API can answer, one radio chip each, in place of a slider
+ * that would reach values nothing can answer. Native radios, so the arrow keys move the choice.
+ */
+function TideStops({ labelId, stops, value, onChange }: TideStopsProps) {
+  const name = useId();
+  return (
+    <div role="radiogroup" aria-labelledby={labelId} className="flex flex-wrap gap-1.5">
+      {stops.map((stop) => {
+        const checked = Math.abs(stop - value) < 1e-9;
+        return (
+          <label
+            key={stop}
+            className={cn(
+              "rounded-chip num type-small inline-flex min-h-8 cursor-pointer items-center border px-3 transition-colors",
+              "has-[:focus-visible]:ring-tide has-[:focus-visible]:ring-2",
+              checked
+                ? "border-tide bg-tide-soft text-text"
+                : "border-line text-text-2 hover:text-text",
+            )}
+          >
+            <input
+              type="radio"
+              name={name}
+              className="sr-only"
+              checked={checked}
+              onChange={() => onChange(stop)}
+            />
+            {formatTideOffset(stop)}
+          </label>
+        );
+      })}
+    </div>
   );
 }
 
@@ -220,6 +274,15 @@ export interface WhatIfControlsProps {
   physicsDisabledReason?: string;
   /** Where the preselected segments came from, printed under the chips. */
   cleanedSource?: string;
+  /** A cleaned segment's street name for its chip. */
+  segmentLabel?: (segmentId: string) => string | undefined;
+  /**
+   * The only tide offsets this API can answer (a cache-only API; `GET /v1/whatif/twin`). Given,
+   * the tide is a set of chips instead of a slider, and a tide off the list is sent as +0.0 m.
+   */
+  tideStops?: readonly number[] | null;
+  /** The tide lever's one line; the full-city Twin note when absent. */
+  tideNote?: string;
   /** The clean-top-14 switch is inert; nothing ranks pipes by beta on this run. */
   cleanDisabled?: boolean;
   /** Why cleaning is inert, shown in place of the switch's sub-copy. */
@@ -250,6 +313,9 @@ export function WhatIfControls({
   physicsDisabledReason = "Not connected here. The what-if lab wires this button to " +
     "POST /v1/whatif/physics-check",
   cleanedSource,
+  segmentLabel,
+  tideStops,
+  tideNote = TIDE_OFFSET_NOTE,
   cleanDisabled = false,
   cleanDisabledReason,
   pumpDisabled = false,
@@ -283,6 +349,9 @@ export function WhatIfControls({
 
   const canRun = Boolean(onRun);
   const canCheck = Boolean(onPhysicsCheck);
+  // What is sent: a tide this API cannot answer is the run's own, and the control shows that.
+  const tide = snapTide(values.tideOffsetM, tideStops);
+  const asked = tide === values.tideOffsetM ? values : { ...values, tideOffsetM: tide };
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -303,11 +372,7 @@ export function WhatIfControls({
           value={[values.rainScale]}
           onValueChange={(value) => update({ rainScale: firstValue(value) })}
         />
-        <p className="type-micro text-text-3">
-          Scales the storm this run&apos;s Twin ran on: the Sky ensemble mean, averaged over the
-          area, one value per 5 minutes. 1.3x is the demo&apos;s &ldquo;rain plus 30 %&rdquo;
-          moment.
-        </p>
+        <p className="type-micro text-text-3">{RAIN_SCALE_NOTE}</p>
       </section>
 
       <section aria-labelledby={tideLabelId} className="space-y-3">
@@ -315,37 +380,49 @@ export function WhatIfControls({
           <span id={tideLabelId} className="type-small text-text font-medium">
             Tide offset
           </span>
-          <span className="flex items-baseline gap-2">
-            <output className="num type-small text-text-2" htmlFor={tideLabelId}>
-              {formatTideOffset(values.tideOffsetM)}
-            </output>
-            {/* Back to the run's own tide in one press: a slider has no reliable way to land
-                exactly on 0 by drag, and a tide of +0.1 m sends the question to the Twin. */}
-            <Button
-              variant="ghost"
-              size="xs"
-              aria-label="Reset the tide offset to +0.0 m"
-              disabled={values.tideOffsetM === 0}
-              onClick={() => update({ tideOffsetM: 0 })}
-            >
-              Reset
-            </Button>
-          </span>
+          {tideStops ? null : (
+            <span className="flex items-baseline gap-2">
+              <output className="num type-small text-text-2" htmlFor={tideLabelId}>
+                {formatTideOffset(tide)}
+              </output>
+              {/* Back to the run's own tide in one press: a slider has no reliable way to land
+                  exactly on 0 by drag, and a tide of +0.1 m sends the question to the Twin. */}
+              <Button
+                variant="ghost"
+                size="xs"
+                aria-label="Reset the tide offset to +0.0 m"
+                disabled={tide === 0}
+                onClick={() => update({ tideOffsetM: 0 })}
+              >
+                Reset
+              </Button>
+            </span>
+          )}
         </div>
-        <Slider
-          aria-labelledby={tideLabelId}
-          min={TIDE_OFFSET_MIN}
-          max={TIDE_OFFSET_MAX}
-          step={WHATIF_STEP}
-          value={[values.tideOffsetM]}
-          onValueChange={(value) => update({ tideOffsetM: firstValue(value) })}
-        />
-        <p className="type-micro text-text-3">{TIDE_OFFSET_NOTE}</p>
+        {tideStops ? (
+          <TideStops
+            labelId={tideLabelId}
+            stops={tideStops}
+            value={tide}
+            onChange={(metres) => update({ tideOffsetM: metres })}
+          />
+        ) : (
+          <Slider
+            aria-labelledby={tideLabelId}
+            min={TIDE_OFFSET_MIN}
+            max={TIDE_OFFSET_MAX}
+            step={WHATIF_STEP}
+            value={[values.tideOffsetM]}
+            onValueChange={(value) => update({ tideOffsetM: firstValue(value) })}
+          />
+        )}
+        <p className="type-micro text-text-3">{tideNote}</p>
       </section>
 
       <CleanedSegments
         segmentIds={values.cleanedSegments}
         source={cleanedSource}
+        segmentLabel={segmentLabel}
         onRemove={(segmentId) =>
           update((prev) => ({
             cleanedSegments: prev.cleanedSegments.filter((id) => id !== segmentId),
@@ -378,7 +455,7 @@ export function WhatIfControls({
             className="w-full"
             disabled={!canRun}
             aria-describedby={canRun ? undefined : runHelpId}
-            onClick={() => onRun?.(values)}
+            onClick={() => onRun?.(asked)}
           >
             Run what-if
           </Button>
@@ -394,7 +471,7 @@ export function WhatIfControls({
             className="w-full"
             disabled={!canCheck}
             aria-describedby={canCheck ? undefined : physicsHelpId}
-            onClick={() => onPhysicsCheck?.(values)}
+            onClick={() => onPhysicsCheck?.(asked)}
           >
             Physics check
           </Button>

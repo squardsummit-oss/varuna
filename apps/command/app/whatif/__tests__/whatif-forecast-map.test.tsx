@@ -118,8 +118,8 @@ function renderLab() {
 }
 
 const CAPTION =
-  "Before any change: the 08:40 IST cycle at its peak, 09:25 (+45 min), framed on 70 % of the " +
-  "118.5 km of street at 15 cm or more. Run what-if to draw what the scenario changes.";
+  "Before any change: the 08:40 IST cycle at its peak, 09:25 (+45 min). 118.5 km of street at " +
+  "15 cm or more.";
 
 describe("Kalpana before a what-if", () => {
   beforeEach(() => {
@@ -145,11 +145,7 @@ describe("Kalpana before a what-if", () => {
     expect(last).toMatchObject({ runId: RUN_ID, frameOn: "affected", step: 8, city: "mumbai" });
     // No empty state in the slot: the map is the answer to "what does the flood look like now".
     expect(screen.queryByText("No scenario run yet")).not.toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "The cycle's forecast until a what-if runs; then segments coloured by change in depth.",
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText("This cycle's forecast until a what-if runs.")).toBeInTheDocument();
     // The scenario line is still there, under the map's own sentence.
     expect(screen.getByText(/^Scenario ready to run:/)).toBeInTheDocument();
   });
@@ -167,7 +163,7 @@ describe("Kalpana before a what-if", () => {
     await waitFor(() => expect(screen.queryByTestId("forecast-map")).not.toBeInTheDocument());
     expect(screen.queryByText(CAPTION)).not.toBeInTheDocument();
     expect(
-      screen.getByText("Segments coloured by change in depth: improved, worse, unchanged."),
+      screen.getByText("Change in peak depth per street: improved, worse, unchanged."),
     ).toBeInTheDocument();
   });
 });
@@ -185,23 +181,21 @@ describe("forecastCaption", () => {
     expect(forecastCaption(FRAME, null)).toBeNull();
   });
 
-  it("says all of it when the frame holds every qualifying street", () => {
+  it("says the cycle, its peak and how much street is deep", () => {
     expect(forecastCaption({ ...FRAME, share: 1, lengthM: 850 }, run)).toBe(
-      "Before any change: the 08:40 IST cycle at its peak, 09:25 (+45 min), framed on all 850 m " +
-        "of street at 15 cm or more. Run what-if to draw what the scenario changes.",
+      "Before any change: the 08:40 IST cycle at its peak, 09:25 (+45 min). 850 m of street at " +
+        "15 cm or more.",
     );
   });
 
   it("names the fallbacks rather than inventing water", () => {
     const spots: AffectedFrame = { ...FRAME, basis: "hotspots", thresholdCm: null, step: null };
     expect(forecastCaption(spots, run)).toBe(
-      "No street reaches 5 cm in the 08:40 IST cycle, so the map shows its chronic spots. " +
-        "Run what-if to see what a scenario would change.",
+      "No street reaches 5 cm in the 08:40 IST cycle; the map shows its chronic spots.",
     );
     const aoi: AffectedFrame = { ...spots, basis: "aoi" };
     expect(forecastCaption(aoi, run)).toBe(
-      "The 08:40 IST cycle has no wet street, so the map shows the whole city. " +
-        "Run what-if to see what a scenario would change.",
+      "The 08:40 IST cycle has no wet street; the map shows the whole city.",
     );
   });
 });

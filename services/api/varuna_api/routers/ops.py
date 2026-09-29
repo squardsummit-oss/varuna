@@ -1164,6 +1164,7 @@ def _plan_inputs(run_id: str | None, city: str) -> dict[str, Any]:
         "root": root,
         "hotspots": hotspots,
         "streets": streets,
+        "streets_readable": segments_readable,
         "points": points,
         "rain": rain,
         "statuses": statuses,

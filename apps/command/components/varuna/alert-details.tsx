@@ -220,7 +220,7 @@ export function AlertDetails({
           </div>
           {hasPassphrase ? null : (
             <p className="type-micro text-text-3">
-              Acknowledging and escalating need the desk passphrase, and this tab holds none.{" "}
+              Acknowledge and escalate need the desk passphrase.{" "}
               <Link className={LINK} href={AUTHORITY_ROUTE}>
                 Enter it on the authority desk
               </Link>
@@ -249,8 +249,7 @@ export function AlertDetails({
               <span className="num">
                 {alert.membersAbove} of {alert.membersTotal}
               </span>{" "}
-              members above {alert.thresholdCm} cm for two steps in a row. Reported beside the
-              raise, never used for it: the raise is the Twin&apos;s own run.
+              members above {alert.thresholdCm} cm for two steps in a row. Shown, not used to raise.
             </p>
           </Section>
         ) : null}

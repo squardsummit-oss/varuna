@@ -25,6 +25,8 @@
 import { BitmapLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 
+import { getTheme, type Theme } from "@/lib/theme";
+
 /**
  * Esri World Imagery, the standard free-with-attribution aerial basemap.
  *
@@ -46,6 +48,15 @@ export const SATELLITE_URL =
  */
 export const LABELS_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
+
+/**
+ * The same reference labels drawn for a light ground: Esri's light grey canvas reference, dark
+ * grey type with no halo. The dark-theme tiles are white type in a black halo, which reads over
+ * any photograph but looks like a night map pasted onto a day one. Same service, same order of
+ * `{z}/{y}/{x}`, same coverage over Mumbai (checked to z 17 on 2026-09-29).
+ */
+export const LABELS_URL_LIGHT =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
 
 /** Attribution the map must carry while the imagery is drawn. */
 export const SATELLITE_ATTRIBUTION =
@@ -75,13 +86,36 @@ const MAX_ZOOM = 19;
 const TILE_SIZE = 256;
 
 /**
- * How much of the imagery survives the treatment.
+ * How much of the imagery survives the treatment, per theme.
  *
- * Low on purpose. At full strength the imagery reads as the subject and the water reads as an
- * overlay on it; at this strength the city is a ground the water sits on, which is the order
- * SPEC.md 6.1 asks for. It is still plainly a photograph of Mumbai.
+ * **Dark is 1, because 1 is what has always been drawn.** This constant read 0.78 (and 0.78 x 0.7
+ * under a raster) from P6.1 to 2026-09-29, but `renderSubLayers` built each tile's `BitmapLayer`
+ * without the parent's props, and deck.gl forwards a composite layer's `opacity` only through
+ * those props - so every tile was drawn opaque and the only treatment the dark map ever had was
+ * the `--ink` scrim in `city-map.tsx`. That look is the one the team approved and recorded the demo
+ * on, so dark keeps it exactly; the opacity now reaches the GPU, which is what the light theme
+ * needs.
+ *
+ * **Light washes the photograph toward paper.** The map's ground and its scrim are `--ink`, paper
+ * in this theme. Measured on /console at 1440 x 900 (2026-09-29, `scratchpad/ux/theme/ground.mjs`):
+ * drawn opaque, the aerial left a mid-grey ground (median rgb 141 145 139) on which the 5-15 cm
+ * blue read 1.15:1 and the pale dry streets were the brightest lines on screen. At 0.3 the
+ * photograph keeps about a fifth of its weight after the console's 30 % scrim: the coast, the
+ * creeks and the street grain still read as Mumbai, the dry streets recede, and the water is again
+ * the only saturated thing (UI_UX.md 4).
  */
-const IMAGERY_OPACITY = 0.78;
+const IMAGERY_OPACITY = 1;
+const IMAGERY_OPACITY_LIGHT = 0.3;
+
+/** Under a depth raster the light imagery drops to this share of its strength. Dark stays at 1
+ * for the reason above. */
+const RASTER_DIMMING_LIGHT = 0.7;
+
+/** The imagery's layer opacity for a theme, with or without a depth raster over it. */
+export function imageryOpacity(theme: Theme, dimmed = false): number {
+  if (theme !== "light") return IMAGERY_OPACITY;
+  return dimmed ? IMAGERY_OPACITY_LIGHT * RASTER_DIMMING_LIGHT : IMAGERY_OPACITY_LIGHT;
+}
 
 /** Tiles kept in GPU memory. Enough for a scrub across the AOI without refetching. */
 const MAX_CACHE_TILES = 220;
@@ -91,22 +125,38 @@ export interface SatelliteOptions {
   enabled: boolean;
   /** Dimmer still under a depth raster, which is itself a translucent sheet over the city. */
   dimmed?: boolean;
+  /** The theme to treat the imagery for. Defaults to the one on the page now; a host that
+   * memoises its layers passes `useTheme().theme` and lists it among the dependencies. */
+  theme?: Theme;
 }
 
-/** How strongly the reference labels read. Bright enough to be legible over dark imagery,
- * dim enough that they are furniture rather than content. */
-const LABEL_OPACITY = 0.85;
+/** How strongly the reference labels read: full strength in both themes. The dark value read
+ * 0.85 until 2026-09-29 but never reached the GPU (see `IMAGERY_OPACITY`), so 1 is what the dark
+ * map has always shown; the light tiles carry no halo and need full strength to read on a pale
+ * ground. */
+const LABEL_OPACITY = 1;
+const LABEL_OPACITY_LIGHT = 1;
 
 /** Below this the labels are country and state names, which say nothing about a city. */
 const LABEL_MIN_ZOOM = 10;
 
-/** Esri's place labels, drawn *over* the run so water never paints over a street name. */
-export function labelLayers({ enabled }: { enabled: boolean }): unknown[] {
+/** Esri's place labels, drawn *over* the run so water never paints over a street name.
+ *
+ * Each theme has its own tile set and its own layer id, so a switch starts a fresh tile cache
+ * instead of drawing night labels and day labels side by side while the new tiles arrive. */
+export function labelLayers({
+  enabled,
+  theme = getTheme(),
+}: {
+  enabled: boolean;
+  theme?: Theme;
+}): unknown[] {
   if (!enabled) return [];
+  const light = theme === "light";
   return [
     new TileLayer({
-      id: "place-labels",
-      data: LABELS_URL,
+      id: light ? "place-labels-light" : "place-labels",
+      data: light ? LABELS_URL_LIGHT : LABELS_URL,
       minZoom: LABEL_MIN_ZOOM,
       maxZoom: MAX_ZOOM,
       tileSize: TILE_SIZE,
@@ -115,7 +165,7 @@ export function labelLayers({ enabled }: { enabled: boolean }): unknown[] {
       maxRequests: 12,
       onTileError: () => undefined,
       pickable: false,
-      opacity: LABEL_OPACITY,
+      opacity: light ? LABEL_OPACITY_LIGHT : LABEL_OPACITY,
       renderSubLayers: (props) => {
         const box = (props.tile as { boundingBox: number[][] }).boundingBox;
         const [west, south] = box[0] as [number, number];
@@ -124,6 +174,7 @@ export function labelLayers({ enabled }: { enabled: boolean }): unknown[] {
           id: props.id,
           image: props.data as never,
           bounds: [west, south, east, north],
+          opacity: props.opacity,
           pickable: false,
         });
       },
@@ -132,7 +183,11 @@ export function labelLayers({ enabled }: { enabled: boolean }): unknown[] {
 }
 
 /** The basemap layers, bottom of the stack. Empty when the basemap is off. */
-export function satelliteLayers({ enabled, dimmed = false }: SatelliteOptions): unknown[] {
+export function satelliteLayers({
+  enabled,
+  dimmed = false,
+  theme = getTheme(),
+}: SatelliteOptions): unknown[] {
   if (!enabled) return [];
 
   return [
@@ -155,7 +210,7 @@ export function satelliteLayers({ enabled, dimmed = false }: SatelliteOptions): 
       // deck logs it once and carries on, and the city's own GIS shows through underneath.
       onTileError: () => undefined,
       pickable: false,
-      opacity: dimmed ? IMAGERY_OPACITY * 0.7 : IMAGERY_OPACITY,
+      opacity: imageryOpacity(theme, dimmed),
       // deck types `tile.boundingBox` as `number[][]`, so the corners are read positionally.
       renderSubLayers: (props) => {
         const box = (props.tile as { boundingBox: number[][] }).boundingBox;
@@ -165,6 +220,9 @@ export function satelliteLayers({ enabled, dimmed = false }: SatelliteOptions): 
           id: props.id,
           image: props.data as never,
           bounds: [west, south, east, north],
+          // deck.gl forwards the tile layer's opacity only through these props; without it every
+          // tile was drawn opaque whatever `imageryOpacity` said (see the note above).
+          opacity: props.opacity,
           // The imagery is a ground, never a target: picking it would put a tile under every
           // hover instead of the street the operator is pointing at.
           pickable: false,

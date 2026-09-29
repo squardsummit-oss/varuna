@@ -439,6 +439,91 @@ def test_the_host_gate_refuses_with_a_reason(
     assert whatif.TWIN_JOB_ENV in error["message"]
 
 
+def test_a_cache_only_server_serves_a_stored_answer_about_this_run(
+    twin_setup: Path, client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The deployed API runs no Twin (`VARUNA_WHATIF_TWIN=0`) and ships the demo's tide answers.
+
+    It refused every tide question before looking in its cache, so the shipped answers were
+    never served. Now a stored answer about this exact run is served there even when this server's
+    Twin code or city build differs from the machine that computed it, and the label says so; a
+    scenario it holds no answer for is still refused, naming what it can answer.
+    """
+    whatif.prewarm_scenario(RUN_ID, tide_offset_m=0.5, shipped=True)
+    whatif._MEMORY.clear()
+    monkeypatch.setenv(whatif.TWIN_JOB_ENV, "0")
+    # Another machine's Twin code: a computing server would recompute; this one cannot.
+    monkeypatch.setattr(whatif, "_CODE_DIGEST", ["f" * 40])
+
+    served = _post(client, tide_offset_m=0.5)
+    assert served.status_code == 200, served.text
+    body = served.json()
+    assert body["state"] == "done"
+    assert body["cache"]["source"] == "shipped"
+    assert body["cache"]["differs"] == ["code"]
+    assert "cannot run the Twin" in body["cache"]["label"]
+    assert "Twin code differs" in body["cache"]["label"]
+
+    refused = _post(client, tide_offset_m=1.0)
+    assert refused.status_code == 403
+    error = refused.json()["error"]
+    assert error["code"] == "whatif_twin_disabled"
+    assert "+0.5 m" in error["message"], "the refusal does not name what this server can answer"
+
+    # A re-baked run is a different run: its stored answers are never served, even here.
+    meta = json.loads((twin_setup / "run.json").read_text(encoding="utf-8"))
+    meta["created_at"] = "re-baked"
+    (twin_setup / "run.json").write_text(json.dumps(meta), encoding="utf-8")
+    whatif._MEMORY.clear()
+    assert _post(client, tide_offset_m=0.5).status_code == 403
+
+
+def test_a_computing_server_still_recomputes_on_other_code(
+    twin_setup: Path, client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    whatif.prewarm_scenario(RUN_ID, tide_offset_m=0.5, shipped=True)
+    whatif._MEMORY.clear()
+    monkeypatch.setattr(whatif, "_CODE_DIGEST", ["f" * 40])
+    again = _post(client, tide_offset_m=0.5)
+    assert again.status_code == 202, "a computing server served another code's answer"
+    assert _finish(client, again.json())["cache"]["source"] == "computed"
+
+
+def test_the_offer_says_what_this_server_can_answer(
+    twin_setup: Path, client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(whatif, "_warm_emulator", lambda path: None)
+    open_offer = client.get("/v1/whatif/twin", params={"run_id": RUN_ID})
+    assert open_offer.status_code == 200, open_offer.text
+    body = open_offer.json()
+    assert body["run_id"] == RUN_ID
+    assert body["enabled"] is True
+    assert body["answers"] == [] and body["tide_offsets_m"] == []
+
+    whatif.prewarm_scenario(RUN_ID, tide_offset_m=0.5, shipped=True)
+    monkeypatch.setenv(whatif.TWIN_JOB_ENV, "0")
+    closed = client.get("/v1/whatif/twin", params={"run_id": RUN_ID}).json()
+    assert closed["enabled"] is False
+    assert closed["tide_offsets_m"] == [0.5]
+    assert [(a["rain_scale"], a["tide_offset_m"], a["cleaned"]) for a in closed["answers"]] == [
+        (1.0, 0.5, False)
+    ]
+    assert "+0.5 m" in closed["message"] and "rain 1.0x" in closed["message"]
+
+
+def test_a_shipped_prewarm_copies_this_machines_exact_answer(
+    twin_setup: Path, client: TestClient
+) -> None:
+    first = _finish(client, _post(client, tide_offset_m=0.5).json())
+    assert first["cache"]["source"] == "computed"
+    result, where = whatif.prewarm_scenario(RUN_ID, tide_offset_m=0.5, shipped=True)
+    assert where["copied_to_shipped"] is True
+    assert result["computed_at"] == first["result"]["computed_at"], "the Twin was run again"
+    shipped = whatif._shipped_cache_root() / RUN_ID
+    assert (shipped / "rain1.0_tide+0.5_clean-none_prior.json.gz").is_file()
+    assert (shipped / whatif.BASELINE_FILE).is_file()
+
+
 def test_a_second_heavy_run_is_refused_while_one_holds_the_machine(
     twin_setup: Path, client: TestClient
 ) -> None:

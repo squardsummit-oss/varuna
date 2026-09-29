@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import { MapPinOff } from "lucide-react";
 
 import {
@@ -18,11 +18,11 @@ import { PageHeader } from "@/components/varuna/page-header";
 import { Panel } from "@/components/varuna/panel";
 import { PanelErrorBoundary } from "@/components/varuna/panel-error-boundary";
 import { VerificationGrid, type ScoreTile } from "@/components/varuna/verification-grid";
-import { VerificationThresholdChart } from "@/components/varuna/verification-threshold-chart";
 import { formatIst } from "@/lib/format";
 import { loadVerification, type ThresholdRow, type Verification } from "@/lib/api/verification";
 import { navItem } from "@/lib/nav";
 
+import { ContingencyPour } from "./contingency-pour";
 import { RainSkillPanel } from "./rain-skill-panel";
 
 /** Events that can be scored. Each one is a replay bundle with sourced ground-truth pins. */
@@ -62,7 +62,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "0 to 1, higher is better",
       value: h?.csi ?? null,
       format: asScore,
-      note: "Critical success index against the sourced pins inside the forecast window.",
+      note: "Critical success index against the sourced pins in the window.",
     },
     {
       id: "pod",
@@ -70,7 +70,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "0 to 1, higher is better",
       value: h?.pod ?? null,
       format: asScore,
-      note: "Share of the sourced pins where VARUNA forecast water above the threshold inside each pin's stated time window, whether before or after the city logged it.",
+      note: "Share of sourced pins with water forecast above the threshold.",
     },
     {
       id: "far",
@@ -78,7 +78,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "0 to 1, lower is better",
       value: h?.far ?? null,
       format: asScore,
-      note: "Streets flagged near a pin that no record corroborates. A lower bound; see the notes.",
+      note: "Streets flagged near a pin that no record backs. A lower bound.",
     },
     {
       id: "lead",
@@ -86,7 +86,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "minutes before the report",
       value: h?.medianLeadMin ?? null,
       format: asMinutes,
-      note: "Over the pins flagged before they were logged. Hits made afterwards are excluded.",
+      note: "Over the pins flagged before the city logged them.",
     },
     {
       id: "pins",
@@ -94,7 +94,7 @@ function tiles(v: Verification | null): ScoreTile[] {
       unit: "sourced, in the window",
       value: v?.nInWindow ?? null,
       format: asCount,
-      note: "Curated public records, each with a source URL and a stated time uncertainty.",
+      note: "Curated public records, each with a source link.",
     },
   ];
 }
@@ -135,6 +135,28 @@ function ThresholdTable({ rows }: { rows: ThresholdRow[] }) {
   );
 }
 
+/** A collapsed "Details": the method and caveats an expert may want, one click away. */
+function Details({
+  summary,
+  children,
+  ref,
+}: {
+  summary: string;
+  children: ReactNode;
+  ref?: Ref<HTMLDetailsElement>;
+}) {
+  // Uncontrolled, and its `open` attribute exempt from hydration checks: the browser opens a
+  // disclosure itself when a fragment link (/verify#limitations) lands inside it, before hydration.
+  return (
+    <details ref={ref} suppressHydrationWarning className="border-line rounded-control border">
+      <summary className="type-small text-text-2 hover:text-text focus-visible:ring-tide rounded-control cursor-pointer px-3 py-2 focus-visible:ring-2 focus-visible:outline-none">
+        {summary}
+      </summary>
+      <div className="border-line border-t px-3 py-3">{children}</div>
+    </details>
+  );
+}
+
 /**
  * Verification dashboard (SPEC.md 7.10, task P9.7).
  *
@@ -167,6 +189,24 @@ export function VerifyScreen() {
       });
     return () => controller.abort();
   }, [eventId]);
+
+  // The landing footnote links to /verify#limitations: open the disclosure that holds them.
+  const limitsRef = useRef<HTMLDetailsElement | null>(null);
+  useEffect(() => {
+    const sync = () => {
+      if (window.location.hash !== "#limitations" || !limitsRef.current) return;
+      limitsRef.current.open = true;
+      window.requestAnimationFrame(() =>
+        document.getElementById("limitations")?.scrollIntoView({ block: "start" }),
+      );
+    };
+    const id = window.setTimeout(sync, 0);
+    window.addEventListener("hashchange", sync);
+    return () => {
+      window.clearTimeout(id);
+      window.removeEventListener("hashchange", sync);
+    };
+  }, []);
 
   const current = answer?.event === eventId ? answer : null;
   const v = current?.result ?? null;
@@ -210,7 +250,7 @@ export function VerifyScreen() {
           <PanelErrorBoundary title="Headline scores">
             <Panel
               title="Headline scores"
-              description="Computed by services/verify from run artifacts, never typed in."
+              description="Scored from run artifacts against sourced pins."
             >
               {loading ? (
                 <Skeleton className="h-24 w-full" />
@@ -223,28 +263,30 @@ export function VerifyScreen() {
           <PanelErrorBoundary title="Contingency by threshold">
             <Panel
               title="Contingency by threshold"
-              description="The pins record waterlogging, not a depth, so the threshold is a choice we show rather than hide."
+              description="Pins record waterlogging, not depth, so we score three thresholds."
             >
               {loading ? (
-                <Skeleton className="h-32 w-full" />
+                <Skeleton className="h-64 w-full" />
               ) : v && v.byThreshold.length > 0 ? (
-                <>
-                  <VerificationThresholdChart
-                    className="mb-4"
+                <div className="flex flex-col gap-4">
+                  <ContingencyPour
                     groundTruthCount={v.nInWindow}
-                    points={v.byThreshold.map((r) => ({
+                    headlineCm={v.headlineThresholdCm}
+                    columns={v.byThreshold.map((r) => ({
                       thresholdCm: r.thresholdCm,
+                      hits: r.contingency.hits,
+                      misses: r.contingency.misses,
+                      falseAlarms: r.contingency.falseAlarms,
                       csi: r.csi,
                       pod: r.pod,
                       far: r.far,
+                      medianLeadMin: r.medianLeadMin,
                     }))}
                   />
-                  <ThresholdTable rows={v.byThreshold} />
-                  <p className="type-micro text-text-3 mt-3">
-                    The spread across the three rows is itself the finding: the pattern is right at
-                    5 cm, where every pin is found, and the level falls short by 30 cm.
-                  </p>
-                </>
+                  <Details summary="Every number by threshold">
+                    <ThresholdTable rows={v.byThreshold} />
+                  </Details>
+                </div>
               ) : (
                 <EmptyState
                   title="Not scored yet"
@@ -263,7 +305,7 @@ export function VerifyScreen() {
             <PanelErrorBoundary title="Where we are wrong">
               <Panel
                 title="Where we are wrong"
-                description="Pins the model missed, each with the deepest water it did forecast nearby."
+                description="Pins the model missed, with the deepest water forecast nearby."
               >
                 {loading ? (
                   <Skeleton className="h-40 w-full" />
@@ -306,7 +348,7 @@ export function VerifyScreen() {
             <PanelErrorBoundary title="Where we were early">
               <Panel
                 title="Where we were early"
-                description="Pins VARUNA flagged before the city logged them, with the warning time."
+                description="Pins flagged before the city logged them."
               >
                 {loading ? (
                   <Skeleton className="h-40 w-full" />
@@ -348,39 +390,40 @@ export function VerifyScreen() {
           </div>
 
           <PanelErrorBoundary title="What we cannot score">
-            <Panel
-              title="What we cannot score, and why"
-              description="Scores this event does not support. Shown rather than omitted."
-            >
+            <Panel title="What we cannot score" description="Shown rather than omitted.">
               {loading ? (
                 <Skeleton className="h-24 w-full" />
               ) : (
-                <dl className="flex flex-col gap-3">
+                <ul className="flex flex-col gap-2">
                   {Object.entries(v?.unavailable ?? {}).map(([key, reason]) => (
-                    <div key={key}>
-                      <dt className="type-small text-text font-medium">{unavailableLabel(key)}</dt>
-                      <dd className="type-micro text-text-2">{reason}</dd>
-                    </div>
+                    <li key={key}>
+                      <Details summary={unavailableLabel(key)}>
+                        <p className="type-small text-text-2 max-w-[72ch]">{reason}</p>
+                      </Details>
+                    </li>
                   ))}
-                </dl>
+                </ul>
               )}
             </Panel>
           </PanelErrorBoundary>
 
-          {v && v.notes.length > 0 ? (
-            <Panel title="How this was scored" description="The method, in the open.">
-              <ul className="flex list-disc flex-col gap-1 pl-5">
-                {v.notes.map((note) => (
-                  <li key={note} className="type-small text-text-2">
-                    {note}
-                  </li>
-                ))}
-              </ul>
-            </Panel>
-          ) : null}
-
-          <Panel>
-            <LimitationsList id="limitations" />
+          <Panel title="Method and limitations">
+            <div className="flex flex-col gap-2">
+              {v && v.notes.length > 0 ? (
+                <Details summary="How this was scored">
+                  <ul className="flex max-w-[72ch] list-disc flex-col gap-1 pl-5">
+                    {v.notes.map((note) => (
+                      <li key={note} className="type-small text-text-2">
+                        {note}
+                      </li>
+                    ))}
+                  </ul>
+                </Details>
+              ) : null}
+              <Details summary="Limitations" ref={limitsRef}>
+                <LimitationsList id="limitations" />
+              </Details>
+            </div>
           </Panel>
         </div>
       </div>

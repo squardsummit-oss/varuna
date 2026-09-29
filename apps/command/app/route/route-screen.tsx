@@ -288,11 +288,6 @@ export function RouteScreen() {
                       Routing...
                     </p>
                   ) : null}
-                  {asked > 0 ? (
-                    <p className="type-micro text-text-3 mt-2">
-                      Changing the departure time, the profile or the tolerance routes again.
-                    </p>
-                  ) : null}
                   {arrivalNote ? (
                     <p className="type-micro text-text-2 mt-3" role="status">
                       {arrivalNote}
@@ -300,16 +295,22 @@ export function RouteScreen() {
                   ) : null}
                   {error ? <p className="type-small text-text-2 mt-3">{error}</p> : null}
                   {plan ? (
-                    <p className="type-micro text-text-3 mt-3">
-                      Routed on run <span className="num">{plan.runId}</span> in{" "}
-                      <span className="num">{Math.round(plan.ms)}</span> ms.
+                    <p className="num type-micro text-text-3 mt-3" title={plan.runId}>
+                      Routed on run {runCycleIst(plan.runId)} in {Math.round(plan.ms)} ms.
                     </p>
                   ) : null}
-                  {plan?.notes.map((note) => (
-                    <p key={note} className="type-micro text-text-3 mt-2">
-                      {note}
-                    </p>
-                  ))}
+                  {plan && plan.notes.length > 0 ? (
+                    <details className="type-micro text-text-3 mt-2">
+                      <summary className="text-text-2 hover:text-text focus-visible:outline-tide cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+                        Details
+                      </summary>
+                      {plan.notes.map((note) => (
+                        <p key={note} className="mt-1">
+                          {note}
+                        </p>
+                      ))}
+                    </details>
+                  ) : null}
                 </Panel>
               </div>
             </PanelErrorBoundary>
@@ -365,7 +366,7 @@ export function RouteScreen() {
                   ) : (
                     <EmptyState
                       title="Loading the city"
-                      description="The street network arrives from the city VARUNA built; the route draws on it."
+                      description="Drawing Mumbai's streets for the route."
                     />
                   )}
                 </section>
@@ -380,6 +381,20 @@ export function RouteScreen() {
       </div>
     </AppShell>
   );
+}
+
+/**
+ * "08:40 IST" from a run id's compact UTC cycle stamp (`MUM-20190702T0310Z-...`), so the panel
+ * names the cycle rather than printing the id; the id stays in the line's title. Falls back to the
+ * id when it carries no stamp.
+ */
+export function runCycleIst(runId: string): string {
+  const m = /-(\d{8})T(\d{2})(\d{2})Z/.exec(runId);
+  if (!m) return runId;
+  const minutes = (Number(m[2]) * 60 + Number(m[3]) + 330) % 1440;
+  const hh = String(Math.floor(minutes / 60)).padStart(2, "0");
+  const mm = String(minutes % 60).padStart(2, "0");
+  return `${hh}:${mm} IST`;
 }
 
 /** How close a registered place must be to an alert's street to stand in for it. */
@@ -420,6 +435,6 @@ export function arrivalFromSearch(
   }
   return {
     place: null,
-    note: `${street} is not near a registered place, so the trip stays KEM Hospital to Sion Hospital. Pick the destination the alert affects.`,
+    note: `${street} is not near a registered place; pick the destination.`,
   };
 }

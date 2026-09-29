@@ -48,6 +48,7 @@ import {
 import { useDashboardRun } from "@/components/citizen/use-dashboard-run";
 import { useMyReports, usePublicReports } from "@/components/citizen/use-report-feeds";
 import { WeatherChip } from "@/components/citizen/weather-chip";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
 import { CAUTION_FRACTION } from "@/components/map/layers/palette";
 import { REPORT_FOCUS_ZOOM } from "@/components/map/layers/reports";
 import type { MapFocus } from "@/components/map/layers/types";
@@ -61,7 +62,7 @@ import { VehicleSelector, type PublicProfile } from "@/components/varuna/vehicle
 import { Wordmark } from "@/components/varuna/wordmark";
 import { reportToPin } from "@/lib/api/reports";
 import { loadPlaces, planRoute, type Place, type RoutePlan } from "@/lib/api/route";
-import { formatDate, formatIst, shortenRunId } from "@/lib/format";
+import { formatDate, formatIst } from "@/lib/format";
 import { useMediaQuery } from "@/lib/hooks";
 import type { CitizenRun } from "@/lib/maps/citizen-run";
 import { LIST_ROAD } from "@/lib/street-label";
@@ -199,7 +200,7 @@ export function nearbyStreets(
 /** The header's honesty line: which run drew this map, and for when. */
 export function runLine(run: CitizenRun | null, failed: boolean): string {
   if (run?.provenance.cycleTs) {
-    return `${formatDate(run.provenance.cycleTs)} · ${formatIst(run.provenance.cycleTs)} IST · run ${shortenRunId(run.provenance.runId)}`;
+    return `Forecast from ${formatIst(run.provenance.cycleTs)} IST, ${formatDate(run.provenance.cycleTs)}`;
   }
   if (failed) return "The forecast did not load; check the connection and reload";
   return "Loading the last VARUNA run";
@@ -573,15 +574,17 @@ export function DashboardScreen() {
           The map: {TIME_BASE_LABEL.replay}
         </h2>
         <ForecastCycleSelect value={shownRunId} cycles={cycle.cycles} onChange={pickCycle} />
-        <p className="type-micro text-text-2">{LEAD_DEFAULT_REASON}</p>
+        <details className="type-micro text-text-3">
+          <summary className="text-text-2 hover:text-text focus-visible:outline-tide cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+            Why +60 min
+          </summary>
+          <p className="mt-1">{LEAD_DEFAULT_REASON}</p>
+        </details>
       </section>
     ) : (
       <section aria-label={TIME_BASE_LABEL.today} className="flex flex-col gap-2">
         <LiveOutlookCard city={city} collapsible={false} />
-        <p className="type-micro text-text-2">
-          The map stays on the 2 July 2019 replay. Today&apos;s outlook is a separate forecast and
-          is not drawn on it.
-        </p>
+        <p className="type-micro text-text-2">The map stays on the 2 July 2019 replay.</p>
       </section>
     );
 
@@ -598,8 +601,7 @@ export function DashboardScreen() {
         </h2>
         {places.length === 0 ? (
           <p className="type-small text-text-2">
-            The city&apos;s places have not loaded, so a trip cannot be planned yet. Reload once the
-            API is reachable.
+            Places did not load. Reload once the API is reachable.
           </p>
         ) : (
           <>
@@ -631,13 +633,9 @@ export function DashboardScreen() {
               {planning ? "Finding the safe way" : "Find the safe way"}
             </Button>
             {run && stepTime ? (
-              <p className="num type-micro text-text-3">
-                Departs at {stepTime} on the 2 July 2019 replay, the step on the map.
-              </p>
+              <p className="num type-micro text-text-3">Departs {stepTime}, the step on the map.</p>
             ) : (
-              <p className="type-micro text-text-3">
-                A trip can be planned once a VARUNA run has scored the streets.
-              </p>
+              <p className="type-micro text-text-3">Available once the forecast loads.</p>
             )}
             {locationState !== "granted" ? (
               <Button variant="outline" className="h-11" onClick={ask}>
@@ -692,8 +690,8 @@ export function DashboardScreen() {
   const at = stepTime ? ` at ${stepTime}` : "";
   const nearbyTitle = centre ? `Streets near you${at}` : `The worst streets in the city${at}`;
   const nearbyEmpty = centre
-    ? "No street within 1.5 km of you is near this vehicle's stopping depth at this step or closes later in the forecast."
-    : "No street is near this vehicle's stopping depth at this step or closes later in the forecast.";
+    ? "No street within 1.5 km of you nears this vehicle's stopping depth."
+    : "No street nears this vehicle's stopping depth.";
   const untilLabel = (street: NearbyStreet) =>
     street.passableUntil === null
       ? `Impassable at ${formatIst(run?.validTs[step])}`
@@ -813,9 +811,16 @@ export function DashboardScreen() {
             <Wordmark size="sm" withMark />
             <span className="type-small text-text-2">Mumbai</span>
           </div>
-          <WeatherChip city={city} />
+          <div className="flex items-center gap-2">
+            <WeatherChip city={city} />
+            <ThemeToggle size={wide ? "sm" : "md"} />
+          </div>
         </div>
-        <p className="num type-micro text-text-3 mt-1" data-slot="run-line">
+        <p
+          className="num type-micro text-text-3 mt-1"
+          data-slot="run-line"
+          title={run?.provenance.runId ?? undefined}
+        >
           {runLine(run, runFailed)}
         </p>
         <ul className="mt-1.5 flex flex-wrap gap-1.5">

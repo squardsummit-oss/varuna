@@ -176,6 +176,86 @@ describe("dispatch model", () => {
     expect(dispatchBounds(null)).toBeUndefined();
   });
 
+  it("frames the places tightly and leaves a far depot to drive in from the edge", () => {
+    // Three places close together in the north, one depot among them, one 5 km south.
+    const at = (lon: number, lat: number) => ({ lon, lat });
+    const leg = MAP.legs[0];
+    const legs = [
+      {
+        ...leg,
+        pumpId: "A",
+        depot: { name: "Near", ...at(72.85, 19.1) },
+        target: { ...leg.target, ...at(72.84, 19.1) },
+      },
+      {
+        ...leg,
+        pumpId: "B",
+        depot: { name: "Near", ...at(72.85, 19.1) },
+        target: { ...leg.target, ...at(72.86, 19.11) },
+      },
+      {
+        ...leg,
+        pumpId: "C",
+        depot: { name: "Far", ...at(72.85, 19.05) },
+        target: { ...leg.target, ...at(72.85, 19.12) },
+      },
+    ];
+    const [[w, s], [e, n]] = dispatchBounds({ ...MAP, legs })!;
+    for (const l of legs) {
+      expect(l.target.lon!).toBeGreaterThan(w);
+      expect(l.target.lon!).toBeLessThan(e);
+      expect(l.target.lat!).toBeGreaterThan(s);
+      expect(l.target.lat!).toBeLessThan(n);
+    }
+    // The near depot is in the frame; the far one is not, and it did not stretch the frame.
+    expect(19.1).toBeGreaterThan(s);
+    expect(19.05).toBeLessThan(s);
+    expect(n - s).toBeLessThan(0.03);
+  });
+
+  it("frames the whole trip of a plan with one place, depot included", () => {
+    const leg = MAP.legs[0];
+    const one = {
+      ...leg,
+      depot: { name: "Worli", lon: 72.8186, lat: 18.995 },
+      target: { ...leg.target, lon: 72.892, lat: 19.0993 },
+    };
+    const [[w, s], [e, n]] = dispatchBounds({ ...MAP, legs: [one] })!;
+    expect(w).toBeLessThan(72.8186);
+    expect(s).toBeLessThan(18.995);
+    expect(e).toBeGreaterThan(72.892);
+    expect(n).toBeGreaterThan(19.0993);
+  });
+
+  it("never frames a short trip closer than street scale", () => {
+    const leg = MAP.legs[0];
+    const short = {
+      ...leg,
+      depot: { name: "Dadar", lon: 72.8542, lat: 19.0266 },
+      target: { ...leg.target, lon: 72.8545, lat: 19.0268 },
+    };
+    const [[w, s], [e, n]] = dispatchBounds({ ...MAP, legs: [short] })!;
+    expect(e - w).toBeGreaterThanOrEqual(0.016);
+    expect(n - s).toBeGreaterThanOrEqual(0.016);
+  });
+
+  it("draws a place with no series at the least the plan says, and races nothing", () => {
+    const leg = {
+      ...MAP.legs[0],
+      depthBeforeCm: null,
+      depthAfterCm: null,
+      peakBefore: null,
+      peakAfter: null,
+      windowBefore: null,
+      minutesBefore: 70,
+    };
+    const [drawn] = routeLegs({ ...MAP, legs: [leg] });
+    // Above the 45 cm line, as the plan's 70 minutes say - never the dry colour.
+    expect(drawn.peakBeforeCm).toBeGreaterThan(MAP.thresholdCm);
+    expect(drawn.peakAfterCm).toBe(drawn.peakBeforeCm);
+    expect(race(leg).kind).toBe("unknown");
+  });
+
   it("draws the road where there is one and the straight line where there is not", () => {
     const legs = routeLegs(MAP);
     expect(legs).toHaveLength(12);

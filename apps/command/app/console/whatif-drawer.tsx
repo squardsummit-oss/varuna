@@ -30,9 +30,11 @@ import {
   WhatIfControls,
   type WhatIfValues,
 } from "@/components/varuna/whatif-controls";
+import { WhatIfDetails } from "@/components/varuna/whatif-details";
+import { tideOfferNote, tideStopsFor } from "@/lib/api/whatif";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-media-query";
 import { usePhysicsCheck } from "@/lib/hooks/use-physics-check";
-import { useWhatIf } from "@/lib/hooks/use-twin-scenario";
+import { useTwinOffer, useWhatIf } from "@/lib/hooks/use-twin-scenario";
 import { DUR, DUR_MS, EASE_UI, tween } from "@/lib/motion";
 import { navItem } from "@/lib/nav";
 
@@ -110,28 +112,28 @@ export function WhatIfDrawer({ runId, onDiff, onClose }: WhatIfDrawerProps) {
       from: link.picked.length > 0 ? (searchParams?.get("from") ?? undefined) : undefined,
     };
   });
-  const flow = useWhatIf(runId);
+  // What this API's Twin can answer: any tide, or only its stored answers for this cycle.
+  const offer = useTwinOffer(runId);
+  const tideStops = useMemo(() => tideStopsFor(offer), [offer]);
+  const flow = useWhatIf(runId, offer);
   const physics = usePhysicsCheck(runId);
   const twin = flow.twin;
   const [progress, setProgress] = useState(1);
 
+  // The job's fields are read out first so the memo depends on exactly the values it uses,
+  // which is what lets the React Compiler keep this memoization (as the lab does).
+  const twinCacheLabel = twin.job?.cache?.label ?? null;
+  const twinScenarioNotes = twin.job?.scenario.notes;
   const answer: WhatIfAnswer | null = useMemo(() => {
     if (flow.engine === "twin" && twin.result) {
       return twinAnswer(twin.result, {
-        cacheLabel: twin.job?.cache?.label ?? null,
+        cacheLabel: twinCacheLabel,
         asked: flow.asked,
-        scenarioNotes: twin.job?.scenario.notes ?? [],
+        scenarioNotes: twinScenarioNotes ?? [],
       });
     }
     return flow.emulator ? emulatorAnswer(flow.emulator) : null;
-  }, [
-    flow.asked,
-    flow.engine,
-    flow.emulator,
-    twin.job?.cache?.label,
-    twin.job?.scenario.notes,
-    twin.result,
-  ]);
+  }, [flow.asked, flow.engine, flow.emulator, twinCacheLabel, twinScenarioNotes, twin.result]);
   const tideAsked = (flow.asked?.tideOffsetM ?? 0) !== 0;
   const tideLeftOut = answer?.engine === "emulator" && tideAsked;
 
@@ -195,6 +197,8 @@ export function WhatIfDrawer({ runId, onDiff, onClose }: WhatIfDrawerProps) {
           onPhysicsCheck={physics.running ? undefined : physics.check}
           physicsDisabledReason="Checking: the Twin is running the scenario"
           cleanedSource={start.from}
+          tideStops={tideStops}
+          tideNote={tideOfferNote(offer)}
         />
         {flow.emulatorRunning ? (
           <p className="type-small text-text-3 mt-3">Running the scenario on the emulator</p>
@@ -202,7 +206,10 @@ export function WhatIfDrawer({ runId, onDiff, onClose }: WhatIfDrawerProps) {
         {flow.emulatorError ? (
           <p className="type-small text-text-2 mt-3">{flow.emulatorError}</p>
         ) : null}
-        {tideAsked ? (
+        {flow.twinSkipped ? (
+          <p className="type-small text-text-2 mt-3">{flow.twinSkipped}</p>
+        ) : null}
+        {tideAsked && !flow.twinSkipped ? (
           <TwinRunProgress
             className="border-line mt-4 border-t pt-4"
             line={twin.line}
@@ -225,22 +232,23 @@ export function WhatIfDrawer({ runId, onDiff, onClose }: WhatIfDrawerProps) {
           className="border-line border-b p-4"
         >
           <h3 className="type-small text-text font-medium">What-if ready</h3>
-          <p className="type-micro text-text-2 mt-1 font-medium">
+          <p className="type-small text-text mt-1">{answer.summary}</p>
+          <p className="type-micro text-text-2 mt-1">
             {tideLeftOut ? EMULATOR_NO_TIDE : ENGINE_LABEL[answer.engine]}
           </p>
+          {answer.skill ? <p className="num type-micro text-text-2">{answer.skill}</p> : null}
           {answer.tideOutcome ? (
             <p className="type-small text-text mt-1">{answer.tideOutcome}</p>
           ) : null}
-          <p className="type-small text-text-2 mt-1">{answer.summary}</p>
-          <p className="type-micro text-text-3 mt-1">
-            In <span className="num">{Math.round(answer.ms).toLocaleString("en-IN")}</span> ms on
-            run <span className="num">{answer.runId}</span>.
-          </p>
-          {answer.lines.map((line) => (
-            <p key={line} className="type-micro text-text-3 mt-1">
-              {line}
+          <WhatIfDetails className="mt-2">
+            <p>
+              Answered in{" "}
+              <span className="num">{Math.round(answer.ms).toLocaleString("en-IN")}</span> ms.
             </p>
-          ))}
+            {answer.lines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </WhatIfDetails>
           {answer.nothingChanged ? null : (
             <div className="mt-3">
               <DeltaTable

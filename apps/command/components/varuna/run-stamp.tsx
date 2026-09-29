@@ -10,6 +10,16 @@ import { cn } from "@/lib/utils";
 import { formatMs, shortenRunId } from "@/lib/format";
 import { totalStageMs, useRunStore } from "@/lib/stores/run";
 
+/**
+ * The part of a run id a reader tells cycles apart by: city and cycle time, "MUM-20190702T0110Z".
+ * The versions and the mode follow in the id and are on the chip and in the tooltip, which carries
+ * the whole id; an id of another shape is shortened in the middle as before.
+ */
+export function cycleRunId(runId: string): string {
+  const cut = runId.indexOf("-sky");
+  return cut > 0 ? runId.slice(0, cut) : shortenRunId(runId);
+}
+
 export interface RunStampProps {
   className?: string;
 }
@@ -74,7 +84,7 @@ export function RunStamp({ className }: RunStampProps) {
             data-slot="run-stamp"
             onClick={() => void copy()}
             className={cn(
-              "group rounded-control border-line bg-well/40 inline-flex h-7 min-w-0 items-center gap-2 border px-2.5",
+              "group rounded-control border-line bg-well/40 inline-flex h-7 min-w-0 items-center gap-2 border px-2.5 whitespace-nowrap",
               "text-small text-text-2 hover:bg-well hover:text-text",
               className,
             )}
@@ -83,7 +93,7 @@ export function RunStamp({ className }: RunStampProps) {
       >
         <span className="text-text-3">run</span>
         <span className="num text-small text-text truncate font-mono">
-          {shortenRunId(run.run_id)}
+          {cycleRunId(run.run_id)}
         </span>
         <span
           className={cn(

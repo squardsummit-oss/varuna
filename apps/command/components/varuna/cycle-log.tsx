@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyState } from "@/components/varuna/empty-state";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,8 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { EmptyState } from "@/components/varuna/empty-state";
+import { Skeleton } from "@/components/varuna/skeleton";
 import { formatMs, formatMassBalance } from "@/lib/format";
 import { formatIstTime } from "@/lib/stores/time";
+import { cn } from "@/lib/utils";
 
 export interface CycleLogRow {
   /**
@@ -20,7 +23,7 @@ export interface CycleLogRow {
   id: string;
   /** Cycle time, ISO 8601 with +05:30. */
   time: string;
-  /** Stages that ran, e.g. "decode, sky, twin, flash, pulse, products". */
+  /** Stages that ran, as the registry summary names them. Not printed: the budget bar shows them. */
   stages: string;
   /** Total stage time in milliseconds. */
   ms: number;
@@ -30,6 +33,12 @@ export interface CycleLogRow {
 
 export interface CycleLogProps {
   rows: CycleLogRow[];
+  /** What the empty log tells the reader to do. */
+  emptyDescription?: string;
+  /** The row whose stage timings are shown beside the log; highlighted when set. */
+  selectedId?: string | null;
+  /** Makes each row's time a button that picks it. Without it the log is read-only. */
+  onSelect?: (row: CycleLogRow) => void;
 }
 
 /**
@@ -46,56 +55,67 @@ export function runVersionTail(runId: string): string {
 }
 
 /**
- * The replay panel's cycle log: one row per published run with stage timings and mass balance.
+ * The cycle log: one row per published run with its total time and mass balance.
  *
- * **One row per run, not per cycle** (found by the P10.2 design QA, 2026-09-24). The rows were
- * keyed on `time`, and the demo registry holds seventeen Mumbai runs across eight cycle times -
- * the 2026-09-13 and 2026-09-23 bakes plus a live run, three of them sharing 08:10 IST. React
- * warned twenty-nine times on a single load of `/replay` that children shared a key, which under
- * its own documented behaviour means rows may be "duplicated and/or omitted": the log was showing
- * a set of numbers no reader could attribute to a run, and section 14's zero-console-errors gate
- * was being missed on a screen nothing was checking. The key is the run id now, and the Run column
- * makes the duplicate times legible instead of merely non-fatal - 7.8's acceptance criterion asks
- * for "baked and live runs", which is exactly the case that collided.
+ * **One row per run, not per cycle** (P10.2 design QA, 2026-09-24): rows are keyed on the run id,
+ * because the registry can hold two bakes and a live run of one cycle, and keying on the time made
+ * React drop rows. The Run column is what tells those rows apart.
  *
- * **The stage list is a caption, not a column.** 7.2 asks the log for "time, stages, ms,
- * mass-balance error", and stages were a column - printing the identical string on every row,
- * because the registry summary carries a run's total and not its per-stage split, so there is
- * nothing per-row to say. Five columns did not fit the console's 360 px replay panel: the last
- * one clipped mid-word ("decod"), which is how this was noticed. Said once above the table it is
- * the same claim, legible, and it leaves the Run column the width it needs. The real per-stage
- * timings are at `GET /v1/runs/{run_id}` and in the cycle budget bar.
+ * **No stage caption.** It used to print "Stages each run: decode, sky, twin, pulse, products"
+ * from a constant, which named a decode stage no baked run reports and left out the Flash stage
+ * every one of them does. The per-stage split is `GET /v1/runs/{run_id}`'s, and `/replay` draws it
+ * in the cycle budget bar for the row picked here.
  */
-export function CycleLog({ rows }: CycleLogProps) {
+export function CycleLog({
+  rows,
+  emptyDescription = "Run make bake to bake this bundle's cycles.",
+  selectedId = null,
+  onSelect,
+}: CycleLogProps) {
   if (rows.length === 0) {
-    return <EmptyState title="No cycles yet" description="Press Play on the replay." />;
+    // Not "Press Play": the log lists baked runs, and playing the clock bakes nothing.
+    return <EmptyState title="No cycles yet" description={emptyDescription} />;
   }
 
-  // Every row carries the same list, so it is stated once. A registry that one day reports a run
-  // that skipped a stage would break this claim, and the distinct values are listed rather than
-  // the first row's, so it would read "decode, sky, twin, pulse, products / decode, sky, twin"
-  // instead of quietly speaking for a run it does not describe.
-  const stages = [...new Set(rows.map((row) => row.stages).filter(Boolean))];
-
   return (
-    <div className="space-y-1.5">
-      {stages.length > 0 ? (
-        <p className="type-micro text-text-3">Stages each run: {stages.join(" / ")}.</p>
-      ) : null}
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Run</TableHead>
-              <TableHead className="text-right">Time taken</TableHead>
-              <TableHead className="text-right">Mass balance</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id} className="h-8">
-                <TableCell className="num">{formatIstTime(row.time)}</TableCell>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Time</TableHead>
+            <TableHead>Run</TableHead>
+            <TableHead className="text-right">Time taken</TableHead>
+            <TableHead className="text-right">Mass balance</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row) => {
+            const selected = row.id === selectedId;
+            return (
+              <TableRow
+                key={row.id}
+                className={cn("h-8", selected && "bg-well")}
+                aria-current={selected ? "true" : undefined}
+              >
+                <TableCell className="num">
+                  {onSelect ? (
+                    <button
+                      type="button"
+                      aria-pressed={selected}
+                      aria-label={`Show the stage timings of the ${formatIstTime(row.time)} run`}
+                      onClick={() => onSelect(row)}
+                      className={cn(
+                        "num rounded-control -mx-1 px-1 underline-offset-2 hover:underline",
+                        "focus-visible:ring-tide outline-none focus-visible:ring-2",
+                        selected ? "text-tide font-medium" : "text-text",
+                      )}
+                    >
+                      {formatIstTime(row.time)}
+                    </button>
+                  ) : (
+                    formatIstTime(row.time)
+                  )}
+                </TableCell>
                 {/* 6.3: mono is for run ids, and this is one. */}
                 <TableCell className="type-micro text-text-3 font-mono" title={row.id}>
                   {runVersionTail(row.id)}
@@ -105,10 +125,60 @@ export function CycleLog({ rows }: CycleLogProps) {
                   {formatMassBalance(row.massBalance)}
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
+  );
+}
+
+/** The registry read behind a cycle log: `useReplayCycleLog`'s result, typed loosely. */
+export interface CycleLogSource {
+  rows: CycleLogRow[];
+  isPending: boolean;
+  isError: boolean;
+  error: { message: string } | null;
+  refetch: () => unknown;
+}
+
+export interface CycleLogStateProps extends Omit<CycleLogProps, "rows" | "emptyDescription"> {
+  bundleId: string;
+  log: CycleLogSource;
+}
+
+/**
+ * The cycle log with its loading and error states: a shimmer while the registry is on its way,
+ * the API's own words and Try again when it failed, and an empty state only when it is empty.
+ */
+export function CycleLogState({ bundleId, log, ...props }: CycleLogStateProps) {
+  if (log.isPending) {
+    return (
+      <div className="space-y-1.5" aria-busy="true" aria-label="Loading the cycle log">
+        <Skeleton className="h-8" />
+        <Skeleton className="h-8" />
+        <Skeleton className="h-8" />
+      </div>
+    );
+  }
+  if (log.isError) {
+    return (
+      <EmptyState
+        title="The cycle log did not load"
+        description={log.error?.message ?? "The run registry did not answer."}
+        action={
+          <Button variant="outline" onClick={() => void log.refetch()}>
+            Try again
+          </Button>
+        }
+      />
+    );
+  }
+  return (
+    <CycleLog
+      rows={log.rows}
+      emptyDescription={`Run make bake BUNDLE=${bundleId} to bake its cycles.`}
+      {...props}
+    />
   );
 }

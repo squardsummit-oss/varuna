@@ -31,7 +31,7 @@ pnpm test && uv run pytest`, `pnpm lint:design`) · committed.
 - [x] **D-05 `GET /v1/weather`.** Open-Meteo proxy with a 15-minute in-process cache, a last-good
   disk copy, `age_s`, `stale`, `source`, `licence`. *Accepts:* second call makes no outbound
   request; offline serves the stamped copy; upstream 500 degrades with the section 12 envelope;
-  contract test and `pnpm typegen` regenerated. (2026-09-19, 3bc358f - measured by the implementer at 1,260.7-1,465.0 ms uncached and 5.2-21.8 ms cached; the contract snapshot went 46 -> 47 paths and `pnpm typegen` ran on merge. ADR-0061.)
+  contract test and `pnpm typegen` regenerated. (2026-09-19, 3bc358f - measured by the builder at 1,260.7-1,465.0 ms uncached and 5.2-21.8 ms cached; the contract snapshot went 46 -> 47 paths and `pnpm typegen` ran on merge. ADR-0061.)
 - [x] **D-06 Ops overlay store.** `data/ops/<city>.jsonl`, append-only, with
   `varuna_route.overlay.apply(...)` honoured by the router and the road-conditions feed.
   *Accepts:* a closure makes the next route avoid the street and annotates the reason; the sha256
@@ -79,7 +79,7 @@ pnpm test && uv run pytest`, `pnpm lint:design`) · committed.
 - [x] **D-15 `/authority`.** Passphrase gate, the two columns of UI_SPEC §6, the citizen inbox and
   the ops log. *Accepts:* closing a street changes the next route on screen; marking a pump
   unavailable removes it from the next optimise; an acknowledgement survives a reload; every
-  right-column action says it changed no forecast. (2026-09-19, ecedc80 - **the loop was driven in a browser by the lead, not only by its implementer**: typing segment S618477973-001 and "Slab collapsed outside Bharatmata; police barricade across both carriageways" into the desk wrote one ops-log entry, and the next KEM-to-Sion ambulance route went from 5.6 min / 5,121 m with nothing avoided to 6.1 min / 5,241 m avoiding Dr Babasaheb Ambedkar Marg (Vincent Road), carrying the officer's own words as `closed_reason`. The gate's four states all render; the passphrase lives in one header and sessionStorage. **On the deployed API `VARUNA_OPS_PASSPHRASE` is deliberately unset**, so the desk there says it is read-only, as PRD 6 intends.)
+  right-column action says it changed no forecast. (2026-09-19, ecedc80 - **the loop was driven in a browser by the team, not only by its builder**: typing segment S618477973-001 and "Slab collapsed outside Bharatmata; police barricade across both carriageways" into the desk wrote one ops-log entry, and the next KEM-to-Sion ambulance route went from 5.6 min / 5,121 m with nothing avoided to 6.1 min / 5,241 m avoiding Dr Babasaheb Ambedkar Marg (Vincent Road), carrying the officer's own words as `closed_reason`. The gate's four states all render; the passphrase lives in one header and sessionStorage. **On the deployed API `VARUNA_OPS_PASSPHRASE` is deliberately unset**, so the desk there says it is read-only, as PRD 6 intends.)
 - [x] **D-16 `/rural`.** Server-rendered advisory, no client JavaScript, under 30 KB, print
   stylesheet, share link carrying the query. *Accepts:* measured transfer size with JS disabled;
   the "what we do not know" block is present; the same numbers as the dashboard for the same trip.

@@ -10,6 +10,7 @@ import {
 import { renderWithProviders, stubFetch } from "@/lib/test-utils";
 import { useReplayStore } from "@/lib/stores/replay";
 import { useRunStore } from "@/lib/stores/run";
+import { useScrubStore } from "@/lib/stores/scrub";
 
 const T0 = "2019-07-02T05:40:00+05:30";
 const CLOCK = {
@@ -71,6 +72,7 @@ describe("TimeBar", () => {
     vi.stubGlobal("fetch", vi.fn(stubFetch({})));
     useReplayStore.getState().reset();
     useRunStore.getState().clear();
+    useScrubStore.getState().pause();
   });
 
   afterEach(() => {
@@ -130,15 +132,34 @@ describe("TimeBar", () => {
     expect(screen.getByText("07:25 (+45 min)")).toBeInTheDocument();
   });
 
-  it("toggles playing from the play button even without a run", () => {
+  it("does not play before a run has loaded, and says so", () => {
     renderTimeBar();
     const play = screen.getByRole("button", { name: "Play the replay" });
     expect(play).toHaveAttribute("aria-disabled", "true");
     act(() => {
       play.click();
     });
-    expect(useReplayStore.getState().playing).toBe(true);
-    expect(screen.getByRole("button", { name: "Pause the replay" })).toBeInTheDocument();
+    expect(useScrubStore.getState().playing).toBe(false);
+  });
+
+  it("reads the map's valid time from the loaded run's cycle, not the shared clock", () => {
+    act(() => {
+      useRunStore.getState().setRun({
+        run_id: "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked",
+        city: "mumbai",
+        cycle_ts: "2019-07-02T08:40:00+05:30",
+        mode: "replay",
+        replay_mode: "baked",
+        step_min: 5,
+        step_leads: [5, 10, 15],
+      });
+      useReplayStore.getState().setLeadMin(10);
+    });
+    renderTimeBar();
+    // The shared clock is at 06:40; the map is on the 08:40 cycle, and the readout follows the map.
+    expect(screen.getByText("08:50 (+10 min)")).toBeInTheDocument();
+    // And the date beside it, so the time is never read without its day.
+    expect(screen.getByTestId("time-bar-date")).toHaveTextContent("2 Jul 2019");
   });
 
   it("keeps Compute live disabled until a bundle is loaded", () => {
@@ -202,30 +223,40 @@ describe("TimeBar", () => {
       vi.fn(stubFetch({ "/v1/cycle/compute": { ...COMPUTE_ON, enabled: false, reason: "Off." } })),
     );
     renderTimeBar();
-    await screen.findByText("Off on this server");
+    await screen.findByText("Off on this server; the map shows baked runs");
     // Until the bundle list answers, the bundle is named by its id rather than guessed.
     expect(screen.getByText("Live compute on bundle MUM-2019-07-02")).toBeInTheDocument();
   });
 
-  it("asks the API to play once the clock is available", async () => {
+  it("plays the map's forecast and never moves the shared replay clock", async () => {
     const fetchMock = vi.fn(
       stubFetch({ "/v1/replay/clock": CLOCK, "/v1/replay/play": { ...CLOCK, playing: true } }),
     );
     vi.stubGlobal("fetch", fetchMock);
+    act(() => {
+      useRunStore.getState().setRun({
+        run_id: "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked",
+        city: "mumbai",
+        cycle_ts: "2019-07-02T06:40:00+05:30",
+        mode: "replay",
+        replay_mode: "baked",
+        step_leads: [5, 10, 15],
+      });
+    });
     renderTimeBar();
-
-    // The clock the API reports becomes the store's clock.
+    // The clock is still read, for what Compute live would re-run.
     await waitFor(() => expect(useReplayStore.getState().cycleIndex).toBe(12));
 
     act(() => {
       screen.getByRole("button", { name: "Play the replay" }).click();
     });
-    await waitFor(() => {
-      const posted = fetchMock.mock.calls.find(([url]) => String(url).endsWith("/v1/replay/play"));
-      expect(posted).toBeDefined();
-      expect(posted?.[1]?.method).toBe("POST");
-    });
-    expect(useReplayStore.getState().playing).toBe(true);
+    expect(useScrubStore.getState().playing).toBe(true);
+    expect(screen.getByRole("button", { name: "Pause the replay" })).toBeInTheDocument();
+    const posted = fetchMock.mock.calls.find(([url]) => String(url).includes("/v1/replay/"));
+    expect(posted?.[1]?.method ?? "GET").toBe("GET");
+    expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("/v1/replay/play"))).toBe(
+      false,
+    );
   });
 });
 
@@ -296,7 +327,7 @@ describe("computeLiveCopy", () => {
       ...base,
       info: { ...COMPUTE_ON, enabled: false, reason: "Compute live is off on this server." },
     });
-    expect(note).toBe("Off on this server");
+    expect(note).toBe("Off on this server; the map shows baked runs");
     expect(tooltip).toBe("Compute live is off on this server.");
   });
 

@@ -96,7 +96,7 @@ export function ObservationCard({ obs, className }: ObservationCardProps) {
             </span>
           </>
         ) : (
-          <span className="text-text-3">No blockage change recorded for this observation yet.</span>
+          <span className="text-text-3">No blockage change recorded.</span>
         )}
       </p>
     </article>

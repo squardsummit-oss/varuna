@@ -15,12 +15,23 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { before, describe, it } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { DIST_DIR, OUTPUT_FILES, TOKENS_PATH, build, check, generate, loadTokens, validateTokens } from "../build.mjs";
+import {
+  DIST_DIR,
+  OUTPUT_FILES,
+  TOKENS_PATH,
+  build,
+  check,
+  generate,
+  generateCss,
+  loadTokens,
+  validateTokens,
+} from "../build.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_SCRIPT = path.join(HERE, "..", "build.mjs");
@@ -215,11 +226,15 @@ describe("tokens.css Tailwind theme", () => {
   });
 
   it("contains no hex outside the token set", () => {
+    const light = raw.theme.light;
     const allowed = new Set([
       ...expectedSolidColors().map(([, hex]) => hex.toUpperCase()),
       raw.focus.ring_color.toUpperCase(),
       raw.glass.background.toUpperCase(),
       raw.color.reach["5"].value.toUpperCase(),
+      ...Object.values(light.color).flatMap((group) => Object.values(group).map((e) => e.value.toUpperCase())),
+      ...Object.values(raw.theme.on_fill).flatMap((group) => Object.values(group).map((e) => e.value.toUpperCase())),
+      light.focus.ring_color.toUpperCase(),
     ]);
     for (const m of css.matchAll(/#[0-9A-Fa-f]{6}\b/g)) assert.ok(allowed.has(m[0].toUpperCase()), `${m[0]} is a token colour`);
   });
@@ -441,6 +456,168 @@ describe("tokens.json shape the Python ramps read", () => {
       assert.match(band.label, /mm\/h$/, `color.rain.${k}.label carries the unit`);
       assert.equal(typeof band.meaning, "string", `color.rain.${k}.meaning`);
     }
+  });
+});
+
+/* ------------------------------------------------------------------------------------------------
+ * Light theme
+ * ---------------------------------------------------------------------------------------------- */
+
+/** sha256 of the dark :root block as it stood before the light theme existed (commit 46007d8). */
+const DARK_ROOT_SHA256 = "15bf1ce03f0e7f96231e9da1ebefc48b1515634636bde2c3cc20f825d7c976dd";
+
+/** The `{ "--name": value }` of a `selector { ... }` block. */
+function parseBlock(cssText, selector) {
+  const start = cssText.indexOf(`${selector} {`);
+  assert.notEqual(start, -1, `tokens.css has a ${selector} block`);
+  const block = cssText.slice(start, cssText.indexOf("\n}", start));
+  const vars = {};
+  for (const m of block.matchAll(/^\s*(--[\w-]+):\s*([^;]+);/gm)) vars[m[1]] = m[2].trim();
+  return vars;
+}
+
+/** The first `:root {` block, verbatim: the dark theme. */
+function darkRootBlock(cssText) {
+  const start = cssText.indexOf(":root {");
+  return cssText.slice(start, cssText.indexOf("\n}", start) + 2);
+}
+
+/** The `@theme {` block, verbatim. */
+function themeBlock(cssText) {
+  const start = cssText.indexOf("@theme {");
+  return cssText.slice(start, cssText.indexOf("\n}", start) + 2);
+}
+
+/** WCAG 2.x contrast ratio of two #RRGGBB colours. */
+function contrast(a, b) {
+  const lum = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    const [r, g, bl] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+describe("light theme", () => {
+  const LIGHT = ':root[data-theme="light"]';
+
+  it("leaves the dark :root block byte for byte as it was", () => {
+    // Changing a dark token on purpose changes this hash; the light theme never may.
+    const hash = createHash("sha256").update(darkRootBlock(css)).digest("hex");
+    assert.equal(hash, DARK_ROOT_SHA256);
+  });
+
+  it("cannot leak into the dark :root or the Tailwind theme", () => {
+    const poisoned = JSON.parse(JSON.stringify(raw));
+    for (const group of Object.values(poisoned.theme.light.color)) for (const entry of Object.values(group)) entry.value = "#000000";
+    poisoned.theme.light.focus.ring_color = "#000000";
+    const out = generateCss(poisoned, "x");
+    assert.equal(darkRootBlock(out), darkRootBlock(css));
+    assert.equal(themeBlock(out), themeBlock(css));
+  });
+
+  it("overrides every surface and text colour, each as a CSS variable and a Tailwind colour", () => {
+    const vars = parseBlock(css, LIGHT);
+    for (const [k, v] of Object.entries(raw.theme.light.color.base)) {
+      assert.equal(vars[`--${k}`], v.value, `--${k}`);
+      assert.equal(vars[`--color-${k}`], v.value, `--color-${k}`);
+    }
+    assert.equal(vars["--focus-ring-color"], raw.theme.light.focus.ring_color);
+    assert.equal(vars["--glass-bg"], "rgb(245 247 251 / 0.82)");
+  });
+
+  it("never moves the water: depth 1-5 and the rain ramp keep their hex", () => {
+    const vars = parseBlock(css, LIGHT);
+    for (const k of ["1", "2", "3", "4", "5"]) assert.equal(vars[`--depth-${k}`], undefined, `--depth-${k} is fixed`);
+    for (const k of Object.keys(raw.color.rain)) assert.equal(vars[`--rain-${k}`], undefined, `--rain-${k} is fixed`);
+    assert.equal(tokensModule.colorsFor("light")["depth-3"], raw.color.depth["3"].value);
+  });
+
+  it("keeps text readable: 4.5:1 on ink, deep and well in both themes", () => {
+    for (const theme of ["dark", "light"]) {
+      const c = tokensModule.colorsFor(theme);
+      for (const fg of ["text", "text-2", "text-3", "tide"]) {
+        for (const bg of ["ink", "deep", "well"]) {
+          const ratio = contrast(c[fg], c[bg]);
+          assert.ok(ratio >= 4.5, `${theme}: --${fg} on --${bg} is ${ratio.toFixed(2)}:1`);
+        }
+      }
+      assert.ok(contrast(c.danger, c.deep) >= 4.5, `${theme}: --danger on --deep`);
+      assert.ok(contrast(c["on-tide"], c.tide) >= 4.5, `${theme}: --on-tide on --tide`);
+      // Count badges on an observation-type fill (Nadi's timeline): axe found `text-ink` there,
+      // which is near-white paper in light.
+      for (const kind of ["traffic", "report", "sensor", "cctv", "sar"]) {
+        const ratio = contrast(c["on-obs"], c[`obs-${kind}`]);
+        assert.ok(ratio >= 4.5, `${theme}: --on-obs on --obs-${kind} is ${ratio.toFixed(2)}:1`);
+      }
+    }
+  });
+
+  it("keeps --tide readable as text on its own 15-20 % tint, the selected-chip pattern", () => {
+    // `border-tide bg-tide/15 text-tide` (cycle picker, alert filters) is the light theme's first
+    // axe failure: teal-700 read 4.16:1 on its own tint over paper.
+    const tint = (fg, bg, alpha) => {
+      const [f, b] = [fg, bg].map((hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)));
+      return `#${f.map((v, i) => Math.round(alpha * v + (1 - alpha) * b[i]).toString(16).padStart(2, "0")).join("")}`;
+    };
+    for (const theme of ["dark", "light"]) {
+      const c = tokensModule.colorsFor(theme);
+      for (const bg of ["ink", "deep", "well"]) {
+        for (const alpha of [0.15, 0.2]) {
+          const ratio = contrast(c.tide, tint(c.tide, c[bg], alpha));
+          assert.ok(ratio >= 4.5, `${theme}: --tide on --tide/${alpha * 100} over --${bg} is ${ratio.toFixed(2)}:1`);
+        }
+      }
+    }
+  });
+
+  it("chooses the text colour per depth fill for contrast", () => {
+    for (const theme of ["dark", "light"]) {
+      const c = tokensModule.colorsFor(theme);
+      for (const k of ["dry", "1", "2", "3", "4", "5"]) {
+        const ratio = contrast(c[`on-depth-${k}`], c[`depth-${k}`]);
+        assert.ok(ratio >= 4.5, `${theme}: --on-depth-${k} on --depth-${k} is ${ratio.toFixed(2)}:1`);
+      }
+    }
+  });
+
+  it("keeps status, chart and observation marks at 3:1 on a light panel", () => {
+    const c = tokensModule.colorsFor("light");
+    for (const name of Object.keys(c).filter((n) => /^(status|chart|obs)-/.test(n))) {
+      const ratio = contrast(c[name], c.deep);
+      assert.ok(ratio >= 3, `light --${name} on --deep is ${ratio.toFixed(2)}:1`);
+    }
+  });
+
+  it("exports the theme tables and helpers", () => {
+    const { THEMES, DEFAULT_THEME, THEME_STORAGE_KEY, THEME_ATTRIBUTE, themeColors, colorsFor, isTheme, colors } = tokensModule;
+    assert.deepEqual([...THEMES], ["dark", "light"]);
+    assert.equal(DEFAULT_THEME, "dark");
+    assert.equal(THEME_STORAGE_KEY, "varuna-theme");
+    assert.equal(THEME_ATTRIBUTE, "data-theme");
+    for (const [name, hex] of Object.entries(colors)) assert.equal(themeColors.dark[name], hex, `dark ${name} is the :root value`);
+    assert.equal(colorsFor("light").ink, "#F5F7FB");
+    assert.equal(colorsFor("sepia").ink, colors.ink, "an unknown theme reads as dark");
+    assert.equal(isTheme("light"), true);
+    assert.equal(isTheme("Light"), false);
+    assert.ok(Object.isFrozen(themeColors.light));
+  });
+
+  it("rejects a light theme that moves a depth band, drops a base colour or adds a group", () => {
+    const clone = () => JSON.parse(JSON.stringify(raw));
+    const moved = clone();
+    moved.theme.light.color.depth["3"] = { value: "#123456" };
+    assert.throws(() => validateTokens(moved), /theme\.light\.color\.depth\.3/);
+    const missing = clone();
+    delete missing.theme.light.color.base["text-3"];
+    assert.throws(() => validateTokens(missing), /theme\.light\.color\.base\.text-3 is missing/);
+    const rain = clone();
+    rain.theme.light.color.rain = { 1: { value: "#FFFFFF" } };
+    assert.throws(() => validateTokens(rain), /theme\.light\.color\.rain cannot change/);
   });
 });
 

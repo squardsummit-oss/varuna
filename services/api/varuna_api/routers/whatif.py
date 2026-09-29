@@ -26,6 +26,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import threading
 import uuid
 from collections import OrderedDict
@@ -391,8 +392,8 @@ def _tide_block(tide_offset_m: float) -> dict[str, Any]:
         "twin_endpoint": TWIN_ENDPOINT,
         "message": (
             f"Tide {tide_offset_m:+.1f} m is not in this answer: the emulator has no sea level. "
-            "Rain, cleaning and pumps are answered here; the tide needs a full-city Twin run of "
-            "about a minute."
+            "Rain, cleaning and pumps are answered here; the tide needs a full-city Twin run, "
+            "which takes minutes."
         ),
     }
 
@@ -1403,7 +1404,7 @@ def _physics_on_twin(
         edges, *_ = _twin_cleaning(city, set(requested), _known_segments(city))
         key = scenario_key(_quantise(rain_scale), _quantise(tide_offset), edges)
         fingerprint = run_fingerprint(path)
-        hit = _cached(path.name, key, fingerprint)
+        hit = _serve_cached(path.name, key, fingerprint)
         cached = None if hit is None else str(hit[1]["source"])
         expected, expected_from = _expected_ms(
             meta,
@@ -1454,7 +1455,7 @@ def _physics_on_twin(
                 "This exact scenario is already answered for this run; posting it returns the "
                 "stored answer at once."
                 if cached
-                else "The full-city run takes about a minute and holds the server while it runs."
+                else "The full-city run takes minutes and holds the server while it runs."
                 if enabled
                 else f"The full-city Twin what-if is off on this server ({TWIN_JOB_ENV}=0)."
             ),
@@ -1945,15 +1946,56 @@ def _remember(run_id: str, key: str, payload: dict[str, Any]) -> None:
             _MEMORY.popitem(last=False)
 
 
+FINGERPRINT_PARTS = ("run", "twin", "code", "city")
+"""What a fingerprint is made of, in order: the run's `run.json`, the Twin's version, its code and
+the city build (:func:`run_fingerprint`)."""
+
+
+def _fingerprint_parts(fingerprint: str) -> dict[str, str]:
+    """``"<run>-twin<v>-code<c>-city<c>"`` as its four parts; a malformed one gives no parts."""
+    pieces = str(fingerprint).split("-")
+    if len(pieces) != len(FINGERPRINT_PARTS):
+        return {}
+    return dict(zip(FINGERPRINT_PARTS, pieces, strict=True))
+
+
+def _fingerprint_differs(stored: str, current: str, *, run_only: bool) -> list[str] | None:
+    """Which parts of ``current`` a stored answer was not made on, or None when it cannot serve.
+
+    A server that runs the Twin serves only an exact match: anything else it recomputes. A server
+    that cannot (:func:`twin_scenario_enabled` off) serves an answer made about **this run** - the
+    same `run.json` bytes and Twin version - on another machine's code or city build, because it
+    has no answer of its own to give instead; the parts that differ are returned so the label
+    says so (rule 6). The run it serves was baked on that same machine.
+    """
+    if stored == current:
+        return []
+    if not run_only:
+        return None
+    have, want = _fingerprint_parts(stored), _fingerprint_parts(current)
+    if not have or not want or have["run"] != want["run"] or have["twin"] != want["twin"]:
+        return None
+    return [part for part in ("code", "city") if have[part] != want[part]]
+
+
 def _cached(
-    run_id: str, key: str, fingerprint: str
+    run_id: str, key: str, fingerprint: str, *, run_only: bool = False
 ) -> tuple[dict[str, Any], dict[str, Any]] | None:
-    """A stored answer for this scenario on this exact run, and where it came from."""
+    """A stored answer for this scenario on this exact run, and where it came from.
+
+    ``run_only`` is the cache-only server's rule (:func:`_fingerprint_differs`); the answer's
+    ``where`` then names any part of the fingerprint it was not made on in ``differs``.
+    """
     with _MEMORY_GUARD:
         held = _MEMORY.get((run_id, key))
-        if held is not None and held.get("fingerprint") == fingerprint:
+        differs = (
+            None
+            if held is None
+            else _fingerprint_differs(str(held.get("fingerprint")), fingerprint, run_only=run_only)
+        )
+        if held is not None and differs is not None:
             _MEMORY.move_to_end((run_id, key))
-            return held, {"source": "memory"}
+            return held, {"source": "memory", **({"differs": differs} if differs else {})}
         if held is not None:
             del _MEMORY[(run_id, key)]
     for source, root in (("disk", _cache_root()), ("shipped", _shipped_cache_root())):
@@ -1964,15 +2006,28 @@ def _cached(
             payload = json.loads(gzip.decompress(stored.read_bytes()).decode("utf-8"))
         except (OSError, ValueError, EOFError):
             payload = None
-        if not isinstance(payload, dict) or payload.get("fingerprint") != fingerprint:
+        differs = (
+            _fingerprint_differs(str(payload.get("fingerprint")), fingerprint, run_only=run_only)
+            if isinstance(payload, dict)
+            else None
+        )
+        if not isinstance(payload, dict) or differs is None:
             # Another bake of this run, or another Twin: the answer is not this run's. The local
             # cache is ours to clean; the shipped one is read-only and is simply not used.
             if source == "disk":
                 stored.unlink(missing_ok=True)
             continue
         _remember(run_id, key, payload)
-        return payload, {"source": source, "path": f"{root.name}/{run_id}/{stored.name}"}
+        where = {"source": source, "path": f"{root.name}/{run_id}/{stored.name}"}
+        return payload, {**where, **({"differs": differs} if differs else {})}
     return None
+
+
+def _serve_cached(
+    run_id: str, key: str, fingerprint: str
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """:func:`_cached` under this server's rule: exact when it can run the Twin, by run when not."""
+    return _cached(run_id, key, fingerprint, run_only=not twin_scenario_enabled())
 
 
 def _store(run_id: str, key: str, payload: dict[str, Any], *, root: Path | None = None) -> Path:
@@ -2005,11 +2060,21 @@ def _cache_label(where: dict[str, Any], payload: dict[str, Any]) -> dict[str, An
         "not recomputed on this machine.",
         "computed": "Computed now on this server.",
     }[where["source"]]
+    differs = [
+        {"code": "Twin code", "city": "city build"}[part] for part in where.get("differs") or ()
+    ]
+    tail = (
+        f" This server cannot run the Twin, and its {' and '.join(differs)} "
+        f"{'differ' if len(differs) > 1 else 'differs'} from the one this answer was computed "
+        "on; the run it answers about is the same."
+        if differs
+        else ""
+    )
     return {
         **where,
         "computed_at": payload.get("computed_at"),
         "computed_on": on,
-        "label": f"{label} Computed {payload.get('computed_at')} on {machine}.",
+        "label": f"{label} Computed {payload.get('computed_at')} on {machine}.{tail}",
     }
 
 
@@ -3105,11 +3170,24 @@ def prewarm_scenario(
         str(meta["city"]), params["cleaned_segments"], _known_segments(str(meta["city"]))
     )
     key = scenario_key(params["rain_scale"], params["tide_offset_m"], edges)
+    root = _shipped_cache_root() if shipped else None
     if not force:
         hit = _cached(path.name, key, fingerprint)
         if hit is not None and (not shipped or hit[1]["source"] == "shipped"):
             return hit[0], _cache_label(hit[1], hit[0])
-    root = _shipped_cache_root() if shipped else None
+        if hit is not None and root is not None:
+            # This machine already answered this exact scenario on this code and city: the
+            # shipped copy is that answer, with its own stamp, not a second run of the Twin.
+            stored = _store(path.name, key, hit[0], root=root)
+            held = _load_baseline(path.name, fingerprint)
+            if held is not None:
+                _store_baseline(path.name, held[0], root=root)
+            where = {
+                **hit[1],
+                "path": f"{stored.parent.parent.name}/{path.name}/{stored.name}",
+                "copied_to_shipped": True,
+            }
+            return hit[0], _cache_label(where, hit[0])
     payload = _computed_payload(
         compute_twin_scenario(path, baseline_root=root, **params), fingerprint
     )
@@ -3142,17 +3220,12 @@ def whatif_twin(
     scenario already computed for this exact run answers **200** with ``state: done`` and the
     result, saying which cache it came from.
     """
-    if not twin_scenario_enabled():
-        raise api_error(
-            403,
-            "whatif_twin_disabled",
-            f"The full-city Twin what-if is off on this server ({TWIN_JOB_ENV}=0): one scenario "
-            "holds the host for about a minute. The emulator what-if and the physics check still "
-            "answer rain and cleaning.",
-        )
+    enabled = twin_scenario_enabled()
     path, meta = _resolve_twin_run(body)
     params, param_notes = _scenario_params(body)
-    _refuse_missing(path, meta, params["tide_offset_m"])
+    if enabled:
+        # A cache-only server never runs the Twin, so it needs no grid to run it on.
+        _refuse_missing(path, meta, params["tide_offset_m"])
     edges, *_ = _twin_cleaning(
         str(meta["city"]), params["cleaned_segments"], _known_segments(str(meta["city"]))
     )
@@ -3169,7 +3242,7 @@ def whatif_twin(
     }
     now = datetime.now(IST)
 
-    hit = _cached(path.name, key, fingerprint)
+    hit = _serve_cached(path.name, key, fingerprint)
     if hit is not None:
         payload, where = hit
         done = TwinScenarioJob(
@@ -3191,6 +3264,16 @@ def whatif_twin(
         )
         _keep(done)
         return JSONResponse(status_code=200, content=done.payload())
+
+    if not enabled:
+        offer = _twin_offer(path, meta, fingerprint)
+        raise api_error(
+            403,
+            "whatif_twin_disabled",
+            f"This server cannot run the full-city Twin ({TWIN_JOB_ENV}=0) and has no stored "
+            f"answer for this scenario. {offer['message']}",
+            run_id=path.name,
+        )
 
     with _JOBS_GUARD:
         running = [j for j in _JOBS.values() if j.running]
@@ -3242,6 +3325,166 @@ def whatif_twin(
         raise
     log.info("whatif.twin_started", job_id=job.job_id, run_id=path.name, key=key)
     return JSONResponse(status_code=202, content=job.payload())
+
+
+_KEY_PATTERN = re.compile(
+    r"^rain(?P<rain>\d+\.\d)_tide(?P<tide>[+-]\d+\.\d)_clean-(?P<clean>none|[0-9a-f]{12})_"
+    + BLOCKAGE_SOURCE
+    + r"$"
+)
+"""A stored answer's file name (:func:`scenario_key`), read back into its lever values."""
+
+
+def _stored_keys(run_id: str) -> list[str]:
+    """Every scenario key held for a run: in memory, on disk and in the shipped copy."""
+    keys: set[str] = set()
+    for root in (_cache_root(), _shipped_cache_root()):
+        folder = root / run_id
+        if folder.is_dir():
+            keys.update(f.name.removesuffix(".json.gz") for f in folder.glob("*.json.gz"))
+    with _MEMORY_GUARD:
+        keys.update(key for held_run, key in _MEMORY if held_run == run_id)
+    return sorted(keys)
+
+
+def _answers_for(run_id: str, fingerprint: str) -> list[dict[str, Any]]:
+    """The stored answers this server would serve for a run, as lever values."""
+    answers: list[dict[str, Any]] = []
+    for key in _stored_keys(run_id):
+        match = _KEY_PATTERN.match(key)
+        if match is None:
+            continue
+        hit = _serve_cached(run_id, key, fingerprint)
+        if hit is None:
+            continue
+        payload, where = hit
+        answers.append(
+            {
+                "rain_scale": float(match["rain"]),
+                "tide_offset_m": float(match["tide"]) + 0.0,
+                "cleaned": match["clean"] != "none",
+                "source": where["source"],
+                "computed_at": payload.get("computed_at"),
+                **({"differs": where["differs"]} if where.get("differs") else {}),
+            }
+        )
+    return sorted(answers, key=lambda a: (a["cleaned"], a["rain_scale"], a["tide_offset_m"]))
+
+
+def _tide_only(answers: list[dict[str, Any]]) -> list[float]:
+    """The tide offsets answered with rain 1.0x and nothing cleaned: what a tide lever can offer."""
+    return sorted(
+        {
+            a["tide_offset_m"]
+            for a in answers
+            if a["rain_scale"] == 1.0 and not a["cleaned"] and a["tide_offset_m"] != 0.0
+        }
+    )
+
+
+def _offsets_text(offsets: list[float]) -> str:
+    return " and ".join(f"{offset:+.1f} m" for offset in offsets)
+
+
+def _cycle_label(meta: dict[str, Any]) -> str:
+    try:
+        return datetime.fromisoformat(str(meta["cycle_ts"])).astimezone(IST).strftime("%H:%M")
+    except (KeyError, ValueError):
+        return str(meta.get("run_id", "another cycle"))
+
+
+def _twin_offer(path: Path, meta: dict[str, Any], fingerprint: str) -> dict[str, Any]:
+    """What the full-city Twin what-if can answer on this server, for this run and the others."""
+    enabled = twin_scenario_enabled()
+    answers = _answers_for(path.name, fingerprint)
+    tides = _tide_only(answers)
+    elsewhere: list[dict[str, Any]] = []
+    if not enabled:
+        runs = {
+            folder.name
+            for root in (_cache_root(), _shipped_cache_root())
+            if root.is_dir()
+            for folder in root.iterdir()
+            if folder.is_dir() and folder.name != path.name
+        }
+        for other in sorted(runs):
+            other_path = run_dir(other)
+            try:
+                other_meta = json.loads((other_path / "run.json").read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if other_meta.get("city") != meta.get("city"):
+                continue
+            offsets = _tide_only(_answers_for(other, run_fingerprint(other_path)))
+            if offsets:
+                elsewhere.append(
+                    {
+                        "run_id": other,
+                        "cycle_ts": other_meta.get("cycle_ts"),
+                        "cycle": _cycle_label(other_meta),
+                        "tide_offsets_m": offsets,
+                    }
+                )
+    if enabled:
+        message = (
+            "This server runs the full-city Twin: any tide from -0.5 to +1.0 m, minutes each. "
+            "Stored answers return at once."
+        )
+    elif tides:
+        message = (
+            f"The tide is answered here from stored Twin runs only: {_offsets_text(tides)} at "
+            "rain 1.0x with no pipes cleaned."
+        )
+    elif elsewhere:
+        where = "; ".join(
+            f"{row['cycle']} IST at {_offsets_text(row['tide_offsets_m'])}" for row in elsewhere
+        )
+        message = f"No stored tide answer for this cycle. Stored on this server: {where}."
+    else:
+        message = "This server cannot run the Twin and holds no stored tide answer."
+    return {
+        "enabled": enabled,
+        "answers": answers,
+        "tide_offsets_m": tides,
+        "elsewhere": elsewhere,
+        "message": message,
+    }
+
+
+_WARMED: set[str] = set()
+_WARM_GUARD = threading.Lock()
+
+
+def _warm_emulator(path: Path) -> None:
+    """Load the emulator and the run's tables once per run, off the request, so the first
+    "Run what-if" answers inside its 1 s budget rather than paying the cold load (2-4 s)."""
+    with _WARM_GUARD:
+        if path.name in _WARMED:
+            return
+        _WARMED.add(path.name)
+
+    def warm() -> None:
+        try:
+            whatif({"run_id": path.name, "rain_scale": 1.1})
+        except Exception as error:  # a warm-up never fails a request
+            log.info("whatif.warm_failed", run_id=path.name, error=str(error))
+
+    threading.Thread(target=warm, name=f"whatif-warm-{path.name}", daemon=True).start()
+
+
+@router.get("/whatif/twin", summary="What the full-city Twin what-if can answer on this server")
+def whatif_twin_offer(run_id: str | None = None) -> dict[str, Any]:
+    """Whether this server runs the full-city Twin, and the stored answers it can serve for a run.
+
+    ``enabled`` false is a cache-only server (``VARUNA_WHATIF_TWIN=0``): it answers only the
+    scenarios in ``answers``, and ``tide_offsets_m`` are the tides a lab can offer at rain 1.0x
+    with nothing cleaned. ``elsewhere`` names the other cycles of the city that have stored tide
+    answers, and ``message`` is one sentence a screen can print. Reading it also warms the
+    emulator for the run, so the first what-if on it is not the cold one.
+    """
+    path, meta = _resolve_twin_run({"run_id": run_id} if run_id else {})
+    _warm_emulator(path)
+    return {"run_id": path.name, **_twin_offer(path, meta, run_fingerprint(path))}
 
 
 def _job(job_id: str) -> TwinScenarioJob:

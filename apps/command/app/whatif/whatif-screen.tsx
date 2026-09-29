@@ -20,19 +20,22 @@ import {
   WhatIfControls,
   formatRainScale,
   formatTideOffset,
+  snapTide,
   type WhatIfValues,
 } from "@/components/varuna/whatif-controls";
+import { WhatIfDetails } from "@/components/varuna/whatif-details";
 import { apiUrl } from "@/lib/api/client";
 import { allSegments, type GeoSegment, type RunDepth } from "@/lib/api/run-depth";
-import { MAX_CLEANED_SEGMENTS } from "@/lib/api/whatif";
+import { MAX_CLEANED_SEGMENTS, tideOfferNote, tideStopsFor } from "@/lib/api/whatif";
 import { cityFromSearch } from "@/lib/city";
 import { formatIst, formatKm, formatTimeWithLead, minutesBetween } from "@/lib/format";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-media-query";
 import { usePhysicsCheck } from "@/lib/hooks/use-physics-check";
-import { useWhatIf, type WhatIfEngine } from "@/lib/hooks/use-twin-scenario";
+import { useTwinOffer, useWhatIf, type WhatIfEngine } from "@/lib/hooks/use-twin-scenario";
 import { DUR, DUR_MS, tween } from "@/lib/motion";
 import { denseFrame, pathLengthM, pathPoints, type AffectedFrame } from "@/lib/map/affected-bounds";
 import { navItem } from "@/lib/nav";
+import { fetchOpeningRunId } from "@/lib/opening-run";
 
 import {
   BEFORE_FLOOR_CM,
@@ -54,8 +57,15 @@ const CITY_SLUG = /^[a-z][a-z0-9-]{0,31}$/;
 
 const SCREEN = navItem("whatif");
 
-const DESCRIPTION =
-  "Ask the twin a question: rain, cleaning and pumps answer before the next radar frame, and a tide runs the full physics.";
+const DESCRIPTION = "Change the rain, the tide, the pipes or the pumps and see which streets move.";
+
+/**
+ * The cycle the lab opens on when the URL pins none: 08:40 IST, the storm's peak in the 2 July
+ * replay and the cycle the demo's what-if is asked about (section 15, 4:30). Left to the API, the
+ * lab opened on the newest run - 09:10, after the storm - where a rain scenario has almost nothing
+ * to move, and the stored tide answers are for 08:40. `/drains` and the dashboard open here too.
+ */
+export const WHATIF_OPENING_TS = "2019-07-02T08:40:00+05:30";
 
 /**
  * Where the forecast map sits clear of what `MapSlot` floats over it, in px: the depth legend on
@@ -83,25 +93,18 @@ export function forecastCaption(
 ): string | null {
   if (!frame || !run) return null;
   const cycle = run.cycleTs ? `The ${formatIst(run.cycleTs)} IST cycle` : "This cycle";
-  if (frame.basis === "aoi") {
-    return `${cycle} has no wet street, so the map shows the whole city. Run what-if to see what a scenario would change.`;
-  }
+  const lower = `${cycle.charAt(0).toLowerCase()}${cycle.slice(1)}`;
+  if (frame.basis === "aoi") return `${cycle} has no wet street; the map shows the whole city.`;
   if (frame.basis === "hotspots") {
-    return `No street reaches 5 cm in ${cycle.charAt(0).toLowerCase()}${cycle.slice(1)}, so the map shows its chronic spots. Run what-if to see what a scenario would change.`;
+    return `No street reaches 5 cm in ${lower}; the map shows its chronic spots.`;
   }
   const step = frame.step ?? 0;
   const ts = run.validTs[step];
   const lead =
     (run.cycleTs && ts ? minutesBetween(run.cycleTs, ts) : null) ?? (step + 1) * run.stepMin;
-  const pct = Math.round(frame.share * 100);
-  const held =
-    pct >= 100
-      ? `all ${formatKm(frame.lengthM)} of street at ${frame.thresholdCm} cm or more`
-      : `${pct} % of the ${formatKm(frame.lengthM)} of street at ${frame.thresholdCm} cm or more`;
   return (
-    `Before any change: ${cycle.charAt(0).toLowerCase()}${cycle.slice(1)} at its peak, ` +
-    `${ts ? formatTimeWithLead(ts, lead) : "its peak step"}, framed on ${held}. ` +
-    "Run what-if to draw what the scenario changes."
+    `Before any change: ${lower} at its peak, ${ts ? formatTimeWithLead(ts, lead) : "its peak step"}. ` +
+    `${formatKm(frame.lengthM)} of street at ${frame.thresholdCm} cm or more.`
   );
 }
 
@@ -178,7 +181,25 @@ function WhatIfLab() {
   // scenario at 08:40 has 6,474 to move. The operator picks the cycle here as they do on the
   // console, on Alerts and on Pumps - or the deep link brings the cycle it was pressed on.
   const [runId, setRunId] = useState<string | undefined>(deepLink.runId);
-  const flow = useWhatIf(runId);
+  // With no `?run=`, the lab opens on the 08:40 storm cycle (WHATIF_OPENING_TS), and the map holds
+  // its load until it knows that is the run to draw.
+  const [opened, setOpened] = useState(deepLink.runId !== undefined);
+  useEffect(() => {
+    if (opened) return;
+    const controller = new AbortController();
+    void fetchOpeningRunId(deepLink.city, WHATIF_OPENING_TS, apiUrl, controller.signal).then(
+      (opening) => {
+        if (controller.signal.aborted) return;
+        setRunId((current) => current ?? opening);
+        setOpened(true);
+      },
+    );
+    return () => controller.abort();
+  }, [opened, deepLink.city]);
+  // What this API's Twin can answer for the cycle: everything, or only its stored tide answers.
+  const offer = useTwinOffer(runId, opened);
+  const tideStops = useMemo(() => tideStopsFor(offer), [offer]);
+  const flow = useWhatIf(runId, offer);
   const physics = usePhysicsCheck(runId);
   const twin = flow.twin;
 
@@ -248,7 +269,10 @@ function WhatIfLab() {
   );
 
   // A different cycle is a different answer, so the last one stops being shown with it.
-  const pickCycle = useCallback((next: string) => setRunId(next), []);
+  const pickCycle = useCallback((next: string) => {
+    setRunId(next);
+    setOpened(true);
+  }, []);
 
   // The answer on screen: the Twin's once it has finished the question, the emulator's until then.
   // The job's fields are read out first so the memo depends on exactly the values it uses, which
@@ -323,6 +347,9 @@ function WhatIfLab() {
 
   const undrawn = answer && streetRows.length > 0 ? answer.nChanged - diffSegments.length : 0;
   const emulator = flow.emulator;
+  // A cleaned segment's chip reads as its street, not its id.
+  const segmentLabel = useCallback((id: string) => names.get(id), [names]);
+  const shownValues = { ...values, tideOffsetM: snapTide(values.tideOffsetM, tideStops) };
 
   return (
     <AppShell>
@@ -336,15 +363,14 @@ function WhatIfLab() {
             honesty={ENGINE_LABEL[answer?.engine ?? "emulator"]}
           />
 
-          <CyclePicker currentRunId={answer?.runId ?? runId} onPick={pickCycle} />
+          <CyclePicker
+            currentRunId={answer?.runId ?? forecastShown?.runId ?? runId}
+            onPick={pickCycle}
+          />
 
           <div className="grid min-h-0 gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
             <PanelErrorBoundary title="Scenario">
-              <Panel
-                title="Scenario"
-                description="Rain, cleaning and the pump plan run on the emulator; the tide runs on the Twin."
-                className="min-w-0"
-              >
+              <Panel title="Scenario" className="min-w-0">
                 <WhatIfControls
                   initial={values}
                   onChange={setValues}
@@ -352,6 +378,9 @@ function WhatIfLab() {
                   onPhysicsCheck={physics.running ? undefined : physics.check}
                   physicsDisabledReason="Checking: the Twin is running the scenario"
                   cleanedSource={deepLink.hotspot}
+                  segmentLabel={segmentLabel}
+                  tideStops={tideStops}
+                  tideNote={tideOfferNote(offer)}
                 />
                 {deepLink.asked > deepLink.picked.length ? (
                   // The URL is hand-editable, so a longer list is possible; saying nothing would
@@ -369,7 +398,10 @@ function WhatIfLab() {
                 {flow.emulatorError ? (
                   <p className="type-small text-text-2 mt-3">{flow.emulatorError}</p>
                 ) : null}
-                {tideAsked ? (
+                {flow.twinSkipped ? (
+                  <p className="type-small text-text-2 mt-3">{flow.twinSkipped}</p>
+                ) : null}
+                {tideAsked && !flow.twinSkipped ? (
                   <TwinRunProgress
                     className="border-line mt-4 border-t pt-4"
                     line={twin.line}
@@ -380,22 +412,12 @@ function WhatIfLab() {
                     onCancel={twin.cancel}
                   />
                 ) : null}
-                {answer ? (
-                  // The run the answer is about, as /route prints it. Without it the screen says
-                  // how much the scenario moved without saying which forecast it moved: the same
-                  // 1.3x is 1,498 wet segments at 09:10 IST and 6,474 at 08:40.
-                  <p className="type-micro text-text-3 mt-3">
-                    Ran on run <span className="num">{answer.runId}</span> in{" "}
-                    <span className="num">{Math.round(answer.ms).toLocaleString("en-IN")}</span> ms.
-                    {emulator && emulator.cleanedSegments.length > 0
-                      ? ` ${emulator.cleanedSegments.length} segment${emulator.cleanedSegments.length === 1 ? "" : "s"} cleaned.`
-                      : ""}
-                    {/* What the run could not clean. The endpoint drops an id this city has no
-                        segment for rather than failing, so the count has to be visible or a
-                        partly wrong link reads as a whole answer (rule 6). */}
-                    {emulator && emulator.cleanedUnmatched.length > 0
-                      ? ` ${emulator.cleanedUnmatched.length} of the ids asked for are not road segments in this city and were not cleaned.`
-                      : ""}
+                {emulator && emulator.cleanedUnmatched.length > 0 ? (
+                  // The endpoint drops an id this city has no segment for rather than failing,
+                  // so the count has to be visible or a partly wrong link reads as a whole answer.
+                  <p className="type-micro text-text-2 mt-3">
+                    {emulator.cleanedUnmatched.length} of the ids asked for are not road segments in
+                    this city and were not cleaned.
                   </p>
                 ) : null}
               </Panel>
@@ -407,8 +429,8 @@ function WhatIfLab() {
                   title="Difference layer"
                   description={
                     answer
-                      ? "Segments coloured by change in depth: improved, worse, unchanged."
-                      : "The cycle's forecast until a what-if runs; then segments coloured by change in depth."
+                      ? "Change in peak depth per street: improved, worse, unchanged."
+                      : "This cycle's forecast until a what-if runs."
                   }
                   className="min-w-0"
                 >
@@ -421,6 +443,7 @@ function WhatIfLab() {
                         <FloodMap
                           city={city}
                           runId={runId}
+                          deferLoad={!opened}
                           step={forecastFrame?.step ?? 0}
                           onLoaded={onForecastLoaded}
                           frameOn="affected"
@@ -460,8 +483,7 @@ function WhatIfLab() {
                               }
                             : {
                                 title: "No scenario run yet",
-                                description:
-                                  "Set the rain, the tide, the pipes or the pump plan, then press Run what-if.",
+                                description: "Set a lever, then press Run what-if.",
                               }
                         }
                       />
@@ -469,40 +491,63 @@ function WhatIfLab() {
                   </div>
                   <AnswerFade engine={answer?.engine ?? null}>
                     {answer ? (
-                      <p className="type-micro text-text-2 mt-3 font-medium">
-                        {tideLeftOut ? EMULATOR_NO_TIDE : ENGINE_LABEL[answer.engine]}
-                      </p>
-                    ) : null}
-                    {answer?.tideOutcome ? (
-                      <p className="type-small text-text mt-1">{answer.tideOutcome}</p>
-                    ) : null}
-                    {!answer && forecastLine ? (
-                      <p className="type-micro text-text-2 mt-3">{forecastLine}</p>
-                    ) : null}
-                    <p className="type-micro text-text-3 mt-1">
-                      {answer
-                        ? // The engine's own sentence, counted from the list the map draws.
-                          answer.summary
-                        : `Scenario ready to run: ${scenarioLine(values)}.`}
-                    </p>
-                    {answer && !answer.nothingChanged && streetRows.length > 0 ? (
-                      <p className="type-micro text-text-3 mt-1">
-                        Drawn:{" "}
-                        <span className="num">{diffSegments.length.toLocaleString("en-IN")}</span>{" "}
-                        of <span className="num">{answer.nChanged.toLocaleString("en-IN")}</span>.
-                        {undrawn > 0
-                          ? ` ${undrawn.toLocaleString("en-IN")} changed segment${undrawn === 1 ? " has" : "s have"} no geometry in the served street layer and cannot be drawn.`
-                          : ""}
-                        {answer.nDryBefore > 0
-                          ? ` ${answer.nDryBefore.toLocaleString("en-IN")} were below ${BEFORE_FLOOR_CM} cm in the run, which does not store their depth; their change is read from 0 cm.`
-                          : ""}
-                      </p>
-                    ) : null}
-                    {(answer?.lines ?? []).map((line) => (
-                      <p key={line} className="type-micro text-text-3 mt-1">
-                        {line}
-                      </p>
-                    ))}
+                      <>
+                        <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                          <p className="type-body text-text font-medium">{answer.summary}</p>
+                          <span className="rounded-chip border-line type-micro text-text-2 border px-2 py-0.5">
+                            {tideLeftOut ? EMULATOR_NO_TIDE : ENGINE_LABEL[answer.engine]}
+                          </span>
+                          {answer.skill ? (
+                            <span className="num type-micro text-text-2">{answer.skill}</span>
+                          ) : null}
+                        </div>
+                        {answer.tideOutcome ? (
+                          <p className="type-small text-text mt-1">{answer.tideOutcome}</p>
+                        ) : null}
+                        <WhatIfDetails className="mt-2">
+                          <p>
+                            Answered in{" "}
+                            <span className="num">
+                              {Math.round(answer.ms).toLocaleString("en-IN")}
+                            </span>{" "}
+                            ms
+                            {emulator && emulator.cleanedSegments.length > 0
+                              ? `; ${emulator.cleanedSegments.length} segment${emulator.cleanedSegments.length === 1 ? "" : "s"} cleaned`
+                              : ""}
+                            .
+                          </p>
+                          {!answer.nothingChanged && streetRows.length > 0 ? (
+                            <p>
+                              Drawn:{" "}
+                              <span className="num">
+                                {diffSegments.length.toLocaleString("en-IN")}
+                              </span>{" "}
+                              of{" "}
+                              <span className="num">{answer.nChanged.toLocaleString("en-IN")}</span>
+                              .
+                              {undrawn > 0
+                                ? ` ${undrawn.toLocaleString("en-IN")} changed segment${undrawn === 1 ? " has" : "s have"} no geometry in the served street layer and cannot be drawn.`
+                                : ""}
+                              {answer.nDryBefore > 0
+                                ? ` ${answer.nDryBefore.toLocaleString("en-IN")} were below ${BEFORE_FLOOR_CM} cm in the run, which does not store their depth; their change is read from 0 cm.`
+                                : ""}
+                            </p>
+                          ) : null}
+                          {answer.lines.map((line) => (
+                            <p key={line}>{line}</p>
+                          ))}
+                        </WhatIfDetails>
+                      </>
+                    ) : (
+                      <>
+                        {forecastLine ? (
+                          <p className="type-micro text-text-2 mt-3">{forecastLine}</p>
+                        ) : null}
+                        <p className="type-micro text-text-3 mt-1">
+                          Scenario ready to run: {scenarioLine(shownValues)}.
+                        </p>
+                      </>
+                    )}
                   </AnswerFade>
                 </Panel>
               </PanelErrorBoundary>
@@ -512,7 +557,7 @@ function WhatIfLab() {
                   title="Hotspot deltas"
                   // One row per junction of the run's own register: its peak and its minutes
                   // above 30 and 45 cm, before and after, from whichever engine answered.
-                  description="Peak depth and minutes above 30 and 45 cm per hotspot, before and after."
+                  description="Peak depth and minutes above 30 and 45 cm, before and after."
                   className="min-w-0"
                 >
                   <AnswerFade engine={answer?.engine ?? null}>
@@ -534,7 +579,7 @@ function WhatIfLab() {
               <PanelErrorBoundary title="Largest changes">
                 <Panel
                   title="Largest changes"
-                  description={`Up to ${MAX_STREET_ROWS} segments the scenario moved most, by street name.`}
+                  description={`The ${MAX_STREET_ROWS} streets the scenario moved most.`}
                   className="min-w-0"
                 >
                   <AnswerFade engine={answer?.engine ?? null}>
@@ -553,7 +598,7 @@ function WhatIfLab() {
               <PanelErrorBoundary title="Physics check">
                 <Panel
                   title="Physics check"
-                  description="How far the emulator sits from a Twin run on the same scenario."
+                  description="The emulator against a Twin run of the same scenario."
                   className="min-w-0"
                 >
                   <PhysicsCheckPanel

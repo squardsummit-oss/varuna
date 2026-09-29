@@ -188,8 +188,7 @@ export function PumpPanel({
           <Skeleton lines={4} />
         ) : inventory.length === 0 ? (
           <p className="type-small text-text-2">
-            This cycle carries no pump plan, so there is no fleet to set a status on. Pick a cycle
-            from the storm, or bake one.
+            No pump plan on this cycle. Pick a cycle from the storm.
           </p>
         ) : (
           <ul className="max-h-72 space-y-1.5 overflow-y-auto" aria-label="Pumps">

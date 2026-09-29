@@ -13,13 +13,14 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { formatPct, formatSpeed } from "@/lib/format";
+import { isTheme, useTheme } from "@/lib/theme";
 import { isReplaySpeed, REPLAY_SPEEDS } from "@/lib/stores/replay";
 import { PROFILE_LABELS, useUiStore, VEHICLE_PROFILES } from "@/lib/stores/ui";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="type-small font-medium text-text-2">{title}</h3>
+      <h3 className="type-small text-text-2 font-medium">{title}</h3>
       {children}
     </section>
   );
@@ -35,6 +36,7 @@ export function SettingsDrawer() {
   const setRiskTolerance = useUiStore((s) => s.setRiskTolerance);
   const replaySpeedDefault = useUiStore((s) => s.replaySpeedDefault);
   const setReplaySpeedDefault = useUiStore((s) => s.setReplaySpeedDefault);
+  const { theme, setTheme } = useTheme();
 
   return (
     <Sheet open={open} onOpenChange={(next) => setOpen(next)}>
@@ -47,7 +49,7 @@ export function SettingsDrawer() {
         <div className="flex flex-col gap-6 overflow-y-auto px-4 pb-4">
           <Section title="Sound">
             <div className="flex items-center justify-between gap-4">
-              <Label htmlFor="settings-sound" className="type-body font-normal text-text">
+              <Label htmlFor="settings-sound" className="type-body text-text font-normal">
                 Phone mock sound
               </Label>
               <Switch
@@ -67,10 +69,15 @@ export function SettingsDrawer() {
 
           <Section title="Units">
             <div className="flex items-center justify-between gap-4">
-              <Label htmlFor="settings-units" className="type-body font-normal text-text">
+              <Label htmlFor="settings-units" className="type-body text-text font-normal">
                 Depth is shown in centimetres
               </Label>
-              <Switch id="settings-units" checked disabled aria-label="Depth unit, locked to centimetres" />
+              <Switch
+                id="settings-units"
+                checked
+                disabled
+                aria-label="Depth unit, locked to centimetres"
+              />
             </div>
             <p className="type-small text-text-3">
               Operators, alerts and the CAP feed all use centimetres, so one unit avoids misread
@@ -91,7 +98,7 @@ export function SettingsDrawer() {
                 return (
                   <li key={profile} className="flex flex-col gap-2">
                     <div className="flex items-center justify-between gap-4">
-                      <Label htmlFor={id} className="type-body font-normal text-text">
+                      <Label htmlFor={id} className="type-body text-text font-normal">
                         {PROFILE_LABELS[profile]}
                       </Label>
                       <span className="num type-small text-text-2">{formatPct(value)}</span>
@@ -132,16 +139,27 @@ export function SettingsDrawer() {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-            <p className="type-small text-text-3">Speed the replay starts at when a bundle loads.</p>
+            <p className="type-small text-text-3">
+              Speed the replay starts at when a bundle loads.
+            </p>
           </Section>
 
           <Separator />
 
           <Section title="Theme">
-            <p className="type-body text-text">Dark only</p>
-            <p className="type-small text-text-3">
-              The console is designed for a control room at night.
-            </p>
+            <ToggleGroup
+              aria-label="Theme"
+              variant="outline"
+              value={[theme]}
+              onValueChange={(values) => {
+                const next = values[0];
+                if (isTheme(next)) setTheme(next);
+              }}
+            >
+              <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
+              <ToggleGroupItem value="light">Light</ToggleGroupItem>
+            </ToggleGroup>
+            <p className="type-small text-text-3">Dark for a control room, light for daylight.</p>
           </Section>
         </div>
       </SheetContent>

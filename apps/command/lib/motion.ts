@@ -159,6 +159,9 @@ export const DUR_MS = {
   heroHandover: 900,
   staggerPumps: 150,
   gaugeDrain: 900,
+  pourBand: 600,
+  staggerThresholds: 150,
+  crestSettle: 1200,
 } as const;
 
 export type DurationKey = keyof typeof DUR_MS;
@@ -211,7 +214,9 @@ export type MotionId =
   | "M32"
   | "M33"
   | "M34"
-  | "M35";
+  | "M35"
+  | "M36"
+  | "M37";
 
 /** Framer props for one motion; spread onto a `motion.*` element. */
 export interface MotionPreset {
@@ -598,6 +603,23 @@ export const M: Readonly<Record<MotionId, MotionSpec>> = {
     trigger: "Optimise",
     reduced: "markers at their times, no slide",
     durations: ["crossFade"],
+  },
+  M36: {
+    id: "M36",
+    where: "Pramana contingency by threshold",
+    motion:
+      "Each threshold's column fills from the bottom like rising water, hits then misses then false alarms, 600 ms per band, 150 ms stagger across thresholds, under a wave crest whose amplitude decays to flat within 1.2 s; the counts and CSI, POD and FAR roll to their values; choosing another threshold drains and re-pours the columns",
+    trigger: "in view or threshold change",
+    reduced: "columns at their final heights, flat crest, final numbers",
+    durations: ["pourBand", "staggerThresholds", "crestSettle"],
+  },
+  M37: {
+    id: "M37",
+    where: "Theme switch",
+    motion: "None: dark and light swap in one frame",
+    trigger: "toggle",
+    reduced: "same",
+    durations: [],
   },
 };
 

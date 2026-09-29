@@ -6,10 +6,13 @@ import type { WhatIfValues } from "@/components/varuna/whatif-controls";
 import { errorMessage, isApiError } from "@/lib/api/client";
 import {
   cancelTwinScenario,
+  getTwinOffer,
   getTwinScenario,
   runWhatIf,
   startTwinScenario,
+  twinCannotAnswer,
   twinProgressLine,
+  type TwinOffer,
   type TwinScenarioJob,
   type TwinScenarioResult,
   type TwinStepMark,
@@ -269,9 +272,37 @@ export function useTwinScenario(runId: string | null | undefined): TwinScenarioS
 /** Which engine answered the question on screen. */
 export type WhatIfEngine = "emulator" | "twin";
 
+/**
+ * What this API's full-city Twin can answer for a cycle (`GET /v1/whatif/twin`), or null while it
+ * loads and on an API that predates the route. A null offer leaves every lever as it was: the
+ * Twin job itself then says what it refuses.
+ */
+export function useTwinOffer(runId: string | null | undefined, ready = true): TwinOffer | null {
+  const [held, setHeld] = useState<{ runId: string | null | undefined; offer: TwinOffer } | null>(
+    null,
+  );
+  useEffect(() => {
+    // Not until the screen knows its cycle: an offer for the API's newest run would be dropped.
+    if (!ready) return;
+    const controller = new AbortController();
+    getTwinOffer(runId ?? undefined, controller.signal)
+      .then((offer) => {
+        if (!controller.signal.aborted) setHeld({ runId, offer });
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [runId, ready]);
+  return held && held.runId === runId ? held.offer : null;
+}
+
 export interface WhatIfFlow {
   /** The scenario of the last "Run what-if", or null before the first. */
   asked: WhatIfValues | null;
+  /**
+   * Why the tide in the last question was not sent to the Twin: a cache-only API holds no answer
+   * to it. Null when the Twin ran, or the question kept the run's own tide.
+   */
+  twinSkipped: string | null;
   /** The emulator's answer: rain, cleaning and pumps, never the tide. */
   emulator: WhatIfResult | null;
   emulatorError: string | null;
@@ -295,9 +326,13 @@ export interface WhatIfFlow {
  * emulator's when it lands. A question with no tide stops following any Twin job; the job on the
  * server still finishes into the scenario cache.
  */
-export function useWhatIf(runId: string | null | undefined): WhatIfFlow {
+export function useWhatIf(
+  runId: string | null | undefined,
+  offer: TwinOffer | null = null,
+): WhatIfFlow {
   const twin = useTwinScenario(runId);
   const [asked, setAsked] = useState<WhatIfValues | null>(null);
+  const [twinSkipped, setTwinSkipped] = useState<string | null>(null);
   const [emulator, setEmulator] = useState<WhatIfResult | null>(null);
   const [emulatorError, setEmulatorError] = useState<string | null>(null);
   const [emulatorRunning, setEmulatorRunning] = useState(false);
@@ -309,6 +344,7 @@ export function useWhatIf(runId: string | null | undefined): WhatIfFlow {
     setAsked(null);
     setEmulator(null);
     setEmulatorError(null);
+    setTwinSkipped(null);
   }
 
   useEffect(() => () => inFlight.current?.abort(), [runId]);
@@ -322,7 +358,11 @@ export function useWhatIf(runId: string | null | undefined): WhatIfFlow {
       setAsked(values);
       setEmulatorError(null);
       setEmulatorRunning(true);
-      if (values.tideOffsetM !== 0) runTwin(values);
+      // A cache-only API refuses a tide it holds no answer to, so the question is not sent and
+      // the emulator's answer stands, saying the tide is left out and why.
+      const skipped = values.tideOffsetM !== 0 ? twinCannotAnswer(offer, values) : null;
+      setTwinSkipped(skipped);
+      if (values.tideOffsetM !== 0 && skipped === null) runTwin(values);
       else resetTwin();
       runWhatIf(
         {
@@ -348,11 +388,11 @@ export function useWhatIf(runId: string | null | undefined): WhatIfFlow {
           if (inFlight.current === controller) setEmulatorRunning(false);
         });
     },
-    [resetTwin, runId, runTwin],
+    [offer, resetTwin, runId, runTwin],
   );
 
   const twinAnswers = Boolean(twin.result) && asked !== null && asked.tideOffsetM !== 0;
   const engine: WhatIfEngine | null = twinAnswers ? "twin" : emulator ? "emulator" : null;
 
-  return { asked, emulator, emulatorError, emulatorRunning, twin, engine, run };
+  return { asked, twinSkipped, emulator, emulatorError, emulatorRunning, twin, engine, run };
 }

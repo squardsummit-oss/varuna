@@ -10,6 +10,7 @@ import { BottomSheet } from "@/components/varuna/bottom-sheet";
 import { EmptyState } from "@/components/varuna/empty-state";
 import { LanguageToggle } from "@/components/varuna/language-toggle";
 import { Skeleton } from "@/components/varuna/skeleton";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
 import { FloodMap, type FloodMapStatusKind } from "@/components/map/flood-map";
 import { segmentDisplayName, type RunDepth } from "@/lib/api/run-depth";
 import { apiUrl } from "@/lib/api/client";
@@ -290,7 +291,10 @@ export function MapScreen() {
       <header className="border-line bg-deep shrink-0 border-b px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <Wordmark size="sm" withMark />
-          <LanguageToggle />
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <ThemeToggle size="md" />
+          </div>
         </div>
         <p className="num type-micro text-text-3 mt-2" data-slot="honesty-line">
           {honestyLine(run?.provenance.cycleTs, problem, t)}

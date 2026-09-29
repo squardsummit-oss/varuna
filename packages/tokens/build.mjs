@@ -35,6 +35,21 @@ const DRAIN_ORDER = ["0", "1", "2", "3"];
 const CHART_ORDER = ["1", "2", "3", "4", "5"];
 const REACH_ORDER = ["5", "10", "15"];
 const TYPE_ORDER = ["micro", "small", "body", "h3", "h2", "h1", "display", "hero"];
+/** The themes, dark first: dark is the default and the one :root carries. */
+export const THEMES = ["dark", "light"];
+/** Colour groups the light theme may override, and which keys (null = any key of the group). */
+const LIGHT_OVERRIDABLE = {
+  base: null,
+  depth: ["dry"],
+  drain: ["0"],
+  semantic: null,
+  reach: null,
+  obs: null,
+  status: null,
+  chart: null,
+};
+/** Fills that carry text, in order: the accent and every depth band. */
+const ON_FILL_ORDER = ["tide", ...DEPTH_ORDER.map((k) => `depth-${k}`), "obs"];
 /** Type sizes set in the display family (Bricolage Grotesque), weight 600, tracking -0.02em. */
 const DISPLAY_SIZES = new Set(["h1", "display", "hero"]);
 /** Weight per size for the sans sizes. */
@@ -125,6 +140,46 @@ export function validateTokens(t) {
   needHex(t.focus.ring_color, "focus.ring_color");
   needHex(t.glass.background, "glass.background");
   if (typeof t.motion.easing !== "string") fail("motion.easing is missing");
+  validateTheme(t, fail, needHex);
+}
+
+/**
+ * The theme section: a light set that overrides the dark tokens by name, and the text colours that
+ * sit on a fill. Light may only rename nothing, add nothing and leave the water alone: depth 1-5
+ * and the rain ramp are the same pixels in Python rasters and in both themes, so they cannot move.
+ */
+function validateTheme(t, fail, needHex) {
+  const theme = t.theme;
+  if (!theme || typeof theme !== "object") fail('section "theme" is missing');
+  if (!THEMES.includes(theme.default)) fail(`theme.default must be one of ${THEMES.join(", ")}`);
+  if (typeof theme.storage_key !== "string" || !theme.storage_key) fail("theme.storage_key is missing");
+  if (theme.attribute !== "data-theme") fail('theme.attribute must be "data-theme"');
+  const light = theme.light;
+  if (!light || !light.color) fail("theme.light.color is missing");
+  for (const [group, entries] of Object.entries(light.color)) {
+    if (!(group in LIGHT_OVERRIDABLE)) fail(`theme.light.color.${group} cannot change with the theme`);
+    const allowed = LIGHT_OVERRIDABLE[group] ?? Object.keys(t.color[group]);
+    for (const [key, entry] of Object.entries(entries)) {
+      if (!allowed.includes(key)) fail(`theme.light.color.${group}.${key} is not a token that may change with the theme`);
+      needHex(entry?.value, `theme.light.color.${group}.${key}.value`);
+    }
+  }
+  for (const key of Object.keys(t.color.base)) {
+    if (!light.color.base?.[key]) fail(`theme.light.color.base.${key} is missing: every surface and text colour needs a light value`);
+  }
+  needHex(light.glass?.background, "theme.light.glass.background");
+  if (typeof light.glass?.opacity !== "number" || light.glass.opacity <= 0 || light.glass.opacity > 1) fail("theme.light.glass.opacity must be in (0, 1]");
+  needHex(light.focus?.ring_color, "theme.light.focus.ring_color");
+  const onDark = theme.on_fill?.dark;
+  if (!onDark) fail("theme.on_fill.dark is missing");
+  for (const key of ON_FILL_ORDER) {
+    if (!onDark[key]) fail(`theme.on_fill.dark.${key} is missing`);
+    needHex(onDark[key].value, `theme.on_fill.dark.${key}.value`);
+  }
+  for (const [key, entry] of Object.entries(theme.on_fill.light ?? {})) {
+    if (!ON_FILL_ORDER.includes(key)) fail(`theme.on_fill.light.${key} has no dark counterpart`);
+    needHex(entry?.value, `theme.on_fill.light.${key}.value`);
+  }
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -153,18 +208,73 @@ function fontStack(fontToken, cssVariable) {
   return `var(${cssVariable}), ${fallback}`;
 }
 
-/** Ordered list of solid colour custom properties: [name without "--", hex]. */
-export function solidColorEntries(t) {
+/**
+ * Ordered list of solid colour custom properties: [name without "--", hex]. `theme` "light" lays
+ * the light overrides over the dark values by name; the default is the dark set :root carries.
+ */
+export function solidColorEntries(t, theme = "dark") {
+  const light = theme === "light" ? t.theme.light.color : {};
+  const pick = (group, key) => light[group]?.[key]?.value ?? t.color[group][key].value;
   const out = [];
-  for (const [k, v] of Object.entries(t.color.base)) out.push([k, v.value]);
-  for (const k of DEPTH_ORDER) out.push([`depth-${k}`, t.color.depth[k].value]);
-  for (const k of RAIN_ORDER) out.push([`rain-${k}`, t.color.rain[k].value]);
-  for (const k of DRAIN_ORDER) out.push([`drain-${k}`, t.color.drain[k].value]);
-  for (const [k, v] of Object.entries(t.color.semantic)) out.push([k, v.value]);
-  for (const [k, v] of Object.entries(t.color.obs)) out.push([`obs-${k}`, v.value]);
-  for (const [k, v] of Object.entries(t.color.status)) out.push([`status-${k}`, v.value]);
-  for (const k of CHART_ORDER) out.push([`chart-${k}`, t.color.chart[k].value]);
+  for (const k of Object.keys(t.color.base)) out.push([k, pick("base", k)]);
+  for (const k of DEPTH_ORDER) out.push([`depth-${k}`, pick("depth", k)]);
+  for (const k of RAIN_ORDER) out.push([`rain-${k}`, pick("rain", k)]);
+  for (const k of DRAIN_ORDER) out.push([`drain-${k}`, pick("drain", k)]);
+  for (const k of Object.keys(t.color.semantic)) out.push([k, pick("semantic", k)]);
+  for (const k of Object.keys(t.color.obs)) out.push([`obs-${k}`, pick("obs", k)]);
+  for (const k of Object.keys(t.color.status)) out.push([`status-${k}`, pick("status", k)]);
+  for (const k of CHART_ORDER) out.push([`chart-${k}`, pick("chart", k)]);
   return out;
+}
+
+/** Text colours that sit on a fill, per theme: [name without "--", hex], e.g. ["on-depth-5", "#FFFFFF"]. */
+export function onFillEntries(t, theme = "dark") {
+  const light = theme === "light" ? (t.theme.on_fill.light ?? {}) : {};
+  return ON_FILL_ORDER.map((k) => [`on-${k}`, light[k]?.value ?? t.theme.on_fill.dark[k].value]);
+}
+
+/** Reachability ring colours per theme: [minutes, `rgb(r g b / a)`]. The opacities never change. */
+function reachEntries(t, theme = "dark") {
+  const light = theme === "light" ? (t.theme.light.color.reach ?? {}) : {};
+  return REACH_ORDER.map((k) => [k, rgbWithAlpha(light[k]?.value ?? t.color.reach[k].value, t.color.reach[k].opacity)]);
+}
+
+/** Every colour a theme resolves, by name: solids, then the text-on-fill colours. */
+export function themeColorMap(t, theme = "dark") {
+  return Object.fromEntries([...solidColorEntries(t, theme), ...onFillEntries(t, theme)]);
+}
+
+/**
+ * The light theme's overrides as custom properties, grouped like :root. Only the names whose value
+ * differs from dark are written, so the block reads as the list of what daylight changes.
+ */
+export function lightVarGroups(t) {
+  const dark = themeColorMap(t, "dark");
+  const light = themeColorMap(t, "light");
+  const changed = (names) => names.filter((n) => light[n] !== dark[n]).map((n) => [`--${n}`, light[n]]);
+  const names = Object.keys(light);
+  const groups = [];
+  const group = (title, vars) => {
+    if (vars.length) groups.push({ title, vars });
+  };
+  group("Base surface and text", changed(Object.keys(t.color.base)));
+  group("Depth ramp: only the dry band moves; 5 cm and up keep their hex", changed(names.filter((n) => n.startsWith("depth-"))));
+  group("Drain blockage: a clear pipe stays quiet on a light ground", changed(names.filter((n) => n.startsWith("drain-"))));
+  group("Semantic", changed(Object.keys(t.color.semantic)));
+  const darkReach = Object.fromEntries(reachEntries(t, "dark"));
+  group(
+    "Reachability isochrones",
+    reachEntries(t, "light")
+      .filter(([k, v]) => darkReach[k] !== v)
+      .map(([k, v]) => [`--reach-${k}`, v]),
+  );
+  group("Observation types (Pulse)", changed(names.filter((n) => n.startsWith("obs-"))));
+  group("Mode banner status", changed(names.filter((n) => n.startsWith("status-"))));
+  group("Charts, in order", changed(names.filter((n) => n.startsWith("chart-"))));
+  group("Text on fills", changed(names.filter((n) => n.startsWith("on-"))));
+  group("Glass", [["--glass-bg", rgbWithAlpha(t.theme.light.glass.background, t.theme.light.glass.opacity)]]);
+  group("Focus ring", [["--focus-ring-color", t.theme.light.focus.ring_color]]);
+  return groups;
 }
 
 /**
@@ -278,6 +388,29 @@ export function generateCss(t, hash) {
   }
   push("}");
   push("");
+  push("/* Text on fills: the colour a label takes on --tide or on a depth band, chosen per fill for");
+  push("   contrast. A separate block so the dark :root above stays exactly what it was. */");
+  push(":root {");
+  for (const [name, value] of onFillEntries(t)) push(`  --${name}: ${value};`);
+  push("}");
+  push("");
+  push(`/* Light theme: the same control room in daylight, switched by <html ${t.theme.attribute}="light">.`);
+  push("   Only what changes is listed. Tailwind utilities read var(--color-*), so those follow too. */");
+  push(`:root[${t.theme.attribute}="light"] {`);
+  const lightGroups = lightVarGroups(t);
+  for (const g of lightGroups) {
+    push(`  /* ${g.title} */`);
+    for (const [name, value] of g.vars) push(`  ${name}: ${value};`);
+  }
+  push("  /* Tailwind theme colours */");
+  for (const g of lightGroups) {
+    for (const [name, value] of g.vars) {
+      if (name.startsWith("--glass") || name.startsWith("--focus")) continue;
+      push(`  --color-${name.slice(2)}: ${value};`);
+    }
+  }
+  push("}");
+  push("");
 
   const display = fontStack(t.font.display, "--font-bricolage");
   const sans = fontStack(t.font.sans, "--font-geist-sans");
@@ -289,6 +422,8 @@ export function generateCss(t, hash) {
   push("  /* Colours */");
   for (const [name, value] of solidColorEntries(t)) push(`  --color-${name}: ${value};`);
   for (const k of REACH_ORDER) push(`  --color-reach-${k}: ${rgbWithAlpha(t.color.reach[k].value, t.color.reach[k].opacity)};`);
+  push("  /* Text on fills: text-on-tide, text-on-depth-5 ... */");
+  for (const [name, value] of onFillEntries(t)) push(`  --color-${name}: ${value};`);
   push("  /* Radius: rounded-panel, rounded-control, rounded-chip, rounded-popover, rounded-phone */");
   for (const [k, v] of Object.entries(t.radius)) push(`  --radius-${k}: ${px(v)};`);
   push("  /* Spacing: h-top-bar, h-time-bar, w-icon-rail, w-right-rail, h-row, h-row-dense, p-panel, gap-section */");
@@ -530,6 +665,16 @@ export function obsColor(kind) {
   return entry.value;
 }
 
+/** True for "dark" or "light". */
+export function isTheme(value) {
+  return THEMES.includes(value);
+}
+
+/** The colour table of a theme; anything that is not a theme name reads as the default theme. */
+export function colorsFor(theme) {
+  return themeColors[isTheme(theme) ? theme : DEFAULT_THEME];
+}
+
 /** "var(--name)" for a token name, e.g. cssVar("tide") -> "var(--tide)". */
 export function cssVar(name) {
   return "var(--" + String(name).replace(/^--/, "") + ")";
@@ -554,6 +699,21 @@ export function generateJs(t, hash) {
     "",
     "/** Solid colour tokens by name, e.g. colors.tide, colors[\"depth-3\"], colors[\"obs-traffic\"]. */",
     `export const colors = deepFreeze(${json(colors)});`,
+    "",
+    "/** The themes, dark first. <html data-theme> carries the choice; dark is the default. */",
+    `export const THEMES = deepFreeze(${json(THEMES)});`,
+    "",
+    "/** The theme a first visit gets. */",
+    `export const DEFAULT_THEME = ${JSON.stringify(t.theme.default)};`,
+    "",
+    "/** localStorage key the chosen theme is kept under. */",
+    `export const THEME_STORAGE_KEY = ${JSON.stringify(t.theme.storage_key)};`,
+    "",
+    "/** The attribute on <html> that switches the theme. */",
+    `export const THEME_ATTRIBUTE = ${JSON.stringify(t.theme.attribute)};`,
+    "",
+    "/** Every colour each theme resolves, by name: the solids plus the on-* text colours for fills. */",
+    `export const themeColors = deepFreeze(${json(Object.fromEntries(THEMES.map((name) => [name, themeColorMap(t, name)])))});`,
     "",
     "/** Depth band lower bounds in centimetres: the fixed thresholds of the ramp. */",
     `export const DEPTH_THRESHOLDS_CM = deepFreeze(${json(depthThresholds(t))});`,
@@ -633,6 +793,10 @@ export function generateDts(t, hash) {
     `export type ObservationKind = ${Object.keys(t.color.obs).map((k) => JSON.stringify(k)).join(" | ")};`,
     `export type ColorName = ${Object.keys(colors).map((k) => JSON.stringify(k)).join(" | ")};`,
     `export type CssVarName = ${Object.keys(cssVarMap(t)).map((k) => JSON.stringify(k)).join(" | ")};`,
+    `export type ThemeName = ${THEMES.map((k) => JSON.stringify(k)).join(" | ")};`,
+    `export type ThemeColorName = ${Object.keys(themeColorMap(t)).map((k) => JSON.stringify(k)).join(" | ")};`,
+    "/** Every colour one theme resolves, by name. */",
+    "export type ThemeColorTable = { readonly [K in ThemeColorName]: Hex };",
     "",
     "export interface DepthBand {",
     "  readonly key: DepthKey;",
@@ -678,6 +842,17 @@ export function generateDts(t, hash) {
     "",
     "/** Solid colour tokens by name, e.g. colors.tide, colors[\"depth-3\"]. */",
     `export declare const colors: ${typeLiteral(colors)};`,
+    "",
+    "/** The themes, dark first. <html data-theme> carries the choice; dark is the default. */",
+    `export declare const THEMES: ${typeLiteral(THEMES)};`,
+    "/** The theme a first visit gets. */",
+    `export declare const DEFAULT_THEME: ${JSON.stringify(t.theme.default)};`,
+    "/** localStorage key the chosen theme is kept under. */",
+    `export declare const THEME_STORAGE_KEY: ${JSON.stringify(t.theme.storage_key)};`,
+    "/** The attribute on <html> that switches the theme. */",
+    `export declare const THEME_ATTRIBUTE: ${JSON.stringify(t.theme.attribute)};`,
+    "/** Every colour each theme resolves, by name: the solids plus the on-* text colours for fills. */",
+    "export declare const themeColors: { readonly [K in ThemeName]: ThemeColorTable };",
     "",
     "/** Depth band lower bounds in centimetres: the fixed thresholds of the ramp. */",
     `export declare const DEPTH_THRESHOLDS_CM: ${typeLiteral(depthThresholds(t))};`,
@@ -732,6 +907,10 @@ export function generateDts(t, hash) {
     "export declare function statusColor(mode: StatusMode): Hex;",
     "/** Observation type colour. */",
     "export declare function obsColor(kind: ObservationKind): Hex;",
+    "/** True for \"dark\" or \"light\". */",
+    "export declare function isTheme(value: unknown): value is ThemeName;",
+    "/** The colour table of a theme; anything that is not a theme name reads as the default theme. */",
+    "export declare function colorsFor(theme: ThemeName | (string & {}) | null | undefined): ThemeColorTable;",
     "/** \"var(--name)\" for a token name. */",
     "export declare function cssVar(name: CssVarName | (string & {})): string;",
   ];

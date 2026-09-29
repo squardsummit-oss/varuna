@@ -175,7 +175,9 @@ test.describe("landing hero without the API (7.1 states)", () => {
     ) as { run_id: string; frames: string[] };
     await expect(page.locator('[data-slot="hero-frames"]')).toBeVisible({ timeout: 30_000 });
     await expect(page.locator("[data-hero-readout]")).toContainText(
-      `Pre-rendered frames of run ${manifest.run_id}`,
+      "Pre-rendered frames of a baked run",
     );
+    // Which run the frames are is provenance, kept on the map layer rather than in the copy.
+    await expect(page.locator("[data-hero-map]")).toHaveAttribute("data-run-id", manifest.run_id);
   });
 });

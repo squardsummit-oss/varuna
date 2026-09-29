@@ -6,6 +6,7 @@ import { Settings2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CitySwitcher } from "@/components/varuna/city-switcher";
 import { DARK_TOOLTIP_CLASS, IconRail, useAddressCity } from "@/components/varuna/icon-rail";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
 import { Wordmark } from "@/components/varuna/wordmark";
 import { navHref, navItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,8 @@ export function TopBar({ className }: TopBarProps) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
+        {/* Dark is the control room at night, light the same room in daylight (UI_UX.md). */}
+        <ThemeToggle size="sm" />
         <Tooltip>
           <TooltipTrigger
             render={

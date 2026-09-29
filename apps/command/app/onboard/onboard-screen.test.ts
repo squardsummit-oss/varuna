@@ -20,6 +20,8 @@ import {
   stageSum,
   stepLeads,
   stepsFromRecords,
+  streetsMatchRun,
+  summariseDepth,
   toLines,
 } from "./onboard-screen";
 
@@ -381,5 +383,60 @@ describe("finishFacts", () => {
 
   it("has nothing to say before either has arrived", () => {
     expect(finishFacts(RUN, null, null, null)).toBeNull();
+  });
+});
+
+describe("summariseDepth", () => {
+  const validTs = [
+    "2026-07-01T06:15:00+05:30",
+    "2026-07-01T06:20:00+05:30",
+    "2026-07-01T06:25:00+05:30",
+  ];
+  const depth = {
+    validTs,
+    nSegmentsTotal: 10,
+    depthCm: new Map<string, number[]>([
+      ["S1-000", [2, 16, 40]],
+      ["S2-000", [20, 14, 3]],
+      ["S3-000", [5, 9, 12]],
+    ]),
+  };
+
+  it("counts the streets that reach 15 cm at any step and at each step", () => {
+    const summary = summariseDepth(depth, [5, 10, 15]);
+    expect(summary.flooded).toEqual({ count: 2, total: 10, thresholdCm: 15 });
+    expect(summary.perStep).toEqual([1, 1, 1]);
+  });
+
+  it("finds the deepest street and the step it peaks at, with that step's lead", () => {
+    expect(summariseDepth(depth, [5, 10, 15]).deepest).toEqual({
+      segmentId: "S1-000",
+      cm: 40,
+      at: validTs[2],
+      leadMin: 15,
+    });
+  });
+
+  it("has no deepest street and no total for an empty run", () => {
+    const summary = summariseDepth({ validTs: [], nSegmentsTotal: 0, depthCm: new Map() }, []);
+    expect(summary).toEqual({
+      flooded: { count: 0, total: null, thresholdCm: 15 },
+      deepest: null,
+      perStep: [],
+    });
+  });
+});
+
+describe("streetsMatchRun", () => {
+  it("refuses to colour a city layer that is not the one the run scored", () => {
+    // The deployed Chennai on 2026-09-29: an older build's 18,622 streets under a run of 18,626.
+    expect(streetsMatchRun(18_622, 18_626)).toBe(false);
+    expect(streetsMatchRun(18_626, 18_626)).toBe(true);
+  });
+
+  it("treats an unknown count on either side as a match", () => {
+    expect(streetsMatchRun(null, 18_626)).toBe(true);
+    expect(streetsMatchRun(18_626, null)).toBe(true);
+    expect(streetsMatchRun(18_626, 0)).toBe(true);
   });
 });

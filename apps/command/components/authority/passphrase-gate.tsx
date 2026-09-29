@@ -122,9 +122,7 @@ export function PassphraseGate({ status, reason, onOpen, className }: Passphrase
             <p className="type-small text-text">
               {reason ?? "The VARUNA API did not answer, so nothing about this desk can be known."}
             </p>
-            <p className="type-micro text-text-3">
-              Nothing was sent. The forecast screens read the same API, so they are unavailable too.
-            </p>
+            <p className="type-micro text-text-3">Nothing was sent.</p>
           </div>
         </div>
       </Panel>
@@ -141,14 +139,17 @@ export function PassphraseGate({ status, reason, onOpen, className }: Passphrase
               {reason ??
                 `${OPS_PASSPHRASE_ENV} is not set where this API runs, so there is nothing to check a passphrase against and every authority edit is refused.`}
             </p>
-            <p className="type-micro text-text-3">
-              The deployed API leaves it unset on purpose: a shared passphrase on a public address
-              is not access control. Set {OPS_PASSPHRASE_ENV} where the API runs and restart it to
-              open the desk on this machine.
-            </p>
-            <p className="type-micro text-text-3">
-              The citizen inbox and the ops log below are public reads and still work.
-            </p>
+            <p className="type-micro text-text-3">The inbox and the ops log below still work.</p>
+            <details className="type-micro text-text-3">
+              <summary className="text-text-2 hover:text-text focus-visible:outline-tide cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+                Details
+              </summary>
+              <p className="mt-1">
+                The deployed API leaves it unset on purpose: a shared passphrase on a public address
+                is not access control. Set {OPS_PASSPHRASE_ENV} where the API runs and restart it to
+                open the desk on this machine.
+              </p>
+            </details>
           </div>
         </div>
       </Panel>
@@ -178,8 +179,7 @@ export function PassphraseGate({ status, reason, onOpen, className }: Passphrase
             aria-describedby="ops-passphrase-note"
           />
           <p id="ops-passphrase-note" className="type-micro text-text-3">
-            Sent in the {OPS_HEADER} header for this tab only. It is never saved to this browser
-            past the tab, never put in a link and never written to the log.
+            Sent in the {OPS_HEADER} header for this tab only; never saved, linked or logged.
           </p>
         </div>
 
@@ -196,8 +196,7 @@ export function PassphraseGate({ status, reason, onOpen, className }: Passphrase
             aria-describedby="ops-officer-note"
           />
           <p id="ops-officer-note" className="type-micro text-text-3">
-            The passphrase is shared, so this name is the only thing that says who acted. It is
-            recorded on every row.
+            Recorded on every row, since the passphrase is shared.
           </p>
         </div>
 

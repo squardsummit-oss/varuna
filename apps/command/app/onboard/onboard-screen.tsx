@@ -9,10 +9,16 @@ import { CityMap } from "@/components/map/city-map";
 import { AppShell } from "@/components/varuna/app-shell";
 import { LogStream, type LogLine } from "@/components/varuna/log-stream";
 import { MapSlot } from "@/components/varuna/map-slot";
-import { OnboardFinishCard, type FinishFacts } from "@/components/varuna/onboard-finish-card";
+import {
+  OnboardFinishCard,
+  type FinishDeepest,
+  type FinishFacts,
+  type FinishFlooded,
+} from "@/components/varuna/onboard-finish-card";
 import {
   IDLE_ONBOARDING_STEPS,
   ONBOARDING_STEP_IDS,
+  OnboardingStepDetails,
   OnboardingSteps,
   type OnboardingStage,
   type OnboardingStepId,
@@ -389,6 +395,69 @@ export function finishFacts(
   };
 }
 
+/** Where a street counts as flooded in the headline: 15 cm, where two-wheelers stop (6.2). */
+export const FLOOD_THRESHOLD_CM = 15;
+
+/** What Pravesh says about a first forecast, from the run's own per-street depths. */
+export interface DepthSummary {
+  flooded: FinishFlooded;
+  /** The deepest street's peak, without its name: the run knows ids, the city layer knows names. */
+  deepest: (Omit<FinishDeepest, "name"> & { segmentId: string }) | null;
+  /** Streets at or above the threshold at each step: the lead-time scrub's line. */
+  perStep: number[];
+}
+
+/**
+ * Count the streets that reach `thresholdCm` at any step and at each step, and find the deepest
+ * street and when it peaks. Every number is the run's own (SPEC.md rule 6); `total` is every
+ * street the run scored, wet or dry.
+ */
+export function summariseDepth(
+  depth: Pick<RunDepth, "depthCm" | "validTs" | "nSegmentsTotal">,
+  leads: readonly number[],
+  thresholdCm = FLOOD_THRESHOLD_CM,
+): DepthSummary {
+  const perStep = depth.validTs.map(() => 0);
+  let count = 0;
+  let deepest: DepthSummary["deepest"] = null;
+  for (const [segmentId, series] of depth.depthCm) {
+    let peak = -Infinity;
+    let peakStep = -1;
+    series.forEach((cm, step) => {
+      if (cm >= thresholdCm && step < perStep.length) perStep[step] += 1;
+      if (cm > peak) {
+        peak = cm;
+        peakStep = step;
+      }
+    });
+    if (peak >= thresholdCm) count += 1;
+    if (peakStep >= 0 && (deepest === null || peak > deepest.cm)) {
+      deepest = {
+        segmentId,
+        cm: peak,
+        at: depth.validTs[peakStep] ?? null,
+        leadMin: leads[peakStep] ?? null,
+      };
+    }
+  }
+  return {
+    flooded: { count, total: depth.nSegmentsTotal > 0 ? depth.nSegmentsTotal : null, thresholdCm },
+    deepest,
+    perStep,
+  };
+}
+
+/**
+ * Whether the city's street layer is the one the run scored. A run's ids are only meaningful on
+ * the segment table it was made from; a server whose city was built by an older pipeline (the
+ * deployed Chennai, 18,622 streets against the run's 18,626 on 2026-09-29) would colour the wrong
+ * streets. Unknown on either side counts as a match: nothing to compare is nothing to refuse.
+ */
+export function streetsMatchRun(layerCount: number | null, runTotal: number | null): boolean {
+  if (!layerCount || !runTotal) return true;
+  return layerCount === runTotal;
+}
+
 /**
  * City-in-a-box wizard (SPEC.md 7.9, tasks P9.5, P9.6 and D-21), behind the Suspense boundary
  * `useSearchParams` needs.
@@ -455,7 +524,7 @@ function ReplayCityRefusal({ city }: { city: string }) {
             <PageHeader
               title={navItem("onboard").label}
               screen={navItem("onboard")}
-              description={`City in a box: open data in, digital twin out. ${other} in minutes.`}
+              description="Open data in, a first street flood forecast out."
               honesty="Inferred drain graph"
             />
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -493,8 +562,12 @@ function ReplayCityRefusal({ city }: { city: string }) {
  *
  * Every line in the log comes from `services/city` and every step's status and time from the job,
  * so a judge watching this is watching the pipeline rather than an animation. The map stacks the
- * layers as the build writes them - roads, the inferred drain graph, and finally the first
- * forecast's depth - each fading in over 400 ms (motion M19); buildings wait until asked for.
+ * layers as the build writes them - roads, the inferred drain graph during a build, and finally
+ * the first forecast's depth - each fading in over 400 ms (motion M19).
+ *
+ * Once a forecast exists the screen says it in three numbers beside the map (2026-09-29): streets
+ * that flood, the deepest one and when, and when the forecast was issued. The six steps are one
+ * line each, and the pipeline's log and each step's detail sit behind "Details".
  */
 function OnboardView({ city }: { city: string }) {
   const name = cityName(city);
@@ -519,12 +592,14 @@ function OnboardView({ city }: { city: string }) {
   const [noRun, setNoRun] = useState(false);
   // Buildings are off by default and fetched only when switched on: 72,522 polygons for Chennai,
   // 2.4 MB gzipped, and the console already opens with them off.
-  const [show, setShow] = useState<Record<WizardLayerId, boolean>>({
+  const [show, setShow] = useState<Record<Exclude<WizardLayerId, "drains">, boolean>>({
     streets: true,
     buildings: false,
-    drains: true,
     depth: true,
   });
+  // Drains stack onto the map while a build runs (M19) and stay off over a finished forecast,
+  // where 4,000 pipes only hide the water; null means "follow that rule", a switch overrides it.
+  const [drainsPick, setDrainsPick] = useState<boolean | null>(null);
   // The lead-time scrub's step, per run: null means "the default +60 min" for whichever run is up.
   const [picked, setPicked] = useState<{ runId: string; step: number } | null>(null);
   /** Which (job, layer) pairs have already been asked for, so a poll does not refetch. */
@@ -544,12 +619,10 @@ function OnboardView({ city }: { city: string }) {
   // once, so a step lands on screen when the pipeline reports it rather than on the next poll
   // tick; the job endpoint carries the log, so the event is the trigger and the job the state.
   const liveJobId = job?.status === "running" || job?.status === "queued" ? job.jobId : null;
-  const [streamed, setStreamed] = useState(0);
   const onProgress = useCallback(
     (event: LiveEvent) => {
       const payload = (event.payload ?? {}) as { city?: unknown };
       if (!liveJobId || payload.city !== city) return;
-      setStreamed((n) => n + 1);
       pollOnboard(liveJobId)
         .then(setJob)
         .catch(() => undefined);
@@ -578,9 +651,11 @@ function OnboardView({ city }: { city: string }) {
   const previous = job?.status === "none" ? job.previous : null;
   const built = job?.built ?? false;
   const finished = live?.status === "finished";
+  const running = live?.status === "running" || live?.status === "queued" || starting;
   // Built, no job in this API process, and no record of the build that wrote it: the case task
   // D-21 was about. Whether it also has a forecast is `hasRun`, not this.
   const cached = job?.status === "none" && built && !previous;
+  const showDrains = drainsPick ?? Boolean(running);
 
   // The run the map draws and the card names: this build's own first run; the recorded build's,
   // when that run is still on this API; or, with no record at all, the newest the API serves for
@@ -615,6 +690,21 @@ function OnboardView({ city }: { city: string }) {
       });
     };
 
+    // The forecast first: its depth frames are what the screen exists to show, and they are a
+    // fraction of the street layer's 8 MB, so the map can draw the water before the streets land.
+    if (wantRun) {
+      once(`depth:${wantRun}`, async () => {
+        try {
+          const runId = wantRun === "newest" ? undefined : wantRun;
+          setDepth(await loadRunDepth(runId, controller.signal, undefined, city));
+          setNoRun(false);
+        } catch (failure) {
+          // An abort is this effect being replaced, not an answer about the city.
+          if (!controller.signal.aborted) setNoRun(true);
+          throw failure;
+        }
+      });
+    }
     if (reached > LAYER_AFTER.streets) {
       once("streets", async () => {
         try {
@@ -635,7 +725,7 @@ function OnboardView({ city }: { city: string }) {
         setBuildings(await loadBuildings(city, controller.signal));
       });
     }
-    if (reached > LAYER_AFTER.drains) {
+    if (showDrains && reached > LAYER_AFTER.drains) {
       once("drains", async () => {
         const pipes = await loadDrains(city, controller.signal);
         if (pipes.length === 0) throw new Error("drains not written yet");
@@ -643,21 +733,8 @@ function OnboardView({ city }: { city: string }) {
         setDrains(pipes.slice(0, MAP_EDGE_LIMIT));
       });
     }
-    if (wantRun) {
-      once(`depth:${wantRun}`, async () => {
-        try {
-          const runId = wantRun === "newest" ? undefined : wantRun;
-          setDepth(await loadRunDepth(runId, controller.signal, undefined, city));
-          setNoRun(false);
-        } catch (failure) {
-          // An abort is this effect being replaced, not an answer about the city.
-          if (!controller.signal.aborted) setNoRun(true);
-          throw failure;
-        }
-      });
-    }
     return () => controller.abort();
-  }, [reached, jobKey, wantRun, city, show.buildings]);
+  }, [reached, jobKey, wantRun, city, show.buildings, showDrains]);
 
   // The run the finish card names and opens: the one the map has actually loaded, or the build's
   // own first run while its layers are still on their way.
@@ -686,27 +763,17 @@ function OnboardView({ city }: { city: string }) {
   }, [rainRunId]);
   const runRain = rain && rain.runId === rainRunId ? rain.rain : null;
 
-  const facts = useMemo(
-    () => (openRunId ? finishFacts(openRunId, summary, shownDepth, runRain, forecastWallMs) : null),
-    [openRunId, summary, shownDepth, runRain, forecastWallMs],
-  );
-
   const segments = useMemo<GeoSegment[] | null>(() => (roads ? allSegments(roads) : null), [roads]);
+  // Only colour streets the run actually scored: an older city build on the server has other ids.
+  const streetsMatch = streetsMatchRun(
+    roads?.features.length ?? null,
+    shownDepth?.nSegmentsTotal ?? null,
+  );
   // The first forecast's own wet streets, coloured by its depth.
   const wet = useMemo(
-    () => (shownDepth && roads ? joinSegments(roads, shownDepth.depthCm) : []),
-    [shownDepth, roads],
+    () => (shownDepth && roads && streetsMatch ? joinSegments(roads, shownDepth.depthCm) : []),
+    [shownDepth, roads, streetsMatch],
   );
-
-  // Motion M19: each layer fades in over 400 ms when it arrives, and instantly under reduced
-  // motion. A reopened tab whose layers are already loaded reads 1 at once and does not replay.
-  const fadeStreets = useLayerFade("streets", (segments?.length ?? 0) > 0 && show.streets);
-  const fadeBuildings = useLayerFade("buildings", (buildings?.length ?? 0) > 0 && show.buildings);
-  const fadeDrains = useLayerFade("drains", (drains?.length ?? 0) > 0 && show.drains);
-  const fadeDepth = useLayerFade("depth", shownDepth !== null && show.depth);
-  // The card's numbers arrive with the forecast (M19's "final depth fade-in"), whether or not the
-  // depth layer is switched on at that moment.
-  const fadeFacts = useLayerFade("finish", shownDepth !== null || summary !== null);
 
   // The lead-time scrub: every step of the run, opening at +60 min.
   const leads = useMemo(
@@ -720,6 +787,50 @@ function OnboardView({ city }: { city: string }) {
         : [],
     [shownDepth],
   );
+  const depthSummary = useMemo(
+    () => (shownDepth ? summariseDepth(shownDepth, leads) : null),
+    [shownDepth, leads],
+  );
+  const deepestName = useMemo(() => {
+    const id = depthSummary?.deepest?.segmentId;
+    if (!id || !segments || !streetsMatch) return null;
+    const street = segments.find((segment) => segment.id === id);
+    return street?.displayName ?? street?.name ?? null;
+  }, [depthSummary, segments, streetsMatch]);
+
+  const facts = useMemo<FinishFacts | null>(() => {
+    if (!openRunId) return null;
+    const base = finishFacts(openRunId, summary, shownDepth, runRain, forecastWallMs);
+    if (!base) return null;
+    const deepest: FinishDeepest | null = depthSummary?.deepest
+      ? {
+          cm: depthSummary.deepest.cm,
+          at: depthSummary.deepest.at,
+          leadMin: depthSummary.deepest.leadMin,
+          name: deepestName,
+        }
+      : summary?.maxPeakCm !== null && summary?.maxPeakCm !== undefined
+        ? { cm: summary.maxPeakCm, at: null, leadMin: null, name: null }
+        : null;
+    return {
+      ...base,
+      flooded: depthSummary?.flooded ?? null,
+      deepest,
+      issuedAt: shownDepth?.provenance.cycleTs ?? summary?.cycleTs ?? null,
+      horizonMin: leads.length > 0 ? leads[leads.length - 1] : null,
+    };
+  }, [openRunId, summary, shownDepth, runRain, forecastWallMs, depthSummary, deepestName, leads]);
+
+  // Motion M19: each layer fades in over 400 ms when it arrives, and instantly under reduced
+  // motion. A reopened tab whose layers are already loaded reads 1 at once and does not replay.
+  const fadeStreets = useLayerFade("streets", (segments?.length ?? 0) > 0 && show.streets);
+  const fadeBuildings = useLayerFade("buildings", (buildings?.length ?? 0) > 0 && show.buildings);
+  const fadeDrains = useLayerFade("drains", (drains?.length ?? 0) > 0 && showDrains);
+  const fadeDepth = useLayerFade("depth", shownDepth !== null && show.depth);
+  // The card's numbers arrive with the forecast (M19's "final depth fade-in"), whether or not the
+  // depth layer is switched on at that moment.
+  const fadeFacts = useLayerFade("finish", shownDepth !== null || summary !== null);
+
   const defaultStep = useMemo(() => leadStepIndex(leads), [leads]);
   const depthStep =
     shownDepth && picked && picked.runId === shownDepth.provenance.runId
@@ -727,18 +838,22 @@ function OnboardView({ city }: { city: string }) {
       : defaultStep;
   const depthAt = shownDepth?.validTs[depthStep];
   const atLabel = depthAt ? formatTimeWithLead(depthAt, leads[depthStep]) : null;
+  const floodedNow = depthSummary?.perStep[depthStep] ?? null;
+  const floodedNowText =
+    floodedNow !== null
+      ? `${formatCount(floodedNow)} streets above ${FLOOD_THRESHOLD_CM} cm`
+      : null;
 
-  // Where the map opens once the first forecast is drawn: on the city's wet streets at the step
-  // the lead-time scrub shows (15 cm or more, else 5 cm), by the console's densest-7-km rule - not
-  // on the whole AOI. Settled, so the camera re-frames when the water has moved somewhere else and
-  // not at every step; and like every map, only while nobody has moved it. Before the forecast,
-  // and with the depth layer off, the map frames the layers it has, as it always did.
+  // Where the map opens once the first forecast is drawn: on the city's wet streets at their peak
+  // (15 cm or more, else 5 cm), by the console's densest-7-km rule - not on the whole AOI. At the
+  // peak rather than the scrubbed step, so moving the scrub never moves the camera; and like every
+  // map, only while nobody has moved it. Before the forecast the map frames the city's box.
   const cityBox = CITY_BOUNDS[city] ?? CITY_BOUNDS[ONBOARD_DEFAULT_CITY];
   const wetFrameNext = useMemo(() => {
     if (!shownDepth || !show.depth || wet.length === 0 || !cityBox) return null;
-    const frame = affectedFrame({ streets: wet, step: depthStep, fallback: cityBox });
+    const frame = affectedFrame({ streets: wet, fallback: cityBox });
     return frame.basis === "aoi" ? null : frame.bounds;
-  }, [shownDepth, show.depth, wet, depthStep, cityBox]);
+  }, [shownDepth, show.depth, wet, cityBox]);
   const wetFrame = useSettledBounds(wetFrameNext);
 
   const start = useCallback(async () => {
@@ -762,7 +877,6 @@ function OnboardView({ city }: { city: string }) {
     }
   }, [city, designStorm]);
 
-  const running = live?.status === "running" || live?.status === "queued" || starting;
   // A run for the city was actually read. Nothing else proves the first forecast exists.
   const hasRun = shownDepth !== null;
   const href = openRunId && (finished || previous || hasRun) ? consoleHref(city, openRunId) : null;
@@ -771,44 +885,36 @@ function OnboardView({ city }: { city: string }) {
   const lines = toLines(job);
   const lastAttempt = job?.status === "none" ? job.lastAttempt : null;
 
-  const stepsCaption = live
-    ? live.fromRecord
-      ? "Recorded by the API when this build ended. Each time is the pipeline's own."
-      : "Each step's time is the pipeline's own."
+  // One line under "Build": where these steps came from, or what to press.
+  const buildLine = live
+    ? running
+      ? `${Math.round((live.progress ?? 0) * 100)} % built, ${formatSeconds(live.elapsedS ?? 0)} elapsed.`
+      : finished
+        ? live.firstRunId
+          ? `Built in ${formatSeconds(live.elapsedS)}${live.fromRecord ? ", before the API restarted" : " in this session"}.`
+          : `Built without a first forecast${live.designStorm ? `: ${live.designStorm} is not on this API` : ""}.`
+        : "The build failed. Details holds the pipeline's log."
     : previous
-      ? `${previousBuildLabel(previous)}.${
-          previous.seeded ? " Recorded where this deployment was packed, not on this server." : ""
-        }${
-          lastAttempt && lastAttempt.status === "failed"
-            ? ` A later build failed${lastAttempt.failedStep ? ` at ${lastAttempt.failedStep}` : ""}.`
-            : ""
+      ? `${previousBuildLabel(previous)}.${previous.seeded ? " Recorded on another machine." : ""}${
+          lastAttempt && lastAttempt.status === "failed" ? " A later build failed." : ""
         }`
       : cached
         ? hasRun
-          ? `${name} is already built. These six steps ran before this session, and no record of them was kept.`
+          ? "Built before this session; no record of the steps was kept."
           : noRun
-            ? `${name}'s layers are already built, and the API serves no forecast for it yet. Start onboarding ${name} to run its first one.`
-            : `${name}'s layers are already built.`
-        : "Every step reports its own progress and elapsed time.";
+            ? `No forecast on this API yet. Start onboarding ${name} to run one.`
+            : "Built before this session."
+        : "Runs offline from open data already downloaded.";
 
-  // One line each: the steps caption above already names which build this is.
-  const logCaption = previous
-    ? "Lines from the previous build, each with the time it was captured."
-    : live?.log
-      ? live.logTotal !== null && live.logTotal > live.log.length
-        ? `The last ${live.log.length} of ${live.logTotal} lines, each with its capture time.`
-        : "The pipeline's own lines, each with the time it was captured."
-      : "Real lines from services/city, never scripted copy.";
-
+  // Which run the numbers are from, one line, behind the card's Details (or in view when the card
+  // has no numbers to show, because then it is the explanation).
   const cardNote = live
-    ? finished && live.firstRunId
-      ? `Built in ${formatSeconds(live.elapsedS)}${live.fromRecord ? ", before the API restarted" : " in this session"}.`
-      : finished
-        ? `The build finished without a first forecast${live.designStorm ? `: ${live.designStorm} is not on this API` : ""}.`
-        : null
+    ? finished && !live.firstRunId
+      ? "This build made no forecast."
+      : null
     : previous
       ? previous.firstRunExists === false && previous.firstRunId
-        ? `The previous build's first run, ${previous.firstRunId}, is not on this API.`
+        ? "The recorded forecast is not on this API."
         : `From the previous build, ${previous.startedAt ? formatDateTime(previous.startedAt) : "recorded by the API"}.`
       : cached && hasRun
         ? `Newest ${name} run, built before this session.`
@@ -825,8 +931,10 @@ function OnboardView({ city }: { city: string }) {
     },
     // The count is every pipe the pipeline wrote; the note says when the map draws fewer.
     drains: {
-      on: show.drains,
+      on: showDrains,
       count: drains ? (drainsTotal ?? drains.length) : undefined,
+      lazy: reached > LAYER_AFTER.drains,
+      loading: showDrains && drains === null && reached > LAYER_AFTER.drains,
       detail:
         drains && drainsTotal !== null && drainsTotal > drains.length
           ? `${formatCount(drains.length)} drawn`
@@ -839,13 +947,14 @@ function OnboardView({ city }: { city: string }) {
     },
   };
   const hasLayers = (segments?.length ?? 0) > 0 || (drains?.length ?? 0) > 0;
+  const showMap = hasLayers || shownDepth !== null;
 
   const scrub =
     shownDepth && leads.length > 1 ? (
       <div className="space-y-1">
         <div className="flex items-baseline justify-between gap-3">
           <label htmlFor="onboard-lead" className="type-micro text-text-3">
-            Lead time on the map
+            Map at
           </label>
           <span className="num type-small text-text" aria-hidden="true">
             {atLabel}
@@ -858,7 +967,9 @@ function OnboardView({ city }: { city: string }) {
           max={leads.length - 1}
           step={1}
           value={depthStep}
-          aria-valuetext={atLabel ?? undefined}
+          aria-valuetext={
+            atLabel ? [atLabel, floodedNowText].filter(Boolean).join(", ") : undefined
+          }
           onChange={(event) =>
             setPicked({
               runId: shownDepth.provenance.runId,
@@ -867,35 +978,29 @@ function OnboardView({ city }: { city: string }) {
           }
           className="accent-tide focus-visible:ring-tide/50 h-5 w-full cursor-pointer rounded-full focus-visible:ring-3 focus-visible:outline-none"
         />
+        {floodedNowText ? (
+          <p className="num type-micro text-text-2" aria-hidden="true">
+            {floodedNowText}
+          </p>
+        ) : null}
       </div>
     ) : null;
 
   return (
     <AppShell>
       <div className="flex h-full min-h-0 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
-        <div className="border-line flex shrink-0 flex-col gap-4 border-b p-5 lg:min-h-0 lg:w-[420px] lg:overflow-hidden lg:border-r lg:border-b-0">
-          <div className="space-y-2">
+        <div className="border-line flex shrink-0 flex-col gap-4 border-b p-5 lg:min-h-0 lg:w-[420px] lg:overflow-y-auto lg:border-r lg:border-b-0">
+          <div className="space-y-3">
             <PageHeader
               title={navItem("onboard").label}
               screen={navItem("onboard")}
-              description={`City in a box: open data in, digital twin out. ${name} in minutes.`}
+              description="Open data in, a first street flood forecast out."
               honesty="Inferred drain graph"
             />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <Button onClick={() => void start()} disabled={running} aria-busy={running}>
-                <MapPinned aria-hidden="true" />
-                {running ? `Building ${name}` : `Start onboarding ${name}`}
-              </Button>
-              <p className="type-micro text-text-3 min-w-0 flex-1">
-                {running
-                  ? `${Math.round((live?.progress ?? 0) * 100)} % built, ${formatSeconds(live?.elapsedS ?? 0)} elapsed.${
-                      streamed > 0
-                        ? ` ${streamed} progress ${streamed === 1 ? "event" : "events"} over the live socket.`
-                        : ""
-                    }`
-                  : `Runs from city/cache/${city}: open data already downloaded.`}
-              </p>
-            </div>
+            <Button onClick={() => void start()} disabled={running} aria-busy={running}>
+              <MapPinned aria-hidden="true" />
+              {running ? `Building ${name}` : `Start onboarding ${name}`}
+            </Button>
           </div>
 
           {error ? (
@@ -904,57 +1009,49 @@ function OnboardView({ city }: { city: string }) {
             </p>
           ) : null}
 
-          <PanelErrorBoundary title="Onboarding steps">
-            <section aria-labelledby="onboard-steps-title" className="shrink-0 space-y-1.5">
-              <div className="space-y-0.5">
-                <h2 id="onboard-steps-title" className="type-small text-text font-medium">
-                  Steps
-                </h2>
-                <p className="type-micro text-text-2">{stepsCaption}</p>
-              </div>
-              {/* Each row's detail line is shown where the column has the height for it: at
-                  1366 x 768 six of them pushed the log below the fold. Below lg the page scrolls,
-                  so they always show. */}
-              <OnboardingSteps
-                steps={steps}
-                detailClassName="lg:hidden lg:[@media(min-height:860px)]:block"
-              />
-            </section>
+          <PanelErrorBoundary title="First forecast">
+            <OnboardFinishCard
+              cityName={name}
+              facts={facts}
+              href={href}
+              note={cardNote}
+              factsOpacity={fadeFacts}
+              scrub={scrub}
+            />
           </PanelErrorBoundary>
 
-          <PanelErrorBoundary title="Pipeline log">
-            <section
-              aria-labelledby="onboard-log-title"
-              className="flex flex-col gap-1.5 lg:min-h-[184px] lg:flex-1"
-            >
+          <PanelErrorBoundary title="Onboarding steps">
+            <section aria-labelledby="onboard-steps-title" className="shrink-0 space-y-1">
               <div className="space-y-0.5">
-                <h2 id="onboard-log-title" className="type-small text-text font-medium">
-                  Pipeline log
+                <h2 id="onboard-steps-title" className="type-small text-text font-medium">
+                  Build
                 </h2>
-                <p className="type-micro text-text-2">{logCaption}</p>
+                <p className="type-micro text-text-2">{buildLine}</p>
               </div>
-              <LogStream
-                lines={lines}
-                // A recorded build's lines are dimmed: they are its own, but they are not
-                // happening now.
-                className={
-                  previous
-                    ? "[&>div]:text-text-3 lg:h-auto lg:min-h-[160px] lg:flex-1"
-                    : "lg:h-auto lg:min-h-[160px] lg:flex-1"
-                }
-                emptyDescription={
-                  cached
-                    ? `Nothing has run in this session and no build was recorded. Start onboarding ${name} to rebuild it and stream the pipeline's own lines.`
-                    : "Logs stream here when the wizard runs."
-                }
-              />
+              <OnboardingSteps steps={steps} compact />
+              <details className="pt-1">
+                <summary className="type-micro text-text-2 hover:text-text focus-visible:ring-tide rounded-control w-fit cursor-pointer py-0.5 focus-visible:ring-2 focus-visible:outline-none">
+                  Details
+                  {lines.length > 0 ? `, ${formatCount(lines.length)} log lines` : ""}
+                </summary>
+                <div className="mt-2 space-y-2">
+                  <OnboardingStepDetails steps={steps} />
+                  <LogStream
+                    lines={lines}
+                    // A recorded build's lines are dimmed: they are its own, but they are not
+                    // happening now.
+                    className={previous ? "[&>div]:text-text-3 h-56" : "h-56"}
+                    emptyDescription="Logs stream here when a build runs."
+                  />
+                </div>
+              </details>
             </section>
           </PanelErrorBoundary>
         </div>
 
         <PanelErrorBoundary title="Onboarding map">
-          <div className="relative min-h-[44rem] min-w-0 flex-1 lg:min-h-0">
-            {hasLayers ? (
+          <div className="relative min-h-[36rem] min-w-0 flex-1 lg:min-h-0">
+            {showMap ? (
               <>
                 {/* Behind the map, as on the console: it hosts the depth legend section 6.7 keeps
                     on screen whenever streets are coloured by depth, and the credit line. No
@@ -969,10 +1066,10 @@ function OnboardView({ city }: { city: string }) {
                   surcharge={[]}
                   hotspots={[]}
                   buildings={show.buildings ? (buildings ?? []) : []}
-                  drains={show.drains ? (drains ?? []) : []}
+                  drains={showDrains ? (drains ?? []) : []}
                   bounds={cityBox}
                   fitBounds={wetFrame}
-                  showDrains={(drains?.length ?? 0) > 0 && show.drains}
+                  showDrains={(drains?.length ?? 0) > 0 && showDrains}
                   showRaster={shownDepth !== null && show.depth}
                   showSurcharge={false}
                   showBuildings={(buildings?.length ?? 0) > 0 && show.buildings}
@@ -987,9 +1084,19 @@ function OnboardView({ city }: { city: string }) {
                 <div className="absolute top-4 left-4 z-10">
                   <OnboardLayers
                     value={layerState}
-                    onChange={(key, next) => setShow((s) => ({ ...s, [key]: next }))}
+                    onChange={(key, next) =>
+                      key === "drains"
+                        ? setDrainsPick(next)
+                        : setShow((s) => ({ ...s, [key]: next }))
+                    }
                   />
                 </div>
+                {shownDepth && roads && !streetsMatch ? (
+                  <p className="rounded-control border-line bg-deep type-micro text-text-2 absolute top-4 right-4 z-10 max-w-[280px] border px-3 py-2">
+                    Streets not coloured: this server&apos;s {name} streets differ from the
+                    forecast&apos;s.
+                  </p>
+                ) : null}
               </>
             ) : (
               // No "Reconstructed replay" chip: this city's first forecast is a design storm. And a
@@ -1006,33 +1113,15 @@ function OnboardView({ city }: { city: string }) {
                     : streetsFailed
                       ? {
                           title: `${name}'s streets did not load`,
-                          description: `The API did not serve /v1/city/${city}/layers/segments. Reload once it answers.`,
+                          description: "Reload once the API answers.",
                         }
                       : {
                           title: `Loading ${name}'s streets`,
-                          description: `The layers this build wrote are on their way from the API.`,
+                          description: "On their way from the API.",
                         }
                 }
               />
             )}
-            {/* Bottom-left, clear of the Layers panel above it and the credit line below it; with
-                no map yet it sits above the empty slot's own chip. */}
-            <div
-              className={
-                hasLayers
-                  ? "absolute bottom-10 left-4 z-10 max-w-[calc(100%-2rem)]"
-                  : "absolute bottom-20 left-4 z-10 max-w-[calc(100%-2rem)]"
-              }
-            >
-              <OnboardFinishCard
-                cityName={name}
-                facts={facts}
-                href={href}
-                note={cardNote}
-                factsOpacity={fadeFacts}
-                scrub={scrub}
-              />
-            </div>
           </div>
         </PanelErrorBoundary>
       </div>

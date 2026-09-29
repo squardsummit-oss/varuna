@@ -271,10 +271,13 @@ function GaugeRow({
               />
             </span>
             <span>above {thresholdCm} cm</span>
+            {arrived && minutes !== Math.round(leg.minutesBefore) ? (
+              <span className="text-text-3">(was {Math.round(leg.minutesBefore)})</span>
+            ) : null}
           </span>
           <span className="num type-micro text-text-3 truncate">
-            {Math.round(leg.minutesBefore)} min with no pump. {leg.pumpId} from {leg.depot.name},{" "}
-            {formatMinutes(leg.etaMin)} away
+            {leg.depthBeforeCm === null ? "No depth series. " : null}
+            {leg.pumpId}, {formatMinutes(leg.etaMin)} from {leg.depot.name}
           </span>
         </span>
       </button>

@@ -13,6 +13,12 @@
  * Colours are tokens, as deck.gl RGBA arrays like the rest of `layers/palette.ts`: open water in
  * `--well`, waterways and streets in `--line` and `--line-strong`, buildings in `--deep`. None of
  * them is the depth ramp, which means water depth and nothing else (SPEC.md 6.2).
+ *
+ * **Two themes.** The constants below are the dark theme's and are live bindings: when the page
+ * switches to light they are reassigned to the daylight mapping (sea in `--line`, streets in
+ * `--line-strong`, buildings in `--well` on the paper ground), so a layer built after the switch
+ * draws the new ground. Paper sea on paper land would vanish, which is why light does not reuse
+ * the dark theme's token for each role.
  */
 
 import { TileLayer } from "@deck.gl/geo-layers";
@@ -21,18 +27,73 @@ import { MVTLoader } from "@loaders.gl/mvt";
 import { PMTilesSource, type PMTilesTileSource } from "@loaders.gl/pmtiles";
 
 import { apiUrl } from "@/lib/api/client";
+import {
+  getTheme,
+  subscribeTheme,
+  themeRgbaTable,
+  type Theme,
+  type ThemeColorName,
+} from "@/lib/theme";
 
 type Rgba = [number, number, number, number];
 
 /** `--well` #17233B: open water, a shade lighter than the `--ink` land around it. */
-export const WATER_FILL: Rgba = [23, 35, 59, 255];
+export let WATER_FILL: Rgba = [23, 35, 59, 255];
 /** `--line-strong` #33436A: creeks, nallahs and canals as lines. */
-export const WATERWAY_LINE: Rgba = [51, 67, 106, 220];
+export let WATERWAY_LINE: Rgba = [51, 67, 106, 220];
 /** `--line` #24314F: every street, under the city's own dry-street layer. */
-export const ROAD_LINE: Rgba = [36, 49, 79, 255];
+export let ROAD_LINE: Rgba = [36, 49, 79, 255];
 /** `--deep` #111A2E with a `--line` hairline, as the online map draws buildings. */
-export const BUILDING_FILL: Rgba = [17, 26, 46, 235];
-export const BUILDING_LINE: Rgba = [36, 49, 79, 170];
+export let BUILDING_FILL: Rgba = [17, 26, 46, 235];
+export let BUILDING_LINE: Rgba = [36, 49, 79, 170];
+
+/** The offline ground's colours in a theme. `offlineBasemapPalette("dark")` equals the constants
+ * above exactly. */
+export function offlineBasemapPalette(theme: Theme): {
+  WATER_FILL: Rgba;
+  WATERWAY_LINE: Rgba;
+  ROAD_LINE: Rgba;
+  BUILDING_FILL: Rgba;
+  BUILDING_LINE: Rgba;
+} {
+  const table = themeRgbaTable(theme);
+  const at = (name: ThemeColorName, alpha: number): Rgba => {
+    const [r, g, b] = table[name];
+    return [r, g, b, alpha];
+  };
+  if (theme === "light") {
+    return {
+      WATER_FILL: at("line", 255),
+      WATERWAY_LINE: at("line-strong", 220),
+      ROAD_LINE: at("line-strong", 170),
+      BUILDING_FILL: at("well", 235),
+      BUILDING_LINE: at("line", 200),
+    };
+  }
+  return {
+    WATER_FILL: at("well", 255),
+    WATERWAY_LINE: at("line-strong", 220),
+    ROAD_LINE: at("line", 255),
+    BUILDING_FILL: at("deep", 235),
+    BUILDING_LINE: at("line", 170),
+  };
+}
+
+let appliedTheme: Theme = "dark";
+
+function applyOfflinePalette(theme: Theme): void {
+  if (theme === appliedTheme) return;
+  appliedTheme = theme;
+  const p = offlineBasemapPalette(theme);
+  WATER_FILL = p.WATER_FILL;
+  WATERWAY_LINE = p.WATERWAY_LINE;
+  ROAD_LINE = p.ROAD_LINE;
+  BUILDING_FILL = p.BUILDING_FILL;
+  BUILDING_LINE = p.BUILDING_LINE;
+}
+
+applyOfflinePalette(getTheme());
+subscribeTheme(() => applyOfflinePalette(getTheme()));
 
 /** Credit the archive must carry (ODbL and CC BY 4.0), used if its metadata cannot be read. */
 export const OFFLINE_BASEMAP_ATTRIBUTION =
@@ -147,6 +208,9 @@ export function offlineBasemapLayers(basemap: OfflineBasemap | null): unknown[] 
           getFillColor: basemapFillColor as never,
           getLineColor: basemapLineColor as never,
           getLineWidth: basemapLineWidth as never,
+          // The accessors read the theme's live colours, so a layer built after a switch
+          // re-evaluates them rather than keeping the other theme's ground.
+          updateTriggers: { getFillColor: appliedTheme, getLineColor: appliedTheme },
           lineWidthUnits: "pixels",
           lineWidthMinPixels: 0.4,
           pickable: false,

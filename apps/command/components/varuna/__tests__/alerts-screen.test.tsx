@@ -318,7 +318,7 @@ describe("AlertsScreen on a cycle that raises nothing", () => {
 
     expect(
       await screen.findByText(
-        "06:40 raises nothing yet: 105 places crossed a threshold for the first time and raise at 08:40 if they hold.",
+        "06:40 raises nothing yet: 105 new places raise at 08:40 if they hold.",
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText(/Press Play/)).toBeNull();

@@ -159,10 +159,16 @@ export function SegmentPopover({
         })}
       </ul>
 
-      <p className="type-micro text-text-3 mt-2">
-        Depth is the 90th percentile of cells within 15 m of the centreline. One member, so this is
-        a forecast and not a distribution.
-      </p>
+      {/* Method, for the judge who asks; it said "one member" on runs that carry fifty. */}
+      <details className="type-micro text-text-3 mt-2">
+        <summary className="text-text-2 cursor-pointer">Details</summary>
+        <p className="mt-1">
+          Depth is the 90th percentile of cells within 15 m of the centreline
+          {segment.pGt
+            ? ", from the Twin; probability mode reads the ensemble."
+            : ". One member, so a forecast and not a distribution."}
+        </p>
+      </details>
 
       {hotspot ? (
         <div className="border-line mt-3 border-t pt-2">

@@ -33,7 +33,7 @@ const LAYER_KEYS = [
   { key: "g", label: /ground truth/i },
   { key: "r", label: /^routes/i },
   { key: "i", label: /^isochrones/i },
-  { key: "3", label: /photorealistic city/i },
+  { key: "3", label: /3d city/i },
   { key: "x", label: /drain x-ray/i },
 ] as const;
 
@@ -100,7 +100,9 @@ test.describe("P6.13 the keyboard path", () => {
     await expect(overlay).not.toBeVisible();
   });
 
-  for (const { key, label } of LAYER_KEYS) {
+  // X is offered under the 3D city and switches 3D on with it, so its switch is not in the panel
+  // until pressed; it has its own test below.
+  for (const { key, label } of LAYER_KEYS.filter((k) => k.key !== "x")) {
     test(`"${key}" toggles its layer and the panel reports it`, async ({ page }) => {
       await page.goto("/console");
       await waitForRun(page);
@@ -157,7 +159,7 @@ test.describe("P6.13 the keyboard path", () => {
       await page.goto("/console");
       await waitForRun(page);
       await page.keyboard.press("3");
-      const row = page.getByRole("listitem").filter({ hasText: "Photorealistic city" });
+      const row = page.getByRole("listitem").filter({ hasText: "3D city" });
       await expect(row).toContainText(/photorealistic/i, { timeout: 30_000 });
       await page.keyboard.press("3");
       await expect(row).not.toContainText(/Asking Google|Map Tiles API|draped on it/);
@@ -190,7 +192,7 @@ test.describe("P6.13 the keyboard path", () => {
   test("space plays and pauses the same clock the time bar shows", async ({ page }) => {
     await page.goto("/console");
     await waitForRun(page);
-    const play = page.getByRole("button", { name: /^(play|pause)$/i }).first();
+    const play = page.getByRole("button", { name: /^(play|pause) the replay$/i }).first();
     await expect(play).toBeAttached({ timeout: 20_000 });
 
     const before = await play.getAttribute("aria-label");

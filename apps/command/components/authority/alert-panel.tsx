@@ -141,7 +141,7 @@ export function AlertPanel({
     <Panel
       className={className}
       title="Alerts"
-      description="Acknowledging records that this alert was seen. It changes no forecast, and it survives a reload."
+      description="Acknowledge records that an alert was seen; no forecast changes."
     >
       <div className="space-y-4">
         <fieldset className="space-y-1.5">
@@ -170,7 +170,7 @@ export function AlertPanel({
           <EmptyState
             size="sm"
             title="This cycle raised no alert"
-            description="Pick a cycle from the middle of the storm; the calm cycles raise nothing."
+            description="Pick a cycle from the storm; calm cycles raise nothing."
           />
         ) : (
           <ul className="max-h-96 space-y-2 overflow-y-auto" aria-label="Alerts">

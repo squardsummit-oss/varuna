@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { colorsFor } from "@varuna/tokens";
 import { describe, expect, it } from "vitest";
 
 import { BRAND_MARK_64_SRC } from "@/components/varuna/wordmark";
@@ -123,6 +124,22 @@ describe("the rural document", () => {
       expect(html).not.toMatch(/@import/i);
       expect(html).not.toMatch(/url\(/i);
     }
+  });
+
+  it("follows the system's light setting from the token palette, with no script", () => {
+    const html = renderRural(page(BODIES[0]));
+    const light = colorsFor("light");
+    const block = /@media \(prefers-color-scheme:light\)\{([^@]*)/.exec(html)?.[1] ?? "";
+    expect(block).toContain(`--ink:${light.ink}`);
+    expect(block).toContain(`--text:${light.text}`);
+    expect(block).toContain(`--on-tide:${light["on-tide"]}`);
+    // On paper the depth number is ink with a ramp-coloured underline, not ramp-coloured text.
+    expect(block).toContain(".depth{color:var(--text)");
+    // The light block must come after the base rules to win at equal specificity.
+    expect(html.indexOf("prefers-color-scheme:light")).toBeGreaterThan(
+      html.indexOf(".depth{font-weight:600;color:var(--d)}"),
+    );
+    expect(html).not.toMatch(/<script/i);
   });
 
   it("carries the team's 64 px emblem as a plain image, and counts it against the budget", () => {

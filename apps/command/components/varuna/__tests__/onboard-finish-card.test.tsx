@@ -1,8 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { formatDate } from "@/lib/format";
 import {
   OnboardFinishCard,
+  detailLines,
+  headlineFacts,
   stageListText,
   stormText,
   type FinishFacts,
@@ -51,57 +54,131 @@ describe("stageListText", () => {
   });
 });
 
+/** What the screen adds once the map has loaded the run's own depths. */
+const DEPTH_FACTS: FinishFacts = {
+  ...FACTS,
+  flooded: { count: 9_214, total: 18_622, thresholdCm: 15 },
+  deepest: {
+    cm: 366.6,
+    at: "2026-07-01T07:25:00+05:30",
+    leadMin: 75,
+    name: "Anna Salai",
+  },
+  issuedAt: "2026-07-01T06:10:00+05:30",
+  horizonMin: 155,
+};
+
+describe("headlineFacts", () => {
+  it("leads with streets above 15 cm, the deepest street and when the forecast was issued", () => {
+    const [flooded, deepest, issued] = headlineFacts(DEPTH_FACTS);
+    expect(flooded).toEqual({
+      label: "Flooded streets",
+      value: "9,214",
+      subs: ["of 18,622", "above 15 cm"],
+    });
+    expect(deepest).toEqual({
+      label: "Deepest street",
+      value: "367 cm",
+      subs: ["07:25 (+75 min)", "Anna Salai"],
+    });
+    expect(issued.label).toBe("Forecast issued");
+    expect(issued.value).toBe("06:10");
+    expect(issued.subs).toEqual([formatDate("2026-07-01T06:10:00+05:30"), "2 h 35 min ahead"]);
+  });
+
+  it("falls back to the record's own numbers before the depths have loaded", () => {
+    const [flooded, deepest, issued] = headlineFacts(FACTS);
+    expect(flooded).toEqual({
+      label: "Wet streets",
+      value: "15,472",
+      subs: ["of 18,622", "above 5 cm"],
+    });
+    expect(deepest).toEqual({ label: "Median street peak", value: "26 cm" });
+    expect(issued).toEqual({ label: "Forecast computed in", value: "46.5 s" });
+  });
+
+  it("leaves the street unnamed rather than guessing one", () => {
+    const [, deepest] = headlineFacts({
+      ...DEPTH_FACTS,
+      deepest: { ...DEPTH_FACTS.deepest!, name: null },
+    });
+    expect(deepest.subs).toEqual(["07:25 (+75 min)"]);
+  });
+});
+
+describe("detailLines", () => {
+  it("keeps the storm, the 5 cm count, the median and the timings behind Details", () => {
+    expect(detailLines(DEPTH_FACTS, "Chennai")).toEqual([
+      "Design storm CHN-IDF-25yr: 150 mm in 3 h, peak 449 mm/h",
+      "Streets above 5 cm: 15,472 of 18,622",
+      "Median street peak: 26 cm",
+      "Forecast computed in 46.5 s; Sky, Twin, Pulse and products took 46.4 s of it",
+      "VARUNA learns Chennai's drains from the next monsoon.",
+    ]);
+  });
+
+  it("does not repeat what the headline already shows", () => {
+    const lines = detailLines(FACTS, "Chennai");
+    expect(lines.some((line) => line.startsWith("Streets above"))).toBe(false);
+    expect(lines.some((line) => line.startsWith("Median"))).toBe(false);
+    expect(lines).toContain("Sky, Twin, Pulse and products took 46.4 s of it");
+  });
+});
+
 describe("OnboardFinishCard", () => {
-  it("holds the sentence and a disabled button before a forecast has been read", () => {
+  it("holds the honesty chips and a disabled button before a forecast has been read", () => {
     render(<OnboardFinishCard cityName="Chennai" facts={null} href={null} />);
+    const card = within(screen.getByRole("region", { name: "First forecast" }));
+    expect(card.getByText("Design storm")).toBeInTheDocument();
+    expect(card.getByText("Uncalibrated")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "First forecast, uncalibrated. VARUNA learns Chennai's drains from the next monsoon.",
-      ),
+      card.getByText("Chennai's street depths appear here when the build finishes."),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Open Chennai console" })).toBeDisabled();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("First forecast numbers")).not.toBeInTheDocument();
   });
 
-  it("prints the run's own numbers and links its console", () => {
+  it("shows the note in view while there are no numbers, because then it is the explanation", () => {
     render(
       <OnboardFinishCard
         cityName="Chennai"
-        facts={FACTS}
-        href={`/console?city=chennai&run=${RUN}`}
-        note="Built in 51 s in this session."
+        facts={null}
+        href={null}
+        note="The recorded forecast is not on this API."
       />,
     );
-    expect(screen.getByText(RUN)).toBeInTheDocument();
+    expect(screen.getByText("The recorded forecast is not on this API.")).toBeVisible();
+  });
+
+  it("prints three headline numbers and links the run's console", () => {
+    render(
+      <OnboardFinishCard
+        cityName="Chennai"
+        facts={DEPTH_FACTS}
+        href={`/console?city=chennai&run=${RUN}`}
+        note="From the previous build."
+      />,
+    );
     const numbers = within(screen.getByLabelText("First forecast numbers"));
-    expect(numbers.getByText("Wet streets, 5 cm or more")).toBeInTheDocument();
-    expect(numbers.getByText("15,472 of 18,622")).toBeInTheDocument();
-    expect(numbers.getByText("26 cm")).toBeInTheDocument();
-    expect(numbers.getByText("Design storm CHN-IDF-25yr")).toBeInTheDocument();
-    expect(numbers.getByText("150 mm in 3 h, peak 449 mm/h")).toBeInTheDocument();
-    // The wall time the first forecast's row prints, then the stage sum under its own label.
-    expect(numbers.getByText("Forecast computed in")).toBeInTheDocument();
-    expect(numbers.getByText("46.5 s")).toBeInTheDocument();
-    expect(
-      numbers.getByText("Sky, Twin, Pulse and products took 46.4 s of it"),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Built in 51 s in this session.")).toBeInTheDocument();
+    expect(numbers.getByText("Flooded streets")).toBeInTheDocument();
+    expect(numbers.getByText("9,214")).toBeInTheDocument();
+    expect(numbers.getByText("of 18,622")).toBeInTheDocument();
+    expect(numbers.getByText("above 15 cm")).toBeInTheDocument();
+    expect(numbers.getByText("367 cm")).toBeInTheDocument();
+    expect(numbers.getByText("07:25 (+75 min)")).toBeInTheDocument();
+    expect(numbers.getByText("Anna Salai")).toBeInTheDocument();
+    expect(numbers.getByText("06:10")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open Chennai console" })).toHaveAttribute(
       "href",
       `/console?city=chennai&run=${RUN}`,
     );
-  });
-
-  it("labels a stage sum as a stage sum when no build recorded the wall time", () => {
-    render(
-      <OnboardFinishCard cityName="Chennai" facts={{ ...FACTS, forecastMs: null }} href={null} />,
-    );
-    const numbers = within(screen.getByLabelText("First forecast numbers"));
-    expect(numbers.queryByText("Forecast computed in")).not.toBeInTheDocument();
-    expect(numbers.getByText("Sky, Twin, Pulse and products")).toBeInTheDocument();
-    expect(numbers.getByText("46.4 s")).toBeInTheDocument();
-    expect(numbers.queryByText(/of it/)).not.toBeInTheDocument();
+    // The run id, the storm and the note are one click away, never deleted.
+    const card = screen.getByRole("region", { name: "First forecast" });
+    expect(card).toHaveTextContent(RUN);
+    expect(card).toHaveTextContent("Design storm CHN-IDF-25yr: 150 mm in 3 h, peak 449 mm/h");
+    expect(card).toHaveTextContent("From the previous build.");
+    expect(screen.getByText("Details").closest("details")).not.toHaveAttribute("open");
   });
 
   it("says a number was not recorded rather than inventing one", () => {
@@ -121,7 +198,7 @@ describe("OnboardFinishCard", () => {
       />,
     );
     expect(screen.getAllByText("Not recorded")).toHaveLength(3);
-    expect(screen.queryByText(/Design storm/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Design storm CHN/)).not.toBeInTheDocument();
   });
 
   it("fades the numbers in with the forecast's depth layer (M19)", () => {

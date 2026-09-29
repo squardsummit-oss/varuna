@@ -15,6 +15,8 @@
 
 import { IconLayer, TextLayer } from "@deck.gl/layers";
 
+import { getTheme, subscribeTheme, themeRgbaTable, type Theme } from "@/lib/theme";
+
 import type { SegmentPath } from "./city-map";
 
 /** One named thing on the map. */
@@ -38,12 +40,30 @@ const MIN_ZOOM: Record<MapLabel["kind"], number> = {
 /** Labels drawn at once. Past this the map is text, not a map. */
 const MAX_LABELS = 260;
 
-/** `--text` #E3EAF6 and `--ink` #0A1020: light type with a dark halo, legible over any imagery. */
-const LABEL_FILL: [number, number, number, number] = [227, 234, 246, 255];
-const LABEL_HALO: [number, number, number, number] = [10, 16, 32, 235];
+type Rgba = [number, number, number, number];
 
-/** `--tide` #2DD4BF: the register's chronic junctions, which are the map's own subject. */
-const HOTSPOT_FILL: [number, number, number, number] = [45, 212, 191, 255];
+/** `--text` over an `--ink` halo, and `--tide` for the register's chronic junctions, which are the
+ * map's own subject. In dark that is light type on a dark halo; in light it inverts to dark type
+ * on a paper halo, which is how a daylight map is read. Either way legible over any imagery. */
+function labelColours(theme: Theme): { fill: Rgba; halo: Rgba; hotspot: Rgba; theme: Theme } {
+  const table = themeRgbaTable(theme);
+  const at = (name: "text" | "ink" | "tide", alpha: number): Rgba => {
+    const [r, g, b] = table[name];
+    return [r, g, b, alpha];
+  };
+  return { fill: at("text", 255), halo: at("ink", 235), hotspot: at("tide", 255), theme };
+}
+
+let colours = labelColours(getTheme());
+subscribeTheme(() => {
+  if (getTheme() !== colours.theme) colours = labelColours(getTheme());
+});
+
+/** A colour update trigger that also changes with the theme. In dark it is the bare count, so a
+ * dark layer hands deck exactly the props the equivalence fixtures recorded. */
+function colourTrigger(count: number): number | string {
+  return colours.theme === "dark" ? count : `${count}-${colours.theme}`;
+}
 
 const SIZE: Record<MapLabel["kind"], number> = {
   hotspot: 13,
@@ -132,11 +152,11 @@ export function labelTextLayers(labels: MapLabel[]): unknown[] {
       getText: (d) => d.text,
       getSize: (d) => SIZE[d.kind],
       sizeUnits: "pixels",
-      getColor: (d) => (d.kind === "hotspot" ? HOTSPOT_FILL : LABEL_FILL),
-      // The halo is what makes a light label readable over bright imagery and over the depth
-      // ramp alike, without a panel behind it.
+      getColor: (d) => (d.kind === "hotspot" ? colours.hotspot : colours.fill),
+      // The halo is what makes a label readable over bright imagery and over the depth ramp
+      // alike, without a panel behind it.
       outlineWidth: 3,
-      outlineColor: LABEL_HALO,
+      outlineColor: colours.halo,
       fontSettings: { sdf: true, fontSize: 64, buffer: 8 },
       fontFamily: "var(--font-sans), system-ui, sans-serif",
       fontWeight: 600,
@@ -145,7 +165,11 @@ export function labelTextLayers(labels: MapLabel[]): unknown[] {
       getPixelOffset: (d) => (d.kind === "street" ? [0, 0] : [0, -12]),
       characterSet: "auto",
       pickable: false,
-      updateTriggers: { getText: labels.length, getColor: labels.length, getSize: labels.length },
+      updateTriggers: {
+        getText: labels.length,
+        getColor: colourTrigger(labels.length),
+        getSize: labels.length,
+      },
     }),
   ];
 }
@@ -166,9 +190,9 @@ export function labelMarkerLayers(labels: MapLabel[]): unknown[] {
       getPosition: (d) => [d.lon, d.lat],
       getSize: (d) => (d.kind === "hotspot" ? 9 : 7),
       sizeUnits: "pixels",
-      getColor: (d) => (d.kind === "hotspot" ? HOTSPOT_FILL : LABEL_FILL),
+      getColor: (d) => (d.kind === "hotspot" ? colours.hotspot : colours.fill),
       pickable: false,
-      updateTriggers: { getColor: facilities.length, getSize: facilities.length },
+      updateTriggers: { getColor: colourTrigger(facilities.length), getSize: facilities.length },
     }),
   ];
 }

@@ -125,10 +125,9 @@ export function WardMap() {
           </span>
           {run?.provenance.cycleTs ? (
             <span className="num block">
-              From the {formatIst(run.provenance.cycleTs)} cycle of the reconstructed replay.
+              {formatIst(run.provenance.cycleTs)} cycle, reconstructed replay
             </span>
           ) : null}
-          The first lead a run started from dry can stand behind.
         </p>
       ) : null}
     </>

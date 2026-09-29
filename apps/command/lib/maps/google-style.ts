@@ -20,10 +20,12 @@
  * boldness on the water, and a basemap full of restaurant pins spends it on lunch.
  */
 
+import { colorsFor, type ThemeColorName } from "@varuna/tokens";
+
 import { colors } from "@/lib/ramps";
 
-/** The five tokens the basemap is allowed to use. */
-export type StyleToken = "--ink" | "--deep" | "--well" | "--line" | "--text-3";
+/** The tokens the basemap is allowed to use: five in dark, plus `--line-strong` for daylight water. */
+export type StyleToken = "--ink" | "--deep" | "--well" | "--line" | "--line-strong" | "--text-3";
 
 /**
  * Values from the generated token module, used when there is no document to read - the server
@@ -34,6 +36,7 @@ const TOKEN_FALLBACK: Record<StyleToken, string> = {
   "--deep": colors.deep,
   "--well": colors.well,
   "--line": colors.line,
+  "--line-strong": colors["line-strong"],
   "--text-3": colors["text-3"],
 };
 
@@ -43,7 +46,14 @@ const TOKEN_FALLBACK: Record<StyleToken, string> = {
  * The computed property is preferred over the compiled constant so that a theme override on
  * `:root` - the mechanism SPEC.md 6.2 already uses for dark mode - reaches the basemap too.
  */
-export function resolveToken(token: StyleToken): string {
+export function resolveToken(token: StyleToken, theme?: "dark" | "light"): string {
+  // A named theme that is not the one on the document reads straight from that theme's tokens:
+  // the computed value would be the other theme's.
+  if (theme !== undefined) {
+    const onDocument =
+      typeof document !== "undefined" ? document.documentElement.getAttribute("data-theme") : null;
+    if ((onDocument ?? "dark") !== theme) return colorsFor(theme)[token.slice(2) as ThemeColorName];
+  }
   if (typeof window !== "undefined" && typeof document?.documentElement !== "undefined") {
     try {
       const value = window
@@ -92,11 +102,13 @@ function paint(
  * never reach the tiles.
  */
 export function darkMapStyle(): MapTypeStyle[] {
-  const ink = resolveToken("--ink");
-  const deep = resolveToken("--deep");
-  const well = resolveToken("--well");
-  const line = resolveToken("--line");
-  const muted = resolveToken("--text-3");
+  // Named "dark" so a light document never hands this mapping its near-white --ink and --deep,
+  // which would paint the sea and the land alike; `lightMapStyle` is the daylight map.
+  const ink = resolveToken("--ink", "dark");
+  const deep = resolveToken("--deep", "dark");
+  const well = resolveToken("--well", "dark");
+  const line = resolveToken("--line", "dark");
+  const muted = resolveToken("--text-3", "dark");
 
   return [
     // Land, and the default for anything a later rule does not name.
@@ -133,4 +145,53 @@ export function darkMapStyle(): MapTypeStyle[] {
     paint("water", "geometry", [{ color: ink }]),
     paint("water", "labels.text.fill", [{ color: muted }]),
   ];
+}
+
+/**
+ * The daylight basemap, for `<html data-theme="light">`, resolved from the light tokens.
+ *
+ * Not the dark style with the tokens swapped: in light, `--ink` and `--deep` are both near white,
+ * so the dark mapping would draw the sea and the land in the same colour. Daylight maps are read
+ * the other way round - pale paper land, white roads with a hairline casing, and water as the one
+ * cool mid-tone - so the coast still reads as an edge and the depth ramp still has the only
+ * saturated colour on the map.
+ */
+export function lightMapStyle(): MapTypeStyle[] {
+  const paper = resolveToken("--ink", "light");
+  const white = resolveToken("--deep", "light");
+  const line = resolveToken("--line", "light");
+  const water = resolveToken("--line-strong", "light");
+  const muted = resolveToken("--text-3", "light");
+
+  return [
+    paint(undefined, "geometry", [{ color: paper }]),
+    paint(undefined, "labels.text.fill", [{ color: muted }]),
+    paint(undefined, "labels.text.stroke", [{ color: white }, { weight: 2 }]),
+    paint(undefined, "labels.icon", [{ visibility: "off" }]),
+
+    paint("administrative", "geometry", [{ color: line }]),
+    paint("administrative.land_parcel", undefined, [{ visibility: "off" }]),
+    paint("administrative.neighborhood", "labels", [{ visibility: "off" }]),
+
+    paint("poi", undefined, [{ visibility: "off" }]),
+    paint("poi.park", "geometry", [{ color: paper }, { visibility: "on" }]),
+    paint("poi.park", "labels", [{ visibility: "off" }]),
+
+    paint("road", "geometry", [{ color: white }]),
+    paint("road", "geometry.stroke", [{ color: line }]),
+    paint("road.highway", "geometry", [{ color: white }]),
+    paint("road.highway", "geometry.stroke", [{ color: water }]),
+    paint("road.local", "labels", [{ visibility: "off" }]),
+
+    paint("transit", undefined, [{ visibility: "off" }]),
+
+    paint("water", "geometry", [{ color: water }]),
+    paint("water", "labels.text.fill", [{ color: muted }]),
+  ];
+}
+
+/** The basemap style for a theme. Call it with `useTheme().theme` in the map's own component so a
+ * switch restyles the tiles. */
+export function mapStyleFor(theme: "dark" | "light"): MapTypeStyle[] {
+  return theme === "light" ? lightMapStyle() : darkMapStyle();
 }

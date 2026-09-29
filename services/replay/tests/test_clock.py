@@ -343,7 +343,9 @@ async def test_live_mode_without_an_orchestrator_says_where_it_lands(
     await clock.play()
     await clock.poll()
     assert clock.note == LIVE_NOTE
-    assert "Phase 5" in clock.note
+    # Phase 5 landed and the note used to say it had not; it names where live cycles run now.
+    assert "Compute live" in clock.note
+    assert "Phase" not in clock.note
 
 
 async def test_baked_mode_publishes_the_run_for_the_cycle(
@@ -378,6 +380,70 @@ async def test_baked_mode_says_when_nothing_is_baked_instead_of_publishing(
     assert clock.note is not None
     assert "make bake" in clock.note
     assert clock.last_run_id is None
+
+
+async def test_a_cycle_between_bakes_holds_the_newest_run_and_does_not_republish_it(
+    make_clock: Callable[..., ReplayClock], registry: RunRegistry, fake: FakeMonotonic
+) -> None:
+    """The demo bakes every sixth cycle, so 06:45 has no run of its own and 06:40's is newest.
+
+    It used to publish nothing and set "No baked run for 06:45 IST. Run make bake" on five of
+    every six cycles of a correctly baked demo, which is what an operator pressing Play read.
+    """
+    clock = make_clock(speed=30, mode="baked")
+    first = baked_run(T0, clock.bundle_id)
+    later = baked_run(T0 + timedelta(minutes=30), clock.bundle_id)
+    registry.write_meta(first)
+    registry.write_meta(later)
+
+    await clock.play()
+    opening = await clock.poll()
+    assert [e.payload["run_id"] for e in opening if e.topic == "runs.published"] == [first.run_id]
+    assert clock.note is None
+
+    fake.advance(10)  # 5 simulated minutes: 05:45, between bakes
+    held = await clock.poll()
+    assert [e for e in held if e.topic == "runs.published"] == []
+    assert clock.last_run_id == first.run_id
+    assert clock.note == "Holding the 05:40 run until the next baked cycle."
+
+    fake.advance(50)  # 06:10: its own run
+    arrived = await clock.poll()
+    runs = [e for e in arrived if e.topic == "runs.published"]
+    assert [e.payload["run_id"] for e in runs] == [later.run_id]
+    assert runs[0].payload["cycle_ts"] == later.cycle_ts.isoformat()
+    assert clock.note is None
+
+
+async def test_a_seek_between_bakes_publishes_the_run_it_lands_after(
+    make_clock: Callable[..., ReplayClock], registry: RunRegistry
+) -> None:
+    clock = make_clock(speed=30, mode="baked")
+    baked = baked_run(T0 + timedelta(minutes=10), clock.bundle_id)
+    registry.write_meta(baked)
+
+    await clock.seek(T0 + timedelta(minutes=25))
+    await clock.play()
+    published = await clock.poll()
+    runs = [e for e in published if e.topic == "runs.published"]
+    assert [e.payload["run_id"] for e in runs] == [baked.run_id]
+    # The event carries the run's own cycle and the clock's, which differ for a held run.
+    assert runs[0].payload["cycle_ts"] == baked.cycle_ts.isoformat()
+    assert runs[0].payload["clock_cycle_ts"] == (T0 + timedelta(minutes=25)).isoformat()
+
+
+async def test_before_the_first_bake_the_note_names_where_to_seek(
+    make_clock: Callable[..., ReplayClock], registry: RunRegistry
+) -> None:
+    clock = make_clock(speed=30, mode="baked")
+    registry.write_meta(baked_run(T0 + timedelta(minutes=30), clock.bundle_id))
+
+    await clock.play()
+    published = await clock.poll()
+    assert [e for e in published if e.topic == "runs.published"] == []
+    assert clock.note is not None
+    assert clock.note.startswith("No baked run until 06:10 IST. Seek there")
+    assert "make bake" in clock.note
 
 
 # --------------------------------------------------------------------------- lifecycle

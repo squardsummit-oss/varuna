@@ -107,10 +107,7 @@ export function leadNote(proof: Proof | null): string {
   const base = "How long before the civic log VARUNA first called that street impassable.";
   if (!proof || proof.leadMin !== null || proof.hitsEarly !== 0 || !proof.hitsAfter) return base;
   const n = proof.hitsAfter;
-  return (
-    `None on this event: VARUNA flagged ${n === 1 ? "the one pin" : `all ${n} pins`} it caught ` +
-    "after the city logged them, inside each pin's stated time uncertainty."
-  );
+  return `None on this event: VARUNA flagged ${n === 1 ? "the one pin" : `all ${n} pins`} it caught after the civic log.`;
 }
 
 export function Proof() {
@@ -152,7 +149,7 @@ export function Proof() {
             label={`Probability of detection at ${proof?.thresholdCm ?? 15} cm`}
             // A hit is a pin where the forecast crossed the threshold inside the pin's own time
             // uncertainty, before or after the log; the warning time below counts only "before".
-            note={`Share of the sourced pins where VARUNA forecast more than ${proof?.thresholdCm ?? 15} cm, inside each pin's stated time uncertainty.`}
+            note={`Share of sourced pins where VARUNA forecast over ${proof?.thresholdCm ?? 15} cm in the pin's time window.`}
           />
           <Figure
             value={proof?.leadMin ?? null}
@@ -163,12 +160,11 @@ export function Proof() {
           <Figure
             value={proof?.pins ?? null}
             label="Ground-truth pins"
-            note="Curated public records inside the forecast window, each with a source URL and a stated time uncertainty."
+            note="Public records in the forecast window, each with a source URL."
           />
         </div>
         <p className="text-small text-text-3 mt-10 max-w-[72ch]">
-          Computed on a reconstructed replay of 2 July 2019 against sourced ground truth. The
-          numbers are what the model achieved, not what we would like it to achieve.{" "}
+          Reconstructed replay of 2 July 2019, scored against sourced ground truth.{" "}
           <a href={LIMITATIONS_HREF} className="text-tide underline">
             See how we score ourselves, and where we fall short
           </a>

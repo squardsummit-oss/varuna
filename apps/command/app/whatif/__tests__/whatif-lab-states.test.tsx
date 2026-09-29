@@ -57,7 +57,46 @@ const LAYER = {
  */
 const NOTHING = emulatorFixture.nothing;
 
+/** `GET /v1/whatif/twin` on an API that runs the Twin: every tide, nothing stored. */
+const OPEN_OFFER = {
+  run_id: RUN_ID,
+  enabled: true,
+  answers: [],
+  tide_offsets_m: [],
+  elsewhere: [],
+  message: "This server runs the full-city Twin.",
+};
+
+/**
+ * The same on the deployed API (`VARUNA_WHATIF_TWIN=0`): it runs no Twin and holds the stored
+ * answer for +0.5 m at rain 1.0x, as `services/api/tests/test_whatif_twin.py` pins it.
+ */
+const STORED_OFFER = {
+  run_id: RUN_ID,
+  enabled: false,
+  answers: [{ rain_scale: 1, tide_offset_m: 0.5, cleaned: false, source: "shipped" }],
+  tide_offsets_m: [0.5],
+  elsewhere: [],
+  message:
+    "The tide is answered here from stored Twin runs only: +0.5 m at rain 1.0x with no pipes cleaned.",
+};
+
+/** The stored +0.5 m answer as `POST /v1/whatif/twin` serves it from the shipped copy. */
+const TWIN_STORED = {
+  ...TWIN_DONE,
+  baseline_steps: 0,
+  n_steps: 6,
+  step: 6,
+  scenario: { ...TWIN_DONE.scenario, rain_scale: 1, tide_offset_m: 0.5 },
+  cache: {
+    ...TWIN_DONE.cache,
+    source: "shipped",
+    label: "Answered from the cache shipped with the repository in demo/whatif.",
+  },
+};
+
 interface Routes {
+  offer?: unknown;
   emulator?: unknown;
   /** Answers to `POST /v1/whatif/twin`, then to each poll, in order; the last repeats. */
   twin?: unknown[];
@@ -76,6 +115,9 @@ function stubApi(routes: Routes) {
         headers: { "content-type": "application/json" },
       });
     if (url.includes("/cancel")) return json(routes.cancel ?? TWIN_RUNNING);
+    if (url.includes("/v1/whatif/twin?") || (url.endsWith("/v1/whatif/twin") && method === "GET")) {
+      return json(routes.offer ?? OPEN_OFFER);
+    }
     if (url.includes("/v1/whatif/twin")) return json(next(), method === "POST" ? 202 : 200);
     if (url.includes("/v1/whatif/physics-check")) return json(emulatorFixture.physics_tide);
     if (url.endsWith("/v1/whatif")) return json(routes.emulator ?? emulatorFixture.emulator);
@@ -142,6 +184,8 @@ describe("what-if lab states", () => {
       screen.getAllByText("Reduced-order emulator calibrated to VARUNA-Twin").length,
     ).toBeGreaterThan(1);
     expect(screen.queryByText("Emulator, tide not included")).not.toBeInTheDocument();
+    // Its measured skill sits beside the answer, not behind Details (section 15, 4:30).
+    expect(screen.getByText("Emulator skill: RMSE 5.7 cm, CSI 0.09 at 30 cm")).toBeVisible();
     // No tide asked, so no Twin job and no M31 bar.
     expect(calls(fetchMock, "/v1/whatif/twin")).toHaveLength(0);
     expect(screen.queryByRole("progressbar", { name: "Full-city Twin run" })).toBeNull();
@@ -307,6 +351,48 @@ describe("what-if lab states", () => {
     expect(screen.queryByText(/already running on this server/)).toBeNull();
   });
 
+  it("offers only the stored tides on an API that cannot run the Twin, and says so", async () => {
+    const fetchMock = stubApi({ offer: STORED_OFFER, twin: [TWIN_STORED] });
+    renderLab();
+
+    // The tide is the values this API can answer, as chips, never a slider reaching the rest.
+    const choices = await screen.findByRole("radiogroup", { name: "Tide offset" });
+    expect(
+      within(choices)
+        .getAllByRole("radio")
+        .map((radio) => radio.parentElement?.textContent),
+    ).toEqual(["+0.0 m", "+0.5 m"]);
+    const tide = screen.getByRole("region", { name: "Tide offset" });
+    expect(within(tide).queryByRole("slider", { hidden: true })).toBeNull();
+    expect(
+      screen.getByText("Stored Twin answers on this server, at rain 1.0x."),
+    ).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.click(within(choices).getByLabelText("+0.5 m"));
+    });
+    await pressRun();
+    const [, init] = calls(fetchMock, "/v1/whatif/twin")[0] ?? [];
+    expect(JSON.parse(String(init?.body))).toMatchObject({ tide_offset_m: 0.5, rain_scale: 1 });
+    // Served from the store, and said to be: not a run that just finished.
+    expect(await screen.findByText("Stored Twin answer: 6 steps, not rerun.")).toBeInTheDocument();
+
+    // Rain moved with the tide: the store holds no such answer, so the Twin is not asked, and the
+    // emulator's answer stands with the tide left out and the reason beside it.
+    const rain = within(screen.getByRole("region", { name: "Rain scale" })).getByRole("slider", {
+      hidden: true,
+    });
+    act(() => {
+      fireEvent.keyDown(rain, { key: "ArrowRight" });
+    });
+    await pressRun();
+    expect(calls(fetchMock, "/v1/whatif/twin")).toHaveLength(1);
+    expect(
+      await screen.findByText("The tide is answered here only at rain 1.0x with no pipes cleaned."),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("Emulator, tide not included")).toBeInTheDocument();
+  });
+
   it("says nothing changed rather than drawing grey streets", async () => {
     stubApi({ emulator: NOTHING });
     renderLab();
@@ -318,7 +404,7 @@ describe("what-if lab states", () => {
     expect(screen.getAllByText("No street's peak moved by 0.5 cm or more.")).toHaveLength(2);
     // The emulator did not run, so no skill is printed beside the answer (rule 6); the endpoint's
     // own note says why the forecast is the run's.
-    expect(screen.queryByText(/Emulator skill on held-out storms/)).toBeNull();
+    expect(screen.queryByText(/Emulator skill/)).toBeNull();
     expect(screen.getByText(/^No lever is set/)).toBeInTheDocument();
     expect(screen.queryByText(/^Drawn:/)).toBeNull();
     // The hotspots are still tabled, each unchanged, so "nothing" is a measured answer: the

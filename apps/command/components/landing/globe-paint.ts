@@ -142,6 +142,8 @@ export async function loadTopology(url: string, signal: AbortSignal): Promise<Wo
  * so no colour is written here (SPEC.md 6.2) and a worker, which has no stylesheet, gets them.
  */
 export interface CanvasPalette {
+  /** `--ink`: the halo behind the Mumbai mark, so it reads on the photograph in either theme. */
+  ink: string;
   deep: string;
   well: string;
   lineStrong: string;
@@ -230,21 +232,35 @@ export function paintUnroll(
   }
   const [x, y] = point;
   const grow = frame.alpha;
+  const labelX = x + 12 + 14 * grow;
+  // Every part of the mark sits on an `--ink` halo, as a map label does. In the dark theme the halo
+  // is the page's own colour and changes nothing; in the light theme the teal and the label are
+  // dark, and without it they vanished into the photograph's dark night-side ocean.
   context.globalAlpha = opacity;
   context.beginPath();
   context.arc(x, y, 3, 0, 2 * Math.PI);
+  context.lineWidth = 3;
+  context.strokeStyle = palette.ink;
+  context.stroke();
   context.fillStyle = palette.tide;
   context.fill();
   context.globalAlpha = opacity * 0.7;
   context.beginPath();
   context.arc(x, y, 6 + 14 * grow, 0, 2 * Math.PI);
+  context.lineWidth = 3.2;
+  context.strokeStyle = palette.ink;
+  context.stroke();
   context.lineWidth = 1.2;
   context.strokeStyle = palette.tide;
   context.stroke();
   context.globalAlpha = opacity;
   context.font = `11px ${palette.font}`;
+  context.lineWidth = 3;
+  context.lineJoin = "round";
+  context.strokeStyle = palette.ink;
+  context.strokeText("Mumbai", labelX, y + 4);
   context.fillStyle = palette.text2;
-  context.fillText("Mumbai", x + 12 + 14 * grow, y + 4);
+  context.fillText("Mumbai", labelX, y + 4);
   context.globalAlpha = 1;
 }
 

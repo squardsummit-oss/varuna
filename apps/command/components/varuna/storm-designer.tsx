@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/varuna/empty-state";
 import { RadarPreview } from "@/components/varuna/radar-preview";
+import { Skeleton } from "@/components/varuna/skeleton";
 import { formatIst, formatMinutes } from "@/lib/format";
 import { cssVar, rainBand } from "@/lib/ramps";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,13 @@ export interface StormDesignerProps {
   built: boolean;
   /** Bundle members `make bundle` has not written yet, from `GET /v1/replay/bundles`. */
   missingMembers: readonly string[];
+  /**
+   * True while the bundle list or the storm index is on its way. Without it the designer said
+   * "Run make bundle" over a bundle that was built and merely still loading.
+   */
+  loading?: boolean;
+  /** Why the storm index did not load, in the API's words; the cell table says so. */
+  cellsError?: string | null;
   /** Reason the storm cannot be edited yet. */
   generateDisabledReason?: string;
   className?: string;
@@ -102,12 +110,12 @@ function HyetographSparkline({ storm }: { storm: DesignStormHyetograph }) {
       <div
         role="img"
         aria-label={summary}
-        className="flex h-16 items-end gap-px rounded-control border border-line bg-well/40 p-1"
+        className="rounded-control border-line bg-well/40 flex h-16 items-end gap-px border p-1"
       >
         {storm.blocksMmH.map((mmH, index) => (
           <div
             key={index * storm.stepMin}
-            className="min-w-0 flex-1 rounded-chip"
+            className="rounded-chip min-w-0 flex-1"
             style={{
               height: `${Math.max(MIN_BAR_FRACTION, mmH / peakMmH) * 100}%`,
               background: blockColor(mmH),
@@ -131,7 +139,9 @@ export function StormDesigner({
   bundleId,
   built,
   missingMembers,
-  generateDisabledReason = "Editing the storm is coming in pilot; the demo storm is read-only",
+  loading = false,
+  cellsError = null,
+  generateDisabledReason = "Coming in pilot. The demo storm is fixed by its seed.",
   className,
 }: StormDesignerProps) {
   const helpId = "storm-designer-generate-help";
@@ -140,7 +150,16 @@ export function StormDesigner({
     <div className={cn("space-y-4", className)}>
       <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
         <div className="min-w-0">
-          {cells.length === 0 && designStorm ? (
+          {loading ? (
+            <div className="space-y-1.5" aria-busy="true" aria-label="Loading the storm">
+              <Skeleton className="h-8" />
+              <Skeleton className="h-8" />
+              <Skeleton className="h-8" />
+              <Skeleton className="h-8" />
+            </div>
+          ) : cellsError ? (
+            <EmptyState icon={Radar} title="The storm did not load" description={cellsError} />
+          ) : cells.length === 0 && designStorm ? (
             <HyetographSparkline storm={designStorm} />
           ) : cells.length === 0 ? (
             <EmptyState
@@ -166,10 +185,16 @@ export function StormDesigner({
                     <TableRow key={cell.id} className="h-8">
                       <TableCell className="num">{formatIst(cell.birth)}</TableCell>
                       <TableCell className="num">{formatMinutes(cell.lifetimeMin)}</TableCell>
-                      <TableCell className="num">{formatLatLon(cell.startLat, cell.startLon)}</TableCell>
-                      <TableCell className="num text-right">{cell.velocityMs.toFixed(1)} m/s</TableCell>
+                      <TableCell className="num">
+                        {formatLatLon(cell.startLat, cell.startLon)}
+                      </TableCell>
+                      <TableCell className="num text-right">
+                        {cell.velocityMs.toFixed(1)} m/s
+                      </TableCell>
                       <TableCell className="num text-right">{cell.sigmaKm.toFixed(1)} km</TableCell>
-                      <TableCell className="num text-right">{Math.round(cell.peakMmH)} mm/h</TableCell>
+                      <TableCell className="num text-right">
+                        {Math.round(cell.peakMmH)} mm/h
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -179,11 +204,15 @@ export function StormDesigner({
         </div>
 
         <div role="region" aria-label="Radar preview" className="min-w-0">
-          <RadarPreview bundleId={bundleId} built={built} missingMembers={missingMembers} />
+          {loading && !built ? (
+            <Skeleton className="aspect-square w-full" />
+          ) : (
+            <RadarPreview bundleId={bundleId} built={built} missingMembers={missingMembers} />
+          )}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
+      <div className="border-line flex flex-wrap items-center gap-3 border-t pt-4">
         <Button variant="outline" disabled aria-describedby={helpId}>
           Generate bundle
         </Button>

@@ -126,7 +126,7 @@ export function DrainHealthTable({ rows, defaultSort = "beta", className }: Drai
       <EmptyState
         size="sm"
         title="No drain health yet"
-        description="Run a replay cycle: Pulse writes a posterior blockage for every pipe it can see."
+        description="Press Play on the replay: Pulse writes each pipe's blockage every cycle."
         className={className}
       />
     );

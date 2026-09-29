@@ -27,16 +27,20 @@ import type { SegmentPick } from "@/components/map/city-map";
 import type { RunDepth } from "@/lib/api/run-depth";
 import type { AffectedFrame } from "@/lib/map/affected-bounds";
 import { useGlobalShortcuts } from "@/lib/shortcuts";
+import { useReplayStore } from "@/lib/stores/replay";
 import { useRunStore } from "@/lib/stores/run";
+import { useScrubStore } from "@/lib/stores/scrub";
 import { useUiStore } from "@/lib/stores/ui";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/console",
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }),
-  useSearchParams: () => new URLSearchParams(`run=${RUN_ID}`),
+  useSearchParams: () => new URLSearchParams(mockQuery.value),
 }));
 
 const RUN_ID = "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked";
+/** The console's query string; a test that needs another sets it and puts it back. */
+const mockQuery = { value: `run=${RUN_ID}` };
 
 /**
  * The 06:40 cycle's steps as the API serves them: 36, five minutes apart, the first at 06:45 -
@@ -252,10 +256,10 @@ describe("frameCaption", () => {
       "Full view: all 22.7 km of streets at 15 cm or more at 09:40 (+180 min). F or Esc goes back.",
     );
     expect(frameCaption({ ...FRAME, basis: "hotspots", step: null }, RUN, true)).toBe(
-      "Full view: no street reaches 5 cm in this run, so it frames the chronic spots. F or Esc goes back.",
+      "Full view: no street reaches 5 cm, so the chronic spots. F or Esc goes back.",
     );
     expect(frameCaption({ ...FRAME, basis: "aoi", step: null }, RUN, true)).toBe(
-      "Full view: nothing in this run is wet, so it shows the whole city. F or Esc goes back.",
+      "Full view: nothing is wet, so the whole city. F or Esc goes back.",
     );
   });
 
@@ -264,8 +268,8 @@ describe("frameCaption", () => {
       "Full view: all 2.1 km of streets at 15 cm or more at 07:40 (+60 min). F or Esc goes back.",
     );
     expect(frameCaption(WHOLE_FRAME, RUN, true, 0)).toBe(
-      "Full view: less than 200 m of street is 5 cm deep at 06:45 (+5 min), so it frames the " +
-        "peak: all 22.7 km of streets at 15 cm or more at 09:40 (+180 min). F or Esc goes back.",
+      "Full view: under 200 m wet at 06:45 (+5 min), so the peak: all 22.7 km of streets at " +
+        "15 cm or more at 09:40 (+180 min). F or Esc goes back.",
     );
     // The normal view never reads the step it is asked about: it is always the peak.
     expect(frameCaption(FRAME, RUN, false, 0)).toBe(frameCaption(FRAME, RUN));
@@ -306,6 +310,9 @@ describe("the console's full view", () => {
     map.fitPadding = "";
     useRunStore.getState().clear();
     useUiStore.getState().closeOverlays();
+    // The scrub is the replay store's lead, which outlives a render: every test starts at +0.
+    useReplayStore.getState().reset();
+    useScrubStore.getState().pause();
   });
 
   afterEach(() => {
@@ -323,9 +330,9 @@ describe("the console's full view", () => {
     expect(map.fitKey).toBe("affected");
     expect(map.keepViewOf).toBe("affected");
     expect(region()).toHaveAttribute("data-full-view", "off");
-    expect(screen.getByTestId("console-frame")).toHaveTextContent(
-      "Opened on the densest water and the rail's top 5 spots: 86 %",
-    );
+    // The frame is not narrated outside full view: the time bar is the map's only caption there.
+    expect(screen.queryByTestId("console-frame")).toBeNull();
+    expect(screen.queryByTestId("console-scrub")).toBeNull();
   });
 
   it("without the Fullscreen API, pins the map over the viewport and comes back", async () => {
@@ -334,7 +341,7 @@ describe("the console's full view", () => {
     await waitFor(() => expect(useRunStore.getState().currentRun).not.toBeNull());
     // Scrub to +60 min first: full view frames the water at the step on screen.
     act(() => {
-      for (let i = 0; i < 11; i += 1) fireEvent.keyDown(window, { key: "ArrowRight" });
+      useReplayStore.getState().setLeadMin(60);
     });
 
     fireEvent.click(control());
@@ -353,10 +360,12 @@ describe("the console's full view", () => {
     );
 
     // Scrubbing inside full view never moves the camera: the frame stays at the step it opened on.
+    // Two plain arrows are 15 minutes each (SPEC.md 6.10): +60 to +90, step 17.
     act(() => {
-      for (let i = 0; i < 6; i += 1) fireEvent.keyDown(window, { key: "ArrowRight" });
+      for (let i = 0; i < 2; i += 1) fireEvent.keyDown(window, { key: "ArrowRight" });
     });
-    expect(screen.getByRole("slider", { name: "Scrub the forecast" })).toHaveValue("17");
+    const inMap = within(screen.getByTestId("console-scrub"));
+    expect(inMap.getByRole("slider", { name: "Scrub the forecast" })).toHaveValue("17");
     expect(map.frameStep).toBe("11");
     expect(map.fitKey).toBe("full-view");
     // The rail is covered, not unmounted, and neither it nor the top bar can take focus.
@@ -391,7 +400,7 @@ describe("the console's full view", () => {
     expect(map.frameStep).toBe("0");
     await waitFor(() =>
       expect(screen.getByTestId("console-frame")).toHaveTextContent(
-        "Full view: less than 200 m of street is 5 cm deep at 06:45 (+5 min), so it frames the peak",
+        "Full view: under 200 m wet at 06:45 (+5 min), so the peak",
       ),
     );
 
@@ -416,31 +425,73 @@ describe("the console's full view", () => {
     renderConsole();
     await screen.findByRole("button", { name: "Full view" });
     await waitFor(() => expect(useRunStore.getState().currentRun).not.toBeNull());
-    const scrub = screen.getByRole("slider", { name: "Scrub the forecast" });
 
-    scrub.focus();
+    // Outside full view the scrub is the time bar's.
+    const barScrub = () =>
+      document.querySelector<HTMLInputElement>('[data-slot="slider-thumb"] input') ??
+      document.querySelector<HTMLElement>('[data-slot="slider-thumb"]');
+    const bar = barScrub();
+    expect(bar).not.toBeNull();
+    bar!.focus();
     act(() => {
-      fireEvent.keyDown(scrub, { key: "f" });
+      fireEvent.keyDown(bar!, { key: "f" });
     });
     await waitFor(() => expect(control()).toHaveAttribute("aria-pressed", "true"));
 
-    // Focus goes to the control on entering; the operator drags the scrub again, then leaves.
-    scrub.focus();
+    // In full view the map carries its own; the operator drags it, then leaves.
+    const inMap = within(screen.getByTestId("console-scrub")).getByRole("slider", {
+      name: "Scrub the forecast",
+    });
+    inMap.focus();
     act(() => {
-      fireEvent.keyDown(scrub, { key: "Escape" });
+      fireEvent.keyDown(inMap, { key: "Escape" });
     });
     await waitFor(() => expect(control()).toHaveAttribute("aria-pressed", "false"));
 
-    scrub.focus();
     act(() => {
-      fireEvent.keyDown(scrub, { key: "f" });
+      fireEvent.keyDown(window, { key: "f" });
     });
     await waitFor(() => expect(control()).toHaveAttribute("aria-pressed", "true"));
-    scrub.focus();
+    const again = within(screen.getByTestId("console-scrub")).getByRole("slider", {
+      name: "Scrub the forecast",
+    });
+    again.focus();
     act(() => {
-      fireEvent.keyDown(scrub, { key: "f" });
+      fireEvent.keyDown(again, { key: "f" });
     });
     await waitFor(() => expect(control()).toHaveAttribute("aria-pressed", "false"));
+  });
+
+  it("the time bar and the map's scrub are one clock", async () => {
+    renderConsole();
+    await screen.findByRole("button", { name: "Full view" });
+    await waitFor(() => expect(useRunStore.getState().currentRun).not.toBeNull());
+    // The store opens at +0, where no run has a step; the scrub lands on the first one.
+    await waitFor(() => expect(useReplayStore.getState().leadMin).toBe(5));
+
+    act(() => {
+      useReplayStore.getState().setLeadMin(60);
+    });
+    fireEvent.click(control());
+    await waitFor(() => expect(control()).toHaveAttribute("aria-pressed", "true"));
+    const inMap = within(screen.getByTestId("console-scrub")).getByRole("slider", {
+      name: "Scrub the forecast",
+    });
+    expect(inMap).toHaveValue("11");
+    fireEvent.change(inMap, { target: { value: "17" } });
+    expect(useReplayStore.getState().leadMin).toBe(90);
+  });
+
+  it("?autoplay=1 presses Play once the run's steps are known", async () => {
+    mockQuery.value = `run=${RUN_ID}&autoplay=1`;
+    try {
+      renderConsole();
+      await waitFor(() => expect(useRunStore.getState().currentRun).not.toBeNull());
+      await waitFor(() => expect(useScrubStore.getState().playing).toBe(true));
+    } finally {
+      mockQuery.value = `run=${RUN_ID}`;
+      act(() => useScrubStore.getState().pause());
+    }
   });
 
   it("in full view a clicked street still answers and probability mode keeps its legend", async () => {

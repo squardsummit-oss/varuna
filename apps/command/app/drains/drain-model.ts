@@ -6,7 +6,9 @@
  * pipes the run wrote, with the gap said out loud rather than papered over.
  */
 
+import type { Bbox } from "@/components/map/basemap";
 import type { LearnedDrain } from "@/components/map/layers/drains";
+import { denseFrame, pathPoints, type WeightedPoint } from "@/lib/map/affected-bounds";
 import type {
   AssimilatedObservation,
   DrainEdge,
@@ -219,10 +221,8 @@ export interface DrainStats {
 }
 
 /** The API rebuilds a summary for a run baked before the bake wrote one; say which it is. */
-const REBUILT_NOTE =
-  "This run was baked before the product carried its own summary, so these figures are rebuilt from the pipes it wrote.";
-const MISSING_NOTE =
-  "This run carries no summary: counts are of the pipes it wrote, and capacity lost needs the run baked again.";
+const REBUILT_NOTE = "Rebuilt from the pipes this run wrote: it predates the summary.";
+const MISSING_NOTE = "Counted from the pipes this run wrote: it carries no summary.";
 
 function observationCounts(observed: ObservationSet | null) {
   const list = observed?.observations ?? [];
@@ -530,4 +530,167 @@ export function stripLayout(
   });
   marks.sort((a, b) => a.x - b.x || a.lane.localeCompare(b.lane));
   return { start, end, marks };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Where the map opens
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * What floats over the drain map, in pixels: the "Learned" and "Prior" chips on the split handle
+ * along the top, the imagery credit along the bottom, and a little air at the sides. The opening
+ * frame is fitted inside what is left, so no learned pipe opens under a chip.
+ */
+export const DRAIN_FIT_PADDING = { top: 40, right: 16, bottom: 28, left: 16 } as const;
+
+/**
+ * The widest the opening view may be, as a zoom on deck's 512 px tiles: at 13.25 a pipe draws
+ * about 12 px long and reads clearly with its glow. Previously 12.75 put the opening too far
+ * from the main drain area.
+ */
+export const DRAIN_MIN_ZOOM = 13.25;
+
+/** The pane the frame is fitted into until it has been measured (a 1440 x 900 window's map). */
+export const DRAIN_PANE_FALLBACK = { width: 990, height: 520 } as const;
+
+const EARTH_CIRCUMFERENCE_M = 40_075_016.686;
+const TILE_PX = 512;
+/** Air around the dense window before the fit's own pixel padding, as a share of its span. */
+const FRAME_PAD_FRACTION = 0.09;
+const FRAME_MIN_PAD_M = 60;
+
+/** A manhole that surcharges in this run, weighted by its peak discharge. */
+export interface SurchargingManhole {
+  lon: number;
+  lat: number;
+  q?: number | null;
+}
+
+/**
+ * The drain story as weighted points: every learned pipe by how far its blockage moved, and every
+ * surcharging manhole by its peak discharge. Each set is normalised to one, so the two count
+ * equally however many rings the run carries. Both empty when nothing was learned and nothing
+ * surcharges, which leaves the map on everything it draws.
+ */
+export interface DrainStory {
+  pipes: WeightedPoint[];
+  manholes: WeightedPoint[];
+}
+
+export function drainStory(
+  learned: readonly Pick<LearnedDrain, "path" | "prior" | "post">[],
+  manholes: readonly SurchargingManhole[] = [],
+): DrainStory {
+  const pipes: WeightedPoint[] = [];
+  const moved = learned.reduce((sum, pipe) => sum + Math.abs(pipe.post - pipe.prior), 0);
+  for (const pipe of learned) {
+    const weight = moved > 0 ? Math.abs(pipe.post - pipe.prior) / moved : 1 / learned.length;
+    pipes.push(...pathPoints(pipe.path, weight));
+  }
+  const discharge = manholes.reduce((sum, node) => sum + Math.max(node.q ?? 0, 0), 0);
+  const nodes = manholes.map((node) => ({
+    lon: node.lon,
+    lat: node.lat,
+    weight: discharge > 0 ? Math.max(node.q ?? 0, 0) / discharge : 1 / manholes.length,
+  }));
+  return { pipes, manholes: nodes };
+}
+
+/**
+ * The box `/drains` opens on: the part of the city, **shaped like the map pane**, that holds the
+ * most of the drain story at a zoom where a pipe reads (`DRAIN_MIN_ZOOM`). Null when there is no
+ * story, so the map falls back to everything it draws.
+ *
+ * The densest-window rule is `denseFrame`'s; this only chooses the window. The pane is wide - 2 to
+ * 2.8 times wider than tall between 1440 x 900 and 1366 x 768 - and a square window fitted into it
+ * is height-bound: the old 7 km square opened 18.6 to 24.4 km across, half of it sea and creek. So
+ * the window is the pane's shape: its height is what the pane shows at `DRAIN_MIN_ZOOM`, and its
+ * width follows by the pane's aspect, found by running `denseFrame` on longitudes squeezed by that
+ * aspect (a square there is the pane's shape here), and never wider than the city.
+ *
+ * **Where** is decided by the whole story, pipes and surcharging manholes together. **What the
+ * box holds** is then the learned pipes inside that window, because they are what the map draws
+ * by default: the 500 hardest-surcharging manholes on 2 July sit all across the city, and a box
+ * trimmed on them spanned the AOI's width and put the Sewri mangroves beside the Parel pipes. With
+ * no learned pipe in the window the box is the whole story's. The box is grown to the pane's shape
+ * about its own centre, so the learning sits in the middle of the view. Deterministic.
+ */
+export function drainFrame(
+  story: DrainStory,
+  pane: { width: number; height: number },
+  within: Bbox,
+  options: {
+    padding?: { top: number; right: number; bottom: number; left: number };
+    minZoom?: number;
+  } = {},
+): Bbox | null {
+  const usable = (p: WeightedPoint) =>
+    Number.isFinite(p.lon) && Number.isFinite(p.lat) && p.weight > 0;
+  const pipes = story.pipes.filter(usable);
+  const kept = [...pipes, ...story.manholes.filter(usable)];
+  if (kept.length === 0) return null;
+  const padding = options.padding ?? DRAIN_FIT_PADDING;
+  const minZoom = options.minZoom ?? DRAIN_MIN_ZOOM;
+  const usableW = Math.max(1, pane.width - padding.left - padding.right);
+  const usableH = Math.max(1, pane.height - padding.top - padding.bottom);
+  const aspect = usableW / usableH;
+
+  const total = kept.reduce((sum, p) => sum + p.weight, 0);
+  const lon0 = kept.reduce((sum, p) => sum + p.lon * p.weight, 0) / total;
+  const lat0 = kept.reduce((sum, p) => sum + p.lat * p.weight, 0) / total;
+  const metresPerPx =
+    (EARTH_CIRCUMFERENCE_M * Math.cos((lat0 * Math.PI) / 180)) / (TILE_PX * 2 ** minZoom);
+  // Never taller than the city, and never wider (at the pane's aspect) than the city is wide: on
+  // a 4K wall the zoom alone would open 20 km across a 9.5 km city, half of it sea.
+  const withinWideM = (within[1][0] - within[0][0]) * M_PER_DEG * Math.cos((lat0 * Math.PI) / 180);
+  const withinTallM = (within[1][1] - within[0][1]) * M_PER_DEG;
+  const windowM =
+    Math.min(usableH * metresPerPx, withinWideM / aspect, withinTallM) /
+    (1 + 2 * FRAME_PAD_FRACTION);
+
+  const squeeze = (p: WeightedPoint): WeightedPoint => ({
+    ...p,
+    lon: lon0 + (p.lon - lon0) / aspect,
+  });
+  const stretch = (lon: number) => lon0 + (lon - lon0) * aspect;
+  const rule = {
+    maxSpanM: windowM,
+    padFraction: FRAME_PAD_FRACTION,
+    minPadM: FRAME_MIN_PAD_M,
+    within: [
+      [lon0 + (within[0][0] - lon0) / aspect, within[0][1]],
+      [lon0 + (within[1][0] - lon0) / aspect, within[1][1]],
+    ] as Bbox,
+  };
+  const where = denseFrame(kept.map(squeeze), rule);
+  if (!where) return null;
+  const [[ww, ws], [we, wn]] = where.bounds;
+  const pipesThere = pipes
+    .map(squeeze)
+    .filter((p) => p.lon >= ww && p.lon <= we && p.lat >= ws && p.lat <= wn);
+  const dense = (pipesThere.length > 0 ? denseFrame(pipesThere, rule) : null) ?? where;
+
+  let west = stretch(dense.bounds[0][0]);
+  let east = stretch(dense.bounds[1][0]);
+  let south = dense.bounds[0][1];
+  let north = dense.bounds[1][1];
+  // Grown to the pane's shape about its centre (degrees of longitude shrink by cos(lat)).
+  const midLon = (west + east) / 2;
+  const midLat = (south + north) / 2;
+  const cos = Math.cos((midLat * Math.PI) / 180);
+  const wide = (east - west) * cos;
+  const tall = north - south;
+  if (wide < aspect * tall) {
+    const half = (aspect * tall) / cos / 2;
+    west = midLon - half;
+    east = midLon + half;
+  } else {
+    const half = wide / aspect / 2;
+    south = midLat - half;
+    north = midLat + half;
+  }
+  return [
+    [west, south],
+    [east, north],
+  ];
 }

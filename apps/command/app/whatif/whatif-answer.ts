@@ -93,6 +93,11 @@ export interface WhatIfAnswer {
   streets: DeltaRow[];
   /** The tide's outcome on the Twin, or null when the answer did not move the sea. */
   tideOutcome: string | null;
+  /**
+   * The emulator's measured skill on held-out storms, printed beside its answer (section 15,
+   * 4:30); null on the Twin's answer, which is the physics itself.
+   */
+  skill: string | null;
   /** Lever lines and method notes, each one sentence, in the engine's own words. */
   lines: string[];
   /** Server time for the answer. */
@@ -155,13 +160,16 @@ export function emulatorAnswer(result: WhatIfResult): WhatIfAnswer {
     })),
     streets: result.largestChanges.slice(0, MAX_STREET_ROWS).map(emulatorStreet),
     tideOutcome: null,
+    // The skill only when the emulator ran. A scenario with no lever never loads it, and the
+    // endpoint's own note says why the forecast is the run's.
+    skill: result.emulator
+      ? `Emulator skill: RMSE ${result.emulator.rmseCm.toFixed(1)} cm, CSI ${result.emulator.csi30cm.toFixed(2)} at 30 cm`
+      : null,
     lines: [
       ...leverLines(result),
-      // The skill only when the emulator ran. A scenario with no lever never loads it, and the
-      // endpoint's own note says why the forecast is the run's.
       ...(result.emulator
         ? [
-            `Level from the Twin's own forecast for this run; the emulator supplies only the difference. Emulator skill on held-out storms: RMSE ${result.emulator.rmseCm.toFixed(1)} cm, CSI ${result.emulator.csi30cm.toFixed(2)} at 30 cm.`,
+            "Level from the Twin's own forecast for this run; the emulator supplies only the difference, and its skill is measured on held-out storms.",
           ]
         : result.notes.slice(0, 1)),
     ],
@@ -238,6 +246,7 @@ export function twinAnswer(
       ...(row.before_cm === null ? { beforeBelowCm: BEFORE_FLOOR_CM } : {}),
     })),
     tideOutcome: result.scenario.tide_offset_m !== 0 ? twinTideOutcome(result) : null,
+    skill: null,
     lines,
     ms: result.ms,
   };

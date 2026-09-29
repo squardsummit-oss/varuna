@@ -201,6 +201,49 @@ def test_no_road_graph_still_draws_the_leg_and_says_why(seeded: Path, client: Te
             assert leg["route_note"]
 
 
+def test_a_place_that_no_longer_crosses_keeps_its_series(seeded: Path, client: TestClient) -> None:
+    """The recount drawing a place under the line serves its series flagged, not an empty gauge.
+
+    On the 07:40 demo cycle the plan's one place recounted 1 cm under 45 cm on the rebuilt city,
+    and the map dropped both its series and its road while the plan beside it said "5 min above
+    45 cm". The series is the forecast; it is drawn, and the disagreement is said.
+    """
+    record = seeded / "hotspots.json"
+    hotspots = json.loads(record.read_text(encoding="utf-8"))
+    hotspots[0]["depth_cm"] = [30.0] * 36  # never above 45 cm
+    record.write_text(json.dumps(hotspots), encoding="utf-8")
+
+    body = _get(client)
+    leg = next(leg for leg in body["legs"] if leg["target"]["id"] == "MUM-HS-01")
+    assert leg["depth_before_cm"] == [30.0] * 36
+    assert leg["window_before"] is None
+    assert leg["agrees"] is False
+    assert "series_note" not in leg
+    assert any(leg["pump_id"] in note for note in body["notes"])
+
+
+def test_a_place_with_no_series_is_still_routed(seeded: Path, client: TestClient) -> None:
+    """The road does not wait for the depth: a leg with no series is still sent to the router."""
+    record = seeded / "hotspots.json"
+    hotspots = json.loads(record.read_text(encoding="utf-8"))
+    record.write_text(json.dumps(hotspots[1:]), encoding="utf-8")  # drop MUM-HS-01 entirely
+
+    body = _get(client, routes=True)
+    leg = next(leg for leg in body["legs"] if leg["target"]["id"] == "MUM-HS-01")
+    assert leg["depth_before_cm"] is None
+    assert "no depth series" in leg["series_note"]
+    assert "no longer crosses" not in leg["series_note"]
+    # No road graph in the fixture, so the router was asked and said why - it was not skipped.
+    assert leg["route"] is not None or leg["route_note"]
+
+
+def test_the_no_series_note_names_what_is_missing() -> None:
+    street = pump_map._no_series_note("street:Danda Avenue", streets_read=False)
+    assert "street table could not be read" in street
+    assert "no depth series" in pump_map._no_series_note("street:Danda Avenue", streets_read=True)
+    assert "no depth series" in pump_map._no_series_note("MUM-HS-01", streets_read=False)
+
+
 def test_a_run_without_a_pump_plan_is_a_404(seeded: Path, client: TestClient) -> None:
     (seeded / "pump_plan.json").unlink()
     res = client.get("/v1/pumps/map", params={"run_id": RUN_ID, "routes": False})

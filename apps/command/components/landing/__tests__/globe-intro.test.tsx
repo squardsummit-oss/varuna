@@ -120,6 +120,7 @@ describe("the landing hero's sequence (M26) is unchanged", () => {
       },
     ) as unknown as CanvasRenderingContext2D;
     const palette = {
+      ink: "ink",
       deep: "deep",
       well: "well",
       lineStrong: "line-strong",
@@ -136,6 +137,11 @@ describe("the landing hero's sequence (M26) is unchanged", () => {
     expect(calls).toContain("fillStyle=well");
     expect(calls).toContain("fillStyle=tide");
     expect(calls).toContain("fillText(3)");
+    // The mark and its label sit on an --ink halo, so they read on the photograph in the light
+    // theme, where the teal and the label are dark and the night-side ocean is too.
+    expect(calls).toContain("strokeStyle=ink");
+    expect(calls).toContain("strokeText(3)");
+    expect(calls.indexOf("strokeText(3)")).toBeLessThan(calls.indexOf("fillText(3)"));
   });
 
   it("does not fetch the finer topology; only the approach pays for that", () => {

@@ -246,7 +246,10 @@ describe("OnboardScreen", () => {
   it("shows the honest empty states until a build has run", () => {
     renderOnboard();
     expect(screen.getByText(/No logs yet/)).toBeInTheDocument();
-    expect(screen.getByText(/First forecast, uncalibrated/)).toBeInTheDocument();
+    // The honesty labels are chips beside the card's title, there before the numbers are.
+    const card = within(screen.getByRole("region", { name: "First forecast" }));
+    expect(card.getByText("Design storm")).toBeInTheDocument();
+    expect(card.getByText("Uncalibrated")).toBeInTheDocument();
     // "Open Chennai console" stays on screen and disabled rather than appearing on success:
     // a control that materialises is harder to find on stage than one that lights up.
     expect(screen.getByRole("button", { name: "Open Chennai console" })).toBeDisabled();
@@ -404,10 +407,13 @@ describe("OnboardScreen while a build runs", () => {
     const rows = stepRows();
     expect(rows[0]).toHaveTextContent("Done 18 ms");
     expect(rows[1]).toHaveTextContent("Loaded from disk");
-    expect(rows[1]).toHaveTextContent("34,410 roads, 72,573 buildings from OSM");
     expect(rows[5]).toHaveTextContent("Running 19.8 s");
-    expect(rows[5]).toHaveTextContent("Sky 135 ms, Twin running 12.1 s");
     expect(rows[5]).toHaveAttribute("aria-current", "step");
+    // One line a step; what each step reported sits behind Details, word for word.
+    expect(rows[1]).not.toHaveTextContent("34,410 roads");
+    const details = screen.getByLabelText("Step details");
+    expect(details).toHaveTextContent("34,410 roads, 72,573 buildings from OSM");
+    expect(details).toHaveTextContent("Sky 135 ms, Twin running 12.1 s");
 
     const log = screen.getByRole("log", { name: "Pipeline log" });
     expect(log).toHaveTextContent("osm.layer name=roads n=34410");
@@ -451,21 +457,28 @@ describe("OnboardScreen once a build has finished", () => {
       `/console?city=chennai&run=${encodeURIComponent(CHENNAI_RUN)}`,
     );
     const card = screen.getByRole("region", { name: "First forecast" });
-    expect(card).toHaveTextContent(CHENNAI_RUN);
-    expect(card).toHaveTextContent("15,472 of 18,622");
-    expect(card).toHaveTextContent("26 cm");
-    expect(card).toHaveTextContent("Design storm CHN-IDF-25yr");
-    expect(card).toHaveTextContent("150 mm in 3 h, peak 449 mm/h");
-    // The card's time is the first forecast row's own wall time, so the two never disagree; the
-    // stage sum beside it is `run.json`'s, labelled with the stages it adds up.
-    expect(card).toHaveTextContent("Forecast computed in46.5 s");
-    expect(card).toHaveTextContent("Sky, Twin, Pulse and products took 46.4 s of it");
-    expect(card).toHaveTextContent("Built in 51 s in this session.");
-    expect(card).toHaveTextContent(
-      "First forecast, uncalibrated. VARUNA learns Chennai's drains from the next monsoon.",
+    // The headline: the run's own count at 15 cm (this stub run has no wet street), its deepest
+    // street from the build's summary, and the cycle it was issued at.
+    const numbers = within(
+      await within(card).findByLabelText("First forecast numbers", {}, LOADED),
     );
+    expect(numbers.getByText("Flooded streets")).toBeInTheDocument();
+    expect(numbers.getByText("240 cm")).toBeInTheDocument();
+    expect(numbers.getByText("06:10")).toBeInTheDocument();
+    // Everything else is behind Details, never deleted: the run id, the 5 cm count, the median,
+    // the storm and the times. The card's time is the first forecast row's own wall time, so the
+    // two never disagree; the stage sum beside it is `run.json`'s.
+    expect(card).toHaveTextContent(CHENNAI_RUN);
+    expect(card).toHaveTextContent("Streets above 5 cm: 15,472 of 18,622");
+    expect(card).toHaveTextContent("Median street peak: 26 cm");
+    expect(card).toHaveTextContent("Design storm CHN-IDF-25yr: 150 mm in 3 h, peak 449 mm/h");
+    expect(card).toHaveTextContent(
+      "Forecast computed in 46.5 s; Sky, Twin, Pulse and products took 46.4 s of it",
+    );
+    expect(card).toHaveTextContent("VARUNA learns Chennai's drains from the next monsoon.");
+    expect(screen.getByText("Built in 51 s in this session.")).toBeInTheDocument();
     expect(stepRows()[5]).toHaveTextContent("Done 46.5 s");
-    expect(stepRows()[5]).toHaveTextContent(
+    expect(screen.getByLabelText("Step details")).toHaveTextContent(
       "Sky 135 ms, Twin 42.9 s, Pulse 981 ms, products 2.5 s",
     );
   });
@@ -579,7 +592,7 @@ describe("OnboardScreen, on a laptop where Chennai is already built (D-21)", () 
       LOADED,
     );
     expect(screen.queryByText(/Waiting/)).not.toBeInTheDocument();
-    expect(screen.getByText(/These six steps ran before this session/)).toBeInTheDocument();
+    expect(screen.getByText(/Built before this session; no record/)).toBeInTheDocument();
     // The city is on the server when deployed, not the visitor's machine.
     expect(screen.queryByText(/on this machine/)).not.toBeInTheDocument();
   });
@@ -615,9 +628,7 @@ describe("OnboardScreen, on a laptop where Chennai is already built (D-21)", () 
 
     // Wait for the run lookup to be answered, not just for the job: until the 404 lands the
     // screen does not yet know there is no run.
-    expect(
-      await screen.findByText(/serves no forecast for it yet/, {}, LOADED),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/No forecast on this API yet/, {}, LOADED)).toBeInTheDocument();
     expect(
       fetchMock.mock.calls.some(([input]) =>
         String(input).includes("/v1/nowcast/raster/bounds?city=chennai"),
@@ -634,7 +645,7 @@ describe("OnboardScreen, on a laptop where Chennai is already built (D-21)", () 
     expect(screen.getByRole("button", { name: "Open Chennai console" })).toBeDisabled();
     expect(screen.queryByRole("link", { name: "Open Chennai console" })).not.toBeInTheDocument();
     expect(screen.queryByText(/Newest Chennai run/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/These six steps ran/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/no record of the steps/)).not.toBeInTheDocument();
     expect(screen.queryByText(/on this machine/)).not.toBeInTheDocument();
   });
 

@@ -251,7 +251,7 @@ export function ClosurePanel({
     <Panel
       className={className}
       title="Close or reopen a street"
-      description="A closure beats the forecast: the next route treats the street as impassable whatever the water is doing."
+      description="A closure overrides the forecast for the next route."
     >
       <div className="space-y-4">
         <fieldset className="space-y-1.5">
@@ -291,8 +291,7 @@ export function ClosurePanel({
             />
           </div>
           <p id="closure-search-note" className="type-micro text-text-3">
-            This list is the streets in trouble on the chosen cycle, plus the ones already closed.
-            Any other street can be closed by its segment id below.
+            Streets in trouble on this cycle, plus closed ones. Others by segment id below.
           </p>
         </div>
 
@@ -302,8 +301,7 @@ export function ClosurePanel({
           <p className="type-small text-text-2">{streetsError}</p>
         ) : matches.length === 0 ? (
           <p className="type-small text-text-2">
-            No street on this cycle matches that. Widen the vehicle, pick another cycle, or use the
-            segment id.
+            No street matches. Try another vehicle, cycle or the segment id.
           </p>
         ) : (
           <ul className="max-h-64 space-y-1 overflow-y-auto" aria-label="Streets">
@@ -368,7 +366,7 @@ export function ClosurePanel({
             aria-describedby="closure-reason-note"
           />
           <p id="closure-reason-note" className="type-micro text-text-3">
-            Required. A driver is shown these words, so the API refuses a closure without them.
+            Required; drivers are shown these words.
           </p>
         </div>
 
@@ -388,9 +386,7 @@ export function ClosurePanel({
               </Button>
             ))}
           </div>
-          <p className="type-micro text-text-3">
-            Counted from now, on the real clock, not from the replay&rsquo;s clock.
-          </p>
+          <p className="type-micro text-text-3">From now, on the real clock.</p>
         </fieldset>
 
         <Button

@@ -205,7 +205,7 @@ describe("AlertsScreen cross-cycle state", () => {
     fireEvent.click(watching);
     expect(screen.getByText("Sion Circle")).toBeVisible();
     expect(
-      screen.getByText("This run lists 1 of the 7 places waiting to raise or go up a level."),
+      screen.getByText("1 of 7 waiting places listed."),
     ).toBeVisible();
   });
 

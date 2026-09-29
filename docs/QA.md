@@ -540,7 +540,7 @@ the KEM-to-Sion response is identical field for field apart from `ms`.
 
 The weather is, and nothing else on the screen is - which is why they are labelled separately and
 never share an axis. `GET /v1/weather` proxies Open-Meteo (CC BY 4.0, no key) for the city's AOI
-centre. Measured by the implementer on the laptop: **1,260.7-1,465.0 ms uncached**, about 1.1 s
+centre. Measured by the builder on the laptop: **1,260.7-1,465.0 ms uncached**, about 1.1 s
 of it Open-Meteo, and **5.2-21.8 ms cached**, so the wire is touched once per fifteen minutes per
 city. Offline, or when Open-Meteo fails, the last good copy is served with its real age and a
 note; only a first request with no copy at all refuses.

@@ -106,6 +106,8 @@ describe("TheCycle", () => {
     expect(timingOf(container, "outputs")).toBe("Not timed");
     expect(screen.getByText("MUM-live-test-run")).toBeInTheDocument();
     expect(screen.getByText(/^Measured on run/)).toBeInTheDocument();
+    // The run id is provenance for an expert, so it sits in the collapsed "Details".
+    expect(screen.getByText("MUM-live-test-run").closest("details")).not.toBeNull();
   });
 
   it("falls back to the committed copy and says so when the API is unreachable", async () => {

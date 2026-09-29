@@ -171,18 +171,17 @@ export function PumpHeadline({
       </dl>
       <p className="num type-small text-text-2">
         {assignments.length} of {plan.pumps.length} pumps assigned;{" "}
-        {plainMinutes(plan.totalMinutesSaved)} avoided at {assignments.length} place
-        {assignments.length === 1 ? "" : "s"}.
+        {plainMinutes(plan.totalMinutesSaved)} avoided.
         {unserved > 0
-          ? ` ${unserved} more place${unserved === 1 ? " crosses" : "s cross"} ${plan.thresholdCm} cm with no pump left to send.`
+          ? ` ${unserved} more place${unserved === 1 ? " crosses" : "s cross"} ${plan.thresholdCm} cm, no pump left.`
           : null}
       </p>
       {helped ? (
         <p className="type-small text-text-2">
           Helped most: <span className="text-text font-medium">{helped.targetName}</span>
           <span className="num">
-            , {plainMinutes(helped.minutesBefore)} to {plainMinutes(helped.minutesAfter)} by{" "}
-            {helped.pumpId} from {helped.depot}.
+            , {plainMinutes(helped.minutesBefore)} to {plainMinutes(helped.minutesAfter)} (
+            {helped.pumpId}).
           </span>
         </p>
       ) : (

@@ -111,6 +111,58 @@ def _rounded(series: Sequence[float]) -> list[float]:
     return [round(float(v), 1) for v in series]
 
 
+def _places(inputs: dict[str, Any], step: int) -> dict[str, dict[str, Any]]:
+    """Every place a plan can name, with its depth series, whether or not it crosses 45 cm.
+
+    The optimiser's ``_candidates`` keeps only places above the threshold, which is right for
+    choosing where to send a pump and wrong for drawing where one was sent: a recount that puts a
+    place 1 cm under the line on a rebuilt city dropped its series and, before this, its road too,
+    and the map said "no longer crosses" beside the plan's own "5 min above 45 cm". The crossing
+    places come through ``_candidates`` unchanged; the rest are shaped the same way so the leg
+    loop does not care which it is.
+    """
+    from varuna_products.pumps import _candidates
+
+    places = {
+        str(c["hotspot"].get("hotspot_id")): c
+        for c in _candidates(inputs["hotspots"], inputs["streets"], inputs["points"], step)
+    }
+    for hotspot in inputs["hotspots"]:
+        key = str(hotspot.get("hotspot_id"))
+        if key not in places and hotspot.get("depth_cm"):
+            series = [float(v) for v in hotspot["depth_cm"]]
+            places[key] = {"hotspot": hotspot, "series": series}
+    for street, series in (inputs["streets"] or {}).items():
+        key = f"street:{street}"
+        point = (inputs["points"] or {}).get(street)
+        if key in places or point is None:
+            continue
+        places[key] = {
+            "hotspot": {
+                "hotspot_id": key,
+                "name": street,
+                "lon": point[0],
+                "lat": point[1],
+                "exposure": {"weight": 0.5},
+            },
+            "series": [float(v) for v in series],
+        }
+    return places
+
+
+def _no_series_note(target_id: str, streets_read: bool) -> str:
+    """Why a leg has no depth series, in the terms of what is actually missing."""
+    if target_id.startswith("street:") and not streets_read:
+        return (
+            "The city's street table could not be read, so this street's depth series could not "
+            "be recomputed. The plan's own minutes still stand."
+        )
+    return (
+        "The run's forecast has no depth series for this place, so there is none to draw. "
+        "The plan's own minutes still stand."
+    )
+
+
 def _route(
     origin: tuple[float, float],
     destination: tuple[float, float],
@@ -148,7 +200,6 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
         PUMP_THRESHOLD_CM,
         TRAVEL_SPEED_KMH,
         _after_delta,
-        _candidates,
         _drawn_down,
         _emulator,
         _haversine_km,
@@ -179,10 +230,11 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
     threshold = float(plan.get("threshold_cm") or PUMP_THRESHOLD_CM)
     speed = float(plan.get("travel_speed_kmh") or TRAVEL_SPEED_KMH)
 
-    candidates = {
-        str(c["hotspot"].get("hotspot_id")): c
-        for c in _candidates(inputs["hotspots"], inputs["streets"], inputs["points"], step)
-    }
+    candidates = _places(inputs, step)
+    # False when the city's segment table failed to read - a city built before segments carried
+    # their OSM names, as the deployed volume's was on 2026-09-29 - so the note says that rather
+    # than blaming the forecast.
+    streets_read = bool(inputs.get("streets_readable", True))
     emulator = (
         _emulator(inputs["root"], path.name, None, inputs["rain"]) if inputs["rain"] else None
     )
@@ -231,63 +283,68 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
         }
 
         complete = None not in (depot["lon"], depot["lat"], target["lon"], target["lat"])
-        if candidate is None or not complete:
-            leg["series_note"] = (
-                "This place no longer crosses 45 cm in the run's own forecast, so there is no "
-                "series to draw."
-                if complete
-                else "The plan carries no coordinate for this depot or place."
-            )
+        if not complete:
+            leg["series_note"] = "The plan carries no coordinate for this depot or place."
             legs.append(leg)
             continue
 
-        series: list[float] = list(candidate["series"])
-        travel_min = (
-            _haversine_km(depot["lon"], depot["lat"], target["lon"], target["lat"]) / speed * 60.0
-        )
-        rate = _rate_cm_per_step(float(a.get("capacity_m3_per_h") or 0.0), step)
-        wanted = leg["benefit_model"]
-        delta = (
-            emulator.drawdown(target_id, candidate["hotspot"], rate)
-            if emulator is not None and wanted == "emulator"
-            else None
-        )
-
-        def lowered_at(arrive_step: int, delta=delta, series=series, rate=rate) -> list[float]:
-            if delta is not None:
-                return _after_delta(series, delta, arrive_step)
-            return _drawn_down(series, rate, arrive_step)
-
-        arrive_step = int(travel_min // step)
-        after = lowered_at(arrive_step)
-        before_min = _minutes_above(series, threshold, step)
-        after_min = _minutes_above(after, threshold, step)
-        used = "emulator" if delta is not None else "reduced_model"
-        leg.update(
-            {
-                "depth_before_cm": _rounded(series),
-                "depth_after_cm": _rounded(after),
-                "window_before": _window(series, threshold, step),
-                "window_after": _window(after, threshold, step),
-                "peak_before": _peak(series, step),
-                "peak_after": _peak(after, step),
-                "effective_from_min": (arrive_step + 1) * step,
-                "series_model": used,
-                "agrees": (
-                    before_min == a.get("minutes_before")
-                    and after_min == a.get("minutes_after")
-                    and used == wanted
-                ),
-            }
-        )
-        if not leg["agrees"]:
-            notes.append(
-                f"{pump_id} at {target['name']}: recounted {before_min} to {after_min} minutes "
-                f"above {threshold:g} cm against the plan's {a.get('minutes_before')} to "
-                f"{a.get('minutes_after')} ({used} now, {wanted} in the plan). The series is "
-                "served as recomputed."
+        # The pumped series at a given arrival step; None when there is no series to lower.
+        lowered_at = None
+        before_min: int | None = None
+        if candidate is None:
+            leg["series_note"] = _no_series_note(target_id, streets_read)
+        else:
+            series: list[float] = list(candidate["series"])
+            travel_min = (
+                _haversine_km(depot["lon"], depot["lat"], target["lon"], target["lat"])
+                / speed
+                * 60.0
+            )
+            rate = _rate_cm_per_step(float(a.get("capacity_m3_per_h") or 0.0), step)
+            wanted = leg["benefit_model"]
+            delta = (
+                emulator.drawdown(target_id, candidate["hotspot"], rate)
+                if emulator is not None and wanted == "emulator"
+                else None
             )
 
+            def lowered_at(arrive_step: int, delta=delta, series=series, rate=rate) -> list[float]:
+                if delta is not None:
+                    return _after_delta(series, delta, arrive_step)
+                return _drawn_down(series, rate, arrive_step)
+
+            arrive_step = int(travel_min // step)
+            after = lowered_at(arrive_step)
+            before_min = _minutes_above(series, threshold, step)
+            after_min = _minutes_above(after, threshold, step)
+            used = "emulator" if delta is not None else "reduced_model"
+            leg.update(
+                {
+                    "depth_before_cm": _rounded(series),
+                    "depth_after_cm": _rounded(after),
+                    "window_before": _window(series, threshold, step),
+                    "window_after": _window(after, threshold, step),
+                    "peak_before": _peak(series, step),
+                    "peak_after": _peak(after, step),
+                    "effective_from_min": (arrive_step + 1) * step,
+                    "series_model": used,
+                    "agrees": (
+                        before_min == a.get("minutes_before")
+                        and after_min == a.get("minutes_after")
+                        and used == wanted
+                    ),
+                }
+            )
+            if not leg["agrees"]:
+                notes.append(
+                    f"{pump_id} at {target['name']}: recounted {before_min} to {after_min} "
+                    f"minutes above {threshold:g} cm against the plan's "
+                    f"{a.get('minutes_before')} to {a.get('minutes_after')} ({used} now, "
+                    f"{wanted} in the plan). The series is served as recomputed."
+                )
+
+        # The road does not depend on the series: a lorry whose place has no recomputed depth
+        # still has a depot and a place, and the map draws the road between them.
         if routes:
             t0 = time.perf_counter()
             chosen, why = _route(
@@ -300,8 +357,11 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
             route_ms += (time.perf_counter() - t0) * 1000.0
             if chosen is not None:
                 minutes = float(chosen["minutes"])
-                routed_after = lowered_at(int(minutes // step))
-                routed_after_min = _minutes_above(routed_after, threshold, step)
+                routed_after_min = (
+                    _minutes_above(lowered_at(int(minutes // step)), threshold, step)
+                    if lowered_at is not None
+                    else None
+                )
                 leg["route"] = {
                     "profile": ROUTE_PROFILE,
                     "minutes": round(minutes, 1),
@@ -309,8 +369,13 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
                     "max_depth_cm": chosen.get("max_depth_cm"),
                     "path": chosen.get("path", []),
                     "streets": chosen.get("streets", []),
+                    # Priced at the routed arrival only where there is a series to price.
                     "minutes_after": routed_after_min,
-                    "minutes_saved": before_min - routed_after_min,
+                    "minutes_saved": (
+                        before_min - routed_after_min
+                        if before_min is not None and routed_after_min is not None
+                        else None
+                    ),
                 }
             else:
                 leg["route_note"] = why
@@ -321,6 +386,9 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
     after_total = sum(int(leg["minutes_after"] or 0) for leg in assigned)
     helped = max(assigned, key=lambda leg: int(leg["minutes_saved"] or 0), default=None)
     routed = [leg for leg in legs if leg["route"] is not None]
+    # Only a routed leg with a series can be priced at its road's arrival; a partial sum would be
+    # set beside the plan's full one as if they counted the same places, so it is all or nothing.
+    priced = [leg for leg in routed if leg["route"]["minutes_saved"] is not None]
     summary: dict[str, Any] = {
         "pumps_dispatched": len(assigned),
         "pumps_in_fleet": int(plan.get("n_pumps") or len(fleet)),
@@ -340,7 +408,9 @@ def dispatch_map(run_id: str | None, city: str, *, routes: bool = True) -> dict[
         ),
         "routed": len(routed),
         "routed_minutes_saved": (
-            sum(int(leg["route"]["minutes_saved"]) for leg in routed) if routed else None
+            sum(int(leg["route"]["minutes_saved"]) for leg in priced)
+            if routed and len(priced) == len(routed)
+            else None
         ),
         "late_on_road": sum(
             1 for leg in routed if leg["route"]["minutes"] > float(leg["eta_min"] or 0) + 0.5

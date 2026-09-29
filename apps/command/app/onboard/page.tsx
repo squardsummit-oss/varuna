@@ -4,8 +4,7 @@ import { OnboardScreen } from "./onboard-screen";
 
 export const metadata: Metadata = {
   title: "Pravesh (city onboarding)",
-  description:
-    "Onboard a new city from open data: terrain, roads, inferred drains and a first uncalibrated forecast. Chennai in minutes.",
+  description: "Onboard a city from open data and see its first street flood forecast.",
 };
 
 export default function OnboardPage() {

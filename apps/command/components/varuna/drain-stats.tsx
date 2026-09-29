@@ -59,12 +59,16 @@ function Tile({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-panel border-line bg-deep min-w-0 border px-4 py-2.5", className)}>
+    <div className={cn("rounded-panel border-line bg-deep min-w-0 border px-4 py-2", className)}>
       <p className="type-micro text-text-2">{label}</p>
-      <p className="num font-display text-h2 tracking-display text-text truncate font-semibold">
-        {children}
+      {/* The number and its one short line side by side, so the strip is one row high and the
+          map beneath it gets the height (the "fit to view" request). */}
+      <p className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+        <span className="num font-display text-h3 tracking-display text-text shrink-0 font-semibold">
+          {children}
+        </span>
+        <span className="num type-micro text-text-3 min-w-0">{sub}</span>
       </p>
-      <p className="num type-micro text-text-3 mt-0.5">{sub}</p>
     </div>
   );
 }
@@ -98,7 +102,7 @@ export function DrainStatsStrip({ stats, className }: DrainStatsStripProps) {
         aria-label="Loading what this cycle learned"
       >
         {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="rounded-panel h-[84px]" />
+          <Skeleton key={i} className="rounded-panel h-[58px]" />
         ))}
       </div>
     );
@@ -106,21 +110,21 @@ export function DrainStatsStrip({ stats, className }: DrainStatsStripProps) {
 
   const upDown =
     stats.nUp !== null && stats.nDown !== null
-      ? `: ${formatCount(stats.nUp)} up, ${formatCount(stats.nDown)} down${stats.partial ? " among the pipes written" : ""}`
-      : "";
+      ? `${formatCount(stats.nUp)} up, ${formatCount(stats.nDown)} down${stats.partial ? " of those written" : ""}`
+      : null;
 
   return (
     <section aria-label="What this cycle learned" className={cn("space-y-1", className)}>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Tile
-          label="Pipes learned this cycle"
-          sub={`${formatCount(stats.nMoved)} of ${formatCount(stats.nPipes)} pipes moved this cycle${upDown}`}
+          label={`Pipes learned, of ${formatCount(stats.nPipes)}`}
+          sub={upDown ?? "Up and down not recorded"}
         >
           <Rolling value={stats.nMoved} reduced={reduced} />
         </Tile>
         <Tile
           label="Observations assimilated"
-          sub={`${formatCount(stats.nTraffic)} traffic, ${formatCount(stats.nReports)} citizen; ${formatCount(stats.nSynthetic)} synthetic, ${formatCount(stats.nReal)} real`}
+          sub={`${formatCount(stats.nTraffic)} traffic, ${formatCount(stats.nReports)} citizen; ${formatCount(stats.nSynthetic)} synthetic`}
         >
           <Rolling value={stats.nObs} reduced={reduced} />
         </Tile>
@@ -128,12 +132,8 @@ export function DrainStatsStrip({ stats, className }: DrainStatsStripProps) {
           label="Capacity lost citywide"
           sub={
             stats.capacity
-              ? `${stats.capacity.priorPct.toFixed(1)} % assumed from land use, ${signedPoints(stats.capacity.learnedPoints)} points learned${
-                  stats.capacity.learnedM3s !== null
-                    ? ` (${stats.capacity.learnedM3s >= 0 ? "+" : "-"}${Math.abs(stats.capacity.learnedM3s).toFixed(1)} m³/s)`
-                    : ""
-                }`
-              : "Not in this run: bake it again to split land use from learning."
+              ? `${stats.capacity.priorPct.toFixed(1)} % land use, ${signedPoints(stats.capacity.learnedPoints)} learned`
+              : "Bake this run again to split land use from learning"
           }
         >
           {stats.capacity ? (
@@ -152,7 +152,7 @@ export function DrainStatsStrip({ stats, className }: DrainStatsStripProps) {
                 ]
                   .filter(Boolean)
                   .join(", ")
-              : "No pipe moved this cycle."
+              : "No pipe moved this cycle"
           }
         >
           {stats.biggest ? (

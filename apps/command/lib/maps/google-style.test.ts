@@ -3,9 +3,11 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { colorsFor } from "@varuna/tokens";
+
 import { colors } from "@/lib/ramps";
 
-import { darkMapStyle, resolveToken } from "./google-style";
+import { darkMapStyle, lightMapStyle, mapStyleFor, resolveToken } from "./google-style";
 
 /** The five tokens TECH_SPEC 2.3 allows the basemap, and their values in `tokens.json`. */
 const ALLOWED = [colors.ink, colors.deep, colors.well, colors.line, colors["text-3"]];
@@ -61,5 +63,39 @@ describe("resolveToken", () => {
     } finally {
       document.documentElement.style.removeProperty("--well");
     }
+  });
+});
+
+describe("lightMapStyle", () => {
+  const light = colorsFor("light");
+  const colourOf = (
+    rules: ReturnType<typeof lightMapStyle>,
+    featureType: string | undefined,
+    elementType: string,
+  ) =>
+    rules
+      .find((r) => r.featureType === featureType && r.elementType === elementType)
+      ?.stylers.find((s) => s.color)?.color;
+
+  it("paints only light tokens, even with no document theme to read", () => {
+    const allowed = [light.ink, light.deep, light.line, light["line-strong"], light["text-3"]];
+    const used = lightMapStyle()
+      .flatMap((rule) => rule.stylers)
+      .map((styler) => styler.color)
+      .filter((value): value is string => typeof value === "string");
+    expect(used.length).toBeGreaterThan(0);
+    for (const colour of used) expect(allowed).toContain(colour);
+  });
+
+  it("keeps the sea apart from the land, which the dark mapping would not in daylight", () => {
+    const rules = lightMapStyle();
+    expect(colourOf(rules, "water", "geometry")).toBe(light["line-strong"]);
+    expect(colourOf(rules, undefined, "geometry")).toBe(light.ink);
+    expect(colourOf(rules, "water", "geometry")).not.toBe(colourOf(rules, undefined, "geometry"));
+  });
+
+  it("is what mapStyleFor picks per theme", () => {
+    expect(mapStyleFor("light")).toEqual(lightMapStyle());
+    expect(mapStyleFor("dark")).toEqual(darkMapStyle());
   });
 });

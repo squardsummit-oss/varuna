@@ -75,7 +75,7 @@ export function SituationNote({ officer, className }: SituationNoteProps) {
     <Panel
       className={className}
       title="Situation note"
-      description="A note for people, not for engines. Nothing here reaches the forecast, a route or an alert."
+      description="For people only; reaches no forecast, route or alert."
     >
       <div className="space-y-4">
         <div className="space-y-1.5">
@@ -123,10 +123,7 @@ export function SituationNote({ officer, className }: SituationNoteProps) {
         </div>
 
         <p id="note-not-stored" className="type-micro text-text-3 max-w-[72ch]">
-          Recording is not built. VARUNA&rsquo;s ops log accepts six kinds of entry - a closure, a
-          reopening, a pump status, an acknowledgement, an escalation and a dispatch - and a note is
-          not one of them, so there is nowhere to put this that would outlive the tab. It needs one
-          entry kind and one route on the API; until then the copy button is the honest half.
+          Recording is not built: the ops log has no note entry yet. Copy the note instead.
         </p>
 
         {copied ? (

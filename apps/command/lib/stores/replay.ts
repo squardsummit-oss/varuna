@@ -24,6 +24,34 @@ export const DEFAULT_T0 = "2019-07-02T05:40:00+05:30";
 export const DEFAULT_T1 = "2019-07-02T09:40:00+05:30";
 export const DEFAULT_SPEED: ReplaySpeed = 30;
 
+/** The cycle period (SPEC.md 11.11): the replay clock triggers a cycle every 5 sim-minutes. */
+export const CYCLE_STEP_MIN = 5;
+
+/** Minutes from `t0` to `iso`, fractional; 0 when either does not parse. */
+export function minutesFromStart(iso: string, t0: string): number {
+  const t = Date.parse(iso);
+  const a = Date.parse(t0);
+  if (Number.isNaN(t) || Number.isNaN(a)) return 0;
+  return (t - a) / 60_000;
+}
+
+/**
+ * The cycle boundary before (`-1`) or after (`1`) `iso`, on the 5-minute grid from `t0`.
+ *
+ * The seek buttons step cycle to cycle. They used to add five minutes to wherever the clock had
+ * stopped, so a clock paused at 06:43:09 stepped to 06:48:09 and never landed on a cycle again.
+ */
+export function stepCycle(iso: string, t0: string, direction: -1 | 1): string {
+  const minutes = minutesFromStart(iso, t0);
+  const onGrid = minutes / CYCLE_STEP_MIN;
+  // A hair either side of a boundary is on it: 06:40:00.0004 must step to 06:45, not 06:40.
+  const next =
+    direction > 0
+      ? (Math.floor(onGrid + 1e-6) + 1) * CYCLE_STEP_MIN
+      : (Math.ceil(onGrid - 1e-6) - 1) * CYCLE_STEP_MIN;
+  return addMinutesIso(t0, next);
+}
+
 /** Clamps a lead to the scrub window and snaps it to whole minutes. */
 export function clampLead(leadMin: number): number {
   if (!Number.isFinite(leadMin)) return 0;

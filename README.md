@@ -1,7 +1,7 @@
 # VARUNA
 
 Street-level urban flood nowcasting digital twin. SIH 2026, problem statement SIH26085
-(Ministry of Earth Sciences). Team VIT.
+(Ministry of Earth Sciences). Team SummitSquard.
 
 > "Every street. Three hours early."
 
@@ -15,9 +15,6 @@ reconstructed replay of 2 July 2019, simplified-but-real physics for the surface
 learning drain map, sub-second what-if, and routes for an ambulance. Every simplification is
 labelled on screen and listed in [`docs/SIMPLIFICATIONS.md`](docs/SIMPLIFICATIONS.md).
 
-The build spec is [`SPEC.md`](SPEC.md); the science reference is
-`docs/VARUNA_SIH2026_Blueprint.pdf`. Progress is tracked in the status board in
-[`SPEC.md` section 1](SPEC.md#1-status-board-updated-after-every-working-session).
 
 ## Quick start
 

@@ -16,10 +16,12 @@ exactly 8 wall-clock minutes after it started, however often it was polled, and 
 loses nothing.
 
 The clock publishes, it does not compute. In ``baked`` mode a cycle boundary publishes the
-pre-computed run for that instant on ``runs.published``; when no such run exists (Phase 5 bakes
-them, task P5.6) it publishes nothing and says so in :attr:`ReplayClock.note`, which the replay
-panel shows. In ``live`` mode it calls the ``on_cycle`` handler the orchestrator will pass in;
-until Phase 5 there is none, and the note says that too.
+pre-computed run for that instant on ``runs.published``. The demo bakes every sixth cycle (every
+30 minutes), so a cycle with no run of its own *holds* the newest run baked at or before it -
+what an operations room sees between two forecasts - and publishes it only when it differs from
+the run already out. Only a cycle with nothing baked at or before it publishes nothing, and
+:attr:`ReplayClock.note` says what to do. In ``live`` mode it calls the ``on_cycle`` handler the
+caller passes in; the API passes none, and the note says so.
 
 Every stream event fires once per clock session. Seeking backwards rewinds the clock but does
 not re-publish what the console already has - the requirement is that a cycle never triggers
@@ -95,8 +97,7 @@ STREAM_TOPICS: Final[tuple[str, ...]] = (
 
 END_NOTE: Final[str] = "The replay reached the end of the window. Press Play to run it again."
 LIVE_NOTE: Final[str] = (
-    "Live compute lands in Phase 5 (task P5.6). The clock is triggering cycles; "
-    "nothing is computing them yet."
+    "Live replay is not wired: nothing computes these cycles. Use Compute live in Drishti."
 )
 
 TimeSource = Callable[[], float]
@@ -426,6 +427,28 @@ def _report_events(path: Path, bundle_id: str) -> list[ScheduledEvent]:
 
 
 # --------------------------------------------------------------------------- the clock
+def _held_run(runs: Iterable[RunMeta], cycle_ts: datetime) -> RunMeta | None:
+    """The newest run at or before ``cycle_ts``; of two runs of one cycle, the later-named one.
+
+    A baked cycle's own run wins, because it is the newest at or before its own instant. The
+    tie-break on ``run_id`` keeps the choice deterministic when a cycle was baked twice.
+    """
+    eligible = [meta for meta in runs if (meta.cycle_ts - cycle_ts).total_seconds() < 1.0]
+    if not eligible:
+        return None
+    return max(eligible, key=lambda meta: (meta.cycle_ts, meta.run_id))
+
+
+def _nothing_baked_note(runs: Iterable[RunMeta], cycle_ts: datetime, bundle_id: str) -> str:
+    """What to do at a cycle with no run at or before it: seek to the first, or bake one."""
+    stamp = f"{cycle_ts.astimezone(IST):%H:%M}"
+    later = sorted(meta.cycle_ts for meta in runs if meta.cycle_ts > cycle_ts)
+    if later:
+        first = f"{later[0].astimezone(IST):%H:%M}"
+        return f"No baked run until {first} IST. Seek there, or run make bake BUNDLE={bundle_id}."
+    return f"No baked run for {stamp} IST. Run make bake BUNDLE={bundle_id}."
+
+
 class ReplayClock:
     """One bundle's simulation clock: play, pause, seek, speed, and the events it publishes.
 
@@ -726,21 +749,30 @@ class ReplayClock:
                 await result
             return []
 
-        meta = self._baked_run(cycle_ts)
+        runs = self.registry.list(bundle=self.bundle_id, limit=10_000)
+        meta = _held_run(runs, cycle_ts)
         if meta is None:
-            self._note = (
-                f"No baked run for {cycle_ts.astimezone(IST):%H:%M} IST. "
-                f"Run make bake BUNDLE={self.bundle_id}, or switch the replay to live."
-            )
+            self._note = _nothing_baked_note(runs, cycle_ts, self.bundle_id)
+            return []
+        exact = abs((meta.cycle_ts - cycle_ts).total_seconds()) < 1.0
+        self._note = (
+            None
+            if exact
+            else f"Holding the {meta.cycle_ts.astimezone(IST):%H:%M} run until the next baked cycle."
+        )
+        if meta.run_id == self._last_run_id:
+            # The run already out is still the newest: publishing it again would only make every
+            # listener reload what it has.
             return []
         self._last_run_id = meta.run_id
-        self._note = None
         event = await self.bus.publish(
             RUNS_TOPIC,
             {
                 "run_id": meta.run_id,
                 "bundle": self.bundle_id,
-                "cycle_ts": _iso(cycle_ts),
+                # The run's own cycle, which a held run does not share with the clock's.
+                "cycle_ts": _iso(meta.cycle_ts),
+                "clock_cycle_ts": _iso(cycle_ts),
                 "cycle_index": index,
                 "mode": "baked",
                 "city": meta.city,
@@ -748,13 +780,6 @@ class ReplayClock:
             run_id=meta.run_id,
         )
         return [event]
-
-    def _baked_run(self, cycle_ts: datetime) -> RunMeta | None:
-        """The run baked for this cycle instant, or ``None`` while nothing is baked."""
-        for meta in self.registry.list(bundle=self.bundle_id, limit=10_000):
-            if abs((meta.cycle_ts - cycle_ts).total_seconds()) < 1.0:
-                return meta
-        return None
 
     def cycle_ts(self, index: int) -> datetime:
         """The simulated instant of cycle ``index`` (cycle 0 is ``t0``)."""

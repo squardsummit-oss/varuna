@@ -8,7 +8,7 @@
  */
 import type { Map as MapLibreMap, StyleSpecification } from "maplibre-gl";
 
-import { colors } from "@/lib/ramps";
+import { getTheme, themeColor, type Theme } from "@/lib/theme";
 
 /** CARTO dark matter, no labels. Free for any use with the attribution below. */
 export const DEFAULT_BASEMAP_STYLE =
@@ -113,8 +113,11 @@ function firstVectorSource(style: StyleSpecification | undefined): string | null
  *
  * Safe to call twice: existing layers are skipped, so a style reload after a context restore does
  * not duplicate them.
+ *
+ * The colours are the theme's: `--text-3` on an `--ink` halo is grey on night in the dark theme
+ * and grey on paper in the light one, so the labels stay quiet on either ground.
  */
-export function addQuietLabels(map: MapLibreMap): void {
+export function addQuietLabels(map: MapLibreMap, theme: Theme = getTheme()): void {
   let style: StyleSpecification | undefined;
   try {
     style = map.getStyle();
@@ -125,8 +128,8 @@ export function addQuietLabels(map: MapLibreMap): void {
   if (!source) return;
 
   const paint = {
-    "text-color": colors["text-3"],
-    "text-halo-color": colors.ink,
+    "text-color": themeColor("text-3", theme),
+    "text-halo-color": themeColor("ink", theme),
     "text-halo-width": 1,
   } as const;
 

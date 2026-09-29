@@ -11,6 +11,8 @@
 import { WebMercatorViewport } from "@deck.gl/core";
 import { useMemo } from "react";
 
+import { useTheme } from "@/lib/theme";
+
 import type { Bbox } from "../basemap";
 import {
   labelMarkerLayers,
@@ -92,12 +94,16 @@ export function useLabelLayers({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showLabels, named, cameraKey, size]);
 
+  // The theme is a dependency because every colour here is one: a switch swaps Esri's tile set
+  // for the day or night one and re-tints the text and its halo (`labels.tsx`), in the same frame
+  // the page's own tokens flip (M37).
+  const { theme } = useTheme();
   return useMemo(
     () => [
-      ...labelLayers({ enabled: showSatellite && showLabels }),
+      ...labelLayers({ enabled: showSatellite && showLabels, theme }),
       ...labelMarkerLayers(drawnLabels),
       ...labelTextLayers(drawnLabels),
     ],
-    [showSatellite, showLabels, drawnLabels],
+    [showSatellite, showLabels, drawnLabels, theme],
   );
 }

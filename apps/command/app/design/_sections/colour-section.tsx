@@ -1,6 +1,6 @@
 "use client";
 
-import { colors, tokens } from "@varuna/tokens";
+import { colorsFor, tokens } from "@varuna/tokens";
 
 import {
   Table,
@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
+import { useTheme, type Theme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 import { AA_TEXT_RATIO, contrastRatio, formatRatio, passesAa } from "./contrast";
@@ -85,7 +87,7 @@ export const COLOUR_GROUPS: readonly ColourGroup[] = [
   {
     id: "base",
     title: "Base",
-    description: "The monsoon night: deep indigo, never black. Tide is the only brand accent.",
+    description: "Dark is the monsoon night, light is cool paper. Tide is the only brand accent.",
     rows: rowsOf(tokens.color.base),
   },
   {
@@ -104,7 +106,8 @@ export const COLOUR_GROUPS: readonly ColourGroup[] = [
   {
     id: "semantic",
     title: "Semantic",
-    description: "Surcharge, the naive route, ground truth and the one destructive colour, which never reaches the map.",
+    description:
+      "Surcharge, the naive route, ground truth and the one destructive colour, which never reaches the map.",
     rows: rowsOf(tokens.color.semantic),
   },
   {
@@ -133,9 +136,22 @@ export const COLOUR_GROUPS: readonly ColourGroup[] = [
   },
 ];
 
-/** Tokens used as text; each is checked against both backgrounds. */
+/** The light reachability overrides; the rest of a theme's solids come from `colorsFor`. */
+const LIGHT_REACH: Readonly<Record<string, { value: string }>> = tokens.theme.light.color.reach;
+
+/** A swatch's hex in the theme on screen, so the label names the colour the swatch draws. */
+function hexIn(theme: Theme, row: SwatchRow): string {
+  const table = colorsFor(theme) as Readonly<Record<string, string>>;
+  if (table[row.name]) return table[row.name]!;
+  if (theme === "light" && row.name.startsWith("reach-")) {
+    return LIGHT_REACH[row.name.slice("reach-".length)]?.value ?? row.hex;
+  }
+  return row.hex;
+}
+
+/** Tokens used as text; each is checked against every surface it sits on. */
 const TEXT_ROLES = ["text", "text-2", "text-3", "tide", "danger"] as const;
-const BACKGROUNDS = ["ink", "deep"] as const;
+const BACKGROUNDS = ["ink", "deep", "well"] as const;
 
 const ROLE_NOTES: Record<(typeof TEXT_ROLES)[number], string> = {
   text: "primary text",
@@ -145,25 +161,34 @@ const ROLE_NOTES: Record<(typeof TEXT_ROLES)[number], string> = {
   danger: "destructive actions only",
 };
 
-function Swatch({ row }: { row: SwatchRow }) {
+function Swatch({ row, theme }: { row: SwatchRow; theme: Theme }) {
   return (
-    <li className="flex items-center gap-3 rounded-control border border-line bg-deep p-2">
+    <li className="rounded-control border-line bg-deep flex items-center gap-3 border p-2">
       <span
         aria-hidden="true"
-        className="size-10 shrink-0 rounded-control border border-line"
+        className="rounded-control border-line size-10 shrink-0 border"
         style={{ backgroundColor: `var(--${row.name})` }}
       />
       <div className="flex min-w-0 flex-col">
-        <span className="type-small font-medium text-text">{`--${row.name}`}</span>
-        <span className="type-micro num text-text-3">{row.hex}</span>
+        <span className="type-small text-text font-medium">{`--${row.name}`}</span>
+        <span className="type-micro num text-text-3">{hexIn(theme, row)}</span>
         {row.use ? <span className="type-micro text-text-2">{row.use}</span> : null}
       </div>
     </li>
   );
 }
 
-function ContrastCell({ fg, bg }: { fg: (typeof TEXT_ROLES)[number]; bg: (typeof BACKGROUNDS)[number] }) {
-  const ratio = contrastRatio(colors[fg], colors[bg]);
+function ContrastCell({
+  fg,
+  bg,
+  theme,
+}: {
+  fg: (typeof TEXT_ROLES)[number];
+  bg: (typeof BACKGROUNDS)[number];
+  theme: Theme;
+}) {
+  const table = colorsFor(theme);
+  const ratio = contrastRatio(table[fg], table[bg]);
   const pass = passesAa(ratio);
   return (
     <TableCell>
@@ -188,14 +213,15 @@ function ContrastCell({ fg, bg }: { fg: (typeof TEXT_ROLES)[number]; bg: (typeof
   );
 }
 
-/** Contrast report: every text token against both backgrounds, computed at render time. */
+/** Contrast report: every text token against every surface, in the theme on screen. */
 export function ContrastReport() {
+  const { theme } = useTheme();
   return (
     <div className="flex flex-col gap-2">
       <h3 className="type-h3 text-text">Contrast report</h3>
-      <p className="type-small max-w-[72ch] text-text-2">
-        Relative luminance and ratio computed from tokens.json in the browser. Text must reach{" "}
-        <span className="num">{AA_TEXT_RATIO}:1</span>; a fail is a real finding, not a footnote.
+      <p className="type-small text-text-2 max-w-[72ch]">
+        Computed from tokens.json for the {theme} theme. Text must reach{" "}
+        <span className="num">{AA_TEXT_RATIO}:1</span>.
       </p>
       <Table aria-label="Contrast report">
         <TableHeader>
@@ -203,6 +229,7 @@ export function ContrastReport() {
             <TableHead>Token</TableHead>
             <TableHead>On ink</TableHead>
             <TableHead>On deep</TableHead>
+            <TableHead>On well</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -210,12 +237,12 @@ export function ContrastReport() {
             <TableRow key={role}>
               <TableCell>
                 <div className="flex flex-col">
-                  <span className="type-small font-medium text-text">{`--${role}`}</span>
+                  <span className="type-small text-text font-medium">{`--${role}`}</span>
                   <span className="type-micro text-text-3">{ROLE_NOTES[role]}</span>
                 </div>
               </TableCell>
               {BACKGROUNDS.map((bg) => (
-                <ContrastCell key={bg} fg={role} bg={bg} />
+                <ContrastCell key={bg} fg={role} bg={bg} theme={theme} />
               ))}
             </TableRow>
           ))}
@@ -225,7 +252,25 @@ export function ContrastReport() {
   );
 }
 
+/** The theme switch, in both sizes: the top bar's 32 px button and the 44 px public-screen one. */
+export function ThemeStory() {
+  const { theme } = useTheme();
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="type-h3 text-text">Theme</h3>
+      <p className="type-small text-text-2 max-w-[72ch]">
+        Dark is the default. Light keeps the water colours and changes the ground. Showing {theme}.
+      </p>
+      <div className="flex items-center gap-3">
+        <ThemeToggle size="sm" className="border-line border" />
+        <ThemeToggle size="md" className="border-line border" />
+      </div>
+    </div>
+  );
+}
+
 export function ColourSection() {
+  const { theme } = useTheme();
   return (
     <DesignSection
       id="colour"
@@ -233,13 +278,14 @@ export function ColourSection() {
       description="Every entry of packages/tokens/tokens.json, read from the built package. Components never carry a hex; they use the custom property or the Tailwind colour utility."
     >
       <div className="flex flex-col gap-8">
+        <ThemeStory />
         {COLOUR_GROUPS.map((group) => (
           <div key={group.id} className="flex flex-col gap-2">
             <h3 className="type-h3 text-text">{group.title}</h3>
-            <p className="type-small max-w-[72ch] text-text-2">{group.description}</p>
+            <p className="type-small text-text-2 max-w-[72ch]">{group.description}</p>
             <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {group.rows.map((row) => (
-                <Swatch key={row.name} row={row} />
+                <Swatch key={row.name} row={row} theme={theme} />
               ))}
             </ul>
           </div>

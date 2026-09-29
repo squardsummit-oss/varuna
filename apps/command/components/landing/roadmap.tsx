@@ -12,17 +12,17 @@ export const ROADMAP = [
   {
     tier: "V1",
     title: "This prototype",
-    body: "One AOI of Mumbai, reconstructed radar, inferred drains, a learning blockage map, routes and alerts. Every simplification labelled.",
+    body: "One Mumbai AOI: reconstructed radar, inferred drains, a learning blockage map, routes and alerts.",
   },
   {
     tier: "V10",
     title: "A pilot city",
-    body: "Real IMD volumes, the ward's own drain GIS, LiDAR at the chronic spots, 5 m nests, a GNN surrogate, and a monsoon of assimilated observations behind the blockage map.",
+    body: "Real IMD radar, the ward's drain GIS, LiDAR at chronic spots, and a monsoon of observations.",
   },
   {
     tier: "V100",
     title: "Every city that wants one",
-    body: "City-in-a-box from open data in an afternoon, a public map in three languages, and a routing feed navigation apps and transit operators consume directly.",
+    body: "City-in-a-box from open data, a public map in three languages, and a routing feed for apps.",
   },
 ] as const;
 

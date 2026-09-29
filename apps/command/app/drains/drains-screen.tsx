@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsLeftRight, Download, Info, Layers3 } from "lucide-react";
+import { ChevronsLeftRight, Download, Info, Layers3, Scan } from "lucide-react";
 import { animate } from "motion/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,6 +15,7 @@ import {
   useState,
   useSyncExternalStore,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from "react";
 
 import type { Viewport } from "@deck.gl/core";
@@ -60,24 +61,24 @@ import { cityFromSearch, DEFAULT_CITY } from "@/lib/city";
 import { formatBeta, formatBetaWithSd, formatIst } from "@/lib/format";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-media-query";
 import { DUR_MS, EASE_UI } from "@/lib/motion";
-import {
-  denseFrame,
-  pathPoints,
-  useSettledBounds,
-  type WeightedPoint,
-} from "@/lib/map/affected-bounds";
+import { useSettledBounds } from "@/lib/map/affected-bounds";
 import { navItem } from "@/lib/nav";
 import { fetchOpeningRunId } from "@/lib/opening-run";
 import { useRunStore, type RunMeta } from "@/lib/stores/run";
 import { cn } from "@/lib/utils";
 
 import {
+  DRAIN_FIT_PADDING,
+  DRAIN_PANE_FALLBACK,
   deriveDrainStats,
+  drainFrame,
+  drainStory,
   learnedDrains,
   midpoint,
   nearbyStreetFinder,
   pipeTitle,
   rankPipeCards,
+  type DrainStats,
   type PipeCardData,
   type PlaceAt,
 } from "./drain-model";
@@ -98,14 +99,16 @@ const CARD_COUNT = 6;
 /** The worst pipes by blockage added to the full table beside the moved ones. */
 const TABLE_WORST = 25;
 
+/** How long the map waits for the surcharging manholes, once the pipes are in, before it opens. */
+const MANHOLE_WAIT_MS = 2_500;
+
 /**
  * What each observation operator is, in one line. The filter's `H(theta)` is injectable
  * (`services/pulse/varuna_pulse/enkf.py`) and the prototype ships the reduced one, so every
  * blockage on this map came through a stand-in for SPEC.md 11.6's "run drain1d per member".
  */
 const OPERATOR_NOTES: Record<string, string> = {
-  capacity_deficit:
-    "an observation is compared against a volume balance over the pipe's catchment, not a drain1d run.",
+  capacity_deficit: "a volume balance over the pipe's catchment, not a drain1d run.",
 };
 
 type Load<T> =
@@ -192,14 +195,14 @@ function MapLegend() {
           aria-hidden="true"
           className="border-naive inline-block w-6 border-t-2 border-dashed"
         />
-        Cleared by observation
+        Cleared
       </li>
       <li className="inline-flex items-center gap-2">
         <span
           aria-hidden="true"
           className="border-drain-0 inline-block w-6 border-t border-dashed"
         />
-        Rest of the network, at its prior
+        Rest of network
       </li>
     </ul>
   );
@@ -208,9 +211,11 @@ function MapLegend() {
 /** "About this map": the explanations that used to be four paragraphs above the pipes. */
 function AboutMap({
   health,
+  stats,
   surchargeNote,
 }: {
   health: DrainHealth | null;
+  stats: DrainStats | null;
   surchargeNote: string | null;
 }) {
   const [open, setOpen] = useState(false);
@@ -250,29 +255,28 @@ function AboutMap({
         hidden={!open}
         className="rounded-panel border-line bg-deep type-micro text-text-2 absolute top-full right-0 z-20 mt-2 w-[min(360px,80vw)] space-y-2 border p-4"
       >
-        <p>
-          Every pipe is dashed because the drain graph is inferred from roads and terrain: none of
-          it comes from a surveyed drain GIS.
-        </p>
-        <p>
-          The glow marks the pipes this cycle&apos;s update moved. The faint network under them is
-          every other pipe, at the blockage its land use gave it. Grey dashed pipes were cleared by
-          observation: the update lowered their blockage.
-        </p>
+        <p>Every pipe is inferred from roads and terrain, so every pipe is dashed.</p>
+        <p>Glow: moved this cycle. Grey dashed: blockage lowered. Faint: at its land-use prior.</p>
         {health ? (
           <p>
             Observation operator: {health.operator.replaceAll("_", " ")}
             {OPERATOR_NOTES[health.operator] ? ` - ${OPERATOR_NOTES[health.operator]}` : "."}
           </p>
         ) : null}
-        <p>
-          Each cycle re-analyses every observation up to its own time from the land-use prior;
-          nothing is carried from one cycle to the next yet.
-        </p>
-        <p>
-          Inlet clogging (κ) is not learned yet, and inlets are not drawn: every inlet keeps the
-          prior the city pipeline gave it.
-        </p>
+        {stats?.capacity?.learnedM3s != null ? (
+          <p className="num">
+            Learning moved full-flow capacity lost by {stats.capacity.learnedM3s >= 0 ? "+" : "-"}
+            {Math.abs(stats.capacity.learnedM3s).toFixed(1)} m³/s.
+          </p>
+        ) : null}
+        {stats ? (
+          <p className="num">
+            Observations: {stats.nSynthetic.toLocaleString("en-IN")} synthetic,{" "}
+            {stats.nReal.toLocaleString("en-IN")} real.
+          </p>
+        ) : null}
+        <p>Each cycle re-learns from the land-use prior; nothing carries over yet.</p>
+        <p>Inlet clogging (κ) is not learned yet, and inlets are not drawn.</p>
         {surchargeNote ? <p>{surchargeNote}</p> : null}
       </div>
     </div>
@@ -397,6 +401,32 @@ function useSplit(reducedMotion: boolean) {
     onPointerMove,
     refresh: place,
   };
+}
+
+/**
+ * The map pane's size, measured before the first paint and on every resize, rounded to 8 px so a
+ * scrollbar appearing does not re-frame. The opening frame is shaped to it (`drainFrame`).
+ */
+function usePaneSize(ref: RefObject<HTMLDivElement | null>) {
+  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const read = () => {
+      const box = element.getBoundingClientRect();
+      if (box.width < 2 || box.height < 2) return;
+      const width = Math.round(box.width / 8) * 8;
+      const height = Math.round(box.height / 8) * 8;
+      setSize((held) =>
+        held && held.width === width && held.height === height ? held : { width, height },
+      );
+    };
+    read();
+    const observer = new ResizeObserver(read);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return size;
 }
 
 /** The run `/drains` opens on: `?run=`, else the 08:40 cycle, else the API's own newest. */
@@ -550,8 +580,9 @@ function DrainsView() {
     return () => controller.abort();
   }, [city]);
 
-  // Surcharge rings: off by default, because 500 red rings drown the pipes this screen is about.
-  // Fetched the first time they are asked for, for the run on screen.
+  // Surcharge rings: drawn only when switched on, because 500 red rings drown the pipes this screen
+  // is about - but loaded with the run, because where manholes surcharge is half of where the map
+  // opens, and a frame that moved when the rings came on would take the camera from the reader.
   const [surchargeOn, setSurchargeOn] = useState(false);
   const [surcharge, setSurcharge] = useState<{
     runId: string;
@@ -559,7 +590,7 @@ function DrainsView() {
     failed: boolean;
   } | null>(null);
   useEffect(() => {
-    if (!surchargeOn || !runId || surcharge?.runId === runId) return;
+    if (!runId || surcharge?.runId === runId) return;
     const controller = new AbortController();
     loadSurcharge(runId, controller.signal)
       .then((set) => setSurcharge({ runId, set, failed: false }))
@@ -567,24 +598,27 @@ function DrainsView() {
         if (!controller.signal.aborted) setSurcharge({ runId, set: null, failed: true });
       });
     return () => controller.abort();
-  }, [surchargeOn, runId, surcharge?.runId]);
+  }, [runId, surcharge?.runId]);
   const surchargeSet = surcharge?.runId === runId ? surcharge?.set : undefined;
-  const surchargeNodes = useMemo(
+  const surchargeSettled = surcharge?.runId === runId;
+  const allManholes = useMemo(
     () =>
-      surchargeOn
-        ? (surchargeSet?.nodes ?? []).map((n) => ({ id: n.id, lon: n.lon, lat: n.lat, q: n.peakQ }))
-        : [],
-    [surchargeOn, surchargeSet],
+      (surchargeSet?.nodes ?? []).map((n) => ({ id: n.id, lon: n.lon, lat: n.lat, q: n.peakQ })),
+    [surchargeSet],
+  );
+  const surchargeNodes = useMemo(
+    () => (surchargeOn ? allManholes : []),
+    [surchargeOn, allManholes],
   );
   const surchargeNote = !surchargeOn
     ? null
     : surchargeSet
       ? surchargeSet.nodes.length > 0
-        ? `Red rings: the ${surchargeSet.nodes.length.toLocaleString("en-IN")} manholes that surcharge hardest in this run, each at its peak, sized by discharge.`
+        ? `Red rings: the ${surchargeSet.nodes.length.toLocaleString("en-IN")} hardest-surcharging manholes, sized by peak discharge.`
         : "No manhole surcharges in this run."
       : surcharge?.runId === runId
         ? surcharge?.failed
-          ? "Surcharge rings did not load. Switch them off and on to try again."
+          ? "Surcharge rings did not load. Reload the page to try again."
           : "This run has no surcharge product. Bake it again to draw the rings."
         : null;
 
@@ -609,30 +643,34 @@ function DrainsView() {
     [network, learned, splitLon, onViewport],
   );
 
-  // Where the map opens: on the pipes Pulse moved and, while the rings are on, the manholes that
-  // surcharge - not on the whole 49,770-pipe network, which is the AOI again. Each set counts
-  // equally (a pipe by how far its blockage moved, a manhole by its peak discharge, each set
-  // normalised to one), then `denseFrame` picks the 7 km that hold the most of it. Settled, so a
-  // few more rings do not re-frame, and the camera re-frames only while nobody has moved it.
-  const drainFrameNext = useMemo(() => {
-    const points: WeightedPoint[] = [];
-    const moved = learned.reduce((sum, pipe) => sum + Math.abs(pipe.post - pipe.prior), 0);
-    for (const pipe of learned) {
-      const weight = moved > 0 ? Math.abs(pipe.post - pipe.prior) / moved : 1 / learned.length;
-      points.push(...pathPoints(pipe.path, weight));
-    }
-    const discharge = surchargeNodes.reduce((sum, node) => sum + Math.max(node.q ?? 0, 0), 0);
-    for (const node of surchargeNodes) {
-      const q = Math.max(node.q ?? 0, 0);
-      points.push({
-        lon: node.lon,
-        lat: node.lat,
-        weight: discharge > 0 ? q / discharge : 1 / surchargeNodes.length,
-      });
-    }
-    return denseFrame(points, { within: cityBounds(city) })?.bounds ?? null;
-  }, [learned, surchargeNodes, city]);
-  const drainFrame = useSettledBounds(drainFrameNext);
+  // Where the map opens: on the part of the city, shaped like the pane, that holds the most of
+  // this cycle's learning and of its surcharging manholes, at a zoom where a pipe reads - not on
+  // the whole 49,770-pipe network, which is the AOI again (`drainFrame`). Decided once the run's
+  // pipes and its manholes are both in, so the camera does not open on one and cut to the other;
+  // settled, and a camera somebody has moved is theirs. The manholes get `MANHOLE_WAIT_MS` after
+  // the pipes: past that the map opens on the pipes alone and keeps that frame, so a slow
+  // surcharge product (10-11 s from the deployed API on 2026-09-29) never holds the map back.
+  const paneSize = usePaneSize(paneRef);
+  const [manholesLate, setManholesLate] = useState<string | null>(null);
+  useEffect(() => {
+    if (health.state !== "ready" || !runId || surchargeSettled) return;
+    const timer = setTimeout(() => setManholesLate(runId), MANHOLE_WAIT_MS);
+    return () => clearTimeout(timer);
+  }, [health.state, runId, surchargeSettled]);
+  const late = runId !== undefined && manholesLate === runId;
+  const frameReady =
+    health.state !== "loading" && (health.state !== "ready" || surchargeSettled || late);
+  const frameManholes = useMemo(() => (late ? [] : allManholes), [late, allManholes]);
+  const story = useMemo(() => drainStory(learned, frameManholes), [learned, frameManholes]);
+  const drainFrameNext = useMemo(
+    () =>
+      frameReady ? drainFrame(story, paneSize ?? DRAIN_PANE_FALLBACK, cityBounds(city)) : null,
+    [frameReady, story, paneSize, city],
+  );
+  const openingFrame = useSettledBounds(drainFrameNext);
+  // "Reset view" hands the camera back to the opening frame after a pipe was shown or the map
+  // was panned (CityMap re-arms its fit on a new key).
+  const [fitKey, setFitKey] = useState(0);
 
   // The handle mounts with the learned set; put it where the split is straight away rather than
   // at the next camera move.
@@ -757,7 +795,8 @@ function DrainsView() {
     [router, search],
   );
 
-  const mapReady = network.length > 0 || streets.length > 0 || learned.length > 0;
+  // The map mounts once it knows where to open, so it never paints the whole city first and cuts.
+  const mapReady = frameReady && (network.length > 0 || streets.length > 0 || learned.length > 0);
   const cycleTs = observed?.cycleTs || current?.edges[0]?.lastUpdate || "";
 
   return (
@@ -775,7 +814,7 @@ function DrainsView() {
             actions={
               <>
                 <CyclePicker currentRunId={runId ?? run.runId} onPick={pickCycle} />
-                <AboutMap health={current} surchargeNote={surchargeNote} />
+                <AboutMap health={current} stats={stats} surchargeNote={surchargeNote} />
               </>
             }
           />
@@ -784,7 +823,7 @@ function DrainsView() {
             <EmptyState
               size="sm"
               title="No drain health for this run yet"
-              description="This run was baked before Pulse wrote drain health. Pick a later cycle, or press Play on the replay."
+              description="Baked before drain health existed. Pick a later cycle, or press Play on the replay."
             />
           ) : health.state === "error" ? (
             <EmptyState
@@ -816,6 +855,15 @@ function DrainsView() {
                         />
                         Surcharge rings
                       </label>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={!openingFrame}
+                        onClick={() => setFitKey((k) => k + 1)}
+                      >
+                        <Scan size={16} strokeWidth={1.75} aria-hidden="true" />
+                        Reset view
+                      </Button>
                       <ToggleGroup
                         aria-label="Drain state"
                         aria-describedby="drain-toggle-help"
@@ -852,7 +900,13 @@ function DrainsView() {
                       </span>
                     </div>
                   </header>
-                  <div ref={paneRef} className="relative min-h-0 flex-1">
+                  <div
+                    ref={paneRef}
+                    className="relative min-h-0 flex-1"
+                    // deck reports no hover when the pointer leaves the canvas, so the tooltip
+                    // would stay on the last pipe; leaving the pane clears it.
+                    onPointerLeave={() => hoverStore.set(null)}
+                  >
                     {mapReady ? (
                       <CityMap
                         frames={[]}
@@ -870,7 +924,9 @@ function DrainsView() {
                         showBuildings={false}
                         step={0}
                         focus={focus}
-                        fitBounds={drainFrame}
+                        fitBounds={openingFrame}
+                        fitKey={fitKey}
+                        fitPadding={DRAIN_FIT_PADDING}
                         onDrainHover={hoverStore.set}
                         drainCrossFadeMs={reducedMotion ? 0 : DUR_MS.crossFade}
                       />
@@ -961,10 +1017,7 @@ function DrainsView() {
               ) : null}
 
               <PanelErrorBoundary title="Largest learned changes">
-                <Panel
-                  title="Largest learned changes"
-                  description="The pipes this cycle moved most, up or down."
-                >
+                <Panel title="Largest learned changes">
                   {health.state === "loading" ? (
                     <Skeleton lines={4} />
                   ) : health.state !== "ready" ? (
@@ -977,7 +1030,7 @@ function DrainsView() {
                     <EmptyState
                       size="sm"
                       title="No pipe moved this cycle"
-                      description="Pulse had nothing to assimilate yet. Pick a later cycle, or press Play on the replay."
+                      description="Nothing to assimilate yet. Pick a later cycle, or press Play on the replay."
                     />
                   ) : (
                     <ol className="flex flex-col gap-2">
@@ -1039,8 +1092,7 @@ function DrainsView() {
                     {showPipes ? (
                       <>
                         <p className="type-micro text-text-3 mb-2">
-                          Every pipe that moved this cycle, then the {TABLE_WORST} worst of the rest
-                          by blockage. Opens on the largest learned change; sort by any column.
+                          Moved pipes, then the {TABLE_WORST} worst by blockage.
                         </p>
                         <DrainHealthTable rows={rows} defaultSort="change" />
                       </>
@@ -1050,7 +1102,6 @@ function DrainsView() {
                     variant="outline"
                     className="mt-3 w-full"
                     disabled={!current}
-                    aria-describedby="drain-export-help"
                     onClick={() => {
                       if (current) window.open(desiltingCsvUrl(current.runId, cityQuery), "_blank");
                     }}
@@ -1058,22 +1109,16 @@ function DrainsView() {
                     <Download size={16} strokeWidth={1.75} aria-hidden="true" />
                     Export desilting priority (CSV)
                   </Button>
-                  <p id="drain-export-help" className="type-micro text-text-3 mt-1">
-                    Rank, pipe, street, locality, blockage, spread and capacity lost, worst first.
-                  </p>
                 </section>
               </PanelErrorBoundary>
 
               <section className="rounded-panel border-line bg-deep border p-4">
                 <p className="type-small text-text inline-flex items-center gap-2 font-medium">
                   <Layers3 size={16} strokeWidth={1.75} aria-hidden="true" />
-                  Walk the drains in 3D
+                  Drains in 3D
                 </p>
                 <p className="type-micro text-text-2 mt-1">
-                  The console can draw these pipes at their own depths beneath Google&apos;s
-                  photorealistic city: switch on 3D with the 3 key, then press X for the drain
-                  X-ray. It needs the Google Map Tiles key and ran at 11 to 26 fps on the demo
-                  laptop, so it is off by default.
+                  In the console, press 3, then X, to see these pipes under the city.
                 </p>
                 <Link
                   href={runId ? `/console?run=${encodeURIComponent(runId)}` : "/console"}

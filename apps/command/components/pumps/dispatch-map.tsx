@@ -6,6 +6,7 @@ import { CityMap } from "@/components/map/city-map";
 import { pumpRouteLayers, type DispatchClock } from "@/components/map/layers/pump-routes";
 import { EmptyState } from "@/components/varuna/empty-state";
 import type { PumpMap } from "@/lib/api/pumps";
+import { useThemeColors } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 import {
@@ -40,12 +41,13 @@ const NO_FRAMES: readonly (ImageBitmap | null)[] = [];
 const NO_SEGMENTS: never[] = [];
 
 /**
- * The frame keeps the plan clear of what floats over the map: the road note and the actions
- * along the top, the attribution strip along the bottom. The key sits in a bottom corner, which
- * a plan that runs north to south along Mumbai leaves empty. The camera gives margin back on a
- * narrow window rather than fitting into nothing (`usablePadding`).
+ * The frame keeps the plan clear of what floats over the map - the actions in the top-right
+ * corner, the attribution strip along the bottom - and no more, so the plan fills the map. The
+ * key sits in a bottom corner, which a plan that runs north to south along Mumbai leaves empty.
+ * The camera gives margin back on a narrow window rather than fitting into nothing
+ * (`usablePadding`).
  */
-const FIT_PADDING = { top: 72, right: 32, bottom: 44, left: 32 };
+const FIT_PADDING = { top: 64, right: 32, bottom: 40, left: 32 };
 
 /**
  * The signature of Jalayantra: the fleet on the city. White dots are the ward depots the lorries
@@ -74,9 +76,10 @@ export function DispatchMap({
   const depots = useMemo(() => depotPoints(map), [map]);
   const unserved = useMemo(() => unservedPlaces(map), [map]);
   const bounds = useMemo(() => dispatchBounds(map), [map]);
+  const colors = useThemeColors();
   const layers = useMemo(
-    () => pumpRouteLayers({ legs, depots, unserved, selectedPumpId, clock }),
-    [legs, depots, unserved, selectedPumpId, clock],
+    () => pumpRouteLayers({ legs, depots, unserved, selectedPumpId, clock, colors }),
+    [legs, depots, unserved, selectedPumpId, clock, colors],
   );
   const drawable = map !== null && legs.length > 0;
 
@@ -103,6 +106,9 @@ export function DispatchMap({
             showSurcharge={false}
             showBuildings={false}
             showHotspots={false}
+            // The plan names its own places over every road; the imagery's locality names at
+            // this zoom ("Open Scrub-Pirojshanagar Nagar") printed across them.
+            showLabels={false}
             basemapLayers={layers}
             bounds={bounds}
             fitBounds={bounds ?? null}
@@ -125,18 +131,19 @@ export function DispatchMap({
           description={
             error ??
             (loading
-              ? "Tracing each lorry's road from its depot. The first answer for a cycle takes a few seconds; the plan's numbers are already above."
+              ? "Tracing each lorry's road. The first answer for a cycle takes a few seconds."
               : (emptyDescription ??
                 "This cycle's plan sends no pump anywhere, so there is no road to draw."))
           }
           action={!error && !loading ? emptyAction : undefined}
         />
       )}
-      {drawable ? (
+      {/* Only the exception is said: a lorry drawn as a straight line has no road behind it. */}
+      {drawable && map.summary.routed < map.legs.length ? (
         <p className="type-micro text-text-2 bg-ink/80 rounded-control pointer-events-none absolute top-3 left-3 max-w-[45%] px-2 py-1">
           {map.summary.routed > 0
-            ? `Roads for a truck at the cycle time; ${map.summary.routed} of ${map.legs.length} routed`
-            : "Straight lines: the router gave no road for these lorries"}
+            ? `${map.legs.length - map.summary.routed} of ${map.legs.length} lorries drawn as straight lines: no road route`
+            : "Straight lines: no road route for these lorries"}
         </p>
       ) : null}
     </section>

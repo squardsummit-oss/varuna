@@ -145,7 +145,7 @@ export function CitizenInbox({
     <Panel
       className={className}
       title="Citizen inbox"
-      description="What people reported, newest first, with their photos. A status you set here is shown with the report on the citizen dashboard. Pulse assimilates reports on the next cycle."
+      description="Newest first. A status you set shows on the citizen dashboard."
     >
       {list === null ? (
         <Skeleton lines={4} />
@@ -162,7 +162,7 @@ export function CitizenInbox({
               <EmptyState
                 size="sm"
                 title="No reports yet"
-                description="A report arrives from the public map's Report water button, or from /report. This inbox checks for new ones every 30 seconds."
+                description="Reports arrive from the public map's Report water button."
               />
             )
           ) : (
@@ -216,8 +216,13 @@ export function CitizenInbox({
                       >
                         <ReportCard report={report} selected={open} />
                         <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-                          <p className="num type-micro text-text-3">
-                            {coordinateLine(report, exact)} · {report.coordinates} · {report.source}
+                          {/* The precision and the source are detail for an expert, so they sit in
+                              the title; a seeded report already says "Demo report (synthetic)". */}
+                          <p
+                            className="num type-micro text-text-3"
+                            title={`Coordinates ${report.coordinates}; source: ${report.source}`}
+                          >
+                            {coordinateLine(report, exact)}
                           </p>
                           <Button
                             type="button"
@@ -415,8 +420,7 @@ function ReportStatusForm({ report, access, onDone, onGateRefused }: ReportStatu
           {pending ? "Setting status" : "Set status"}
         </Button>
         <p className="type-micro text-text-3">
-          Everyone who opens the citizen dashboard reads the status, the role and the note. Your
-          name stays on the desk.
+          The public sees the status, role and note, never your name.
         </p>
       </div>
 

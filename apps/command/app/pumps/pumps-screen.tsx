@@ -54,11 +54,12 @@ const CLOCK_FALLBACK_MS = 1500;
 /**
  * The map and its rail share one height, sized so the whole map is on screen without scrolling
  * at 1366 x 768 and 1440 x 900, and so it does not grow into a strip on a 4K wall. Above it sit
- * the 52 px top bar, the title block with its Sanskrit gloss, the cycle row and the line saying
- * which cycle the screen opened on: 305 px measured at 1440 x 900 on 2026-09-28, plus the page's
- * 24 px bottom padding. At 17rem the map ran 33 px past the fold.
+ * the 52 px top bar, the title with its Sanskrit gloss and the cycle row, which since 2026-09-29
+ * also carries the line saying which cycle the screen opened on: 222 px measured at 1440 x 900,
+ * plus the page's 24 px bottom padding. It was 305 px while the header carried a paragraph and
+ * the opening line had a row of its own, and every one of those 83 px came out of the map.
  */
-const MAP_HEIGHT = "h-[clamp(24rem,calc(100dvh-21rem),46rem)]";
+const MAP_HEIGHT = "h-[clamp(24rem,calc(100dvh-15.5rem),50rem)]";
 
 /** What the gauges and the headline time from before Optimise: nothing has been sent. */
 const IDLE_GAUGE: GaugeClock = { key: "idle", startMs: null, idle: true };
@@ -396,12 +397,18 @@ export function PumpsScreen() {
           <PageHeader
             title={navItem("pumps").label}
             screen={navItem("pumps")}
-            description="Where each dewatering lorry goes before the water rises, by which road, and how much water it takes away."
             honesty="Synthetic pump inventory"
           />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <CyclePicker currentRunId={plan?.runId ?? requestedRunId} onPick={pickCycle} />
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-1">
+              <CyclePicker currentRunId={plan?.runId ?? requestedRunId} onPick={pickCycle} />
+              {openedOn ? (
+                <p className="type-micro text-text-3 min-w-0 flex-1 basis-60" role="note">
+                  {openedOn}
+                </p>
+              ) : null}
+            </div>
             <div
               role="tablist"
               aria-label="How to read the plan"
@@ -428,11 +435,6 @@ export function PumpsScreen() {
               ))}
             </div>
           </div>
-          {openedOn ? (
-            <p className="type-micro text-text-3 -mt-2 max-w-[72ch]" role="note">
-              {openedOn}
-            </p>
-          ) : null}
 
           {view === "map" ? (
             <div
@@ -504,8 +506,7 @@ export function PumpsScreen() {
                     <div className="flex flex-col gap-0.5 px-4 pt-3 pb-1">
                       <h2 className="type-small text-text font-medium">Where each pump goes</h2>
                       <p className="type-micro text-text-3">
-                        Pale column: the peak with no pump. Solid: with it. The line is{" "}
-                        {plan?.thresholdCm ?? 45} cm.
+                        Pale: peak with no pump. Solid: with it. Line: {plan?.thresholdCm ?? 45} cm.
                       </p>
                     </div>
                     {shownMap ? (
@@ -530,25 +531,17 @@ export function PumpsScreen() {
               )}
 
               {plan && !sendsNothing && !planError ? (
-                <div className="type-micro text-text-3 flex max-w-[72ch] flex-col gap-1">
-                  <p>
-                    {benefitCaveat(
-                      shownMap?.benefitModel ?? inferModel(plan),
-                      shownMap?.emulator ?? null,
-                    )}
-                  </p>
-                  <p>
-                    Dispatch pumps sends the optimiser&rsquo;s plan shown here to the ops log, the
-                    alerts and the ward officer&rsquo;s phone. The inventory is synthetic, so no
-                    lorry moves. To rearrange it by hand, open the plan board.
-                  </p>
-                </div>
+                <PlanDetails
+                  model={shownMap?.benefitModel ?? inferModel(plan)}
+                  emulator={shownMap?.emulator ?? null}
+                  map={shownMap}
+                />
               ) : null}
 
               {sendsNothing || planError ? null : (
                 <Panel
                   title="Does each pump get there in time"
-                  description="Each cell is one five-minute forecast step, starting at the time the forecast gives for it. A pump that arrives before the pale cells begin meets the water; one that arrives after chases it."
+                  description="Cells: forecast water above 45 cm. The line: when the pump arrives."
                 >
                   {shownMap ? (
                     <ArrivalTimeline
@@ -569,7 +562,6 @@ export function PumpsScreen() {
                   ) : (
                     <SkeletonRows rows={6} />
                   )}
-                  {shownMap ? <MapNotes map={shownMap} /> : null}
                 </Panel>
               )}
             </div>
@@ -580,12 +572,20 @@ export function PumpsScreen() {
               aria-labelledby="pumps-tab-board"
               className="flex flex-col gap-6"
             >
-              {label ? (
-                <p className="type-micro text-text-3">
-                  Benefit: {label}.{" "}
-                  {priced
-                    ? `The board as arranged saves about ${total} minutes above 45 cm, priced in ${priced.priceMs} ms.`
-                    : "The optimiser's figures, computed when the cycle ran."}
+              {label && plan ? (
+                <p className="type-micro text-text-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span
+                    className="rounded-chip border-line text-text-2 inline-flex items-center border px-2.5 py-0.5"
+                    title={label}
+                  >
+                    {benefitChip(priced ? priced.benefitModel : inferModel(plan))}
+                  </span>
+                  {priced ? (
+                    <span>
+                      As arranged: about {total} min above 45 cm avoided, priced in {priced.priceMs}{" "}
+                      ms.
+                    </span>
+                  ) : null}
                 </p>
               ) : null}
 
@@ -614,13 +614,13 @@ export function PumpsScreen() {
 
               {movedCount > 0 ? (
                 <p className="type-micro text-text-2" role="status">
-                  {movedCount} pump{movedCount === 1 ? " has" : "s have"} been moved by hand.{" "}
+                  {movedCount} pump{movedCount === 1 ? "" : "s"} moved by hand.{" "}
                   {pricing
-                    ? "Pricing the board as arranged through the same model the optimiser uses."
+                    ? "Pricing the board as arranged."
                     : failed
-                      ? `${failed} The figures above are still the optimiser's for its own plan.`
-                      : "The figures above are the board as arranged, priced by the API."}{" "}
-                  Dispatch sends the optimiser&rsquo;s plan: press Optimise to put it back first.
+                      ? `${failed} The figures shown are still the optimiser's.`
+                      : "Figures priced for the board as arranged."}{" "}
+                  Optimise restores the plan Dispatch sends.
                 </p>
               ) : null}
 
@@ -640,7 +640,7 @@ export function PumpsScreen() {
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
               <Panel
                 title="Alert instruction"
-                description="What each alert about a dispatched place now says, on /alerts and the phone."
+                description="What each alert about a dispatched place now says."
               >
                 <ul className="flex flex-col gap-2">
                   {dispatched.instructions.map((line, i) => (
@@ -657,10 +657,7 @@ export function PumpsScreen() {
                   ))}
                 </div>
               </Panel>
-              <Panel
-                title="Ward officer's phone"
-                description="The WhatsApp card the dispatch produced. On-screen mock."
-              >
+              <Panel title="Ward officer's phone" description="On-screen WhatsApp mock.">
                 <PhoneMock
                   messages={dispatched.messages}
                   freshIds={new Set(dispatched.messages.map((m) => m.id))}
@@ -684,26 +681,60 @@ export function describeOpening(plan: PumpPlan, cycles: PumpCycles | null): stri
   const at = cycleClock(here?.cycleTs ?? null);
   const which = at ? `the ${at} cycle` : "this cycle";
   const counts = here
-    ? ` (${Math.round(here.minutesSaved)} min, ${here.nAssigned} pump${here.nAssigned === 1 ? "" : "s"})`
+    ? `: ${here.nAssigned} pump${here.nAssigned === 1 ? "" : "s"} avoid ${Math.round(here.minutesSaved)} min above ${plan.thresholdCm} cm`
     : "";
-  return `Opened on ${which}: of the baked cycles, its plan avoids the most minutes above ${plan.thresholdCm} cm${counts}. Pick another cycle to compare.`;
+  return `Opened on ${which}, the storm's busiest${counts}.`;
 }
 
-/** What the map's recount found, when it did not reproduce the plan, and the road it compared. */
-function MapNotes({ map }: { map: PumpMap }) {
-  const { summary } = map;
+/** The model behind the plan's minutes, as a short honesty label (rule 6, 6.8). */
+export function benefitChip(model: string): string {
+  return model === "emulator" || model === "mixed"
+    ? "Reduced-order emulator estimate"
+    : "Bathtub estimate";
+}
+
+/**
+ * The method behind the figures, kept one click away: the benefit's caveat, what Dispatch pumps
+ * does, the roads' own recount and whatever the API's recount could not reproduce. The model's
+ * label stays in view beside it, because every number on the screen carries its model.
+ */
+function PlanDetails({
+  model,
+  emulator,
+  map,
+}: {
+  model: string;
+  emulator: PumpMap["emulator"];
+  map: PumpMap | null;
+}) {
+  const summary = map?.summary;
   const roadLine =
-    summary.routed > 0 && summary.routedMinutesSaved !== null
+    map && summary && summary.routed > 0 && summary.routedMinutesSaved !== null
       ? `On the roads a truck would take at the cycle time, ${summary.lateOnRoad === 0 ? "every lorry arrives no later than the plan assumes" : `${summary.lateOnRoad} of ${summary.routed} lorries arrive later than the plan assumes`}; priced at those arrivals the plan avoids ${summary.routedMinutesSaved} minutes above ${map.thresholdCm} cm against the plan's ${summary.minutesSaved}. The plan's ETAs are straight lines at ${map.travelSpeedKmh} km/h.`
       : null;
-  if (!roadLine && map.notes.length === 0) return null;
   return (
-    <ul className="type-micro text-text-3 mt-4 flex max-w-[72ch] flex-col gap-1">
-      {roadLine ? <li>{roadLine}</li> : null}
-      {map.notes.map((note) => (
-        <li key={note}>{note}</li>
-      ))}
-    </ul>
+    <div className="type-micro text-text-3 flex max-w-[72ch] flex-wrap items-start gap-x-3 gap-y-2">
+      <span className="rounded-chip border-line text-text-2 inline-flex items-center border px-2.5 py-0.5">
+        {benefitChip(model)}
+      </span>
+      <details className="group min-w-0 flex-1">
+        <summary className="rounded-control text-text-2 hover:text-text focus-visible:ring-tide/60 w-fit cursor-pointer py-0.5 focus-visible:ring-2 focus-visible:outline-none">
+          Details
+        </summary>
+        <ul className="mt-2 flex flex-col gap-1">
+          <li>{benefitCaveat(model, emulator)}</li>
+          <li>
+            Dispatch pumps sends the optimiser&rsquo;s plan to the ops log, the alerts and the ward
+            officer&rsquo;s phone. The inventory is synthetic, so no lorry moves. Rearrange it on
+            the plan board.
+          </li>
+          {roadLine ? <li>{roadLine}</li> : null}
+          {(map?.notes ?? []).map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+      </details>
+    </div>
   );
 }
 

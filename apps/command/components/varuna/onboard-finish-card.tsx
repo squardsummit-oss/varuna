@@ -1,7 +1,15 @@
 "use client";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import { formatCm, formatCount, formatMinutes, formatMs } from "@/lib/format";
+import {
+  formatCm,
+  formatCount,
+  formatDate,
+  formatIst,
+  formatMinutes,
+  formatMs,
+  formatTimeWithLead,
+} from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /** The design storm, or the rain the run recorded when the storm's manifest was not to hand. */
@@ -12,6 +20,24 @@ export interface FinishStorm {
   peakMmH: number | null;
   /** "manifest": the bundle's design storm. "run": the AOI-mean rain the run was forced with. */
   source: "manifest" | "run" | null;
+}
+
+/** Streets whose forecast peak reaches `thresholdCm`, out of every street the run scored. */
+export interface FinishFlooded {
+  count: number;
+  total: number | null;
+  thresholdCm: number;
+}
+
+/** The deepest street in the forecast and the step it peaks at. */
+export interface FinishDeepest {
+  cm: number;
+  /** The valid time of the peak, ISO 8601; null when the run named no times. */
+  at: string | null;
+  /** Minutes from the forecast's cycle to `at`. */
+  leadMin: number | null;
+  /** The street's name, only when the city's streets are the ones the run scored. */
+  name: string | null;
 }
 
 /** Every number the card prints, each read from the run the build made (SPEC.md rule 6). */
@@ -33,6 +59,14 @@ export interface FinishFacts {
   /** The stages in `stagesMs`, named as the step row names them: "Sky", "Twin", "products". */
   stages: string[];
   storm: FinishStorm | null;
+  /** The headline count, computed from the run's own depths once the map has loaded them. */
+  flooded?: FinishFlooded | null;
+  /** The deepest street, computed from the same depths. */
+  deepest?: FinishDeepest | null;
+  /** When the forecast was issued: the run's cycle time. */
+  issuedAt?: string | null;
+  /** How far ahead the forecast runs, in minutes. */
+  horizonMin?: number | null;
 }
 
 export interface OnboardFinishCardProps {
@@ -72,14 +106,128 @@ export function stormText(storm: FinishStorm): string | null {
   return `${mm(storm.totalMm)}${span}${peak}`;
 }
 
+interface Fact {
+  label: string;
+  value: string;
+  /** Up to two short lines under the number. */
+  subs?: string[];
+}
+
+/** The three headline facts, each falling back to what an older record carries. */
+export function headlineFacts(facts: FinishFacts): [Fact, Fact, Fact] {
+  const flooded: Fact = facts.flooded
+    ? {
+        label: "Flooded streets",
+        value: formatCount(facts.flooded.count),
+        subs: [
+          facts.flooded.total !== null ? `of ${formatCount(facts.flooded.total)}` : null,
+          `above ${formatCm(facts.flooded.thresholdCm)}`,
+        ].filter((line): line is string => line !== null),
+      }
+    : {
+        label: "Wet streets",
+        value: facts.wetStreets !== null ? formatCount(facts.wetStreets) : "Not recorded",
+        subs:
+          facts.wetStreets !== null
+            ? [
+                facts.streetsTotal !== null ? `of ${formatCount(facts.streetsTotal)}` : null,
+                facts.wetThresholdCm !== null ? `above ${formatCm(facts.wetThresholdCm)}` : null,
+              ].filter((line): line is string => line !== null)
+            : [],
+      };
+
+  const deepestAt = facts.deepest?.at
+    ? formatTimeWithLead(facts.deepest.at, facts.deepest.leadMin)
+    : null;
+  const deepest: Fact = facts.deepest
+    ? {
+        label: "Deepest street",
+        value: formatCm(facts.deepest.cm),
+        subs: [deepestAt, facts.deepest.name].filter((line): line is string => Boolean(line)),
+      }
+    : {
+        label: "Median street peak",
+        value: facts.medianPeakCm !== null ? formatCm(facts.medianPeakCm) : "Not recorded",
+      };
+
+  const issued: Fact = facts.issuedAt
+    ? {
+        label: "Forecast issued",
+        value: formatIst(facts.issuedAt),
+        subs: [
+          formatDate(facts.issuedAt),
+          facts.horizonMin !== null && facts.horizonMin !== undefined
+            ? `${formatMinutes(facts.horizonMin)} ahead`
+            : null,
+        ].filter((line): line is string => line !== null),
+      }
+    : {
+        label: "Forecast computed in",
+        value:
+          facts.forecastMs !== null
+            ? formatMs(facts.forecastMs)
+            : facts.stagesMs !== null
+              ? formatMs(facts.stagesMs)
+              : "Not recorded",
+      };
+
+  return [flooded, deepest, issued];
+}
+
+/** The lines behind "Details": what an expert may ask, and nothing the headline already says. */
+export function detailLines(facts: FinishFacts, cityName: string): string[] {
+  const lines: string[] = [];
+  const storm = facts.storm ? stormText(facts.storm) : null;
+  if (facts.storm && storm) {
+    const label =
+      facts.storm.source === "run"
+        ? `Rain on the run${facts.storm.id ? `, ${facts.storm.id}` : ""}`
+        : `Design storm${facts.storm.id ? ` ${facts.storm.id}` : ""}`;
+    lines.push(`${label}: ${storm}`);
+  }
+  if (facts.flooded && facts.wetStreets !== null) {
+    const threshold = facts.wetThresholdCm !== null ? formatCm(facts.wetThresholdCm) : "5 cm";
+    const total = facts.streetsTotal !== null ? ` of ${formatCount(facts.streetsTotal)}` : "";
+    lines.push(`Streets above ${threshold}: ${formatCount(facts.wetStreets)}${total}`);
+  }
+  if (facts.deepest && facts.medianPeakCm !== null) {
+    lines.push(`Median street peak: ${formatCm(facts.medianPeakCm)}`);
+  }
+  const stages = facts.stages.length > 0 ? stageListText(facts.stages) : null;
+  if (facts.issuedAt) {
+    if (facts.forecastMs !== null) {
+      lines.push(
+        `Forecast computed in ${formatMs(facts.forecastMs)}${
+          facts.stagesMs !== null && stages
+            ? `; ${stages} took ${formatMs(facts.stagesMs)} of it`
+            : ""
+        }`,
+      );
+    } else if (facts.stagesMs !== null && stages) {
+      lines.push(`${stages}: ${formatMs(facts.stagesMs)}`);
+    }
+  } else if (facts.forecastMs !== null && facts.stagesMs !== null && stages) {
+    lines.push(`${stages} took ${formatMs(facts.stagesMs)} of it`);
+  }
+  return lines;
+}
+
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-chip border-line type-micro text-text-2 inline-flex items-center border px-2 py-0.5">
+      {children}
+    </span>
+  );
+}
+
 /**
- * The wizard's finish card (SPEC.md 7.9): what the first forecast produced, said with the run's
- * own numbers, and the one button that takes the operator to that city's console.
+ * The wizard's result (SPEC.md 7.9): the first forecast in three numbers a judge reads in five
+ * seconds - how many streets flood, the deepest one and when, and when the forecast was issued -
+ * with the honesty chips beside the title, the lead-time scrub for the map, and the one button
+ * that opens that city's console. Everything else a scientist might ask sits behind "Details".
  *
- * It floats on the wizard's map rather than sitting at the foot of the step column, because at
- * 1366 x 768 the foot of the column was 450 px below the fold and the demo never scrolls. It is
- * always on screen, holding the sentence and a disabled button until a forecast has been read, so
- * the control lights up where the eye already is rather than appearing.
+ * It is on screen before the forecast too, holding a disabled button, so the control lights up
+ * where the eye already is rather than appearing.
  */
 export function OnboardFinishCard({
   cityName,
@@ -90,95 +238,47 @@ export function OnboardFinishCard({
   scrub,
   className,
 }: OnboardFinishCardProps) {
-  const storm = facts?.storm ? stormText(facts.storm) : null;
-  const stages = facts && facts.stages.length > 0 ? stageListText(facts.stages) : null;
-  const stormLabel = facts?.storm
-    ? facts.storm.source === "run"
-      ? `Rain on the run${facts.storm.id ? `, ${facts.storm.id}` : ""}`
-      : `Design storm${facts.storm.id ? ` ${facts.storm.id}` : ""}`
-    : null;
+  const headline = facts ? headlineFacts(facts) : null;
+  const details = facts ? detailLines(facts, cityName) : [];
 
   return (
     <section
       aria-label="First forecast"
-      className={cn(
-        "rounded-panel border-line bg-deep w-[360px] max-w-full space-y-3 border p-4",
-        className,
-      )}
+      className={cn("rounded-panel border-line bg-deep w-full space-y-3 border p-4", className)}
     >
-      <div className="space-y-1">
-        <h2 className="type-small text-text font-medium">First forecast</h2>
-        {facts ? (
-          <p
-            className="type-micro text-text-3 truncate font-mono"
-            title={facts.runId}
-            style={{ opacity: factsOpacity }}
-          >
-            {facts.runId}
-          </p>
-        ) : null}
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="type-small text-text mr-1 font-medium">First forecast</h2>
+        <Chip>Design storm</Chip>
+        <Chip>Uncalibrated</Chip>
       </div>
 
-      {facts ? (
+      {headline ? (
         <dl
-          className="grid grid-cols-2 gap-x-4 gap-y-2"
+          className="grid grid-cols-3 gap-x-3 gap-y-2"
           style={{ opacity: factsOpacity }}
           aria-label="First forecast numbers"
         >
-          <div>
-            <dt className="type-micro text-text-3">
-              Wet streets
-              {facts.wetThresholdCm !== null ? `, ${formatCm(facts.wetThresholdCm)} or more` : ""}
-            </dt>
-            <dd className="num type-small text-text">
-              {facts.wetStreets !== null ? formatCount(facts.wetStreets) : "Not recorded"}
-              {facts.wetStreets !== null && facts.streetsTotal !== null
-                ? ` of ${formatCount(facts.streetsTotal)}`
-                : ""}
-            </dd>
-          </div>
-          <div>
-            <dt className="type-micro text-text-3">Median street peak</dt>
-            <dd className="num type-small text-text">
-              {facts.medianPeakCm !== null ? formatCm(facts.medianPeakCm) : "Not recorded"}
-            </dd>
-          </div>
-          {storm && stormLabel ? (
-            <div className="col-span-2">
-              <dt className="type-micro text-text-3">{stormLabel}</dt>
-              <dd className="num type-small text-text">{storm}</dd>
-            </div>
-          ) : null}
-          {/* Two real numbers, each labelled with what it measures. The wall time matches the
-              first forecast's row; the stage sum is `run.json`'s own and is smaller, because work
-              between stages belongs to no stage - on Chennai's recorded build, rebuilding a stale
-              segment index. There they are 6 min 06 s and 5 min 30 s. */}
-          <div className="col-span-2">
-            <dt className="type-micro text-text-3">
-              {facts.forecastMs === null && facts.stagesMs !== null && stages
-                ? stages
-                : "Forecast computed in"}
-            </dt>
-            <dd className="num type-small text-text">
-              {facts.forecastMs !== null
-                ? formatMs(facts.forecastMs)
-                : facts.stagesMs !== null
-                  ? formatMs(facts.stagesMs)
-                  : "Not recorded"}
-            </dd>
-            {facts.forecastMs !== null && facts.stagesMs !== null && stages ? (
-              <dd className="num type-micro text-text-3">
-                {stages} took {formatMs(facts.stagesMs)} of it
+          {headline.map((fact) => (
+            <div key={fact.label} className="min-w-0">
+              <dt className="type-micro text-text-3">{fact.label}</dt>
+              <dd className="num font-display text-h2 tracking-display text-text leading-tight font-semibold">
+                {fact.value}
               </dd>
-            ) : null}
-          </div>
+              {(fact.subs ?? []).map((line) => (
+                <dd key={line} className="num type-micro text-text-2 line-clamp-2" title={line}>
+                  {line}
+                </dd>
+              ))}
+            </div>
+          ))}
         </dl>
-      ) : null}
+      ) : (
+        <p className="type-small text-text-2">
+          Press Start onboarding to generate {cityName}&apos;s flood forecast.
+        </p>
+      )}
 
-      <p className="type-small text-text-2">
-        First forecast, uncalibrated. VARUNA learns {cityName}&apos;s drains from the next monsoon.
-      </p>
-      {note ? <p className="type-micro text-text-3">{note}</p> : null}
+      {!facts && note ? <p className="type-micro text-text-3">{note}</p> : null}
 
       {scrub}
 
@@ -195,6 +295,25 @@ export function OnboardFinishCard({
           Open {cityName} console
         </Button>
       )}
+
+      {facts ? (
+        <details className="group">
+          <summary className="type-micro text-text-2 hover:text-text focus-visible:ring-tide rounded-control w-fit cursor-pointer py-0.5 focus-visible:ring-2 focus-visible:outline-none">
+            Details
+          </summary>
+          <ul className="type-micro text-text-3 mt-1.5 space-y-1">
+            {details.map((line) => (
+              <li key={line} className="num">
+                {line}
+              </li>
+            ))}
+            {note ? <li>{note}</li> : null}
+            <li className="truncate font-mono" title={facts.runId}>
+              {facts.runId}
+            </li>
+          </ul>
+        </details>
+      ) : null}
     </section>
   );
 }

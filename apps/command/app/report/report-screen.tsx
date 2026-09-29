@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/varuna/language-toggle";
 import { PageHeader } from "@/components/varuna/page-header";
 import { ReportWizard } from "@/components/varuna/report-wizard";
+import { ThemeToggle } from "@/components/varuna/theme-toggle";
 import { Wordmark } from "@/components/varuna/wordmark";
 import { usePublicT } from "@/lib/i18n";
 
@@ -20,7 +21,10 @@ export function ReportScreen() {
     <main className="mx-auto flex w-full max-w-[560px] flex-col gap-6 px-4 py-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Wordmark size="sm" withMark />
-        <LanguageToggle />
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle size="md" />
+        </div>
       </div>
       {/* Navigation, so a real link rather than a link announced as a button, as the
           confirmation's links are. */}

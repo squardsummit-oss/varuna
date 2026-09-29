@@ -204,13 +204,16 @@ export function HotspotDrawer({
             markerLabel="now"
           />
         </div>
-        <p className="type-micro text-text-3 mt-2">
-          {hasBand
-            ? `The line is the Twin's depth here; the band is the ensemble's p10 to p90 over the ${hotspot.bandSegments ?? 0} streets registered to this junction.`
-            : hotspot.bandSegments === 0
-              ? "One deterministic Twin run for this junction, so the band has no width: none of its streets is in this run's ensemble."
-              : "One deterministic Twin run for this junction, so the band has no width: this run was baked before junctions carried the ensemble's band."}
-        </p>
+        <details className="type-micro text-text-3 mt-2">
+          <summary className="text-text-2 cursor-pointer">Details</summary>
+          <p className="mt-1">
+            {hasBand
+              ? `The line is the Twin's depth here; the band is the ensemble's p10 to p90 over the ${hotspot.bandSegments ?? 0} streets registered to this junction.`
+              : hotspot.bandSegments === 0
+                ? "One deterministic Twin run for this junction, so the band has no width: none of its streets is in this run's ensemble."
+                : "One deterministic Twin run for this junction, so the band has no width: this run was baked before junctions carried the ensemble's band."}
+          </p>
+        </details>
       </section>
 
       <section className="border-line border-b p-4">
@@ -350,19 +353,22 @@ export function HotspotDrawer({
                 .
               </p>
             ) : null}
-            <p className="type-micro text-text-3 mt-2">
-              {hotspot.attributionCandidates ? (
-                <>
-                  <span className="num">{hotspot.attribution.length}</span> of{" "}
-                  <span className="num">{hotspot.attributionCandidates}</span> pipes within 5
-                  upstream hops explain enough to be named.{" "}
-                </>
-              ) : null}
-              {hotspot.attributionMethod ? `Measured on ${hotspot.attributionMethod}: ` : ""}the
-              street depth is held at this run&rsquo;s forecast, so each figure is the water the
-              drain takes off the junction and an upper bound on what a coupled re-run would remove.
-              The drain graph is inferred.
-            </p>
+            {hotspot.attributionCandidates ? (
+              <p className="type-micro text-text-3 mt-2">
+                <span className="num">{hotspot.attribution.length}</span> of{" "}
+                <span className="num">{hotspot.attributionCandidates}</span> pipes within 5 upstream
+                hops explain enough to be named.
+              </p>
+            ) : null}
+            <details className="type-micro text-text-3 mt-2">
+              <summary className="text-text-2 cursor-pointer">Details</summary>
+              <p className="mt-1">
+                {hotspot.attributionMethod ? `Measured on ${hotspot.attributionMethod}: ` : ""}the
+                street depth is held at this run&rsquo;s forecast, so each figure is the water the
+                drain takes off the junction and an upper bound on what a coupled re-run would
+                remove. The drain graph is inferred.
+              </p>
+            </details>
           </>
         ) : (
           <EmptyState
@@ -413,10 +419,15 @@ export function HotspotDrawer({
                   {cleanedCount === 1 ? "" : "s"}
                 </>
               )}
-              {runId ? ", on this cycle" : ""}. The lab&rsquo;s own cleaning runs on Flash-lite,
-              which is element-wise per segment, so it moves these streets and no others (ADR-0042);
-              the ranking above is the hydraulic answer.
+              {runId ? ", on this cycle" : ""}.
             </p>
+            <details className="type-micro text-text-3">
+              <summary className="text-text-2 cursor-pointer">Details</summary>
+              <p className="mt-1">
+                The lab&rsquo;s own cleaning runs on Flash-lite, which is element-wise per segment,
+                so it moves these streets and no others; the ranking above is the hydraulic answer.
+              </p>
+            </details>
           </div>
         ) : (
           <p className="type-micro text-text-3">

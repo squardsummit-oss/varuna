@@ -119,7 +119,7 @@ export function RouteCompare({ naive, varuna, className }: RouteCompareProps) {
   return (
     <Panel
       title="Naive versus VARUNA"
-      description="Same trip, same clock: one route ignores the forecast, the other reads it."
+      description="Same trip and clock; only VARUNA reads the forecast."
       className={className}
     >
       <div className="grid gap-3 sm:grid-cols-2">
@@ -131,7 +131,7 @@ export function RouteCompare({ naive, varuna, className }: RouteCompareProps) {
         />
         <Column
           title="VARUNA"
-          note="Time-dependent cost with the segment forecast at arrival time."
+          note="Reads each street's forecast at arrival time."
           summary={varuna}
           accent="varuna"
         />
@@ -144,7 +144,7 @@ export function RouteCompare({ naive, varuna, className }: RouteCompareProps) {
             <EmptyState
               size="sm"
               title="Nothing avoided yet"
-              description="Find a route: the segments VARUNA steps around are listed here with their probability."
+              description="Find a route to list the streets VARUNA avoids."
             />
           ) : (
             <ul className="mt-2 space-y-1.5">
@@ -175,7 +175,7 @@ export function RouteCompare({ naive, varuna, className }: RouteCompareProps) {
             <EmptyState
               size="sm"
               title="No alternates yet"
-              description="Find a route: up to two more routes appear once the graph has been searched."
+              description="Find a route to see up to two more."
             />
           ) : (
             <ul className="mt-2 space-y-1.5">

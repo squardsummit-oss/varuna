@@ -41,6 +41,7 @@ import {
   TRAVEL_MS,
 } from "@/components/pumps/dispatch-clock";
 import { depthRgba } from "@/lib/ramps";
+import type { ThemeRgbaTable } from "@/lib/theme";
 
 import { ROUTE_CASING, VARUNA_ROUTE, type Rgba } from "./palette";
 
@@ -266,11 +267,12 @@ const DEPOT_LABEL_MERGE_M = 900;
  */
 const PLACE_LABEL_MERGE_M = 250;
 /**
- * Metres a screen pixel covers at the plan's own framing: the 08:40 plan's 13.6 km north to
- * south in the 450 px a 1440 x 900 map leaves it, measured 2026-09-28. Used only to guess how
- * far a name reaches, so a label can be put on the side where it covers no other ring.
+ * Metres a screen pixel covers at the plan's own framing: 20.5 at the 08:40 plan's opening zoom
+ * of 11.82 on a 1440 x 900 map, 26.6 at 11.44 on 1366 x 768, measured 2026-09-29 after the frame
+ * was tightened (it was 35 before). Used only to guess how far a name reaches, so a label can be
+ * put on the side where it covers no other ring.
  */
-const PLAN_M_PER_PX = 35;
+const PLAN_M_PER_PX = 23;
 /** A 12 px semibold name: about 6.5 px a character, after the 13 px gap from its ring. */
 const LABEL_GAP_PX = 13;
 const LABEL_CHAR_PX = 6.5;
@@ -385,16 +387,22 @@ export interface PumpRouteLayerOptions {
   selectedPumpId?: string | null;
   /** The dispatch being drawn (M33); null draws it finished. */
   clock?: DispatchClock | null;
+  /**
+   * The theme's colours (`useThemeColors()`), so depots, names and marker rims follow light
+   * mode. Absent, the dark theme's values below are used.
+   */
+  colors?: ThemeRgbaTable | null;
 }
 
+// The dark theme's values, for a caller that passes no `colors`; the screen passes the theme's.
 /** `--text` #E3EAF6: a depot is infrastructure, not water, so it is drawn in the text colour. */
-const DEPOT_FILL: Rgba = [227, 234, 246, 235];
+const DARK_DEPOT_FILL: Rgba = [227, 234, 246, 235];
 /** `--text-2` #A7B4CC: the depot's name, quieter than the places the pumps go. */
-const DEPOT_LABEL: Rgba = [167, 180, 204, 255];
+const DARK_DEPOT_LABEL: Rgba = [167, 180, 204, 255];
 /** `--text` #E3EAF6: the name of a place a pump goes, the loudest words on the map. */
-const PLACE_LABEL: Rgba = [227, 234, 246, 255];
+const DARK_PLACE_LABEL: Rgba = [227, 234, 246, 255];
 /** `--ink` #0A1020: the rim that separates a marker from the imagery under it. */
-const INK: Rgba = [10, 16, 32, 255];
+const DARK_INK: Rgba = [10, 16, 32, 255];
 /** `--tide` at 45 %: the straight line the plan assumed where the router found no road. */
 const STRAIGHT_LINE: Rgba = [45, 212, 191, 115];
 /** `--tide` at 40 %: a road that is not the one being pointed at. */
@@ -438,8 +446,15 @@ export function pumpRouteLayers({
   unserved = [],
   selectedPumpId = null,
   clock = null,
+  colors = null,
 }: PumpRouteLayerOptions): unknown[] {
   const { span, trips, roads, lorries, places } = prepared(legs);
+  const INK: Rgba = colors ? [...colors.ink] : DARK_INK;
+  const DEPOT_FILL: Rgba = colors
+    ? [colors.text[0], colors.text[1], colors.text[2], 235]
+    : DARK_DEPOT_FILL;
+  const DEPOT_LABEL: Rgba = colors ? [...colors["text-2"]] : DARK_DEPOT_LABEL;
+  const PLACE_LABEL: Rgba = colors ? [...colors.text] : DARK_PLACE_LABEL;
   // Depot names only for the pump being pointed at: twelve grey names over the roads buried the
   // places the pumps go, and the list beside the map names every depot already. The white dots
   // and the key say what a depot is.

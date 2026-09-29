@@ -118,7 +118,9 @@ ENV VARUNA_DATA_DIR=/data \
     PORT=8000
 
 COPY docker/entrypoint.sh /usr/local/bin/varuna-entrypoint
-RUN chmod +x /usr/local/bin/varuna-entrypoint
+# Strip Windows CRLF: `railway up` uploads from disk, not from git, so on Windows the
+# entrypoint arrives with \r\n. Without this the container dies on `bash\r: not found`.
+RUN sed -i 's/\r$//' /usr/local/bin/varuna-entrypoint && chmod +x /usr/local/bin/varuna-entrypoint
 
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \

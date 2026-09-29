@@ -6,16 +6,20 @@ import { useState } from "react";
 import { Kbd } from "@/components/varuna/kbd";
 import { cn } from "@/lib/utils";
 
-/** The layers the console can actually draw today. */
+/** The layers the console can actually draw today: section 7.2's list and no others. */
 export interface LayerToggles {
-  satellite: boolean;
+  /** No longer offered: the imagery is the console's basemap and is always on. Kept optional so
+   * a caller that still passes it type-checks; the panel ignores it. */
+  satellite?: boolean;
   /** Probability mode: opacity carries P(> threshold) rather than the depth alone. */
   probability: boolean;
   raster: boolean;
   segments: boolean;
   surcharge: boolean;
   drains: boolean;
-  buildings: boolean;
+  /** No longer offered: the footprints are the buildings the imagery already shows. Kept
+   * optional so a caller that still passes it type-checks; the panel ignores it. */
+  buildings?: boolean;
   hotspots: boolean;
   /** The reachability bands of the facility picked in the Reachability tab. */
   isochrones: boolean;
@@ -45,48 +49,54 @@ const ROWS: readonly {
   label: string;
   hint: string;
   shortcut?: string;
+  /** Shown only while this layer is on, indented under it. */
+  under?: LayerKey;
 }[] = [
-  {
-    key: "satellite",
-    label: "Satellite",
-    hint: "Esri aerial imagery, dimmed so the water reads",
-    shortcut: "V",
-  },
+  { key: "segments", label: "Streets (depth)", hint: "Road segments coloured by depth" },
+  { key: "raster", label: "Depth raster", hint: "30 m surface depth from the Twin" },
   {
     key: "probability",
     label: "Probability",
     hint: "Opacity carries P(above the threshold)",
     shortcut: "P",
   },
-  { key: "raster", label: "Depth raster", hint: "30 m surface depth from the Twin" },
-  { key: "segments", label: "Streets (depth)", hint: "Road segments coloured by depth" },
-  { key: "surcharge", label: "Surcharge", hint: "Manholes pushing water up", shortcut: "S" },
+  {
+    key: "surcharge",
+    label: "Surcharge",
+    hint: "Manholes pushing water up; pipes running backwards",
+    shortcut: "S",
+  },
   { key: "drains", label: "Drains", hint: "Inferred graph, coloured by blockage", shortcut: "D" },
+  {
+    key: "hotspots",
+    label: "Ground truth",
+    hint: "Chronic spots and sourced reports",
+    shortcut: "G",
+  },
   {
     key: "isochrones",
     label: "Isochrones",
-    hint: "5, 10 and 15 minute reach of the facility picked under Reachability",
+    hint: "5, 10 and 15 minute reach of a facility",
     shortcut: "I",
   },
   {
     key: "routes",
     label: "Routes",
-    hint: "KEM Hospital to Sion Hospital by ambulance, naive against VARUNA",
+    hint: "KEM to Sion by ambulance, naive against VARUNA",
     shortcut: "R",
   },
-  { key: "buildings", label: "Buildings", hint: "Footprints from OpenStreetMap" },
-  { key: "hotspots", label: "Ground truth", hint: "The chronic register", shortcut: "G" },
   {
     key: "threeD",
-    label: "Photorealistic city",
-    hint: "Google's photographed 3D Mumbai, with the water and the routes draped on it",
+    label: "3D city",
+    hint: "Google's photorealistic Mumbai with the water draped on it",
     shortcut: "3",
   },
   {
     key: "xray",
     label: "Drain X-ray",
-    hint: "The inferred pipes at their invert depth under the streets; best in 3D",
+    hint: "The inferred pipes at their depth under the street",
     shortcut: "X",
+    under: "threeD",
   },
 ];
 
@@ -143,12 +153,12 @@ export function LayerPanel({ value, onChange, counts = {}, details = {} }: Layer
 
       {open ? (
         <ul className="rounded-b-panel border-line border-t p-1">
-          {ROWS.map((row) => {
-            const on = value[row.key];
+          {ROWS.filter((row) => !row.under || value[row.under]).map((row) => {
+            const on = Boolean(value[row.key]);
             const count = counts[row.key];
             const detail = details[row.key];
             return (
-              <li key={row.key}>
+              <li key={row.key} className={row.under ? "pl-4" : undefined}>
                 <button
                   type="button"
                   role="switch"

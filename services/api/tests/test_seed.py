@@ -172,3 +172,92 @@ def test_a_local_bake_is_never_taken_back(dirs: tuple[Path, Path]) -> None:
 
     seed.seed_demo_runs()
     assert (local / seed.LOCAL_PRODUCT).is_file()
+
+
+# ---- an onboarded city's first forecast ----------------------------------------------------------
+CHN_RUN = "CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked"
+
+
+@pytest.fixture
+def cities(dirs: tuple[Path, Path], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """The city root the seeder reads, isolated from the repo's ``city/``."""
+    root = tmp_path / "city"
+    monkeypatch.setattr(seed, "city_dir", lambda city: root / city)
+    return root
+
+
+def _onboard_run(source: Path, name: str = CHN_RUN, city: str = "chennai") -> Path:
+    """A first forecast shipped under ``demo/onboard/runs`` beside the replay's ``demo/runs``."""
+    folder = source.parent / "onboard" / "runs"
+    run = _demo_run(folder, name)
+    (run / "run.json").write_text(json.dumps({"run_id": name, "city": city}), encoding="utf-8")
+    return run
+
+
+def _built(root: Path, city: str = "chennai") -> None:
+    (root / city).mkdir(parents=True, exist_ok=True)
+    (root / city / "segments.parquet").write_bytes(b"")
+
+
+def test_an_onboarded_citys_first_forecast_is_seeded_where_the_city_is_built(
+    dirs: tuple[Path, Path], cities: Path
+) -> None:
+    """The deployed Pravesh said the recorded build's run "is not on this API": it never shipped."""
+    source, target = dirs
+    _demo_run(source, "RUN-A")
+    _onboard_run(source)
+    _built(cities)
+
+    assert seed.seed_demo_runs() == 2
+    assert (target / CHN_RUN / "run.json").is_file()
+    assert (target / CHN_RUN / seed.MARKER).is_file()
+    assert seed.seed_demo_runs() == 0, "an unchanged onboarding run is not recopied every boot"
+
+
+def test_a_first_forecast_is_not_seeded_for_a_city_the_volume_has_not_built(
+    dirs: tuple[Path, Path], cities: Path
+) -> None:
+    source, target = dirs
+    _demo_run(source, "RUN-A")
+    _onboard_run(source)
+
+    assert seed.seed_demo_runs() == 1
+    assert not (target / CHN_RUN).exists()
+
+
+def test_a_first_forecast_baked_here_is_never_replaced(
+    dirs: tuple[Path, Path], cities: Path
+) -> None:
+    """ADR-0082 holds for the onboarding run too: a local bake carries the product of record."""
+    source, target = dirs
+    _onboard_run(source)
+    _built(cities)
+    local = target / CHN_RUN
+    local.mkdir(parents=True)
+    (local / "run.json").write_text(
+        json.dumps({"run_id": CHN_RUN, "local": True}), encoding="utf-8"
+    )
+    (local / seed.LOCAL_PRODUCT).write_bytes(b"parquet")
+
+    assert seed.seed_demo_runs() == 0
+    assert json.loads((local / "run.json").read_text(encoding="utf-8"))["local"] is True
+    assert not (local / seed.MARKER).exists()
+
+
+def test_the_shipped_onboarding_run_is_the_one_the_shipped_record_names() -> None:
+    """The record and its run ship together, and the run ships as the demo runs do."""
+    from varuna_schemas.paths import repo_root
+
+    record_path = repo_root() / "demo" / "onboard" / "chennai.json"
+    if not record_path.is_file():
+        pytest.skip("demo/onboard is not in this checkout")
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    run_id = record["last_finished"]["first_run_id"]
+    run = repo_root() / "demo" / "onboard" / "runs" / run_id
+    assert (run / "run.json").is_file(), f"{run_id} is named by the record and not shipped"
+    assert json.loads((run / "run.json").read_text(encoding="utf-8"))["city"] == "chennai"
+    for product in ("segments_wet.json", "depth/bounds.json", "depth/p50_00.png"):
+        assert (run / product).is_file(), product
+    assert not (run / seed.LOCAL_PRODUCT).exists(), "the 15 MB product of record is not shipped"
+    assert not (run / "rain").exists()
+    assert not (run / seed.MARKER).exists()

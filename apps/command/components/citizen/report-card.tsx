@@ -236,7 +236,12 @@ export function ReportCard({
         // Who set the status and when, by role: the reporter never sees a name, and the desk's
         // exact list carries one (`user`), which is printed beside the role only there. A seeded
         // status says no officer set it (rule 7), so it can never read as the desk's act.
-        <p data-slot="report-desk-note" className="type-small text-text-2 mt-2">
+        <p
+          data-slot="report-desk-note"
+          className="type-small text-text-2 mt-2"
+          // A seeded status's note only restates the label, so it moves to the title.
+          title={act.seeded ? (actNote ?? undefined) : undefined}
+        >
           {act.seeded ? (
             <span className="text-text font-medium">Demo status, not set by the ward desk</span>
           ) : (
@@ -253,7 +258,7 @@ export function ReportCard({
               ) : null}
             </>
           )}
-          {actNote ? `: ${actNote}` : null}
+          {actNote && !act.seeded ? `: ${actNote}` : null}
         </p>
       ) : null}
 

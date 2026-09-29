@@ -98,6 +98,11 @@ export interface OnboardingStepsProps {
    * per row would push the pipeline log below the fold; the line stays the row's tooltip.
    */
   detailClassName?: string;
+  /**
+   * One line per step - icon, name, status and time - with the detail and the forecast's stages
+   * left to `OnboardingStepDetails` behind a disclosure. Pravesh's progress list (2026-09-29).
+   */
+  compact?: boolean;
 }
 
 const STATUS_ICONS = {
@@ -160,9 +165,17 @@ export function stagesText(stages: readonly OnboardingStage[]): string {
  * is scripted. Compact on purpose: at 1366 x 768 the six rows, the pipeline log and the header
  * share one column that does not scroll.
  */
-export function OnboardingSteps({ steps, className, detailClassName }: OnboardingStepsProps) {
+export function OnboardingSteps({
+  steps,
+  className,
+  detailClassName,
+  compact = false,
+}: OnboardingStepsProps) {
   return (
-    <ol className={cn("space-y-0.5", className)} aria-label="Onboarding steps">
+    <ol
+      className={cn(compact ? "space-y-0" : "space-y-0.5", className)}
+      aria-label="Onboarding steps"
+    >
       {steps.map((step, index) => {
         const Icon = STATUS_ICONS[step.status];
         const label = ONBOARDING_STEP_LABELS[step.id];
@@ -173,7 +186,8 @@ export function OnboardingSteps({ steps, className, detailClassName }: Onboardin
           <li
             key={step.id}
             className={cn(
-              "rounded-control relative px-2 pt-2 pb-2.5",
+              "rounded-control relative px-2",
+              compact ? "py-1.5" : "pt-2 pb-2.5",
               step.status === "running" ? "bg-well" : null,
             )}
             aria-current={step.status === "running" ? "step" : undefined}
@@ -182,7 +196,7 @@ export function OnboardingSteps({ steps, className, detailClassName }: Onboardin
             <div className="flex items-center gap-2.5">
               <Icon
                 aria-hidden="true"
-                size={20}
+                size={compact ? 16 : 20}
                 strokeWidth={1.75}
                 className={cn("shrink-0", STATUS_TONES[step.status])}
               />
@@ -191,12 +205,14 @@ export function OnboardingSteps({ steps, className, detailClassName }: Onboardin
               </p>
               <p className="num type-micro text-text-2 shrink-0">{stepStatusText(step)}</p>
             </div>
-            {detail ? (
+            {detail && !compact ? (
               <p className={cn("type-micro text-text-3 truncate pl-[30px]", detailClassName)}>
                 {detail}
               </p>
             ) : null}
-            {stages ? <p className="num type-micro text-text-2 pl-[30px]">{stages}</p> : null}
+            {stages && !compact ? (
+              <p className="num type-micro text-text-2 pl-[30px]">{stages}</p>
+            ) : null}
             {/* The 2 px underline is the step's progress. A native meter would be announced as a
                 second control per row; the row's own text already says where it is. */}
             <div
@@ -223,5 +239,39 @@ export function OnboardingSteps({ steps, className, detailClassName }: Onboardin
         );
       })}
     </ol>
+  );
+}
+
+/**
+ * What each step reported beyond its status: the pipeline's one-line detail ("34,410 roads, 72,573
+ * buildings from OSM") and the first forecast's stage times. The wizard keeps this behind its
+ * "Details" disclosure so the progress list above it stays one line a step.
+ */
+export function OnboardingStepDetails({
+  steps,
+  className,
+}: {
+  steps: OnboardingStepState[];
+  className?: string;
+}) {
+  const rows = steps.flatMap((step) => {
+    const lines = [step.detail ?? null, step.stages ? stagesText(step.stages) || null : null];
+    const text = lines.filter((line): line is string => Boolean(line));
+    return text.length > 0 ? [{ id: step.id, text }] : [];
+  });
+  if (rows.length === 0) return null;
+  return (
+    <dl className={cn("space-y-1", className)} aria-label="Step details">
+      {rows.map((row) => (
+        <div key={row.id}>
+          <dt className="type-micro text-text-2">{ONBOARDING_STEP_LABELS[row.id]}</dt>
+          {row.text.map((line) => (
+            <dd key={line} className="num type-micro text-text-3">
+              {line}
+            </dd>
+          ))}
+        </div>
+      ))}
+    </dl>
   );
 }

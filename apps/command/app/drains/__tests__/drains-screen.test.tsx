@@ -11,12 +11,16 @@
  * `components/map/layers/__tests__/drains-learned.test.ts`. What is checked here is the page.
  */
 
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, configure, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UNNAMED_PLACE } from "@/lib/api/drains";
 import { useRunStore } from "@/lib/stores/run";
+
+// Under a parallel run the screen's first render has taken past the 1 s default, which failed a
+// find that passes alone (as in the alert centre's tests).
+configure({ asyncUtilTimeout: 5000 });
 
 const nav = vi.hoisted(() => ({ params: new URLSearchParams(), replace: vi.fn() }));
 const mapProps = vi.hoisted(() => ({ last: null as Record<string, unknown> | null }));
@@ -314,7 +318,7 @@ describe("DrainsScreen", () => {
       "aria-busy",
       "true",
     );
-    expect(screen.queryByText(/pipes moved this cycle/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Pipes learned, of /)).not.toBeInTheDocument();
   });
 
   it("opens on the 08:40 cycle, not the newest, and asks every product for that run", async () => {
@@ -324,7 +328,7 @@ describe("DrainsScreen", () => {
       "/v1/observations": { body: OBSERVATIONS },
     });
     renderScreen();
-    await screen.findByText(/pipes moved this cycle/);
+    await screen.findByText(/Pipes learned, of /);
     const health = calls.find((u) => u.includes("/v1/drains/health"));
     const observed = calls.find((u) => u.includes("/v1/observations"));
     expect(health).toContain(`run_id=${RUN_0840}`);
@@ -350,7 +354,7 @@ describe("DrainsScreen", () => {
       "/v1/observations": { body: OBSERVATIONS },
     });
     renderScreen();
-    await screen.findByText(/pipes moved this cycle/);
+    await screen.findByText(/Pipes learned, of /);
     // The shell asks the registry for its newest (09:10); the screen draws 08:40 and says so.
     await waitFor(() => expect(useRunStore.getState().currentRun?.run_id).toBe(RUN_0840));
     const run = useRunStore.getState().currentRun;
@@ -367,7 +371,7 @@ describe("DrainsScreen", () => {
       "/v1/observations": { body: OBSERVATIONS },
     });
     renderScreen();
-    await screen.findByText(/pipes moved this cycle/);
+    await screen.findByText(/Pipes learned, of /);
     expect(calls.find((u) => u.includes("/v1/drains/health"))).toContain(`run_id=${RUN_0910}`);
   });
 
@@ -391,11 +395,8 @@ describe("DrainsScreen", () => {
     renderScreen();
     const strip = await screen.findByRole("region", { name: "What this cycle learned" });
     expect(within(strip).getByText("201")).toBeInTheDocument();
-    expect(
-      within(strip).getByText(
-        /201 of 49,770 pipes moved this cycle: 2 up, 0 down among the pipes written/,
-      ),
-    ).toBeInTheDocument();
+    expect(within(strip).getByText("Pipes learned, of 49,770")).toBeInTheDocument();
+    expect(within(strip).getByText("2 up, 0 down of those written")).toBeInTheDocument();
     expect(within(strip).getByText("Not split")).toBeInTheDocument();
     expect(within(strip).getByText(/no summary/)).toBeInTheDocument();
     // The market-prior pipe at 0.35 is not a learned change; the 3 m trunk is. No street names
@@ -429,15 +430,16 @@ describe("DrainsScreen", () => {
     });
     renderScreen();
     const strip = await screen.findByRole("region", { name: "What this cycle learned" });
-    expect(within(strip).getByText(/173 up, 28 down/)).toBeInTheDocument();
+    expect(within(strip).getByText("173 up, 28 down")).toBeInTheDocument();
+    expect(within(strip).getByText("Pipes learned, of 49,770")).toBeInTheDocument();
     expect(within(strip).getByText("28.5 %")).toBeInTheDocument();
-    expect(
-      within(strip).getByText("28.4 % assumed from land use, +0.09 points learned (+55.6 m³/s)"),
-    ).toBeInTheDocument();
-    // Observation counts follow the list the strip draws.
-    expect(
-      within(strip).getByText("1 traffic, 1 citizen; 1 synthetic, 1 real"),
-    ).toBeInTheDocument();
+    expect(within(strip).getByText("28.4 % land use, +0.09 learned")).toBeInTheDocument();
+    // Observation counts follow the list the strip draws; the synthetic share stays on the tile.
+    expect(within(strip).getByText("1 traffic, 1 citizen; 1 synthetic")).toBeInTheDocument();
+    // The flow learning moved, and the real count, are kept one click away in "About this map".
+    fireEvent.click(screen.getByRole("button", { name: "About this map" }));
+    expect(screen.getByText(/moved full-flow capacity lost by \+55\.6 m³\/s/)).toBeVisible();
+    expect(screen.getByText(/Observations: 1 synthetic, 1 real\./)).toBeVisible();
     expect(within(strip).getByText("off Eastern Freeway")).toBeInTheDocument();
 
     // The map gets the whole network quiet and only the moved pipes on top.
@@ -447,6 +449,62 @@ describe("DrainsScreen", () => {
     expect(mapProps.last?.showSurcharge).toBe(false);
   });
 
+  it("waits for the manholes, then opens the map on the learned pipes, clear of the chips", async () => {
+    stub({
+      "/v1/runs": { body: RUNS },
+      "/v1/drains/health": { body: NEW_HEALTH },
+      "/v1/observations": { body: OBSERVATIONS },
+      "/v1/nowcast/surcharge": { pending: true },
+    });
+    const { unmount } = renderScreen();
+    await screen.findByText(/Pipes learned, of /);
+    // Where the manholes surcharge is half of where the map opens: no map until they are in, so
+    // it never paints the whole city and then cuts to the frame.
+    expect(mapProps.last).toBeNull();
+    // ...but a surcharge product that never answers does not hold the map back: past the wait it
+    // opens on the pipes alone.
+    await waitFor(() => expect(mapProps.last?.fitBounds).toBeTruthy(), { timeout: 8_000 });
+    const [[w0, s0], [e0, n0]] = mapProps.last?.fitBounds as [number, number][];
+    expect(w0).toBeLessThanOrEqual(72.84);
+    expect(e0).toBeGreaterThanOrEqual(72.842);
+    expect(s0).toBeLessThanOrEqual(19.01);
+    expect(n0).toBeGreaterThanOrEqual(19.012);
+    unmount();
+    mapProps.last = null as Record<string, unknown> | null;
+
+    stub({
+      "/v1/runs": { body: RUNS },
+      "/v1/drains/health": { body: NEW_HEALTH },
+      "/v1/observations": { body: OBSERVATIONS },
+      "/v1/nowcast/surcharge": {
+        body: {
+          run_id: RUN_0840,
+          nodes: [{ node_id: "N1", lon: 72.8412, lat: 19.0112, peak_q_m3s: 0.4, q_m3s: [0.4] }],
+          reversed_edges: [],
+        },
+      },
+    });
+    renderScreen();
+    await waitFor(() => expect(mapProps.last?.fitBounds).toBeTruthy());
+    const [[west, south], [east, north]] = mapProps.last?.fitBounds as [number, number][];
+    // Every fixture pipe runs 72.840-72.842, 19.010-19.012, and the manhole sits beside them.
+    expect(west).toBeLessThanOrEqual(72.84);
+    expect(east).toBeGreaterThanOrEqual(72.842);
+    expect(south).toBeLessThanOrEqual(19.01);
+    expect(north).toBeGreaterThanOrEqual(19.012);
+    // A frame on two pipes, not the whole city: well under the AOI's 15.5 km.
+    expect((north - south) * 110_540).toBeLessThan(3_000);
+    expect(mapProps.last?.fitPadding).toEqual({ top: 40, right: 16, bottom: 28, left: 16 });
+    // The rings are loaded for the frame but drawn only when asked for.
+    expect(mapProps.last?.showSurcharge).toBe(false);
+    expect(mapProps.last?.surcharge).toEqual([]);
+
+    // Reset view hands the camera back to that frame.
+    const key = mapProps.last?.fitKey as number;
+    fireEvent.click(screen.getByRole("button", { name: "Reset view" }));
+    await waitFor(() => expect(mapProps.last?.fitKey).toBe(key + 1));
+  });
+
   it("keeps Before and After named exactly, and slides to either", async () => {
     stub({
       "/v1/runs": { body: RUNS },
@@ -454,7 +512,7 @@ describe("DrainsScreen", () => {
       "/v1/observations": { body: OBSERVATIONS },
     });
     renderScreen();
-    await screen.findByText(/pipes moved this cycle/);
+    await screen.findByText(/Pipes learned, of /);
     // Anchored, because the e2e suites click these by their exact names.
     const before = screen.getByRole("button", { name: /^Before$/ });
     const after = screen.getByRole("button", { name: /^After$/ });
@@ -514,9 +572,11 @@ describe("DrainsScreen", () => {
       "/v1/observations": { body: OBSERVATIONS },
     });
     renderScreen();
-    const strip = await screen.findByRole("list", {
-      name: "Observations assimilated, oldest first",
-    });
+    const strip = await screen.findByRole(
+      "list",
+      { name: "Observations assimilated, oldest first" },
+      { timeout: 5000 },
+    );
     const dots = within(strip).getAllByRole("button");
     expect(dots).toHaveLength(2);
     expect(dots.map((d) => d.getAttribute("aria-label"))).toEqual(
@@ -550,9 +610,11 @@ describe("DrainsScreen", () => {
       },
     });
     renderScreen();
-    const strip = await screen.findByRole("list", {
-      name: "Observations assimilated, oldest first",
-    });
+    const strip = await screen.findByRole(
+      "list",
+      { name: "Observations assimilated, oldest first" },
+      { timeout: 5000 },
+    );
     const marks = within(strip).getAllByRole("button");
     // Two traffic anomalies at 08:40 share one mark; the report at 08:40 keeps its own lane.
     expect(marks).toHaveLength(2);

@@ -118,6 +118,10 @@ export function ReachabilityPanel({ at: scrubAt, onIsochrones }: ReachabilityPan
   const runId = useRunStore((s) => s.currentRun?.run_id);
   const at = reachabilityStep(scrubAt);
   const [places, setPlaces] = useState<Place[]>([]);
+  // The facility list takes a request to arrive. Until it has, the tab is loading, not empty:
+  // it used to say "No facilities loaded ... Build Mumbai first" for the second it took, over a
+  // city that has 368 of them.
+  const [placesLoaded, setPlacesLoaded] = useState(false);
   const [selected, setSelected] = useState<string>("");
   // The answer carries the question it answers. That is what lets "loading" and "error" be
   // derived below rather than tracked: a result whose key is not the current one is, by
@@ -132,14 +136,24 @@ export function ReachabilityPanel({ at: scrubAt, onIsochrones }: ReachabilityPan
     const controller = new AbortController();
     loadPlaces("mumbai", controller.signal)
       .then((loaded) => {
-        const usable = loaded.filter(
-          (p) =>
-            p.kind === "fire_station" || DEMO_HOSPITALS.some((needle) => p.name.includes(needle)),
-        );
+        // `loadPlaces` answers an aborted request with an empty list rather than rejecting, so a
+        // cancelled load (React's development double mount) must not count as "none".
+        if (controller.signal.aborted) return;
+        const isDemoHospital = (p: Place) =>
+          p.kind === "hospital" && DEMO_HOSPITALS.some((needle) => p.name.includes(needle));
+        // The demo's hospitals first, so the tab opens on KEM rather than on whichever fire
+        // station the city layer happens to list first.
+        const usable = [
+          ...loaded.filter(isDemoHospital),
+          ...loaded.filter((p) => p.kind === "fire_station"),
+        ];
         setPlaces(usable);
         setSelected((current) => current || usable[0]?.id || "");
+        setPlacesLoaded(true);
       })
-      .catch(() => undefined);
+      .catch(() => {
+        if (!controller.signal.aborted) setPlacesLoaded(true);
+      });
     return () => controller.abort();
   }, []);
 
@@ -184,11 +198,22 @@ export function ReachabilityPanel({ at: scrubAt, onIsochrones }: ReachabilityPan
     }));
   }, [result]);
 
+  if (!placesLoaded) {
+    return (
+      <div className="space-y-2" aria-busy="true">
+        <span className="sr-only">Loading hospitals and fire stations</span>
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+      </div>
+    );
+  }
+
   if (places.length === 0) {
     return (
       <EmptyState
         title="No facilities loaded"
-        description="Hospitals and fire stations arrive with the city. Build Mumbai first, then reload."
+        description="The API sent no hospitals or fire stations. Check it is running, then reload."
       />
     );
   }
@@ -262,8 +287,7 @@ export function ReachabilityPanel({ at: scrubAt, onIsochrones }: ReachabilityPan
           </ul>
 
           <p className="type-micro text-text-3">
-            Measured at {formatIst(result.validTs)} IST on the road network VARUNA derived, against
-            this facility&rsquo;s own dry-weather catchment.
+            At {formatIst(result.validTs)} IST, against this facility&rsquo;s dry-weather reach.
           </p>
         </>
       ) : null}

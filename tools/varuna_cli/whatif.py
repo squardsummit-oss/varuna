@@ -92,6 +92,11 @@ def prewarm(
                         f"{drift['n_changed']:,} streets, by up to {drift['max_abs_delta_cm']} cm: "
                         "re-bake the run before quoting its map beside this answer."
                     )
+            elif where.get("copied_to_shipped"):
+                typer.echo(
+                    f"{label}: this machine's answer ({where['source']}) copied to "
+                    f"{where.get('path')}. {where['label']}"
+                )
             else:
                 typer.echo(f"{label}: already cached ({where['source']}). {where['label']}")
     if failed:

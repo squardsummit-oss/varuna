@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   IDLE_ONBOARDING_STEPS,
   ONBOARDING_STEP_IDS,
+  OnboardingStepDetails,
   OnboardingSteps,
   STEP_STATUS_LABELS,
   stagesText,
@@ -146,5 +147,51 @@ describe("stepStatusText and stagesText", () => {
         { label: "products", status: "done", ms: 2462 },
       ]),
     ).toBe("Sky 135 ms, Twin 42.9 s, Pulse 981 ms, products 2.5 s");
+  });
+});
+
+describe("compact progress list and its details", () => {
+  const steps: OnboardingStepState[] = [
+    {
+      id: "fetch",
+      progress: 100,
+      elapsedS: 42.4,
+      elapsedMs: 42_400,
+      status: "done",
+      detail: "34,410 roads, 72,573 buildings from OSM",
+    },
+    {
+      id: "forecast",
+      progress: 100,
+      elapsedS: 109,
+      elapsedMs: 109_000,
+      status: "done",
+      detail: "15,454 of 18,626 streets wet",
+      stages: [
+        { label: "Sky", status: "done", ms: 15_400 },
+        { label: "Twin", status: "done", ms: 51_700 },
+      ],
+    },
+  ];
+
+  it("keeps one line a step: name, status and time, no detail or stages", () => {
+    render(<OnboardingSteps steps={steps} compact />);
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+    expect(screen.getByText("Done 42.4 s")).toBeInTheDocument();
+    expect(screen.queryByText("34,410 roads, 72,573 buildings from OSM")).toBeNull();
+    expect(screen.queryByText(/Twin 51\.7 s/)).toBeNull();
+  });
+
+  it("puts each step's detail and the forecast's stage times behind the disclosure", () => {
+    render(<OnboardingStepDetails steps={steps} />);
+    expect(document.querySelector('dl[aria-label="Step details"]')).not.toBeNull();
+    expect(screen.getByText("34,410 roads, 72,573 buildings from OSM")).toBeInTheDocument();
+    expect(screen.getByText("15,454 of 18,626 streets wet")).toBeInTheDocument();
+    expect(screen.getByText("Sky 15.4 s, Twin 51.7 s")).toBeInTheDocument();
+  });
+
+  it("renders nothing when no step reported a detail", () => {
+    const { container } = render(<OnboardingStepDetails steps={IDLE_ONBOARDING_STEPS} />);
+    expect(container).toBeEmptyDOMElement();
   });
 });

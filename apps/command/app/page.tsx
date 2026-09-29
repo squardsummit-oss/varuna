@@ -30,7 +30,7 @@ export const metadata: Metadata = {
  */
 export default function LandingPage() {
   return (
-    <main className="flex min-h-dvh flex-col bg-ink text-text">
+    <main className="bg-ink text-text flex min-h-dvh flex-col">
       <Hero />
       <TheGap />
       <FourWays />

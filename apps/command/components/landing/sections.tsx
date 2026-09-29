@@ -88,19 +88,12 @@ export function TheGap() {
         <div>
           <h2 className={H2}>Forecasts stop at 12 km. Streets flood at 30 m.</h2>
           <p className={LEAD}>
-            India&apos;s operational rainfall forecasts resolve a city as a handful of grid cells. A
-            cell covering all of Dadar gets one number.
+            A 12 km forecast cell gives all of Dadar one number. The water pools under one rail
+            bridge.
           </p>
           <p className={`${BODY} mt-4`}>
-            Water does not arrive at that resolution. It arrives on the road under a rail bridge
-            that sits half a metre below its neighbours, through a drain nobody has surveyed, at an
-            hour the tide happens to be high. A ward-level warning cannot tell an ambulance which
-            underpass to avoid, because it does not know underpasses exist.
-          </p>
-          <p className={`${BODY} mt-4`}>
-            VARUNA models the city at 30 m, couples the surface to a drain network inferred from
-            roads and terrain, and answers the question a dispatcher actually asks: which street,
-            how deep, and when.
+            VARUNA models the city at 30 m with its drains, and answers which street, how deep, and
+            when.
           </p>
         </div>
         <GapDiagram />
@@ -114,23 +107,22 @@ export function TheGap() {
 const WAYS = [
   {
     title: "Pluvial",
-    body: "Rain falls faster than the drains can take it. The water never reaches a river; it sits in the road.",
+    body: "Rain falls faster than the drains can take it, and sits in the road.",
     example: "Hindmata junction, Dadar East, in almost every heavy spell.",
   },
   {
     title: "Fluvial",
-    body: "A river or nullah overtops and spills into the streets beside it.",
+    body: "A river or nullah overtops into the streets beside it.",
     example: "The Mithi at Kurla and Kalina, 26 July 2005 and since.",
   },
   {
     title: "Tidal lock",
-    body: "A high tide holds the outfall shut. The drains have capacity and nowhere to put it, so the water comes back up through the manholes.",
-    example:
-      "Mumbai's coastal outfalls at spring high tide, which is why the tide table is on the console.",
+    body: "High tide shuts the outfall, and drain water comes back up through the manholes.",
+    example: "Mumbai's coastal outfalls at spring high tide.",
   },
   {
     title: "Invisible drainage",
-    body: "The pipe is there and blocked. Nothing on any map says so, and the street floods where the model says it should not.",
+    body: "A blocked pipe that no map shows floods a street the model calls dry.",
     example: "What VARUNA-Pulse learns from traffic anomalies and citizen reports.",
   },
 ];
@@ -140,11 +132,8 @@ export function FourWays() {
     <section className={SECTION}>
       <div className="mx-auto max-w-[1200px]">
         <h2 className={H2}>Four ways a street floods</h2>
-        <p className={LEAD}>
-          They need different physics, and a model that only knows one of them will be confidently
-          wrong about the other three.
-        </p>
-        <dl className="mt-10 flex flex-col divide-y divide-line border-t border-line">
+        <p className={LEAD}>Each needs different physics. VARUNA models all four.</p>
+        <dl className="divide-line border-line mt-10 flex flex-col divide-y border-t">
           {WAYS.map((way) => (
             <div key={way.title} className="grid gap-3 py-6 lg:grid-cols-[16ch_1fr_1fr] lg:gap-8">
               <dt className="text-h3 text-text">{way.title}</dt>
@@ -164,19 +153,19 @@ const ENGINES: { name: EngineName; job: string; why: string; span: string }[] = 
   {
     name: "Pulse",
     job: "The city reveals its own drains",
-    why: "Every flood is an experiment somebody already ran. A traffic feed collapsing on one street and not its neighbour is a measurement of a pipe nobody has surveyed, and an ensemble Kalman filter turns a monsoon's worth of them into a blockage map.",
+    why: "Every flood is an experiment already run: an ensemble Kalman filter turns traffic slowdowns and reports into a blockage map.",
     span: "md:col-span-2 lg:col-span-3 lg:row-span-2",
   },
   {
     name: "Twin",
     job: "Surface and sewer, solved together",
-    why: "Local-inertial shallow water at 30 m, coupled to a head-driven 1D drain model through inlet capture and surcharge. The manhole that fountains is the same manhole the drain solver pressurised.",
+    why: "Shallow water at 30 m, coupled to a 1D drain model through inlets and surcharging manholes.",
     span: "lg:col-span-3",
   },
   {
     name: "Flash",
     job: "Three hours of city in milliseconds",
-    why: "A reservoir cascade calibrated to the Twin's own runs, so a what-if answers while the question is still on screen. Its measured error is printed beside every answer.",
+    why: "A reduced-order emulator calibrated to the Twin, with its measured error beside every answer.",
     span: "lg:col-span-3",
   },
   {
@@ -194,7 +183,7 @@ const ENGINES: { name: EngineName; job: string; why: string; span: string }[] = 
   {
     name: "Command",
     job: "One screen at three in the morning",
-    why: "Depth on streets, alerts, pumps, reachability - and a label on every simplification.",
+    why: "Depth on streets, alerts, pumps and reachability, with every simplification labelled.",
     span: "lg:col-span-2",
   },
 ];
@@ -218,18 +207,18 @@ export function SixEngines() {
                 key={engine.name}
                 data-engine={engine.name}
                 tabIndex={0}
-                className={`group flex flex-col rounded-panel border border-line bg-deep p-5 outline-none focus-visible:ring-2 focus-visible:ring-tide ${engine.span}`}
+                className={`group rounded-panel border-line bg-deep focus-visible:ring-tide flex flex-col border p-5 outline-none focus-visible:ring-2 ${engine.span}`}
               >
                 <div className="mb-4">
                   <Diagram />
                 </div>
-                <p className="font-display text-h2 font-semibold tracking-display text-text">
+                <p className="font-display text-h2 tracking-display text-text font-semibold">
                   {engine.name}
                 </p>
-                <p className="mt-1 text-h3 text-text-2">{engine.job}</p>
+                <p className="text-h3 text-text-2 mt-1">{engine.job}</p>
                 <p
                   data-engine-why
-                  className="mt-4 text-small text-text-2 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
+                  className="text-small text-text-2 mt-4 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
                 >
                   {engine.why}
                 </p>
@@ -270,13 +259,13 @@ export function Landscape() {
     <section className={SECTION}>
       <div className="mx-auto max-w-[1200px]">
         <h2 className={H2}>Where VARUNA sits</h2>
-        <blockquote className="mt-6 max-w-[64ch] border-l-2 border-tide pl-4 text-h3 text-text-2">
-          The strategic layer tells a city that a ward will flood tomorrow. VARUNA is the tactical
-          layer: which street, how deep, and when, for the next three hours.
+        <blockquote className="border-tide text-h3 text-text-2 mt-6 max-w-[64ch] border-l-2 pl-4">
+          Others warn a ward about tomorrow. VARUNA says which street, how deep, and when, for the
+          next three hours.
         </blockquote>
         <ul
           data-landscape="list"
-          className="mt-10 flex flex-col divide-y divide-line border-t border-line sm:hidden"
+          className="divide-line border-line mt-10 flex flex-col divide-y border-t sm:hidden"
         >
           {LANDSCAPE.map((row) => (
             <li key={row.system} className="py-4">
@@ -295,9 +284,9 @@ export function Landscape() {
         <div data-landscape="table" className="mt-10 hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[560px] border-collapse">
             <thead>
-              <tr className="border-b border-line text-left">
+              <tr className="border-line border-b text-left">
                 {["System", ...LANDSCAPE_COLUMNS.map((column) => column.label)].map((h) => (
-                  <th key={h} className="px-3 py-3 text-small font-medium text-text-2">
+                  <th key={h} className="text-small text-text-2 px-3 py-3 font-medium">
                     {h}
                   </th>
                 ))}
@@ -305,10 +294,10 @@ export function Landscape() {
             </thead>
             <tbody>
               {LANDSCAPE.map((row) => (
-                <tr key={row.system} className="border-b border-line last:border-b-0">
-                  <td className="px-3 py-3 text-body text-text">{row.system}</td>
+                <tr key={row.system} className="border-line border-b last:border-b-0">
+                  <td className="text-body text-text px-3 py-3">{row.system}</td>
                   {LANDSCAPE_COLUMNS.map((column) => (
-                    <td key={column.key} className="px-3 py-3 text-body text-text-2">
+                    <td key={column.key} className="text-body text-text-2 px-3 py-3">
                       {row[column.key]}
                     </td>
                   ))}
@@ -373,18 +362,15 @@ export function DataSources() {
     <section className={SECTION}>
       <div className="mx-auto max-w-[1200px]">
         <h2 className={H2}>What the data actually is</h2>
-        <p className={LEAD}>
-          Three categories, and nothing moves between them quietly. Anything synthetic carries the
-          word on screen, next to the number it produced.
-        </p>
-        <ul className="mt-10 flex flex-col divide-y divide-line border-t border-line">
+        <p className={LEAD}>Anything synthetic says so on screen, beside the number it made.</p>
+        <ul className="divide-line border-line mt-10 flex flex-col divide-y border-t">
           {SOURCES.map((source) => (
             <li
               key={source.name}
               className="flex flex-col gap-2 py-4 sm:flex-row sm:items-baseline sm:gap-6"
             >
-              <span className="min-w-[26ch] text-body text-text">{source.name}</span>
-              <span className="w-fit shrink-0 rounded-chip border border-line bg-well px-2 py-0.5 text-micro text-text-2">
+              <span className="text-body text-text min-w-[26ch]">{source.name}</span>
+              <span className="rounded-chip border-line bg-well text-micro text-text-2 w-fit shrink-0 border px-2 py-0.5">
                 {source.status}
               </span>
               <span className="text-small text-text-3">{source.note}</span>
@@ -421,6 +407,7 @@ const LINKS: { href: string; label: string; name?: string }[] = [
   screenLink("replay"),
   screenLink("verify"),
   { href: "/map", label: "Public map" },
+  { href: "/dashboard", label: "Citizen dashboard" },
   screenLink("onboard"),
   { href: "/api", label: "API explorer" },
 ];
@@ -462,14 +449,14 @@ export const TEAM_ROLES = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-line px-6 py-12 sm:px-12 lg:px-24">
+    <footer className="border-line border-t px-6 py-12 sm:px-12 lg:px-24">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8">
         <div>
           <p className="text-h3 text-text">Team VIT, in six roles</p>
           <dl className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2 lg:grid-cols-3">
             {TEAM_ROLES.map((entry) => (
               <div key={entry.role}>
-                <dt className="text-small font-medium text-text">{entry.role}</dt>
+                <dt className="text-small text-text font-medium">{entry.role}</dt>
                 <dd className="text-small text-text-2">{entry.owns}</dd>
               </div>
             ))}
@@ -502,11 +489,9 @@ export function Footer() {
             Source on GitHub
           </a>
         </nav>
-        <p className="max-w-[72ch] text-small text-text-3">
-          VARUNA, for the Smart India Hackathon 2026: problem statement SIH26085, Ministry of Earth
-          Sciences, Team VIT. Every number on these screens comes from a run the engines computed;
-          every simplification against the blueprint is listed in the repository and labelled where
-          it is visible.
+        <p className="text-small text-text-3 max-w-[72ch]">
+          Smart India Hackathon 2026, problem statement SIH26085, Ministry of Earth Sciences, Team
+          VIT. Every number on these screens comes from a run the engines computed.
         </p>
       </div>
     </footer>

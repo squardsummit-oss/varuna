@@ -17,7 +17,7 @@
  * (Chennai, 422), with the API's sentence; `unavailable` with the reason for anything else. None
  * of them produces a depth the API did not send.
  *
- * The schema is hand-written against `services/api/varuna_api/routers/outlook.py` until the lead
+ * The schema is hand-written against `services/api/varuna_api/routers/outlook.py` until the team
  * regenerates `types.ts`; it is loose so an added field does not break the console.
  */
 import { z } from "zod";

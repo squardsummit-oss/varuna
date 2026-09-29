@@ -171,7 +171,9 @@ describe("RainSkillPanel (Pramana, 7.10)", () => {
     const { container } = render(<RainSkillPanel event="MUM-2019-07-02" />);
     const loading = container.querySelector('[data-slot="rain-skill-loading"]');
     expect(loading).not.toBeNull();
-    expect(screen.getByText(/served from the API's cache/)).toBeInTheDocument();
+    expect(
+      screen.getByText("Scoring every baked cycle against the truth field."),
+    ).toBeInTheDocument();
     expect(loading?.textContent).not.toMatch(/\d+\s*s\b/);
   });
 
@@ -310,7 +312,7 @@ describe("RainSkillPanel (Pramana, 7.10)", () => {
     );
     render(<RainSkillPanel event="MUM-2019-07-02" />);
     await screen.findByText("No useful lead at 20 mm/h.");
-    const method = screen.getByRole("heading", { name: "How this was scored" }).parentElement!;
+    const method = screen.getByText("How this was scored").closest("details")!;
     expect(within(method).getByText(note)).toBeInTheDocument();
   });
 

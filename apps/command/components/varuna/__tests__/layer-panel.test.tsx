@@ -19,13 +19,11 @@ import { describe, expect, it, vi } from "vitest";
 import { LayerPanel, type LayerToggles } from "../layer-panel";
 
 const ALL_OFF: LayerToggles = {
-  satellite: false,
   probability: false,
   raster: false,
   segments: false,
   surcharge: false,
   drains: false,
-  buildings: false,
   hotspots: false,
   isochrones: false,
   routes: false,
@@ -34,9 +32,29 @@ const ALL_OFF: LayerToggles = {
 };
 
 describe("LayerPanel", () => {
-  it("offers the photorealistic city and the drain X-ray as switches", () => {
+  it("offers section 7.2's layers and no others", () => {
     render(<LayerPanel value={ALL_OFF} onChange={() => undefined} />);
-    expect(screen.getByRole("switch", { name: /Photorealistic city/ })).toBeInTheDocument();
+    const names = screen.getAllByRole("switch").map((el) => el.textContent?.replace(/\s+/g, " "));
+    expect(names.map((n) => n?.replace(/\s*[A-Z0-9]$/, "").trim())).toEqual([
+      "Streets (depth)",
+      "Depth raster",
+      "Probability",
+      "Surcharge",
+      "Drains",
+      "Ground truth",
+      "Isochrones",
+      "Routes",
+      "3D city",
+    ]);
+    // Removed: the imagery is the basemap and always on, and the footprints only greyed the roofs.
+    expect(screen.queryByRole("switch", { name: /Satellite/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("switch", { name: /Buildings/ })).not.toBeInTheDocument();
+  });
+
+  it("offers the drain X-ray under the 3D city, and only while it is on", () => {
+    const { rerender } = render(<LayerPanel value={ALL_OFF} onChange={() => undefined} />);
+    expect(screen.queryByRole("switch", { name: /Drain X-ray/ })).not.toBeInTheDocument();
+    rerender(<LayerPanel value={{ ...ALL_OFF, threeD: true }} onChange={() => undefined} />);
     expect(screen.getByRole("switch", { name: /Drain X-ray/ })).toBeInTheDocument();
   });
 
@@ -47,7 +65,7 @@ describe("LayerPanel", () => {
 
   it("reports which layer was switched, and to what", async () => {
     const onChange = vi.fn();
-    render(<LayerPanel value={ALL_OFF} onChange={onChange} />);
+    render(<LayerPanel value={{ ...ALL_OFF, threeD: true }} onChange={onChange} />);
     await userEvent.click(screen.getByRole("switch", { name: /Drain X-ray/ }));
     expect(onChange).toHaveBeenCalledWith("xray", true);
   });
@@ -66,12 +84,9 @@ describe("LayerPanel", () => {
   });
 
   it("marks each switch's state for a reader who cannot see the toggle", () => {
-    render(<LayerPanel value={{ ...ALL_OFF, xray: true }} onChange={() => undefined} />);
+    render(<LayerPanel value={{ ...ALL_OFF, threeD: true }} onChange={() => undefined} />);
+    expect(screen.getByRole("switch", { name: /3D city/ })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("switch", { name: /Drain X-ray/ })).toHaveAttribute(
-      "aria-checked",
-      "true",
-    );
-    expect(screen.getByRole("switch", { name: /Photorealistic city/ })).toHaveAttribute(
       "aria-checked",
       "false",
     );

@@ -67,10 +67,10 @@ describe("SixEngines", () => {
 });
 
 describe("Footer", () => {
-  it("links the console, verification, the API explorer and the repository", () => {
+  it("links the console, verification, the API explorer, the dashboard and the repository", () => {
     render(<Footer />);
     const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href"));
-    for (const href of ["/console", "/verify", "/api", REPOSITORY_URL]) {
+    for (const href of ["/console", "/verify", "/api", "/dashboard", REPOSITORY_URL]) {
       expect(hrefs).toContain(href);
     }
     expect(REPOSITORY_URL).toBe("https://github.com/shahul-royalss/varuna");

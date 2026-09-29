@@ -1,0 +1,26 @@
+rank,edge_id,street,locality,beta_mean,beta_sd,capacity_reduction_pct,observations,hotspots_explained,confidence
+1,CHN-E000052,off Abraham Bridge,,0.35,0.15,51.2,0,,inferred
+2,CHN-E000053,off Abraham Bridge,,0.35,0.15,51.2,0,,inferred
+3,CHN-E000054,off Abraham Bridge,,0.35,0.15,51.2,0,,inferred
+4,CHN-E000055,off Arulayampettai 2nd Street,,0.35,0.15,51.2,0,,inferred
+5,CHN-E000056,off Arulayampettai 2nd Street,,0.35,0.15,51.2,0,,inferred
+6,CHN-E000263,off 3rd Main Road,,0.35,0.15,51.2,0,,inferred
+7,CHN-E000264,off Arangannai Salai,,0.35,0.15,51.2,0,,inferred
+8,CHN-E000265,off Arangannai Salai,,0.35,0.15,51.2,0,,inferred
+9,CHN-E000266,off Arangannai Salai,,0.35,0.15,51.2,0,,inferred
+10,CHN-E000267,off Sardar Patel Road,,0.35,0.15,51.2,0,,inferred
+11,CHN-E000285,off Arangannai Salai,,0.35,0.15,51.2,0,,inferred
+12,CHN-E000286,off Madhya Kailash flyover,,0.35,0.15,51.2,0,,inferred
+13,CHN-E000325,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+14,CHN-E000326,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+15,CHN-E000327,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+16,CHN-E000328,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+17,CHN-E000329,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+18,CHN-E000330,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+19,CHN-E000331,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+20,CHN-E000332,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+21,CHN-E000333,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+22,CHN-E000334,off Dr Bhavin Patel Road,,0.35,0.15,51.2,0,,inferred
+23,CHN-E000335,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+24,CHN-E000336,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred
+25,CHN-E000337,off Rajiv Gandhi IT Expressway,,0.35,0.15,51.2,0,,inferred

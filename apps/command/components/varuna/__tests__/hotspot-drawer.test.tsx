@@ -194,11 +194,15 @@ describe("HotspotDrawer", () => {
   it("names how many of the candidates were worth naming, and how it was measured", () => {
     render(<HotspotDrawer hotspot={SION_SUBWAY} step={0} validTs={VALID_TS} />);
     expect(screen.getByText(/pipes within 5 upstream hops/)).toHaveTextContent(
-      "4 of 55 pipes within 5 upstream hops explain enough to be named. Measured on drain1d, " +
-        "frozen surface: the street depth is held at this run’s forecast, so each figure is the " +
-        "water the drain takes off the junction and an upper bound on what a coupled re-run " +
-        "would remove. The drain graph is inferred.",
+      "4 of 55 pipes within 5 upstream hops explain enough to be named.",
     );
+    // The method is kept for an expert, under Details rather than in the reading line.
+    expect(screen.getByText(/Measured on drain1d/)).toHaveTextContent(
+      "Measured on drain1d, frozen surface: the street depth is held at this run’s forecast, so " +
+        "each figure is the water the drain takes off the junction and an upper bound on what a " +
+        "coupled re-run would remove. The drain graph is inferred.",
+    );
+    expect(screen.getByText(/Measured on drain1d/).closest("details")).not.toBeNull();
   });
 
   it("carries the run's measured refusal when no pipe clears the floor", () => {

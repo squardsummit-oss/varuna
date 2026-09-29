@@ -341,12 +341,12 @@ describe("CitizenInbox status control", () => {
     expect(await screen.findByText("Status set: Crew sent.")).toBeInTheDocument();
     // The note is public, and the form says so rather than calling it a note to one reporter.
     expect(
-      screen.getByText(
-        /Everyone who opens the citizen dashboard reads the status, the role and the note/,
-      ),
+      screen.getByText("The public sees the status, role and note, never your name."),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Everyone who opens the citizen dashboard sees this status, your role and your note, never your name."),
+      screen.getByText(
+        "Everyone who opens the citizen dashboard sees this status, your role and your note, never your name.",
+      ),
     ).toBeInTheDocument();
     // The answer replaces the row at once and the screen reloads the log and the list.
     expect(replace).toHaveBeenCalledWith(answered);

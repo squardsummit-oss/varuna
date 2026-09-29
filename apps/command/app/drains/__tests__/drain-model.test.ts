@@ -7,7 +7,10 @@
  * fixtures here, not claims: each test pins how the screen reads a product, never a number.
  */
 
+import { WebMercatorViewport } from "@deck.gl/core";
 import { describe, expect, it } from "vitest";
+
+import type { Bbox } from "@/components/map/basemap";
 
 import type {
   AssimilatedObservation,
@@ -18,8 +21,12 @@ import type {
 } from "@/lib/api/drains";
 
 import {
+  DRAIN_FIT_PADDING,
+  DRAIN_MIN_ZOOM,
   deriveDrainStats,
   describeObservation,
+  drainFrame,
+  drainStory,
   learnedDrains,
   midpoint,
   nearbyStreetFinder,
@@ -194,7 +201,7 @@ describe("deriveDrainStats", () => {
       health([], { ...SUMMARY, source: "written_features", note: null }),
       null,
     );
-    expect(bare.note).toMatch(/rebuilt from the pipes it wrote/);
+    expect(bare.note).toMatch(/Rebuilt from the pipes this run wrote/);
   });
 
   it("gives a rebuilt summary the network's size, not the count of pipes the run wrote", () => {
@@ -456,5 +463,125 @@ describe("nearbyStreetFinder", () => {
       edge("MUM-E2", { moved: true, betaMean: 0.4, displayName: "off Eastern Freeway" }),
     ];
     expect(rankPipeCards(health(named, null), null, 6, placeAt)[0].place).toBeNull();
+  });
+});
+
+describe("drainFrame: where /drains opens", () => {
+  const AOI: Bbox = [
+    [72.815, 18.995],
+    [72.905, 19.135],
+  ];
+  const PANE = { width: 990, height: 520 };
+  /** A 60 m pipe running east from a point, raised from 0.2 by `delta`. */
+  const pipe = (lon: number, lat: number, delta = 0.2) => ({
+    path: [
+      [lon, lat],
+      [lon + 0.0006, lat],
+    ] as [number, number][],
+    prior: 0.2,
+    post: 0.2 + delta,
+  });
+  // Most of the learning in a Parel-to-Dadar band, a little of it 13 km north at Andheri.
+  const parel = Array.from({ length: 40 }, (_, i) =>
+    pipe(72.832 + (i % 8) * 0.004, 19.0 + Math.floor(i / 8) * 0.004),
+  );
+  const andheri = [pipe(72.845, 19.12, 0.05), pipe(72.85, 19.125, 0.05)];
+  const fit = (box: Bbox, pane = PANE) =>
+    new WebMercatorViewport(pane).fitBounds(box as [[number, number], [number, number]], {
+      padding: DRAIN_FIT_PADDING,
+    });
+
+  it("is null with no story, so the map keeps everything it draws", () => {
+    expect(drainFrame({ pipes: [], manholes: [] }, PANE, AOI)).toBeNull();
+    expect(drainFrame(drainStory([], []), PANE, AOI)).toBeNull();
+  });
+
+  it("counts the learned pipes and the surcharging manholes equally, each set summing to one", () => {
+    const story = drainStory(parel, [
+      { lon: 72.84, lat: 19.01, q: 3 },
+      { lon: 72.85, lat: 19.02, q: 1 },
+    ]);
+    expect(story.pipes.reduce((sum, p) => sum + p.weight, 0)).toBeCloseTo(1, 12);
+    expect(story.manholes.map((p) => p.weight)).toEqual([0.75, 0.25]);
+  });
+
+  it("frames the dense band, not the far pipe, at a zoom where a pipe reads", () => {
+    const box = drainFrame(drainStory([...parel, ...andheri]), PANE, AOI)!;
+    const [[west, south], [east, north]] = box;
+    // Holds every Parel pipe and none of Andheri's.
+    for (const p of parel) {
+      for (const [lon, lat] of p.path) {
+        expect(lon).toBeGreaterThanOrEqual(west);
+        expect(lon).toBeLessThanOrEqual(east);
+        expect(lat).toBeGreaterThanOrEqual(south);
+        expect(lat).toBeLessThanOrEqual(north);
+      }
+    }
+    expect(north).toBeLessThan(19.12);
+    expect(fit(box).zoom).toBeGreaterThanOrEqual(DRAIN_MIN_ZOOM - 0.05);
+  });
+
+  it("is shaped like the pane, centred on the learning, and mostly city", () => {
+    const story = [...parel, ...andheri];
+    const [[sw, ss], [se, sn]] = [
+      [
+        Math.min(...parel.flatMap((p) => p.path.map((q) => q[0]))),
+        Math.min(...parel.flatMap((p) => p.path.map((q) => q[1]))),
+      ],
+      [
+        Math.max(...parel.flatMap((p) => p.path.map((q) => q[0]))),
+        Math.max(...parel.flatMap((p) => p.path.map((q) => q[1]))),
+      ],
+    ];
+    for (const pane of [PANE, { width: 920, height: 400 }, { width: 1900, height: 1000 }]) {
+      const box = drainFrame(drainStory(story), pane, AOI)!;
+      const [[west, south], [east, north]] = box;
+      // The pane's shape: the fit fills it both ways, so nothing the frame holds is cropped.
+      const cos = Math.cos((((south + north) / 2) * Math.PI) / 180);
+      const usable =
+        (pane.width - DRAIN_FIT_PADDING.left - DRAIN_FIT_PADDING.right) /
+        (pane.height - DRAIN_FIT_PADDING.top - DRAIN_FIT_PADDING.bottom);
+      expect(((east - west) * cos) / (north - south)).toBeCloseTo(usable, 6);
+      // Centred on the Parel band, give or take the trim.
+      expect(Math.abs((west + east) / 2 - (sw + se) / 2)).toBeLessThan(0.004);
+      expect(Math.abs((south + north) / 2 - (ss + sn) / 2)).toBeLessThan(0.004);
+      // Never wider than the city, so what the view shows is mostly city.
+      const view = fit(box, pane);
+      const [viewWest] = view.unproject([0, pane.height / 2]);
+      const [viewEast] = view.unproject([pane.width, pane.height / 2]);
+      const inside = Math.min(viewEast, AOI[1][0]) - Math.max(viewWest, AOI[0][0]);
+      expect(inside / (viewEast - viewWest)).toBeGreaterThan(0.75);
+    }
+  });
+
+  it("lets the manholes choose where, and the drawn pipes what the box holds", () => {
+    // Manholes spread right across the band, as the 500 hardest on 2 July are: the box stays on
+    // the pipes, so the learning is centred rather than pushed to one edge.
+    const spread = Array.from({ length: 30 }, (_, i) => ({
+      lon: 72.816 + i * 0.003,
+      lat: 19.004 + (i % 5) * 0.004,
+      q: 1,
+    }));
+    const box = drainFrame(drainStory(parel, spread), PANE, AOI)!;
+    const pipesOnly = drainFrame(drainStory(parel), PANE, AOI)!;
+    expect(box[0][0]).toBeCloseTo(pipesOnly[0][0], 3);
+    expect(box[1][0]).toBeCloseTo(pipesOnly[1][0], 3);
+    // With nothing learned, the manholes alone are the story.
+    const surchargeOnly = drainFrame(drainStory([], spread), PANE, AOI)!;
+    expect(surchargeOnly[0][1]).toBeLessThanOrEqual(19.004);
+    expect(surchargeOnly[1][1]).toBeGreaterThanOrEqual(19.02);
+  });
+
+  it("never zooms onto one pipe", () => {
+    const box = drainFrame(drainStory([pipe(72.84, 19.01)]), PANE, AOI)!;
+    const tallM = (box[1][1] - box[0][1]) * 110_540;
+    expect(tallM).toBeGreaterThanOrEqual(1_199);
+  });
+
+  it("is deterministic", () => {
+    const story = drainStory([...parel, ...andheri], [{ lon: 72.9, lat: 19.0, q: 1 }]);
+    expect(drainFrame(story, PANE, AOI)).toEqual(
+      drainFrame({ pipes: [...story.pipes], manholes: [...story.manholes] }, PANE, AOI),
+    );
   });
 });

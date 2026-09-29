@@ -127,7 +127,7 @@ function WardMapPlaceholder() {
       <EmptyState
         icon={MapIcon}
         title="No ward map yet"
-        description="The photorealistic city map is not wired into the desk. Open the console to see this cycle's water on VARUNA's own map."
+        description="Open the console to see this cycle's water."
         action={
           <Link href="/console" className="text-tide type-small underline underline-offset-2">
             Open the console
@@ -273,7 +273,7 @@ export function AuthorityScreen({ wardMap }: AuthorityScreenProps = {}) {
 
             <PageHeader
               title="Ward officer's desk"
-              description="Tell VARUNA what it cannot know. A closure, a broken pump and an acknowledgement are read back by the router, the optimiser and the alert queue; a note is read by people."
+              description="Tell VARUNA what it cannot know: closed streets, broken pumps, seen alerts."
               honesty="Prototype access"
               actions={
                 open ? (
@@ -287,8 +287,7 @@ export function AuthorityScreen({ wardMap }: AuthorityScreenProps = {}) {
             {open ? (
               <>
                 <p className="type-small text-text-2 max-w-[72ch]">
-                  Acting as {officer}. Every edit is one appended line that the router applies when
-                  a route is read; no baked product is rewritten.
+                  Acting as {officer}. Every edit is appended; no forecast is rewritten.
                 </p>
 
                 <CyclePicker currentRunId={runId} onPick={setRunId} />
@@ -300,8 +299,7 @@ export function AuthorityScreen({ wardMap }: AuthorityScreenProps = {}) {
                         Changes the forecast
                       </h2>
                       <p className="type-small text-text-2 max-w-[72ch]">
-                        An engine reads each of these back: the router, the road-conditions feed,
-                        the pump optimiser and the desk&rsquo;s alert queue.
+                        Read back by the router, the pump optimiser and the alert queue.
                       </p>
                     </div>
                     <ClosurePanel
@@ -333,8 +331,7 @@ export function AuthorityScreen({ wardMap }: AuthorityScreenProps = {}) {
                         Recorded only
                       </h2>
                       <p className="type-small text-text-2 max-w-[72ch]">
-                        Nothing in this column reaches a forecast, a route or an alert. It is
-                        written down so a person can read it.
+                        For people only; reaches no forecast, route or alert.
                       </p>
                     </div>
                     <SituationNote officer={officer} />

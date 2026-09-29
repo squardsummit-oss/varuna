@@ -28,7 +28,14 @@ interface Served {
   headline_threshold_cm: number;
   ground_truth: { n_in_window: number };
   scores: ThresholdScores;
-  by_threshold: Record<string, { threshold_cm: number; scores: ThresholdScores }>;
+  by_threshold: Record<
+    string,
+    {
+      threshold_cm: number;
+      contingency: { hits: number; misses: number; false_alarms: number };
+      scores: ThresholdScores;
+    }
+  >;
 }
 
 /** The page prints two decimals for a score, "N min" for a lead, and a plain count for pins. */
@@ -67,7 +74,7 @@ test.describe("verification (7.10)", () => {
   );
 
   test(
-    "the threshold chart carries its axis, its units and the pin count",
+    "the poured contingency carries every served count, its thresholds and the pin count",
     { tag: "@needs-city" },
     async ({ page, request }) => {
       const served = (await (
@@ -79,29 +86,45 @@ test.describe("verification (7.10)", () => {
       expect(rows.length).toBeGreaterThan(0);
 
       await page.goto("/verify", { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT });
-      const chart = page.locator('[data-slot="threshold-chart"]');
+      const chart = page.locator('[data-slot="contingency-pour"]');
       await expect(chart).toBeVisible({ timeout: 30_000 });
       const plot = chart.getByRole("img");
 
-      // Both axes are named and carry their unit, and every threshold the sweep holds is a tick
-      // on the first of them.
-      await expect(chart).toContainText("Depth threshold (cm)");
-      await expect(chart).toContainText("Score (0 to 1)");
+      // The shared count axis is named, every threshold the sweep holds is a choice, and the
+      // denominator every count is over is printed.
+      await expect(chart).toContainText("Count");
+      const thresholds = chart.getByRole("radiogroup", { name: "Threshold" });
       for (const row of rows) {
-        await expect(chart.getByText(String(row.threshold_cm), { exact: true })).toBeVisible();
+        await expect(
+          thresholds.getByRole("radio", { name: `${row.threshold_cm} cm`, exact: true }),
+        ).toBeVisible();
       }
-      // The units: which way each score is good, beside the score's own name.
-      await expect(chart).toContainText("CSI, higher is better");
-      await expect(chart).toContainText("FAR, lower is better");
-      // The denominator every score is over.
       await expect(chart).toContainText(`n = ${served.ground_truth.n_in_window} sourced pins`);
+      // Each band carries its word, so colour is never the only carrier.
+      for (const word of ["Hits", "Misses", "False alarms"]) {
+        await expect(chart.locator("figcaption")).toContainText(word);
+      }
 
-      // And the chart's own description of each point matches the served numbers, so a reader who
-      // cannot see the plot is given the same figures rather than "chart".
+      // The plot's own description carries every served count and score, so a reader who cannot
+      // see the cylinders is given the same figures rather than "chart".
       const label = (await plot.getAttribute("aria-label")) ?? "";
       for (const row of rows) {
+        const c = row.contingency;
+        expect(label).toContain(`${row.threshold_cm} cm ${c.hits} hit`);
+        expect(label).toContain(`${c.misses} miss`);
+        expect(label).toContain(`${c.false_alarms} false alarm`);
         if (row.scores.csi === null) continue;
-        expect(label).toContain(`${row.threshold_cm} cm CSI ${row.scores.csi.toFixed(2)}`);
+        expect(label).toContain(`CSI ${row.scores.csi.toFixed(2)}`);
+      }
+
+      // Once poured, the readout for the headline threshold states the served scores.
+      const readout = chart.locator('[data-slot="contingency-readout"]');
+      const headline =
+        rows.find((r) => r.threshold_cm === served.headline_threshold_cm) ?? rows[0]!;
+      const c = headline.contingency;
+      await expect(readout).toContainText(`${c.hits} of ${c.hits + c.misses}`, { timeout: 10_000 });
+      if (headline.scores.csi !== null) {
+        await expect(readout).toContainText(headline.scores.csi.toFixed(2), { timeout: 10_000 });
       }
     },
   );

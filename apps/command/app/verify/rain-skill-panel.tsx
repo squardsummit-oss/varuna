@@ -334,7 +334,7 @@ function ScoredView({ skill }: { skill: RainSkillScored }) {
         <p className="type-small text-text-2">{said.detail}</p>
         <p className="type-micro text-text-3 mt-1">
           {scope === "aoi" ? "City grid" : "Radar domain"}, {FORECAST_LABEL[forecast]}, {threshold}{" "}
-          mm/h. Computed by services/verify from the runs, not typed in.
+          mm/h
         </p>
       </div>
 
@@ -397,9 +397,7 @@ function ScoredView({ skill }: { skill: RainSkillScored }) {
             Reliability, {threshold} mm/h
           </h3>
           <p className="type-micro text-text-2">
-            Each point is one tenth of the probability range: how often the rain came above{" "}
-            {threshold} mm/h where the members gave that probability. Above the diagonal the members
-            said too little; below it, too much.
+            Above the diagonal the members said too little; below it, too much.
           </p>
           <ReliabilityDiagram
             bands={scoped.reliability[String(threshold)] ?? []}
@@ -409,12 +407,14 @@ function ScoredView({ skill }: { skill: RainSkillScored }) {
         </section>
       </div>
 
-      <section aria-labelledby="method-heading" className="flex flex-col gap-2">
-        <h3 id="method-heading" className="type-small text-text font-medium">
+      <details className="border-line rounded-control border" data-slot="rain-method">
+        <summary className="type-small text-text-2 hover:text-text focus-visible:ring-tide cursor-pointer px-3 py-2 focus-visible:ring-2 focus-visible:outline-none">
           How this was scored
-        </h3>
-        <MethodNote skill={skill} scope={scope} thresholdMmH={threshold} />
-      </section>
+        </summary>
+        <div className="border-line border-t px-3 py-2">
+          <MethodNote skill={skill} scope={scope} thresholdMmH={threshold} />
+        </div>
+      </details>
 
       <details className="border-line rounded-control border">
         <summary className="type-small text-text-2 hover:text-text cursor-pointer px-3 py-2">
@@ -490,7 +490,7 @@ export function RainSkillPanel({ event }: { event: string }) {
   return (
     <Panel
       title="Rain skill by lead time"
-      description="Rain CSI, POD and FAR by lead against the reconstructed truth field, with persistence as the bar to clear."
+      description="Rain skill by lead against the reconstructed truth, with persistence as the bar."
     >
       <div id="rain-skill" aria-busy={current === null}>
         {current === null ? (
@@ -499,8 +499,7 @@ export function RainSkillPanel({ event }: { event: string }) {
             <Skeleton className="h-8 w-2/3" />
             <Skeleton className="h-[260px] w-full" />
             <p className="type-micro text-text-3">
-              Scoring every baked cycle against the truth field. The first request after a bake
-              computes the scores; later ones are served from the API&apos;s cache.
+              Scoring every baked cycle against the truth field.
             </p>
           </div>
         ) : current.error ? (

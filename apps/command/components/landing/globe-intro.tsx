@@ -332,6 +332,7 @@ function readPalette(element: Element): CanvasPalette {
   const style = getComputedStyle(element);
   const token = (name: string) => style.getPropertyValue(name).trim();
   return {
+    ink: token("--ink"),
     deep: token("--deep"),
     well: token("--well"),
     lineStrong: token("--line-strong"),
@@ -855,19 +856,25 @@ function MumbaiMark({ point, frame }: { point: [number, number] | null; frame: G
   if (opacity <= 0.01) return null;
   const grow = frame.alpha;
 
+  // The same `--ink` halo the canvas mark carries (globe-paint.ts), so the mark reads on the
+  // photograph in the light theme as well as the dark.
   return (
     <g opacity={opacity}>
-      <circle cx={x} cy={y} r={3} fill="var(--tide)" />
-      <circle
-        cx={x}
-        cy={y}
-        r={6 + 14 * grow}
-        fill="none"
-        stroke="var(--tide)"
-        strokeWidth={1.2}
-        opacity={0.7}
-      />
-      <text x={x + 12 + 14 * grow} y={y + 4} className="num fill-[var(--text-2)]" fontSize={11}>
+      <circle cx={x} cy={y} r={3} fill="var(--tide)" stroke="var(--ink)" strokeWidth={3} paintOrder="stroke" />
+      <g opacity={0.7} fill="none">
+        <circle cx={x} cy={y} r={6 + 14 * grow} stroke="var(--ink)" strokeWidth={3.2} />
+        <circle cx={x} cy={y} r={6 + 14 * grow} stroke="var(--tide)" strokeWidth={1.2} />
+      </g>
+      <text
+        x={x + 12 + 14 * grow}
+        y={y + 4}
+        className="num fill-[var(--text-2)]"
+        fontSize={11}
+        stroke="var(--ink)"
+        strokeWidth={3}
+        strokeLinejoin="round"
+        paintOrder="stroke"
+      >
         Mumbai
       </text>
     </g>

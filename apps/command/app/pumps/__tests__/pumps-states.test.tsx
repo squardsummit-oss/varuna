@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { PumpCycles, PumpMap, PumpPlan, RawPumpMap } from "@/lib/api/pumps";
@@ -111,6 +111,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // Unmount before the mocks are reset: an effect still in flight would otherwise call a mock
+  // with no implementation and fail whichever test the machine happened to be slow in.
+  cleanup();
   vi.useRealTimers();
   loadPumpPlan.mockReset();
   loadPumpCycles.mockReset();
@@ -136,7 +139,8 @@ function firstGauge(): HTMLElement {
 describe("Jalayantra keeps the gauges in step with the lorries (M34 with M33)", () => {
   it("never hands a dispatch on a revisited cycle the start time of an earlier one", async () => {
     render(<PumpsScreen />);
-    await screen.findByRole("list", { name: "Places the pumps go" });
+    // A generous wait: under a loaded machine the first render has overrun the default second.
+    await screen.findByRole("list", { name: "Places the pumps go" }, { timeout: 10000 });
     // Timers and `performance.now()` are faked from here, so the drive is timed exactly.
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "performance"] });
     const p08 = dispatchOrder(MAP_A).get("P-08") ?? 0;

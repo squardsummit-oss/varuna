@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AgreementBar } from "@/components/varuna/agreement-bar";
 import { EmptyState } from "@/components/varuna/empty-state";
 import { Skeleton } from "@/components/varuna/skeleton";
+import { WhatIfDetails } from "@/components/varuna/whatif-details";
 import { formatCmPrecise, formatCmSigned, formatMassBalance, formatMs } from "@/lib/format";
 import type { PhysicsCheckResult } from "@/lib/api/whatif";
 import { usePrefersReducedMotion } from "@/lib/hooks/use-media-query";
@@ -93,17 +94,12 @@ export function PhysicsCheckPanel({
     // A tide scenario: the emulator has no answer to check, so the endpoint compares nothing and
     // says where the answer is. Printed as that, not as a disagreement of null against a
     // tolerance, and not as "outside tolerance" (`agrees` is null on this path).
-    const expected = result.twinJob?.expectedMs;
-    const tail = result.twinJob?.cached
-      ? " This scenario is already answered for this run."
-      : expected
-        ? ` The full-city run took ${formatMs(expected)} when this cycle was baked.`
-        : "";
-    const unchecked = uncheckedLines(result);
+    // The levers the Twin run leaves out are named in the Twin's own answer, so not again here.
+    const tail = result.twinJob?.cached ? " It is already answered for this run." : "";
     return (
       <EmptyState
         title="Runs on the Twin"
-        description={`${result.summary}${tail}${unchecked.length ? ` ${unchecked.join(" ")}` : ""}`}
+        description={`With a tide, the Twin's answer is the physics; there is no emulator answer to check.${tail}`}
         className={className}
       />
     );
@@ -167,24 +163,24 @@ export function PhysicsCheckPanel({
           ))}
         </tbody>
       </table>
-      <p className="type-micro text-text-3">
-        The Twin ran twice on a <span className="num">{result.window.sizeM}</span> m window around{" "}
-        {result.window.centre}, with{" "}
-        <span className="num">{result.window.edges.toLocaleString("en-IN")}</span> pipes, in{" "}
-        <span className="num">{formatMs(result.ms)}</span>
-        {overBudget ? ", over" : ", inside"} the{" "}
-        <span className="num">{formatMs(result.budgetMs)}</span> budget. Mass balance{" "}
-        <span className="num">{formatMassBalance(result.massBalance.scenario)}</span> on the
-        scenario run.
-        {result.outside.length > 0
-          ? ` Not in the window, so not checked: ${result.outside.join(", ")}.`
-          : ""}
-      </p>
-      {uncheckedLines(result).map((line) => (
-        <p key={line} className="type-micro text-text-2">
-          {line}
+      <WhatIfDetails>
+        <p>
+          The Twin ran twice on a <span className="num">{result.window.sizeM}</span> m window around{" "}
+          {result.window.centre}, with{" "}
+          <span className="num">{result.window.edges.toLocaleString("en-IN")}</span> pipes, in{" "}
+          <span className="num">{formatMs(result.ms)}</span>
+          {overBudget ? ", over" : ", inside"} the{" "}
+          <span className="num">{formatMs(result.budgetMs)}</span> budget. Mass balance{" "}
+          <span className="num">{formatMassBalance(result.massBalance.scenario)}</span> on the
+          scenario run.
+          {result.outside.length > 0
+            ? ` Not in the window, so not checked: ${result.outside.join(", ")}.`
+            : ""}
         </p>
-      ))}
+        {uncheckedLines(result).map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </WhatIfDetails>
     </div>
   );
 }

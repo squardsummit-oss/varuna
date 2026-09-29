@@ -119,7 +119,7 @@ export function PipeCard({ pipe, selected = false, onSelect, className }: PipeCa
             {pipe.movedBy.synthetic ? <span className="text-text-3"> (synthetic)</span> : null}
           </>
         ) : (
-          `${cleared ? "Cleared" : "Raised"} by observations on connected pipes.`
+          `${cleared ? "Cleared" : "Raised"} via connected pipes`
         )}
       </p>
     </article>

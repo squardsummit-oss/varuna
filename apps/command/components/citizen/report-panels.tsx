@@ -117,7 +117,7 @@ export function ComplaintsNearYou({
           {title}
         </h2>
         <p className="type-micro text-text-2 mt-0.5">
-          What people have reported, and what the ward desk has done. Each is a pin on the map.
+          What people reported and what the ward desk did. Each is a map pin.
         </p>
       </div>
 
@@ -135,7 +135,7 @@ export function ComplaintsNearYou({
           <EmptyState
             size="sm"
             title="No complaints yet"
-            description="When someone reports water, it appears here and as a pin on the map."
+            description="A report of water appears here and on the map."
           />
         )
       ) : (
@@ -187,13 +187,16 @@ export function ComplaintsNearYou({
       )}
 
       {notes.length > 0 ? (
-        <div className="flex flex-col gap-1">
+        <details className="type-micro text-text-3">
+          <summary className="text-text-2 hover:text-text focus-visible:outline-tide cursor-pointer rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+            About these reports
+          </summary>
           {notes.map((note) => (
-            <p key={note} className="type-micro text-text-3">
+            <p key={note} className="mt-1">
               {note}
             </p>
           ))}
-        </div>
+        </details>
       ) : null}
     </section>
   );
@@ -215,8 +218,7 @@ export function MyReportsPanel({ items, ready, headingId = "my-reports" }: MyRep
           My reports
         </h2>
         <p className="type-micro text-text-2 mt-0.5">
-          Reports sent from this browser. The ward desk&apos;s status and note appear here, checked{" "}
-          {POLL_WORDS}.
+          Sent from this browser, with the ward desk&apos;s status.
         </p>
       </div>
 
@@ -226,8 +228,7 @@ export function MyReportsPanel({ items, ready, headingId = "my-reports" }: MyRep
         <div className="border-line rounded-panel flex flex-col items-start gap-3 border p-4">
           <p className="type-small text-text">You have not sent a report from this browser.</p>
           <p className="type-small text-text-2">
-            Press Report water, say how deep the water is where you are, and send it. Its status
-            appears here: received, seen by the ward desk, crew sent, resolved.
+            Press Report water and say how deep it is. Its status appears here.
           </p>
           <ReportWaterLink variant="default" />
         </div>

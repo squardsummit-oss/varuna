@@ -215,13 +215,13 @@ describe("ReportWizard photo and note", () => {
     click("Continue to photo");
     expect(
       screen.getByText(
-        /stored with your report and shown to the ward officer and on the citizen dashboard/,
+        /shown to the ward officer and on the citizen dashboard/,
       ),
     ).toBeInTheDocument();
     pick(photoFile());
     expect(await screen.findByAltText("The photo you picked")).toHaveAttribute("src", JPEG);
     expect(
-      screen.getByText(/1280 × 960 px, without the location and camera details/),
+      screen.getByText(/1280 × 960 px, location and camera details removed/),
     ).toBeVisible();
 
     click("Continue to depth");
@@ -312,7 +312,7 @@ describe("ReportWizard photo and note", () => {
     click("Continue to photo");
     pick(photoFile(18_400_000));
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "This photo is 18.4 MB, over the 15 MB limit, so it was not used.",
+      "This photo is 18.4 MB, over the 15 MB limit.",
     );
     expect(canvas.createImageBitmap).not.toHaveBeenCalled();
     expect(screen.queryByAltText("The photo you picked")).toBeNull();
@@ -326,7 +326,7 @@ describe("ReportWizard photo and note", () => {
     expect(screen.queryByText(/Your photo/)).toBeNull();
   });
 
-  it("says a photo it cannot open was not used, and names HEIC", async () => {
+  it("says a photo it cannot open is not used, and names HEIC", async () => {
     vi.stubGlobal(
       "createImageBitmap",
       vi.fn(async () => {
@@ -338,7 +338,7 @@ describe("ReportWizard photo and note", () => {
     click("Continue to photo");
     pick(photoFile());
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      /could not open that photo, so it was not used\. Some phones save photos as HEIC/,
+      /cannot open that photo \(HEIC, perhaps\)/,
     );
     expect(screen.getByRole("button", { name: "Continue to depth" })).toBeEnabled();
   });

@@ -13,15 +13,13 @@
  */
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { z } from "zod";
 
-import {
-  useReplayStore,
-  type ReplayMode,
-  type ReplaySpeed,
-} from "@/lib/stores/replay";
+import type { CycleLogRow } from "@/components/varuna/cycle-log";
+import { useReplayStore, type ReplayMode, type ReplaySpeed } from "@/lib/stores/replay";
 
 import { ApiError, api, apiUrl, errorMessage, timeoutFor } from "./client";
 import { useLive } from "./live";
@@ -95,9 +93,24 @@ export interface UseReplayClockOptions extends QueryOverrides<ReplayClock> {
   sync?: boolean;
 }
 
+/** While the clock has never answered, ask again this often, so a slow start heals by itself. */
+export const CLOCK_RECOVER_MS = 15_000;
+
+/**
+ * While the clock plays, read it this often as well as following the socket. The socket announces
+ * once a simulated minute, and a dropped socket left a playing clock frozen on screen until it
+ * reconnected: 06:45 on the page with the API at 06:56 on a loaded laptop (2026-09-29).
+ */
+export const CLOCK_PLAYING_POLL_MS = 5_000;
+
 /**
  * `GET /v1/replay/clock` plus the `replay.clock` socket events. A missing bundle answers 404,
- * which is a final answer, so this query does not retry.
+ * which is a final answer and is not retried.
+ *
+ * A timeout is not final. The query used to have `retry: false`, so one slow answer from a busy
+ * API left every tab on a local clock for the rest of the session: the controls moved only that
+ * tab, and the console in the next tab never followed. It retries like every other read now,
+ * keeps asking every 15 s until the clock has answered once, and every 5 s while it plays.
  */
 export function useReplayClock(options: UseReplayClockOptions = {}) {
   const { sync = true, ...overrides } = options;
@@ -106,10 +119,13 @@ export function useReplayClock(options: UseReplayClockOptions = {}) {
 
   const query = useQuery<ReplayClock, ApiError>({
     queryKey: queryKeys.replayClock,
-    queryFn: () => api.get("/v1/replay/clock", { schema: ReplayClock, timeoutMs: timeoutFor(4_000) }),
+    queryFn: () =>
+      api.get("/v1/replay/clock", { schema: ReplayClock, timeoutMs: timeoutFor(4_000) }),
     staleTime: 5_000,
     refetchOnWindowFocus: false,
-    retry: false,
+    retry: shouldRetry,
+    refetchInterval: (q) =>
+      !q.state.data ? CLOCK_RECOVER_MS : q.state.data.playing ? CLOCK_PLAYING_POLL_MS : false,
     ...overrides,
   });
 
@@ -166,9 +182,13 @@ export interface ReplayControls {
   selectBundle: (bundleId: string, window?: { t0: string; t1: string; simTime?: string }) => void;
   /** True when the API has a clock to drive; false while no bundle is generated. */
   apiReady: boolean;
+  /** True until the clock has answered or failed for good: reaching it, not missing it. */
+  loading: boolean;
   pending: boolean;
   /** Why the clock could not be read, in the API's own words. */
   error: ApiError | null;
+  /** Asks the clock again, for the panel's Try again. */
+  retry: () => void;
 }
 
 /**
@@ -185,6 +205,9 @@ export function useReplayControls(): ReplayControls {
 
   const mutation = useMutation<ReplayClock, ApiError, ReplayCommand>({
     mutationFn: request,
+    // A clock read already in flight predates this command: landing after it, it would put a
+    // paused clock back to playing until the next read.
+    onMutate: () => queryClient.cancelQueries({ queryKey: queryKeys.replayClock }),
     onSuccess: (next) => {
       queryClient.setQueryData(queryKeys.replayClock, next);
       applyClock(next);
@@ -198,6 +221,8 @@ export function useReplayControls(): ReplayControls {
 
   const apiReady = Boolean(clock.data);
   const { mutate } = mutation;
+  const { refetch } = clock;
+  const retry = useCallback(() => void refetch(), [refetch]);
   const send = useCallback(
     (command: ReplayCommand) => {
       if (!apiReady) return;
@@ -261,7 +286,66 @@ export function useReplayControls(): ReplayControls {
     setMode,
     selectBundle,
     apiReady,
+    loading: !clock.data && !clock.error,
     pending: mutation.isPending,
     error: clock.error ?? null,
+    retry,
   };
+}
+
+/** One row of `GET /v1/runs`, read loosely: the registry summary has no response model. */
+const RegistryRun = z.looseObject({
+  run_id: z.string(),
+  cycle_ts: z.string(),
+  bundle: z.string().nullish(),
+  total_ms: z.number().nullish(),
+  mass_balance_err: z.number().nullish(),
+});
+
+const RegistryRuns = z
+  .union([z.array(RegistryRun), z.looseObject({ runs: z.array(RegistryRun) })])
+  .transform((value) => (Array.isArray(value) ? value : value.runs));
+
+/**
+ * Stages a baked cycle ran. The summary carries the total, not the split, so this names what ran;
+ * the split is `GET /v1/runs/{run_id}`'s, drawn in the cycle budget bar.
+ */
+export const BAKED_STAGES = "sky, twin, flash, pulse, products";
+
+/** The registry's runs as cycle-log rows: one per run, oldest first, ties broken by run id. */
+export function toCycleLogRows(
+  runs: readonly z.infer<typeof RegistryRun>[],
+  bundleId: string | undefined,
+): CycleLogRow[] {
+  return runs
+    .filter((run) => !bundleId || run.bundle === bundleId)
+    .map((run) => ({
+      id: run.run_id,
+      time: run.cycle_ts,
+      stages: BAKED_STAGES,
+      ms: run.total_ms ?? 0,
+      massBalance: run.mass_balance_err ?? null,
+    }))
+    .sort((a, b) => a.time.localeCompare(b.time) || a.id.localeCompare(b.id));
+}
+
+/**
+ * The cycle log of one bundle (SPEC.md 7.2, 7.8), from `GET /v1/runs?city=all`: the log follows
+ * the *bundle*, and the Chennai design storm is selectable too.
+ *
+ * A query rather than the bare `fetch` it replaces (`lib/hooks/use-cycle-log.ts`), because that
+ * hook had no loading or error state: while the registry was on its way, and after it failed, the
+ * log said "No cycles yet. Press Play on the replay." over seven baked cycles.
+ */
+export function useReplayCycleLog(bundleId: string | undefined) {
+  const query = useQuery<z.infer<typeof RegistryRuns>, ApiError>({
+    queryKey: [...queryKeys.runs, "cycle-log", "all"],
+    queryFn: () => api.get("/v1/runs?city=all&limit=200", { schema: RegistryRuns }),
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
+    retry: shouldRetry,
+  });
+  const { data } = query;
+  const rows = useMemo(() => (data ? toCycleLogRows(data, bundleId) : []), [data, bundleId]);
+  return { ...query, rows };
 }

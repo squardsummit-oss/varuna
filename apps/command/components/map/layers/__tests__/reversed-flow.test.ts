@@ -390,8 +390,7 @@ describe("the reversed-pipe sentence", () => {
       ],
     });
     expect(text).toBe(
-      "24,014 pipes run backwards in this run. 2 of the 3 it stored can be drawn: tide-locked " +
-        `outfalls at every zoom, inland pipes from zoom ${INLAND_MIN_ZOOM} and in view.`,
+      `24,014 pipes run backwards; 2 drawn, inland ones from zoom ${INLAND_MIN_ZOOM}.`,
     );
   });
 
@@ -405,10 +404,8 @@ describe("the reversed-pipe sentence", () => {
       reversedTotal: 18380,
       reversedEdges: [{ id: "t", tidal: true, steps: [1], minQ: -0.77 }],
     });
-    expect(text).toBe(
-      "18,380 pipes run backwards in this run. This run stores no pipe geometry, so they are counted here but not drawn.",
-    );
-    expect(text).not.toMatch(/can be drawn|are drawn:/);
+    expect(text).toBe("18,380 pipes run backwards; none stored with geometry, so none drawn.");
+    expect(text).not.toMatch(/can be drawn|are drawn:|; \d+ drawn/);
     // Nothing the stage operator cannot do from the console.
     expect(text).not.toMatch(/bake|make |terminal/i);
   });
@@ -417,8 +414,7 @@ describe("the reversed-pipe sentence", () => {
     const stored = Array.from({ length: 500 }, (_, i) => withPath(`e${i}`));
     const withGeometry = reversedFlowSummary({ reversedTotal: null, reversedEdges: stored });
     expect(withGeometry).toBe(
-      "This run does not report how many pipes run backwards. 500 of the 500 it stored can be " +
-        `drawn: tide-locked outfalls at every zoom, inland pipes from zoom ${INLAND_MIN_ZOOM} and in view.`,
+      `Reversed-pipe count not reported; 500 drawn, inland ones from zoom ${INLAND_MIN_ZOOM}.`,
     );
     expect(withGeometry).not.toMatch(/500 pipes run backwards/);
     expect(
@@ -426,9 +422,7 @@ describe("the reversed-pipe sentence", () => {
         reversedTotal: null,
         reversedEdges: [{ id: "t", tidal: true, steps: [1], minQ: -0.77 }],
       }),
-    ).toBe(
-      "This run reports no reversed-pipe total and stores no pipe geometry, so none are drawn.",
-    );
+    ).toBe("No reversed-pipe count or geometry in this run.");
   });
 
   it("says so when nothing runs backwards", () => {
