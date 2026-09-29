@@ -272,6 +272,6 @@ test.describe("the demo script", () => {
       timeout: SETTLE,
     });
     // The honesty line: which run this is and how often it updates (SPEC.md 7.11).
-    await expect(page.getByText(/updates every 5 minutes|last VARUNA run/i).first()).toBeVisible();
+    await expect(page.getByText(/a new run every 30 minutes|last VARUNA run/i).first()).toBeVisible();
   });
 });

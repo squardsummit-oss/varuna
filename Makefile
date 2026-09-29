@@ -22,7 +22,7 @@ SHELL := bash
 endif
 
 .DEFAULT_GOAL := help
-.PHONY: help setup doctor city city-cache city-terrain city-basemap workers route-rs bundle bake train dev demo test e2e pack demo-video \
+.PHONY: help setup doctor city city-cache city-terrain city-basemap workers route-rs bundle bake live train dev demo test e2e pack demo-video \
         lint typecheck typegen openapi format clean
 
 help: ## List every target (each is also `uv run varuna <target>`)
@@ -58,6 +58,9 @@ bundle: ## Generate a replay bundle (storm designer, synthetic streams, curated 
 
 bake: ## Pre-compute every 5-minute cycle of a bundle into data/runs/
 	$(VARUNA) bake --bundle $(BUNDLE) $(ARGS)
+
+live: ## One live cycle from today's rain ensemble and sea level (ARGS="--every 30" to keep running)
+	uv run python -m varuna_cycle.live --city $(CITY) $(if $(ARGS),$(ARGS),--once)
 
 train: ## Fit Flash-lite from the Twin runs in data/train/ (P1: train the GNN)
 	$(VARUNA) train --city $(CITY) $(ARGS)

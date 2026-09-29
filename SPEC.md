@@ -86,6 +86,13 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - Light mode is monsoon mist, a blue-grey tint rather than white, with every text pair at 4.5:1 or better.
 - **Gates:** vitest 1,925/1,925, tokens 41/41, ESLint clean, design lint clean.
 
+**2026-09-30 later (ADR-0094): the flood map is live.**
+- Every 30 minutes the API host runs a full cycle on today's weather: DWD ICON-EPS rain through Open-Meteo (20 members, NWP, no radar), live sea level, and the citizen reports in the inbox, through the same Twin, Flash-lite, Pulse and products as the replay.
+- Measured on the laptop at 44 s per cycle; the hosted time is recorded per run.
+- Drishti, the public map and the citizen dashboard open on the live run while it is under 3 hours old.
+- A dry forecast says "No street is forecast above 15 cm in the next 3 hours" and links to 2 July 2019 at its peak (08:40, scrubbed to the most flooded step).
+- `/console?bundle=MUM-2019-07-02` still opens the demo's 06:40.
+
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
 - [ ] R1 A Mumbai replay streams through the same pipeline as live data; the mode banner reads "Replay 30×" and the run stamp says "baked" or "live".

@@ -48,6 +48,7 @@ vi.mock("@/components/map/flood-map", () => ({
 }));
 
 const MUMBAI_0640 = "MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked";
+const MUMBAI_0840 = "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked";
 const CHENNAI_LATEST = "CHN-20260701T0120Z-sky1.0-twin1.0-flash0.0-baked";
 
 /** Every city's runs live in one registry; `CHN-` sorts after `MUM-` for the same instant. */
@@ -58,6 +59,7 @@ const REGISTRY: Record<string, { run_id: string; cycle_ts: string }[]> = {
       cycle_ts: "2019-07-02T09:10:00+05:30",
     },
     { run_id: MUMBAI_0640, cycle_ts: "2019-07-02T06:40:00+05:30" },
+    { run_id: MUMBAI_0840, cycle_ts: "2019-07-02T08:40:00+05:30" },
   ],
   // Chennai's design storm is a different day, so no cycle sits at the replay's 06:40 opening.
   chennai: [{ run_id: CHENNAI_LATEST, cycle_ts: "2026-07-01T06:50:00+05:30" }],
@@ -121,12 +123,19 @@ describe("the console's address bar", () => {
     stubFetch();
   });
 
-  it("opens Mumbai on the 06:40 cycle the demo script starts from", async () => {
+  it("opens the demo script's ?bundle= on the 06:40 cycle, where Play is the first click", async () => {
+    nav.params = new URLSearchParams("bundle=MUM-2019-07-02");
     renderConsole();
     const node = await settledMap();
     expect(node).toHaveAttribute("data-city", "mumbai");
     expect(node).toHaveAttribute("data-run", MUMBAI_0640);
     expect(runsQueriedFor).toContain("mumbai");
+  });
+
+  it("opens the replay near its peak at 08:40 when no live cycle is fresh", async () => {
+    renderConsole();
+    const node = await settledMap();
+    expect(node).toHaveAttribute("data-run", MUMBAI_0840);
   });
 
   it("asks a Chennai console about Chennai's runs, and never pins a Mumbai one", async () => {

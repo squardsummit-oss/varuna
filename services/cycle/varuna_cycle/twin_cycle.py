@@ -368,7 +368,18 @@ def _sky_rain_on_city(bundle: str, cycle_ts: datetime | None, city: str, n_steps
     """
     from varuna_sky.products import load_aoi_grid, resample_to_aoi
 
+    from varuna_cycle.live import is_live_bundle, live_sky
     from varuna_cycle.sky_cycle import run_bundle_cycle
+
+    if is_live_bundle(bundle):
+        # A live cycle: the NWP ensemble stands in for the nowcast (varuna_cycle.live), shaped
+        # exactly as Sky's, so everything below this point reads it unchanged.
+        _, cycle = live_sky(bundle, city)
+        aoi = load_aoi_grid(city)
+        field = np.asarray(cycle.products.mean, dtype=np.float64)
+        steps = min(int(field.shape[0]), int(n_steps))
+        cube = np.stack([resample_to_aoi(field[k], cycle.products.grid, aoi) for k in range(steps)])
+        return np.where(np.isfinite(cube), cube, 0.0), cycle
 
     design = _design_storm_rain(bundle, cycle_ts, city, n_steps)
     if design is not None:
@@ -532,9 +543,23 @@ def _flash_members(
     )
 
 
+def _live_city(bundle: str) -> str:
+    """The city a live folder was written for, from its own ``live.json``."""
+    root = bundles_dir() / bundle
+    return str(json.loads((root / "live.json").read_text(encoding="utf-8"))["city"])
+
+
 def _bundle_seed(bundle: str) -> int:
     """The bundle's own seed, which every draw in a bake must come from (rule 8)."""
     from varuna_replay.bundle import BundleLayout, load_manifest
+
+    from varuna_cycle.live import is_live_bundle
+
+    if is_live_bundle(bundle):
+        # A live cycle has no bundle seed; its draws are seeded from its own cycle instant, so
+        # re-running the same live cycle on the same forcing reproduces it.
+        meta = json.loads((bundles_dir() / bundle / "live.json").read_text(encoding="utf-8"))
+        return int(datetime.fromisoformat(meta["cycle_ts"]).timestamp()) % (2**31)
 
     try:
         return int(load_manifest(BundleLayout.for_bundle(bundle).root).seed)
@@ -570,6 +595,15 @@ def _sky_ensemble(
     """
     if design_storm:
         return None, (RAIN_STORES_ABSENT_NOTE,)
+
+    from varuna_cycle.live import is_live_bundle, live_sky
+
+    if is_live_bundle(bundle):
+        ensemble, _ = live_sky(bundle, _live_city(bundle))
+        return ensemble, (
+            f"Rain ensemble kept as rain/cube.zarr ({ensemble.n_members} NWP members x "
+            f"{ensemble.n_steps} steps at {ensemble.grid.res_m:.0f} m).",
+        )
 
     from varuna_replay.bundle import BundleLayout, load_manifest
     from varuna_sky.products import RAIN_CUBE, RAIN_QUANTILES

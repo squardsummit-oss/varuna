@@ -8975,6 +8975,56 @@
       }
     },
     "/v1/whatif/twin": {
+      "get": {
+        "description": "Whether this server runs the full-city Twin, and the stored answers it can serve for a run.\n\n``enabled`` false is a cache-only server (``VARUNA_WHATIF_TWIN=0``): it answers only the\nscenarios in ``answers``, and ``tide_offsets_m`` are the tides a lab can offer at rain 1.0x\nwith nothing cleaned. ``elsewhere`` names the other cycles of the city that have stored tide\nanswers, and ``message`` is one sentence a screen can print. Reading it also warms the\nemulator for the run, so the first what-if on it is not the cold one.",
+        "operationId": "whatif_twin_offer_v1_whatif_twin_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "run_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Whatif Twin Offer V1 Whatif Twin Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "What the full-city Twin what-if can answer on this server",
+        "tags": [
+          "whatif"
+        ]
+      },
       "post": {
         "description": "Start a full-city coupled Twin at the cycle's inputs with the scenario applied.\n\nBody: ``{run_id?, rain_scale?, tide_offset_m?, cleaned_segments?}``; a ``pump_plan`` or\n``clean_top`` from the what-if is not run here and is named in ``scenario.levers_left_out``.\nAnswers **202** with the\njob (``job_id``, ``expected_ms`` from the run's own stage timings); poll\n``GET /v1/whatif/twin/{job_id}`` or listen for ``whatif.progress`` on ``WS /v1/live``. A\nscenario already computed for this exact run answers **200** with ``state: done`` and the\nresult, saying which cache it came from.",
         "operationId": "whatif_twin_v1_whatif_twin_post",

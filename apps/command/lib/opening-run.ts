@@ -11,6 +11,38 @@
 export interface RunSummary {
   run_id: string;
   cycle_ts: string;
+  /** The folder the run was forced from; `MUM-LIVE` for a live cycle (`varuna_cycle.live`). */
+  bundle?: string | null;
+}
+
+/** A run forced by today's weather rather than a replay bundle. */
+export function isLiveRun(run: Pick<RunSummary, "bundle"> | null | undefined): boolean {
+  return Boolean(run?.bundle && run.bundle.endsWith("-LIVE"));
+}
+
+/** Past this age a live run is yesterday's news, and a screen opens on the replay instead. */
+export const LIVE_MAX_AGE_MIN = 180;
+
+/**
+ * The newest live run no older than {@link LIVE_MAX_AGE_MIN}, or undefined.
+ *
+ * The API runs a live cycle every 30 minutes (`varuna_cycle.live`), so a fresh one is normally
+ * under half an hour old; one older than three hours means the live loop has stopped, and a
+ * screen that opened on it would present a stale forecast as today's.
+ */
+export function newestLiveRunId(
+  runs: readonly RunSummary[],
+  nowMs: number,
+  maxAgeMin = LIVE_MAX_AGE_MIN,
+): string | undefined {
+  let best: RunSummary | undefined;
+  for (const run of runs) {
+    if (!isLiveRun(run)) continue;
+    const at = Date.parse(run.cycle_ts);
+    if (!Number.isFinite(at) || nowMs - at > maxAgeMin * 60_000) continue;
+    if (!best || at > Date.parse(best.cycle_ts)) best = run;
+  }
+  return best?.run_id;
 }
 
 export function openingRunId(runs: readonly RunSummary[], openingTs: string): string | undefined {
@@ -41,6 +73,7 @@ export async function fetchOpeningRunId(
   openingTs: string,
   apiUrl: (path: string) => string,
   signal?: AbortSignal,
+  options: { preferLive?: boolean; nowMs?: number } = {},
 ): Promise<string | undefined> {
   const controller = new AbortController();
   const abort = () => controller.abort();
@@ -53,7 +86,11 @@ export async function fetchOpeningRunId(
     });
     if (!response.ok) return undefined;
     const body = (await response.json()) as { runs?: RunSummary[] };
-    return openingRunId(body.runs ?? [], openingTs);
+    const runs = body.runs ?? [];
+    const live = options.preferLive
+      ? newestLiveRunId(runs, options.nowMs ?? Date.now())
+      : undefined;
+    return live ?? openingRunId(runs, openingTs);
   } catch {
     return undefined;
   } finally {

@@ -106,3 +106,6 @@ data/runs-quarantine/
 
 # Local what-if answers; the shipped copy lives in demo/whatif
 data/whatif/
+
+# Live-cycle forcing (varuna_cycle.live): refetched every cycle, never committed.
+bundles/*-LIVE/

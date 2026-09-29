@@ -326,11 +326,18 @@ export function TimeBar() {
       <div className="flex w-80 shrink-0 flex-col items-end gap-1">
         <div className="flex items-center gap-3">
           {validDate ? (
-            <span className="num type-small text-text-2" data-testid="time-bar-date">
+            <span
+              className="num type-small text-text-2 whitespace-nowrap"
+              data-testid="time-bar-date"
+            >
               {validDate}
             </span>
           ) : null}
-          <span className="num type-h3 text-text" aria-live="polite" data-testid="time-bar-valid">
+          <span
+            className="num type-h3 text-text whitespace-nowrap"
+            aria-live="polite"
+            data-testid="time-bar-valid"
+          >
             {validLabel}
           </span>
           <span className="sr-only">Lead {leadLabel}</span>

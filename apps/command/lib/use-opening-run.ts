@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { apiUrl } from "@/lib/api/client";
-import { openingRunId, type RunSummary } from "@/lib/opening-run";
+import { newestLiveRunId, openingRunId, type RunSummary } from "@/lib/opening-run";
 import { DEFAULT_SIM_TIME } from "@/lib/stores/replay";
 
 /** How long a screen waits for the run registry before opening on the API's default run. */
@@ -28,7 +28,12 @@ export interface OpeningRun {
  * slow, unreachable, or has no run at the opening instant, `runId` stays undefined and the API's
  * default stands: a late map beats a wrong one, and a missing one beats neither.
  */
-export function useOpeningRun(city?: string, pinned?: string): OpeningRun {
+export function useOpeningRun(
+  city?: string,
+  pinned?: string,
+  options: { preferLive?: boolean } = {},
+): OpeningRun {
+  const preferLive = options.preferLive ?? false;
   const [runId, setRunId] = useState<string | undefined>(pinned);
   const [resolved, setResolved] = useState(pinned !== undefined);
 
@@ -41,7 +46,12 @@ export function useOpeningRun(city?: string, pinned?: string): OpeningRun {
     fetch(apiUrl(`/v1/runs${query}`), { signal: controller.signal })
       .then((response) => (response.ok ? response.json() : { runs: [] }))
       .then((body: { runs?: RunSummary[] }) => {
-        const opening = openingRunId(body.runs ?? [], DEFAULT_SIM_TIME);
+        const runs = body.runs ?? [];
+        // A screen for the public opens on today's forecast when the live loop has one; the
+        // replay's opening cycle is the fallback, never a forecast presented as today's.
+        const opening =
+          (preferLive ? newestLiveRunId(runs, Date.now()) : undefined) ??
+          openingRunId(runs, DEFAULT_SIM_TIME);
         if (opening && !cancelled) setRunId(opening);
       })
       .catch(() => undefined)
@@ -54,7 +64,7 @@ export function useOpeningRun(city?: string, pinned?: string): OpeningRun {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [city, pinned, resolved]);
+  }, [city, pinned, resolved, preferLive]);
 
   return { runId, resolved };
 }

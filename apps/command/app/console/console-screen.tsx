@@ -48,11 +48,11 @@ import { TimeBar } from "@/components/varuna/time-bar";
 import { edgeFadeStyle, useScrollEdges } from "./use-scroll-edges";
 import { useConsoleRoutes } from "./use-console-routes";
 import { WhatIfDrawer, type WhatIfDiff } from "./whatif-drawer";
-import { fetchOpeningRunId } from "@/lib/opening-run";
+import { fetchOpeningRunId, isLiveRun } from "@/lib/opening-run";
 import { minutesBetween } from "@/lib/format";
 import { DEFAULT_CITY, cityFromSearch } from "@/lib/city";
 import { MIN_AREA_M, type AffectedFrame } from "@/lib/map/affected-bounds";
-import { DEFAULT_SIM_TIME, useReplayStore } from "@/lib/stores/replay";
+import { DEFAULT_SIM_TIME, REPLAY_PEAK_SIM_TIME, useReplayStore } from "@/lib/stores/replay";
 import { useRunStore } from "@/lib/stores/run";
 import { nearestStep, playIntervalMs, useScrubStore } from "@/lib/stores/scrub";
 import { useUiStore } from "@/lib/stores/ui";
@@ -69,6 +69,29 @@ function formatStep(iso: string | undefined): string {
         hour12: false,
         timeZone: "Asia/Kolkata",
       });
+}
+
+/**
+ * The step at which the most streets stand above 15 cm, or null when none ever do.
+ *
+ * Where the replay opens "at its peak": the 08:40 cycle floods most at +180 min (1,263 streets
+ * above 15 cm on the 2026-09-28 bake) and hardly at all at +5 min, so opening on its first step
+ * showed a dry city under a storm that was about to arrive.
+ */
+export function mostFloodedStep(run: Pick<RunDepth, "depthCm" | "validTs">): number | null {
+  const counts = new Array<number>(run.validTs.length).fill(0);
+  for (const series of run.depthCm.values()) {
+    for (let i = 0; i < counts.length; i += 1) if ((series[i] ?? 0) >= 15) counts[i] += 1;
+  }
+  let best = -1;
+  let bestCount = 0;
+  counts.forEach((count, i) => {
+    if (count > bestCount) {
+      best = i;
+      bestCount = count;
+    }
+  });
+  return best >= 0 ? best : null;
 }
 
 /**
@@ -291,6 +314,11 @@ function ConsoleView() {
   const handleLoaded = useCallback(
     (loaded: RunDepth) => {
       setRun(loaded);
+      if (scrubToPeakRef.current) {
+        scrubToPeakRef.current = false;
+        const peak = mostFloodedStep(loaded);
+        if (peak !== null) useReplayStore.getState().setLeadMin(leadMin(loaded, peak));
+      }
       // The chrome - mode banner, run stamp, verification chip - reads the run store, so a run
       // the map has loaded has to land there too or the top bar goes on saying "No runs yet"
       // over a console that is plainly showing one.
@@ -330,18 +358,34 @@ function ConsoleView() {
   // The lookup is stamped with the city it asked about, which is what lets "still looking" be
   // derived rather than tracked: a result for a different city is, by definition, stale.
   const [opening, setOpening] = useState<{ city: string; runId?: string } | null>(null);
+  const pickCycleRef = useRef<((runId: string) => void) | null>(null);
+  // Set when the console is asked for the replay "at its peak": the next run that loads is
+  // scrubbed to its most flooded step instead of +5 min, where the storm has not arrived yet.
+  const scrubToPeakRef = useRef(false);
   useEffect(() => {
     if (pinnedRun !== undefined || opening?.city === city) return;
     let cancelled = false;
     const controller = new AbortController();
-    fetchOpeningRunId(city, DEFAULT_SIM_TIME, apiUrl, controller.signal).then((runId) => {
+    // Today's live cycle when the live loop has one (varuna_cycle.live). The demo script's
+    // `?bundle=` asks for the replay, which opens at 06:40 so Play is the first click; without
+    // it and without a live run, the replay opens at 08:40, the storm near its peak, so the first
+    // view shows the water rather than the city before it.
+    const bundleAsked = searchParams.get("bundle") !== null;
+    fetchOpeningRunId(
+      city,
+      bundleAsked ? DEFAULT_SIM_TIME : REPLAY_PEAK_SIM_TIME,
+      apiUrl,
+      controller.signal,
+      { preferLive: !bundleAsked },
+    ).then((runId) => {
+      if (!bundleAsked && runId && !runId.endsWith("-live")) scrubToPeakRef.current = true;
       if (!cancelled) setOpening({ city, runId });
     });
     return () => {
       cancelled = true;
       controller.abort();
     };
-  }, [city, pinnedRun, opening?.city]);
+  }, [city, pinnedRun, opening?.city, searchParams]);
 
   // The URL wins over the lookup: `?run=` is the operator saying which cycle, and a stale answer
   // from a lookup that ran before they said it must not outrank them.
@@ -531,7 +575,31 @@ function ConsoleView() {
   // Bumped by the popover's "why" link so the drawer opens at its attribution section.
   const [whyFocus, setWhyFocus] = useState<number | null>(null);
 
-  const truth = useTruthPins(run?.provenance.bundle ?? undefined, run?.validTs[step] ?? null);
+  // A live cycle is today's weather: the 2019 ground truth has nothing to say about it (and the
+  // API has none for a live folder), and its chip and notice say which forecast this is.
+  const liveRun = isLiveRun({ bundle: run?.provenance.bundle ?? null });
+  const truth = useTruthPins(
+    liveRun ? undefined : (run?.provenance.bundle ?? undefined),
+    run?.validTs[step] ?? null,
+  );
+  // The deepest street anywhere in the live forecast, so a dry day says so in words instead of
+  // leaving an officer to wonder whether the map failed to draw.
+  const livePeakCm = useMemo(() => {
+    if (!run || !liveRun) return null;
+    let peak = 0;
+    for (const series of run.depthCm.values()) {
+      for (const cm of series) if (cm > peak) peak = cm;
+    }
+    return peak;
+  }, [run, liveRun]);
+  const openReplayPeak = useCallback(() => {
+    const controller = new AbortController();
+    void fetchOpeningRunId(city, REPLAY_PEAK_SIM_TIME, apiUrl, controller.signal).then((runId) => {
+      if (!runId) return;
+      scrubToPeakRef.current = true;
+      pickCycleRef.current?.(runId);
+    });
+  }, [city]);
 
   // The layer column scrolls, and nothing said so: over the aerial basemap the thin `--line`
   // scrollbar thumb is invisible, so at 1366 x 768 with probability and drains on the column read
@@ -652,6 +720,10 @@ function ConsoleView() {
     },
     [router, search],
   );
+
+  useEffect(() => {
+    pickCycleRef.current = pickCycle;
+  }, [pickCycle]);
 
   // A live cycle the time bar started has published (task P6.11): the console moves to it. The
   // map keeps drawing the last run until this event, so nothing half-computed is ever shown.
@@ -953,7 +1025,10 @@ function ConsoleView() {
       >
         {/* The map is the one memorable element on this screen (SPEC.md 6.1); everything else
             floats over it. `MapSlot` stays behind it as the legend and attribution host. */}
-        <MapSlot legendClearsRightPanel={replayPanelOpen && !inFullView} />
+        <MapSlot
+          legendClearsRightPanel={replayPanelOpen && !inFullView}
+          chipLabel={liveRun ? "Live forecast, NWP rain, no radar" : undefined}
+        />
         {/* 3D, the routes layer and the what-if difference reach the map through context: they
             are console-only asks, and `FloodMap` is shared by every screen with a map. */}
         <MapOverlayContext.Provider value={overlay}>
@@ -992,7 +1067,7 @@ function ConsoleView() {
             showHotspots={layers.hotspots}
             showSatellite
             probabilityThresholdCm={layers.probability ? probabilityThresholdCm : undefined}
-            truthPins={layers.hotspots ? truth.dropping : undefined}
+            truthPins={layers.hotspots && !liveRun ? truth.dropping : undefined}
             reports={layers.reports ? reportPins : NO_REPORT_PINS}
             selectedReportId={pickedReportId}
             onPickReport={setPickedReportId}
@@ -1000,6 +1075,21 @@ function ConsoleView() {
             attribution={false}
           />
         </MapOverlayContext.Provider>
+
+        {liveRun && livePeakCm !== null && livePeakCm < 15 && !inFullView ? (
+          <div className="rounded-panel border-line bg-deep absolute top-4 left-1/2 z-30 w-[min(30rem,calc(100%-2rem))] -translate-x-1/2 border p-3 text-center">
+            <p className="type-small text-text font-medium">
+              No street is forecast above 15 cm in the next 3 hours.
+            </p>
+            <p className="type-micro text-text-2 mt-0.5">
+              Live forecast from {run ? formatStep(run.provenance.cycleTs ?? undefined) : ""} IST,
+              updated every 30 minutes from today&apos;s rain forecast.
+            </p>
+            <Button size="sm" variant="outline" className="mt-2" onClick={openReplayPeak}>
+              See 2 July 2019 at its peak
+            </Button>
+          </div>
+        ) : null}
 
         {/* Full view's control, at the map's top-right: beside the replay panel when that is open,
             as the legend is, and in the corner otherwise. One name in both states with

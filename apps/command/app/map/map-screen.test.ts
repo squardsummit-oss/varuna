@@ -51,7 +51,7 @@ describe("nearbyStreets", () => {
 describe("honestyLine", () => {
   it("times the line from the run the map drew", () => {
     expect(honestyLine("2019-07-02T06:40:00+05:30")).toBe(
-      "Forecast from the last VARUNA run at 06:40; updates every 5 minutes",
+      "Forecast from the last VARUNA run at 06:40; a new run every 30 minutes",
     );
   });
 

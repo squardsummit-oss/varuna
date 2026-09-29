@@ -20,6 +20,8 @@ export const LEAD_COARSE = 60;
 
 export const DEFAULT_BUNDLE_ID = "MUM-2019-07-02";
 export const DEFAULT_SIM_TIME = "2019-07-02T06:40:00+05:30";
+/** The 08:40 IST cycle: the 2 July storm near its peak, where the replay opens without `?bundle=`. */
+export const REPLAY_PEAK_SIM_TIME = "2019-07-02T08:40:00+05:30";
 export const DEFAULT_T0 = "2019-07-02T05:40:00+05:30";
 export const DEFAULT_T1 = "2019-07-02T09:40:00+05:30";
 export const DEFAULT_SPEED: ReplaySpeed = 30;

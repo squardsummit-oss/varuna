@@ -45,7 +45,7 @@ import {
   TimeBaseSwitch,
   type TimeBase,
 } from "@/components/citizen/time-base-switch";
-import { useDashboardRun } from "@/components/citizen/use-dashboard-run";
+import { DASHBOARD_OPENING_TS, useDashboardRun } from "@/components/citizen/use-dashboard-run";
 import { useMyReports, usePublicReports } from "@/components/citizen/use-report-feeds";
 import { WeatherChip } from "@/components/citizen/weather-chip";
 import { ThemeToggle } from "@/components/varuna/theme-toggle";
@@ -360,7 +360,9 @@ export function DashboardScreen() {
   const [runFailed, setRunFailed] = useState(false);
   const [introDone, setIntroDone] = useState(false);
   const [lead, setLead] = useState<LeadMinutes>(DEFAULT_LEAD_MIN);
-  const [timeBase, setTimeBase] = useState<TimeBase>("replay");
+  // The reader's own choice of clock, once they make one; until then the clock follows the run
+  // on the map, which is today's live cycle whenever the live loop has a fresh one.
+  const [chosenBase, setChosenBase] = useState<TimeBase | null>(null);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 
   const [places, setPlaces] = useState<Place[]>([]);
@@ -394,6 +396,9 @@ export function DashboardScreen() {
 
   const { pick: pickRun, runId: pickedRunId } = cycle;
   const shownRunId = pickedRunId ?? run?.provenance.runId ?? "";
+  const liveCycle = cycle.live;
+  const shownLive = liveCycle !== null && shownRunId === liveCycle.runId;
+  const timeBase: TimeBase = chosenBase ?? (shownLive ? "today" : "replay");
   const pickCycle = useCallback(
     (runId: string) => {
       if (!runId || runId === shownRunId) return;
@@ -406,6 +411,27 @@ export function DashboardScreen() {
     },
     [pickRun, shownRunId],
   );
+
+  // "Today" draws today's live cycle when there is one; "2 July 2019" goes back to the storm's
+  // peak cycle. Without a live cycle "Today" keeps its old meaning: the outlook card, with the
+  // map left on the replay and saying so.
+  const setTimeBase = useCallback(
+    (next: TimeBase) => {
+      setChosenBase(next);
+      if (next === "today" && liveCycle && shownRunId !== liveCycle.runId) {
+        pickCycle(liveCycle.runId);
+      }
+      if (next === "replay" && shownLive) {
+        const peak =
+          cycle.cycles.find((c) => Date.parse(c.cycleTs) === Date.parse(DASHBOARD_OPENING_TS)) ??
+          cycle.cycles[cycle.cycles.length - 1];
+        if (peak) pickCycle(peak.runId);
+      }
+    },
+    [liveCycle, shownRunId, shownLive, cycle.cycles, pickCycle],
+  );
+  const liveFrom = shownLive && liveCycle ? formatIst(liveCycle.cycleTs) : null;
+  const mapLabel = liveFrom ? `Today, live forecast from ${liveFrom}` : TIME_BASE_LABEL.replay;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -571,7 +597,7 @@ export function DashboardScreen() {
     timeBase === "replay" ? (
       <section aria-labelledby="forecast-when" className="flex flex-col gap-2">
         <h2 id="forecast-when" className="type-small text-text font-medium">
-          The map: {TIME_BASE_LABEL.replay}
+          The map: {mapLabel}
         </h2>
         <ForecastCycleSelect value={shownRunId} cycles={cycle.cycles} onChange={pickCycle} />
         <details className="type-micro text-text-3">
@@ -584,7 +610,11 @@ export function DashboardScreen() {
     ) : (
       <section aria-label={TIME_BASE_LABEL.today} className="flex flex-col gap-2">
         <LiveOutlookCard city={city} collapsible={false} />
-        <p className="type-micro text-text-2">The map stays on the 2 July 2019 replay.</p>
+        <p className="type-micro text-text-2">
+          {shownLive
+            ? "The map shows today's live forecast, run every 30 minutes from today's rain."
+            : "The map stays on the 2 July 2019 replay."}
+        </p>
       </section>
     );
 
@@ -790,7 +820,7 @@ export function DashboardScreen() {
       style={wide ? undefined : { bottom: TIME_STRIP_BOTTOM_PX }}
     >
       <p className="num type-micro text-text-2 px-1" aria-live="polite">
-        {TIME_BASE_LABEL.replay}
+        {shownLive ? "Today" : TIME_BASE_LABEL.replay}
         {stepTime ? `: streets at ${stepTime}` : ""}
       </p>
       <LeadTimeControl

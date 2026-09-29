@@ -127,8 +127,10 @@ export function ObservationStrip({
                     {group ? (
                       <span
                         aria-hidden="true"
-                        className="num text-ink rounded-chip flex h-4 min-w-4 items-center justify-center px-1 text-[11px] leading-none font-semibold"
-                        style={{ backgroundColor: colour, opacity: synthetic ? 0.85 : 1 }}
+                        className="num rounded-chip flex h-4 min-w-4 items-center justify-center px-1 text-[11px] leading-none font-semibold text-[var(--on-obs)]"
+                        // Full strength behind the count in both themes: at 85 % the light
+                        // theme's paper showed through and the number fell under 4.5:1.
+                        style={{ backgroundColor: colour }}
                       >
                         {mark.members.length}
                       </span>

@@ -59,6 +59,7 @@
 import DeckGL from "@deck.gl/react";
 import { useEffect, useMemo, useState } from "react";
 
+import { useTheme } from "@/lib/theme";
 import { cityBounds, type Bbox } from "./basemap";
 import { buildingsLayers, dryStreetsLayers } from "./layers/base";
 import { useCityCamera, type FitPadding } from "./layers/camera";
@@ -320,6 +321,10 @@ export function CityMap({
 }: CityMapProps) {
   const interactive = mode !== "hero";
   const reducedMotion = usePrefersReducedMotion();
+  // The palette's theme-dependent colours (the dry street, the buildings, the route casing, the
+  // accent) are read when a layer is built, so every memo that builds one lists the theme: a
+  // switch rebuilds them in the new colours instead of waiting for the next scrub (palette.ts).
+  const { theme } = useTheme();
 
   // What the console asks for beyond these props: 3D, its routes layer and the what-if
   // difference layer (`layers/overlay-context.ts`). Every other screen provides nothing.
@@ -513,13 +518,13 @@ export function CityMap({
   const fadeRaster = layerFade?.raster ?? 1;
 
   const cityLayers = useMemo(
-    () => buildingsLayers({ buildings, show: showBuildings, fade: fadeBuildings }),
-    [buildings, showBuildings, fadeBuildings],
+    () => (void theme, buildingsLayers({ buildings, show: showBuildings, fade: fadeBuildings })),
+    [buildings, showBuildings, fadeBuildings, theme],
   );
 
   const streetLayers = useMemo(
     () => [
-      ...dryStreetsLayers({ baseSegments, fade: fadeStreets }),
+      ...(void theme, dryStreetsLayers({ baseSegments, fade: fadeStreets })),
       ...drainsLayers({
         drains,
         show: showDrains,
@@ -528,19 +533,29 @@ export function CityMap({
         fade: fadeDrains,
       }),
     ],
-    [baseSegments, drains, showDrains, drainCrossFadeMs, onDrainHover, fadeStreets, fadeDrains],
+    [
+      baseSegments,
+      drains,
+      showDrains,
+      drainCrossFadeMs,
+      onDrainHover,
+      fadeStreets,
+      fadeDrains,
+      theme,
+    ],
   );
 
   const runLayers = useMemo(
     () => [
-      ...depthRasterLayers({
+      ...(void theme,
+      depthRasterLayers({
         frame: frames[step] ?? null,
         bounds: rasterBounds,
         // In 3D the frame is the terrain's texture, and this flat copy is hidden with the rest
         // of the flat map (see `hiddenLayers`) rather than removed.
         show: showRaster,
         fade: fadeRaster,
-      }),
+      })),
       ...wetStreetsLayers({
         segments,
         step,
@@ -578,6 +593,7 @@ export function CityMap({
       playing,
       reducedMotion,
       fadeRaster,
+      theme,
     ],
   );
 
@@ -658,11 +674,11 @@ export function CityMap({
   // All are small - three polygons and four paths - so they share one memo.
   const overlayLayers = useMemo(
     () => [
-      ...isochroneLayers({ isochrones: shownIsochrones }),
+      ...(void theme, isochroneLayers({ isochrones: shownIsochrones })),
       ...routeLayers({ routes, progress: routeProgress }),
       ...truthPinLayers({ truthPins, reducedMotion }),
     ],
-    [routes, shownIsochrones, routeProgress, truthPins, reducedMotion],
+    [routes, shownIsochrones, routeProgress, truthPins, reducedMotion, theme],
   );
 
   // Citizen reports over the overlays and under the labels, so a pin is never hidden by a route

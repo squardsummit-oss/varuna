@@ -205,7 +205,7 @@ export function MapScreen() {
   // API hands back the newest run, which on the replay is 09:10 - the calm cycle after the storm,
   // where a map about which streets are passable has nothing to say. The map holds its load until
   // the registry has answered, so nobody watches the calm cycle load and then swap.
-  const opening = useOpeningRun(city);
+  const opening = useOpeningRun(city, undefined, { preferLive: true });
   // The run the map drew. The public map has no app shell and so no run store behind it: the
   // honesty line and the save button read this run, not a registry row the map never loaded.
   const [run, setRun] = useState<RunDepth | null>(null);

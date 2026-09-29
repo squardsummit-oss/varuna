@@ -201,6 +201,19 @@ if [ "${BUILD_ON_BOOT}" = "1" ]; then
   ( build_city && build_map_products && build_bundle ) &
 fi
 
+# Live cycles (varuna_cycle.live): today's rain ensemble and sea level through the same engines as
+# the replay, every VARUNA_LIVE_EVERY_MIN minutes, in their own lower-priority process so the API
+# keeps answering while the Twin runs. They wait for a complete city, since a fresh volume builds
+# one first. VARUNA_LIVE_CYCLES=0 turns them off.
+if [ "${VARUNA_LIVE_CYCLES:-1}" = "1" ]; then
+  (
+    until city_is_complete; do sleep 30; done
+    sleep 60
+    log "live cycles start: every ${VARUNA_LIVE_EVERY_MIN:-30} min for ${CITY}"
+    exec nice -n 10 uv run python -m varuna_cycle.live --city "${CITY}" --every "${VARUNA_LIVE_EVERY_MIN:-30}"
+  ) &
+fi
+
 log "starting the API on :${PORT}"
 # Score the event once in the background after the API is up, so the first visitor's top bar and
 # the landing page read a kept score instead of starting the sweep themselves (routers/verify.py).

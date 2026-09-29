@@ -1,5 +1,6 @@
 "use client";
 
+import { formatIstTime } from "@/lib/stores/time";
 import { useIsClient } from "@/lib/hooks/use-is-client";
 import { cn } from "@/lib/utils";
 import { formatSpeed } from "@/lib/format";
@@ -77,7 +78,12 @@ export function ModeBanner({ mode: modeProp, label: labelProp, className }: Mode
             ? "Runs unavailable"
             : "No runs yet";
     } else if (mode === "live") {
-      label = "Live";
+      // A cycle forced by today's weather says when it ran; "Live" alone over a map could be
+      // any hour's forecast.
+      label =
+        currentRun?.bundle?.endsWith("-LIVE") && currentRun.cycle_ts
+          ? `Live · ${formatIstTime(currentRun.cycle_ts)} IST`
+          : "Live";
     } else if (mode === "degraded") {
       label = degradedLabel(currentRun?.degraded_feeds);
     } else {

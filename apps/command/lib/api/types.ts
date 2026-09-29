@@ -1614,7 +1614,17 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * What the full-city Twin what-if can answer on this server
+         * @description Whether this server runs the full-city Twin, and the stored answers it can serve for a run.
+         *
+         *     ``enabled`` false is a cache-only server (``VARUNA_WHATIF_TWIN=0``): it answers only the
+         *     scenarios in ``answers``, and ``tide_offsets_m`` are the tides a lab can offer at rain 1.0x
+         *     with nothing cleaned. ``elsewhere`` names the other cycles of the city that have stored tide
+         *     answers, and ``message`` is one sentence a screen can print. Reading it also warms the
+         *     emulator for the run, so the first what-if on it is not the cold one.
+         */
+        get: operations["whatif_twin_offer_v1_whatif_twin_get"];
         put?: never;
         /**
          * Run one scenario on the full-city Twin (the tide lever), as a job
@@ -6469,6 +6479,39 @@ export interface operations {
                 };
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    whatif_twin_offer_v1_whatif_twin_get: {
+        parameters: {
+            query?: {
+                run_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

@@ -16,9 +16,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { newestPerCycle, type BakedCycle } from "@/components/varuna/cycle-picker";
+import { splitLive, type BakedCycle } from "@/components/varuna/cycle-picker";
 import { apiUrl } from "@/lib/api/client";
-import { fetchOpeningRunId } from "@/lib/opening-run";
+import { LIVE_MAX_AGE_MIN, fetchOpeningRunId } from "@/lib/opening-run";
 
 /** The cycle the dashboard opens on: the storm's peak in the 2 July 2019 replay. */
 export const DASHBOARD_OPENING_TS = "2019-07-02T08:40:00+05:30";
@@ -28,8 +28,10 @@ export interface DashboardRun {
   runId: string | undefined;
   /** False until the registry has answered or given up; the map holds its load until then. */
   resolved: boolean;
-  /** One run per cycle time, oldest first, for this city only. */
+  /** One run per cycle time of the replay, oldest first, for this city only. */
   cycles: BakedCycle[];
+  /** Today's newest live cycle when one is fresh (`varuna_cycle.live`), else null. */
+  live: BakedCycle | null;
   pick: (runId: string) => void;
 }
 
@@ -38,17 +40,23 @@ interface RegistryRow {
   cycle_ts: string;
   mass_balance_err?: number | null;
   created_at?: string;
+  bundle?: string | null;
 }
 
 export function useDashboardRun(city: string): DashboardRun {
   const [runId, setRunId] = useState<string | undefined>(undefined);
   const [resolved, setResolved] = useState(false);
   const [rows, setRows] = useState<BakedCycle[]>([]);
+  // When the registry was read, so a live cycle's age is judged against that moment and not
+  // against a clock read during render.
+  const [readAt, setReadAt] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
-    fetchOpeningRunId(city, DASHBOARD_OPENING_TS, apiUrl, controller.signal).then((opening) => {
+    fetchOpeningRunId(city, DASHBOARD_OPENING_TS, apiUrl, controller.signal, {
+      preferLive: true,
+    }).then((opening) => {
       if (cancelled) return;
       setRunId((current) => current ?? opening);
       setResolved(true);
@@ -73,8 +81,10 @@ export function useDashboardRun(city: string): DashboardRun {
             cycleTs: row.cycle_ts,
             massBalanceErr: row.mass_balance_err ?? null,
             createdAt: row.created_at ?? "",
+            bundle: row.bundle ?? null,
           })),
         );
+        setReadAt(Date.now());
       })
       // Without the list the select is not drawn; the map still shows its run.
       .catch(() => undefined);
@@ -82,7 +92,13 @@ export function useDashboardRun(city: string): DashboardRun {
   }, [city]);
 
   // The run on screen keeps its own cycle in the list, so the select never shows nothing chosen.
-  const cycles = useMemo(() => newestPerCycle(rows, runId), [rows, runId]);
+  const split = useMemo(() => splitLive(rows, runId), [rows, runId]);
+  const live =
+    split.live &&
+    readAt !== null &&
+    readAt - Date.parse(split.live.cycleTs) <= LIVE_MAX_AGE_MIN * 60_000
+      ? split.live
+      : null;
 
-  return { runId, resolved, cycles, pick: setRunId };
+  return { runId, resolved, cycles: split.replay, live, pick: setRunId };
 }

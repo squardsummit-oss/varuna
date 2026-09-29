@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { apiUrl } from "@/lib/api/client";
+import { isLiveRun } from "@/lib/opening-run";
 import { cn } from "@/lib/utils";
 import { formatIstDate, formatIstTime } from "@/lib/stores/time";
 
@@ -12,6 +13,26 @@ export interface BakedCycle {
   massBalanceErr: number | null;
   /** When the run was written. Decides which run represents a cycle that has been baked twice. */
   createdAt: string;
+  /** The folder the run was forced from; a live cycle's ends in `-LIVE`. */
+  bundle?: string | null;
+}
+
+/** Split the registry into the replay's cycles and the newest live cycle, if any. */
+export function splitLive(
+  runs: BakedCycle[],
+  currentRunId?: string | null,
+): { replay: BakedCycle[]; live: BakedCycle | null } {
+  const live = runs
+    .filter((run) => isLiveRun(run))
+    .sort((a, b) => b.cycleTs.localeCompare(a.cycleTs));
+  const current = live.find((run) => run.runId === currentRunId);
+  return {
+    replay: newestPerCycle(
+      runs.filter((run) => !isLiveRun(run)),
+      currentRunId,
+    ),
+    live: current ?? live[0] ?? null,
+  };
 }
 
 /**
@@ -75,6 +96,7 @@ export interface CyclePickerProps {
  */
 export function CyclePicker({ currentRunId, onPick, className }: CyclePickerProps) {
   const [cycles, setCycles] = useState<BakedCycle[]>([]);
+  const [live, setLive] = useState<BakedCycle | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -87,6 +109,7 @@ export function CyclePicker({ currentRunId, onPick, className }: CyclePickerProp
             cycle_ts: string;
             mass_balance_err?: number;
             created_at?: string;
+            bundle?: string | null;
           }[];
         }) => {
           const runs = (body.runs ?? []).map((r) => ({
@@ -96,15 +119,23 @@ export function CyclePicker({ currentRunId, onPick, className }: CyclePickerProp
             // A registry row without `created_at` sorts before every dated one, so a run that
             // does not say when it was written never displaces one that does.
             createdAt: r.created_at ?? "",
+            bundle: r.bundle ?? null,
           }));
-          setCycles(newestPerCycle(runs, currentRunId));
+          // The live cycle gets its own chip; the row of clock times stays the storm's timeline.
+          const split = splitLive(runs, currentRunId);
+          setCycles(split.replay);
+          setLive(split.live);
         },
       )
-      .catch(() => setCycles([]));
+      .catch(() => {
+        setCycles([]);
+        setLive(null);
+      });
     return () => controller.abort();
   }, [currentRunId]);
 
-  if (cycles.length === 0) return null;
+  if (cycles.length === 0 && !live) return null;
+  const liveSelected = live !== null && live.runId === currentRunId;
 
   return (
     <div
@@ -113,7 +144,27 @@ export function CyclePicker({ currentRunId, onPick, className }: CyclePickerProp
         className,
       )}
     >
-      <span className="type-micro text-text-3 shrink-0 pr-1">Cycle</span>
+      {live ? (
+        <button
+          type="button"
+          aria-current={liveSelected ? "true" : undefined}
+          aria-label={`Live forecast from ${formatIstTime(live.cycleTs)} IST today`}
+          title={`Live forecast from ${formatIstTime(live.cycleTs)} IST, ${formatIstDate(live.cycleTs)}`}
+          onClick={() => onPick?.(live.runId)}
+          className={cn(
+            "num rounded-chip type-micro inline-flex items-center gap-1.5 border px-2 py-0.5 transition-colors",
+            liveSelected
+              ? "border-status-live bg-status-live/15 text-text"
+              : "border-line bg-well text-text-2 hover:text-text",
+          )}
+        >
+          <span aria-hidden="true" className="bg-status-live size-1.5 rounded-full" />
+          Live {formatIstTime(live.cycleTs)}
+        </button>
+      ) : null}
+      <span className="type-micro text-text-3 shrink-0 pr-1">
+        {live && cycles[0] ? formatIstDate(cycles[0].cycleTs) : "Cycle"}
+      </span>
       {cycles.map((cycle) => {
         const selected = cycle.runId === currentRunId;
         return (

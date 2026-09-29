@@ -70,7 +70,8 @@ import {
   onGoogleAuthFailure,
   type GoogleFallbackReason,
 } from "@/lib/maps/google";
-import { darkMapStyle } from "@/lib/maps/google-style";
+import { mapStyleFor } from "@/lib/maps/google-style";
+import { useTheme } from "@/lib/theme";
 import { usePhotorealTileset, type PhotorealState } from "@/lib/maps/photoreal";
 import { useGoogleDeckOverlay, type OverlayFactory } from "@/lib/maps/overlay";
 import { useMediaQuery, usePrefersReducedMotion } from "@/lib/hooks";
@@ -595,7 +596,9 @@ export function CitizenMap({
   /** The one thing the 3D path asks `CityMap` for, memoised so it is one identity per city. */
   const threeDOverlay = useMemo<MapOverlay>(() => ({ city, threeD: true }), [city]);
   // Resolved inside the component, not at module scope, so a theme override reaches the tiles.
-  const styles = useMemo(() => darkMapStyle(), []);
+  // The Google basemap follows the app's theme: the night style on dark, the mist style on light.
+  const { theme } = useTheme();
+  const styles = useMemo(() => mapStyleFor(theme), [theme]);
 
   const pick = useCallback(
     (event: MapTap) => {
