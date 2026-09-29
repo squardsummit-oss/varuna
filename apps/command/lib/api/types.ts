@@ -1437,6 +1437,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/runs/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish a live run computed elsewhere (token-protected)
+         * @description Store one **live** run directory, sent as a gzipped tar, and keep the newest two.
+         *
+         *     A live cycle needs about 1.5 GB, more than the hosted API's container has beside the API
+         *     itself (ADR-0095), so the cycle runs on a scheduled GitHub Actions job and publishes its run
+         *     here. Only a run whose id ends in ``-live`` and whose ``run.json`` says it was forced from a
+         *     ``-LIVE`` folder is accepted; every member must sit under ``<run_id>/`` as a plain file or
+         *     folder; the write is atomic, so a reader never sees a half-unpacked run. Without
+         *     ``VARUNA_RUN_UPLOAD_TOKEN`` set the endpoint answers 404, and a wrong token 401.
+         */
+        post: operations["upload_run_v1_runs_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/runs/{run_id}": {
         parameters: {
             query?: never;
@@ -6275,6 +6302,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RunList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_run_v1_runs_upload_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Missing or wrong upload token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Uploads are not enabled on this API */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Archive too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
             /** @description Validation Error */

@@ -57,6 +57,7 @@ __all__ = [
     "live_loop",
     "prune_live_runs",
     "read_live_forcing",
+    "recent_reports",
     "run_live_cycle",
     "snap_cycle",
     "tide_from_marine",
@@ -88,6 +89,11 @@ TIDE_POINTS: dict[str, tuple[float, float, str]] = {
 
 KEEP_RUNS = 2
 """Live runs kept on disk; older ones are removed so the 500 MB volume never fills."""
+
+REPORT_WINDOW_H = 3.0
+"""Citizen reports this recent are what a live cycle assimilates. Water seen three hours ago can
+still be on the street; a report from last week, or one stamped with a 2019 replay time, is not
+evidence about now."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -236,6 +242,44 @@ def tide_from_marine(payload: dict[str, Any], cycle_ts: datetime, n_steps: int) 
     return rows
 
 
+def recent_reports(
+    rows: list[dict[str, Any]], city: str, cycle_ts: datetime, hours: float = REPORT_WINDOW_H
+) -> list[dict[str, Any]]:
+    """The inbox rows a live cycle assimilates: this city's, seen in the last ``hours``."""
+    start = cycle_ts - timedelta(hours=hours)
+    kept = []
+    for row in rows:
+        if row.get("outside_aoi") is True or row.get("status") == "dismissed":
+            continue
+        if row.get("city") not in (None, city):
+            continue
+        try:
+            ts = datetime.fromisoformat(str(row.get("ts")))
+        except ValueError:
+            continue
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=IST)
+        if start <= ts <= cycle_ts:
+            kept.append({**row, "synthetic": bool(row.get("synthetic", False))})
+    return kept
+
+
+def _inbox_rows() -> list[dict[str, Any]]:
+    path = data_dir() / "reports" / "inbox.jsonl"
+    if not path.is_file():
+        return []
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except ValueError:
+            continue
+    return rows
+
+
 def write_live_bundle(
     city: str,
     cycle_ts: datetime,
@@ -332,6 +376,12 @@ def write_live_bundle(
     elif tide_path.exists():
         tide_path.unlink()
 
+    reports = recent_reports(_inbox_rows(), city, cycle_ts)
+    (root / "reports.jsonl").write_text(
+        "".join(json.dumps(row, separators=(",", ":")) + "\n" for row in reports),
+        encoding="utf-8",
+    )
+
     total_mm = float(cube.mean(axis=(0, 2, 3)).sum()) * STEP_MIN / 60.0
     meta = {
         "city": city,
@@ -346,6 +396,8 @@ def write_live_bundle(
         "attribution": ATTRIBUTION,
         "tide_point": {"lon": point[0], "lat": point[1], "label": point[2]} if point else None,
         "tide_note": tide_note,
+        "reports": len(reports),
+        "report_window_h": REPORT_WINDOW_H,
     }
     (root / "live.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
     log.info(
@@ -376,6 +428,10 @@ def read_live_forcing(bundle: str) -> LiveForcing:
     ]
     if meta.get("tide_note"):
         notes.append(str(meta["tide_note"]))
+    notes.append(
+        f"{meta.get('reports', 0)} citizen report(s) from the last "
+        f"{meta.get('report_window_h', REPORT_WINDOW_H):g} h were offered to Pulse."
+    )
     return LiveForcing(
         cycle_ts=cycle_ts,
         times=tuple(cycle_ts + timedelta(minutes=STEP_MIN * (k + 1)) for k in range(cube.shape[1])),

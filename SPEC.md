@@ -92,6 +92,7 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - Drishti, the public map and the citizen dashboard open on the live run while it is under 3 hours old.
 - A dry forecast says "No street is forecast above 15 cm in the next 3 hours" and links to 2 July 2019 at its peak (08:40, scrubbed to the most flooded step).
 - `/console?bundle=MUM-2019-07-02` still opens the demo's 06:40.
+- **Where it runs (ADR-0095):** the hosted API's trial container cannot fit a 1.5 GB cycle beside the API, and the first attempt restarted it. The cycle runs on GitHub Actions (`.github/workflows/live.yml`, twice an hour) and is uploaded to `POST /v1/runs/upload` behind a token.
 
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 

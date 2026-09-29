@@ -204,7 +204,9 @@ fi
 # Live cycles (varuna_cycle.live): today's rain ensemble and sea level through the same engines as
 # the replay, every VARUNA_LIVE_EVERY_MIN minutes, in their own lower-priority process so the API
 # keeps answering while the Twin runs. They wait for a complete city, since a fresh volume builds
-# one first. VARUNA_LIVE_CYCLES=0 turns them off.
+# one first. The hosted image sets VARUNA_LIVE_CYCLES=0: a cycle needs about 1.5 GB, more than its
+# container has beside the API, so there the cycle runs on GitHub Actions and is uploaded
+# (ADR-0095). A host with the memory turns them on with VARUNA_LIVE_CYCLES=1.
 if [ "${VARUNA_LIVE_CYCLES:-1}" = "1" ]; then
   (
     until city_is_complete; do sleep 30; done

@@ -8688,6 +8688,88 @@
         ]
       }
     },
+    "/v1/runs/upload": {
+      "post": {
+        "description": "Store one **live** run directory, sent as a gzipped tar, and keep the newest two.\n\nA live cycle needs about 1.5 GB, more than the hosted API's container has beside the API\nitself (ADR-0095), so the cycle runs on a scheduled GitHub Actions job and publishes its run\nhere. Only a run whose id ends in ``-live`` and whose ``run.json`` says it was forced from a\n``-LIVE`` folder is accepted; every member must sit under ``<run_id>/`` as a plain file or\nfolder; the write is atomic, so a reader never sees a half-unpacked run. Without\n``VARUNA_RUN_UPLOAD_TOKEN`` set the endpoint answers 404, and a wrong token 401.",
+        "operationId": "upload_run_v1_runs_upload_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Upload Run V1 Runs Upload Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Missing or wrong upload token"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Uploads are not enabled on this API"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Archive too large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish a live run computed elsewhere (token-protected)",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
     "/v1/runs/{run_id}": {
       "get": {
         "operationId": "get_run_v1_runs__run_id__get",

@@ -129,6 +129,7 @@ def run_pulse(
     prior_sd: NDArray[np.floating] | None = None,
     run_id: str = "",
     seed: int = 2019,
+    use_inbox: bool = True,
 ) -> PulseResult:
     """Assimilate this cycle's observations into the blockage posterior.
 
@@ -143,6 +144,9 @@ def run_pulse(
         rain_mm_h_at: rain over each observed segment, for the observation operator.
         prior_mean, prior_sd: the carried-forward posterior; the city's own prior when absent.
         run_id: stamped into the product.
+        use_inbox: read ``data/reports/inbox.jsonl`` beside the bundle's stream. A live cycle
+            turns it off: its folder already carries the inbox's recent reports, and the whole
+            inbox holds reports stamped with 2019 replay times that say nothing about today.
     """
     import pandas as pd
 
@@ -175,7 +179,7 @@ def run_pulse(
     # Two report sources: the bundle's synthetic stream and the inbox POST /v1/reports appends
     # to. Reading both here is what makes a report filed from the public map an observation on
     # the drain X-ray one cycle later (7.11).
-    inbox = data_dir() / "reports" / "inbox.jsonl"
+    inbox = data_dir() / "reports" / "inbox.jsonl" if use_inbox else None
     reports = read_reports(bundle_dir, until=cycle_ts, inbox=inbox)
 
     # ---- locate each observation on the graph -----------------------------------------

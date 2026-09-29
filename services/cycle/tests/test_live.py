@@ -107,3 +107,17 @@ def test_prune_keeps_only_the_newest_live_runs(tmp_path, monkeypatch):
     removed = live.prune_live_runs("mumbai", keep=2)
     assert removed == ["MUM-20260930T0800Z-sky1.0-twin1.0-flash0.1-live"]
     assert (runs / "MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked").is_dir()
+
+
+def test_a_live_cycle_takes_only_this_citys_recent_reports():
+    rows = [
+        {"id": "a", "ts": "2026-09-30T13:10:00+05:30", "city": "mumbai", "depth_hint": "knee"},
+        {"id": "b", "ts": "2026-09-30T10:00:00+05:30", "city": "mumbai", "depth_hint": "knee"},
+        {"id": "c", "ts": "2019-07-02T08:40:00+05:30", "city": "mumbai", "depth_hint": "knee"},
+        {"id": "d", "ts": "2026-09-30T14:00:00+05:30", "city": "chennai", "depth_hint": "ankle"},
+        {"id": "e", "ts": "2026-09-30T14:00:00+05:30", "city": "mumbai", "status": "dismissed"},
+        {"id": "f", "ts": "2026-09-30T14:40:00+05:30", "city": "mumbai", "depth_hint": "ankle"},
+    ]
+    kept = live.recent_reports(rows, "mumbai", CYCLE)
+    assert [row["id"] for row in kept] == ["a"]
+    assert kept[0]["synthetic"] is False

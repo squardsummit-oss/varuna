@@ -115,6 +115,7 @@ ENV VARUNA_DATA_DIR=/data \
     VARUNA_ONBOARD_ENABLED=0 \
     VARUNA_REPORT_PHOTOS=0 \
     VARUNA_WHATIF_TWIN=0 \
+    VARUNA_LIVE_CYCLES=0 \
     PORT=8000
 
 COPY docker/entrypoint.sh /usr/local/bin/varuna-entrypoint

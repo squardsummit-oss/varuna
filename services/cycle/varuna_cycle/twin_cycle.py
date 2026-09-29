@@ -543,6 +543,12 @@ def _flash_members(
     )
 
 
+def _is_live(bundle: str) -> bool:
+    from varuna_cycle.live import is_live_bundle
+
+    return is_live_bundle(bundle)
+
+
 def _live_city(bundle: str) -> str:
     """The city a live folder was written for, from its own ``live.json``."""
     root = bundles_dir() / bundle
@@ -748,6 +754,8 @@ def run_cycle(
             transform=terrain.transform,
             crs=terrain.crs,
             run_id=run_id,
+            # A live folder carries the inbox's recent reports itself (varuna_cycle.live).
+            use_inbox=not _is_live(bundle),
         )
     except Exception as error:
         # Degraded, not broken (SPEC.md 11.11): the depth forecast is complete and useful
