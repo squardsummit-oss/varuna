@@ -149,6 +149,92 @@ def _read(url: str, timeout: float, headers: dict[str, str]) -> tuple[int, bytes
     return status, body
 
 
+def _fetch(
+    url: str,
+    params: dict[str, Any] | None,
+    timeout: float,
+    retries: int,
+    headers: dict[str, str] | None,
+    accept: str,
+    event: str,
+) -> tuple[str, int, bytes]:
+    """The offline guard, the retry loop and the log line both readers share.
+
+    Returns ``(full_url, status, body)``; raises exactly what :func:`get_json` documents.
+    """
+    if offline():
+        log.info("net.refused_offline", host=_host_of(url), path=_path_of(url))
+        msg = (
+            f"VARUNA_OFFLINE=1 blocks outbound requests, so {_host_of(url)} was not contacted. "
+            "Unset VARUNA_OFFLINE to allow it, or use the cached copy."
+        )
+        raise OfflineRefused(msg)
+
+    use_system_trust_store()
+    full = build_url(url, params)
+    sent = {"User-Agent": USER_AGENT, "Accept": accept}
+    sent.update(headers or {})
+    attempts = max(1, retries + 1)
+    names = sorted(params or {})
+    last: Exception | None = None
+
+    for attempt in range(1, attempts + 1):
+        started = time.perf_counter()
+        try:
+            status, body = _read(full, timeout, sent)
+        except urllib.error.HTTPError as error:
+            ms = (time.perf_counter() - started) * 1000
+            detail = _peek(error)
+            log.warning(
+                event,
+                host=_host_of(full),
+                path=_path_of(full),
+                params=names,
+                status=error.code,
+                ms=round(ms, 1),
+                attempt=attempt,
+                of=attempts,
+            )
+            last = HttpStatusError(error.code, full, detail)
+            if error.code in RETRY_STATUS and attempt < attempts:
+                time.sleep(RETRY_BACKOFF_S * attempt)
+                continue
+            raise last from error
+        except (urllib.error.URLError, TimeoutError, OSError) as error:
+            ms = (time.perf_counter() - started) * 1000
+            log.warning(
+                event,
+                host=_host_of(full),
+                path=_path_of(full),
+                params=names,
+                error=repr(error),
+                ms=round(ms, 1),
+                attempt=attempt,
+                of=attempts,
+            )
+            last = NetworkError(f"Could not reach {_host_of(full)}: {error}")
+            if attempt < attempts:
+                time.sleep(RETRY_BACKOFF_S * attempt)
+                continue
+            raise last from error
+
+        ms = (time.perf_counter() - started) * 1000
+        log.info(
+            event,
+            host=_host_of(full),
+            path=_path_of(full),
+            params=names,
+            status=status,
+            bytes=len(body),
+            ms=round(ms, 1),
+            attempt=attempt,
+            of=attempts,
+        )
+        return full, status, body
+
+    raise last or NetworkError(f"Could not reach {_host_of(full)}")  # pragma: no cover
+
+
 def get_json(
     url: str,
     params: dict[str, Any] | None = None,
@@ -172,81 +258,27 @@ def get_json(
         HttpStatusError: the server answered with a status this call cannot use.
         NetworkError: connection failure, timeout, oversized body or unparseable JSON.
     """
-    if offline():
-        log.info("net.refused_offline", host=_host_of(url), path=_path_of(url))
-        msg = (
-            f"VARUNA_OFFLINE=1 blocks outbound requests, so {_host_of(url)} was not contacted. "
-            "Unset VARUNA_OFFLINE to allow it, or use the cached copy."
-        )
-        raise OfflineRefused(msg)
+    full, status, body = _fetch(
+        url, params, timeout, retries, headers, "application/json", "net.get_json"
+    )
+    try:
+        return json.loads(body)
+    except (ValueError, UnicodeDecodeError) as error:
+        msg = f"{_host_of(full)} answered {status} with a body that is not JSON: {error}"
+        raise NetworkError(msg) from error
 
-    use_system_trust_store()
-    full = build_url(url, params)
-    sent = {"User-Agent": USER_AGENT, "Accept": "application/json"}
-    sent.update(headers or {})
-    attempts = max(1, retries + 1)
-    names = sorted(params or {})
-    last: Exception | None = None
 
-    for attempt in range(1, attempts + 1):
-        started = time.perf_counter()
-        try:
-            status, body = _read(full, timeout, sent)
-        except urllib.error.HTTPError as error:
-            ms = (time.perf_counter() - started) * 1000
-            detail = _peek(error)
-            log.warning(
-                "net.get_json",
-                host=_host_of(full),
-                path=_path_of(full),
-                params=names,
-                status=error.code,
-                ms=round(ms, 1),
-                attempt=attempt,
-                of=attempts,
-            )
-            last = HttpStatusError(error.code, full, detail)
-            if error.code in RETRY_STATUS and attempt < attempts:
-                time.sleep(RETRY_BACKOFF_S * attempt)
-                continue
-            raise last from error
-        except (urllib.error.URLError, TimeoutError, OSError) as error:
-            ms = (time.perf_counter() - started) * 1000
-            log.warning(
-                "net.get_json",
-                host=_host_of(full),
-                path=_path_of(full),
-                params=names,
-                error=repr(error),
-                ms=round(ms, 1),
-                attempt=attempt,
-                of=attempts,
-            )
-            last = NetworkError(f"Could not reach {_host_of(full)}: {error}")
-            if attempt < attempts:
-                time.sleep(RETRY_BACKOFF_S * attempt)
-                continue
-            raise last from error
-
-        ms = (time.perf_counter() - started) * 1000
-        log.info(
-            "net.get_json",
-            host=_host_of(full),
-            path=_path_of(full),
-            params=names,
-            status=status,
-            bytes=len(body),
-            ms=round(ms, 1),
-            attempt=attempt,
-            of=attempts,
-        )
-        try:
-            return json.loads(body)
-        except (ValueError, UnicodeDecodeError) as error:
-            msg = f"{_host_of(full)} answered {status} with a body that is not JSON: {error}"
-            raise NetworkError(msg) from error
-
-    raise last or NetworkError(f"Could not reach {_host_of(full)}")  # pragma: no cover
+def get_bytes(
+    url: str,
+    params: dict[str, Any] | None = None,
+    timeout: float = DEFAULT_TIMEOUT_S,
+    retries: int = DEFAULT_RETRIES,
+    headers: dict[str, str] | None = None,
+) -> bytes:
+    """GET ``url`` and return the raw body: a radar tile, an image. Same guard and retries as
+    :func:`get_json`, and the same errors apart from the JSON one."""
+    _, _, body = _fetch(url, params, timeout, retries, headers, "*/*", "net.get_bytes")
+    return body
 
 
 def _peek(error: urllib.error.HTTPError, limit: int = 400) -> str:
@@ -267,6 +299,7 @@ __all__ = [
     "NetworkError",
     "OfflineRefused",
     "build_url",
+    "get_bytes",
     "get_json",
     "offline",
     "use_system_trust_store",

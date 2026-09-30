@@ -26,6 +26,8 @@ export interface CitizenRunProvenance {
   bundle: string | null;
   nSteps: number;
   ensembleN: number;
+  /** The run's honesty notes, which say whether a live run nowcast from radar. */
+  notes?: string[];
 }
 
 export interface CitizenRun {
@@ -62,6 +64,7 @@ interface BoundsBody {
   n_steps?: number;
   ensemble_n?: number;
   bounds?: { wgs84?: [number, number, number, number] };
+  notes?: string[];
 }
 
 interface SegmentsBody {
@@ -113,6 +116,7 @@ export async function loadCitizenRun(
       bundle: bounds.bundle ?? null,
       nSteps: Number(bounds.n_steps ?? 0),
       ensembleN: Number(bounds.ensemble_n ?? 0),
+      notes: Array.isArray(bounds.notes) ? bounds.notes.map(String) : [],
     },
     bounds: bounds.bounds?.wgs84 ?? [0, 0, 0, 0],
     segments,

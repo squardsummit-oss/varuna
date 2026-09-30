@@ -278,9 +278,10 @@ class MotionField:
 
 
 # ============================================================================ ensemble
-NowcastSource = Literal["pysteps_steps", "fallback_steps", "nwp_ensemble"]
+NowcastSource = Literal["pysteps_steps", "fallback_steps", "nwp_ensemble", "radar_nwp_blend"]
 """Which nowcaster produced the ensemble. The fallback is labelled, never hidden, and
-``nwp_ensemble`` is a live cycle's NWP forecast standing in for radar (``varuna_cycle.live``)."""
+``nwp_ensemble`` is a live cycle's NWP forecast standing in for radar, and
+``radar_nwp_blend`` a live cycle's radar nowcast blended into it (``varuna_cycle.live``)."""
 
 
 @dataclass(frozen=True, slots=True)

@@ -30,6 +30,8 @@ export interface MapSlotProps {
   replayChip?: boolean;
   /** The chip's words; "Reconstructed replay" unless the map is showing a live cycle. */
   chipLabel?: string;
+  /** A source link beside the chip, for data whose licence asks to be credited on the map. */
+  chipLink?: { href: string; label: string };
 }
 
 const OPERATOR_EMPTY_STATE = {
@@ -48,6 +50,7 @@ export function MapSlot({
   emptyState = OPERATOR_EMPTY_STATE,
   replayChip = true,
   chipLabel = "Reconstructed replay",
+  chipLink,
 }: MapSlotProps) {
   const stops = depthLegendStops();
   const isOperator = audience === "operator";
@@ -83,10 +86,20 @@ export function MapSlot({
       ) : null}
 
       {isOperator && replayChip ? (
-        <div className="absolute bottom-10 left-4 z-10">
+        <div className="absolute bottom-10 left-4 z-10 flex items-center gap-2">
           <span className="border-line bg-deep type-small text-text-2 inline-flex h-7 items-center rounded-full border px-3">
             {chipLabel}
           </span>
+          {chipLink ? (
+            <a
+              href={chipLink.href}
+              target="_blank"
+              rel="noreferrer"
+              className="border-line bg-deep type-micro text-text-2 hover:text-text focus-visible:ring-tide inline-flex h-7 items-center rounded-full border px-3 underline underline-offset-2 focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {chipLink.label}
+            </a>
+          ) : null}
         </div>
       ) : null}
 

@@ -94,6 +94,13 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - `/console?bundle=MUM-2019-07-02` still opens the demo's 06:40.
 - **Where it runs (ADR-0095):** the hosted API's trial container cannot fit a 1.5 GB cycle beside the API, and the first attempt restarted it. The cycle runs on GitHub Actions (`.github/workflows/live.yml`, scheduled every 15 minutes, which GitHub runs late or skips) and is uploaded to `POST /v1/runs/upload` behind a token.
 
+**2026-09-30 evening (ADR-0096): live cycles nowcast from real radar.**
+- RainViewer's mosaic (no key, from public-apis) covers Mumbai and Chennai. The six newest frames (about 1.2 km, every 10 min) are decoded to dBZ and run through the unchanged Sky: QC, Marshall-Palmer, Lucas-Kanade motion and 20-member STEPS.
+- The nowcast is blended into ICON-EPS with Appendix A's `exp(-t/60 min)` weight.
+- Measured on Mumbai at 15:50 IST with 30 dBZ echoes and 100 % coverage: Sky 15.4 s, whole cycle 61.5 s.
+- With no fresh radar a live cycle falls back to NWP alone and says so.
+- Screens label a radar-driven run "Live forecast, radar nowcast" and link "Radar: RainViewer" as its terms require.
+
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
 - [ ] R1 A Mumbai replay streams through the same pipeline as live data; the mode banner reads "Replay 30×" and the run stamp says "baked" or "live".

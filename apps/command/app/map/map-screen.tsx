@@ -19,6 +19,7 @@ import { VehicleSelector, type PublicProfile } from "@/components/varuna/vehicle
 import { Wordmark } from "@/components/varuna/wordmark";
 import { useIsClient } from "@/lib/hooks";
 import { currentCity } from "@/lib/city";
+import { RAINVIEWER_CREDIT, usesLiveRadar } from "@/lib/opening-run";
 import { useOpeningRun } from "@/lib/use-opening-run";
 import { formatIst } from "@/lib/format";
 import {
@@ -298,6 +299,19 @@ export function MapScreen() {
         </div>
         <p className="num type-micro text-text-3 mt-2" data-slot="honesty-line">
           {honestyLine(run?.provenance.cycleTs, problem, t)}
+          {usesLiveRadar(run?.provenance.notes) ? (
+            <>
+              {" "}
+              <a
+                href={RAINVIEWER_CREDIT.href}
+                target="_blank"
+                rel="noreferrer"
+                className="text-text-2 hover:text-text underline underline-offset-2"
+              >
+                {RAINVIEWER_CREDIT.label}
+              </a>
+            </>
+          ) : null}
         </p>
         <div className="mt-3">
           <VehicleSelector value={profile} onValueChange={setProfile} />

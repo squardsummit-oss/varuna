@@ -15,6 +15,20 @@ export interface RunSummary {
   bundle?: string | null;
 }
 
+/**
+ * RainViewer's terms ask for a link to rainviewer.com wherever its radar is shown, so every screen
+ * that draws a radar-driven live run carries this credit beside the run's time.
+ */
+export const RAINVIEWER_CREDIT = {
+  href: "https://www.rainviewer.com",
+  label: "Radar: RainViewer",
+} as const;
+
+/** Whether a live run nowcast from radar (its notes open with "Live radar:"), not NWP alone. */
+export function usesLiveRadar(notes: readonly string[] | null | undefined): boolean {
+  return Boolean(notes?.some((note) => note.startsWith("Live radar:")));
+}
+
 /** A run forced by today's weather rather than a replay bundle. */
 export function isLiveRun(run: Pick<RunSummary, "bundle"> | null | undefined): boolean {
   return Boolean(run?.bundle && run.bundle.endsWith("-LIVE"));

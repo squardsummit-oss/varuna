@@ -48,9 +48,12 @@ from varuna_schemas.paths import bundles_dir, city_config_path, data_dir
 log = structlog.get_logger("varuna.cycle.live")
 
 __all__ = [
+    "BLEND_TAU_MIN",
     "LIVE_SUFFIX",
     "NWP_MODEL",
     "LiveForcing",
+    "blend",
+    "blend_weights",
     "forcing_from_points",
     "is_live_bundle",
     "live_bundle_id",
@@ -87,6 +90,17 @@ TIDE_POINTS: dict[str, tuple[float, float, str]] = {
 }
 """A sea point just off each city's shore where the marine model has a wet cell."""
 
+RADAR_FRAMES = 6
+"""RainViewer frames a cycle reads: three are the minimum for Lucas-Kanade, six let Sky's clutter
+test (SPEC.md 11.1 step 1) see an hour of history."""
+
+RADAR_MAX_AGE_MIN = 30
+"""A newest radar frame older than this is not the present; the cycle then runs on NWP alone."""
+
+BLEND_TAU_MIN = 60.0
+"""The e-folding time of the radar-to-NWP blend (SPEC.md Appendix A): the radar nowcast carries
+the first hour and the weather model the third. A choice, recorded in ADR-0096."""
+
 KEEP_RUNS = 2
 """Live runs kept on disk; older ones are removed so the 500 MB volume never fills."""
 
@@ -112,6 +126,9 @@ class LiveForcing:
     model: str
     fetched_at: datetime
     notes: tuple[str, ...]
+    radar_dbz: np.ndarray | None = None
+    """``(frames, n_px, n_px)`` RainViewer dBZ on the Sky grid, oldest first, when fresh."""
+    radar_times: tuple[datetime, ...] = ()
 
 
 def live_bundle_id(city: str) -> str:
@@ -285,6 +302,7 @@ def write_live_bundle(
     cycle_ts: datetime,
     *,
     get_json: Callable[..., Any] | None = None,
+    get_bytes: Callable[..., bytes] | None = None,
     n_steps: int = N_STEPS,
 ) -> Path:
     """Fetch today's rain ensemble and sea level for ``city`` and write the live folder.
@@ -294,11 +312,40 @@ def write_live_bundle(
     boundaries and the run's notes say the tide is missing.
     """
     from pyproj import Transformer
+    from varuna_schemas.net import get_bytes as default_get_bytes
     from varuna_schemas.net import get_json as default_get_json
+    from varuna_sky.rainviewer import fetch_radar
 
     fetch = get_json or default_get_json
+    fetch_bytes = get_bytes or default_get_bytes
     domain = _domain(city)
     config = _config(city)
+    xs, ys = domain.cell_centres()
+    to_wgs84 = Transformer.from_crs(domain.crs_string, "EPSG:4326", always_xy=True)
+    cell_lon, cell_lat = (np.asarray(v) for v in to_wgs84.transform(xs, ys))
+
+    # Radar first: with a fresh frame the cycle is issued at its time, as every Sky cycle is,
+    # and the NWP forcing below is read for that same instant.
+    radar = None
+    radar_note = None
+    try:
+        radar = fetch_radar(
+            cell_lon, cell_lat, n_frames=RADAR_FRAMES, get_json=fetch, get_bytes=fetch_bytes
+        )
+    except Exception as error:  # the radar is the better input, not a required one
+        radar_note = f"No live radar this cycle ({error}); the rain is the NWP forecast alone."
+        log.warning("live.radar_failed", city=city, error=str(error))
+    if radar is not None:
+        newest = radar.times[-1].astimezone(IST)
+        age_min = (cycle_ts - newest).total_seconds() / 60.0
+        if -STEP_MIN <= age_min <= RADAR_MAX_AGE_MIN:
+            cycle_ts = newest
+        else:
+            radar_note = (
+                f"The newest radar frame is {age_min:.0f} min from this cycle; the rain is the "
+                "NWP forecast alone."
+            )
+            radar = None
     center_lon = float(config.radar_domain.center_lon)
     center_lat = float(config.radar_domain.center_lat)
     lons, lats = _point_grid(center_lon, center_lat)
@@ -322,15 +369,12 @@ def write_live_bundle(
         msg = f"Open-Meteo answered {len(payloads)} points of {len(grid_lats)} asked."
         raise ValueError(msg)
 
-    xs, ys = domain.cell_centres()
-    to_wgs84 = Transformer.from_crs(domain.crs_string, "EPSG:4326", always_xy=True)
-    cell_lon, cell_lat = to_wgs84.transform(xs, ys)
     cube = forcing_from_points(
         payloads,
         lons,
         lats,
-        np.asarray(cell_lon),
-        np.asarray(cell_lat),
+        cell_lon,
+        cell_lat,
         cycle_ts,
         n_steps=n_steps,
     )
@@ -344,6 +388,17 @@ def write_live_bundle(
         transform=np.asarray(domain.transform, dtype=np.float64),
     )
     os.replace(tmp, root / "nwp.npz")
+    radar_path = root / "radar.npz"
+    if radar is not None:
+        tmp = root / "radar.tmp.npz"
+        np.savez_compressed(
+            tmp,
+            dbz=radar.dbz.astype(np.float32),
+            times=np.asarray([t.timestamp() for t in radar.times], dtype=np.int64),
+        )
+        os.replace(tmp, radar_path)
+    elif radar_path.exists():
+        radar_path.unlink()
 
     tide_rows: list[dict] = []
     tide_note = None
@@ -398,6 +453,17 @@ def write_live_bundle(
         "tide_note": tide_note,
         "reports": len(reports),
         "report_window_h": REPORT_WINDOW_H,
+        "radar": (
+            {
+                "frames": [t.isoformat() for t in radar.times],
+                "covered_fraction": round(radar.covered_fraction, 4),
+                "max_dbz": None if math.isnan(radar.max_dbz) else round(radar.max_dbz, 1),
+                "notes": list(radar.notes),
+            }
+            if radar is not None
+            else None
+        ),
+        "radar_note": radar_note,
     }
     (root / "live.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
     log.info(
@@ -407,6 +473,7 @@ def write_live_bundle(
         members=int(cube.shape[0]),
         domain_mean_mm_3h=round(total_mm, 2),
         tide_rows=len(tide_rows),
+        radar=radar is not None,
     )
     return root
 
@@ -420,12 +487,32 @@ def read_live_forcing(bundle: str) -> LiveForcing:
         transform = tuple(float(v) for v in data["transform"])
     cycle_ts = datetime.fromisoformat(meta["cycle_ts"])
     domain = _domain(meta["city"])
-    notes = [
-        f"Live cycle: no radar, so the rain is the {meta['model']} forecast, {meta['members']} "
-        f"members interpolated from a 3 x 3 point grid onto the 500 m Sky grid ({SOURCE_URL}). "
-        "The model runs at about 26 km, so it places rain over the region, not over a junction.",
-        f"{ATTRIBUTION}.",
-    ]
+    radar_dbz = None
+    radar_times: tuple[datetime, ...] = ()
+    if (root / "radar.npz").is_file() and meta.get("radar"):
+        with np.load(root / "radar.npz") as data:
+            radar_dbz = np.asarray(data["dbz"], dtype=np.float64)
+            radar_times = tuple(
+                datetime.fromtimestamp(int(t), tz=UTC).astimezone(IST) for t in data["times"]
+            )
+    if radar_dbz is not None:
+        notes = [
+            *meta["radar"]["notes"],
+            f"Nowcast: pySTEPS STEPS from the radar, blended into the {meta['model']} forecast "
+            f"as R = exp(-t/{BLEND_TAU_MIN:g} min) R_radar + (1 - exp(-t/{BLEND_TAU_MIN:g} min)) "
+            "R_NWP (SPEC.md Appendix A), so the first hour follows the radar and the third "
+            f"the model ({SOURCE_URL}).",
+            f"{ATTRIBUTION}.",
+        ]
+    else:
+        notes = [
+            *([meta["radar_note"]] if meta.get("radar_note") else []),
+            f"Live cycle: no radar, so the rain is the {meta['model']} forecast, "
+            f"{meta['members']} members interpolated from a 3 x 3 point grid onto the 500 m Sky "
+            f"grid ({SOURCE_URL}). The model runs at about 26 km, so it places rain over the "
+            "region, not over a junction.",
+            f"{ATTRIBUTION}.",
+        ]
     if meta.get("tide_note"):
         notes.append(str(meta["tide_note"]))
     notes.append(
@@ -443,34 +530,107 @@ def read_live_forcing(bundle: str) -> LiveForcing:
         model=str(meta["model"]),
         fetched_at=datetime.fromisoformat(meta["fetched_at"]),
         notes=tuple(notes),
+        radar_dbz=radar_dbz,
+        radar_times=radar_times,
     )
 
 
+def blend_weights(n_steps: int, step_min: float = STEP_MIN, tau_min: float = BLEND_TAU_MIN):
+    """``exp(-t/tau)`` at each step's lead: the radar nowcast's share of the blend."""
+    leads = step_min * (np.arange(n_steps, dtype=np.float64) + 1.0)
+    return np.exp(-leads / tau_min)
+
+
+def blend(radar_members: np.ndarray, nwp_members: np.ndarray, weights: np.ndarray) -> np.ndarray:
+    """SPEC.md Appendix A's blend, member by member: member ``m`` of the nowcast is paired
+    with member ``m`` of the model, cycling the model's members when it has fewer."""
+    n = radar_members.shape[0]
+    nwp = nwp_members[np.arange(n) % nwp_members.shape[0]]
+    steps = min(radar_members.shape[1], nwp.shape[1], weights.shape[0])
+    w = weights[:steps][None, :, None, None]
+    out = w * np.nan_to_num(radar_members[:, :steps]) + (1.0 - w) * nwp[:, :steps]
+    return np.maximum(out, 0.0)
+
+
+_SKY_CACHE: dict[tuple[str, float, float], tuple[Any, Any]] = {}
+
+
 def live_sky(bundle: str, city: str):
-    """``(ensemble, RainCycle)`` for a live folder, shaped exactly as a Sky cycle's."""
+    """``(ensemble, RainCycle)`` for a live folder, shaped exactly as a Sky cycle's.
+
+    With fresh radar the real Sky runs - QC, Z-R (Marshall-Palmer: no live gauges), optical
+    flow and the 20-member STEPS nowcast - on the RainViewer frames, and its members are blended
+    into the NWP members; without it the NWP members stand alone. Memoised on the folder's
+    files, because the cycle asks twice (the Twin's forcing and the run's rain stores) and both
+    must be the same ensemble.
+    """
+    from varuna_sky.pipeline import run_sky
     from varuna_sky.products import load_aoi_grid, sky_products
-    from varuna_sky.types import RadarGrid, RainEnsemble, ZRParams
+    from varuna_sky.types import RadarFrames, RadarGrid, RainEnsemble, SkyInputs, ZRParams
 
     from varuna_cycle.sky_cycle import RainCycle
+
+    root = bundles_dir() / bundle
+    radar_file = root / "radar.npz"
+    stamp = (
+        bundle,
+        (root / "nwp.npz").stat().st_mtime,
+        radar_file.stat().st_mtime if radar_file.is_file() else 0.0,
+    )
+    if stamp in _SKY_CACHE:
+        return _SKY_CACHE[stamp]
 
     forcing = read_live_forcing(bundle)
     grid = RadarGrid(
         crs=forcing.crs, res_m=forcing.res_m, n_px=forcing.n_px, transform=forcing.transform
     )
-    ensemble = RainEnsemble(
-        rain_mm_h=forcing.rain_mm_h,
-        times=forcing.times,
-        grid=grid,
-        source="nwp_ensemble",
-        seed=int(forcing.cycle_ts.timestamp()) % (2**31),
-        zr=ZRParams(
-            a=200.0,
-            b=1.6,
-            source="marshall_palmer",
-            n_pairs=0,
-            reason="No radar in a live cycle: the rain is an NWP forecast, so no Z-R was applied.",
-        ),
-    )
+    seed = int(forcing.cycle_ts.timestamp()) % (2**31)
+    if forcing.radar_dbz is not None:
+        import pandas as pd
+
+        sky = run_sky(
+            SkyInputs(
+                frames=RadarFrames(dbz=forcing.radar_dbz, times=forcing.radar_times, grid=grid),
+                gauges=pd.DataFrame(columns=["ts", "station_id", "lat", "lon", "mm_5min"]),
+                cycle_ts=forcing.cycle_ts,
+                seed=seed,
+            ),
+            aoi=city,
+        )
+        weights = blend_weights(forcing.rain_mm_h.shape[1])
+        rain = blend(
+            np.asarray(sky.ensemble.rain_mm_h, dtype=np.float64), forcing.rain_mm_h, weights
+        )
+        ensemble = RainEnsemble(
+            rain_mm_h=rain,
+            times=forcing.times[: rain.shape[1]],
+            grid=grid,
+            source="radar_nwp_blend",
+            seed=seed,
+            zr=sky.ensemble.zr,
+            motion=sky.ensemble.motion,
+        )
+        nowcaster = (
+            f"pySTEPS {sky.ensemble.source} on RainViewer radar, blended with {forcing.model}"
+        )
+        notes = (*forcing.notes, *sky.notes)
+    else:
+        ensemble = RainEnsemble(
+            rain_mm_h=forcing.rain_mm_h,
+            times=forcing.times,
+            grid=grid,
+            source="nwp_ensemble",
+            seed=seed,
+            zr=ZRParams(
+                a=200.0,
+                b=1.6,
+                source="marshall_palmer",
+                n_pairs=0,
+                reason="No radar this live cycle: the rain is an NWP forecast, so no Z-R ran.",
+            ),
+        )
+        nowcaster = forcing.model
+        notes = forcing.notes
     products = sky_products(ensemble, load_aoi_grid(city))
     cycle = RainCycle(
         products=products,
@@ -478,10 +638,15 @@ def live_sky(bundle: str, city: str):
         city=city,
         mode="live",
         bundle=bundle,
-        nowcaster=forcing.model,
-        seed=ensemble.seed,
-        notes=forcing.notes,
+        nowcaster=nowcaster,
+        seed=seed,
+        zr_a=float(ensemble.zr.a),
+        zr_b=float(ensemble.zr.b),
+        zr_source=str(ensemble.zr.source),
+        notes=tuple(notes),
     )
+    _SKY_CACHE.clear()
+    _SKY_CACHE[stamp] = (ensemble, cycle)
     return ensemble, cycle
 
 
@@ -506,8 +671,11 @@ def run_live_cycle(city: str = "mumbai", when: datetime | None = None, **fetch: 
     """Fetch the live forcing, run one full cycle on it, publish it, and prune old live runs."""
     from varuna_cycle.twin_cycle import run_cycle
 
-    cycle_ts = snap_cycle(when)
-    write_live_bundle(city, cycle_ts, **fetch)
+    root = write_live_bundle(city, snap_cycle(when), **fetch)
+    # The folder may have moved the instant onto the newest radar frame.
+    cycle_ts = datetime.fromisoformat(
+        json.loads((root / "live.json").read_text(encoding="utf-8"))["cycle_ts"]
+    )
     result = run_cycle(live_bundle_id(city), cycle_ts, city=city, mode="live", overwrite=True)
     prune_live_runs(city)
     return result

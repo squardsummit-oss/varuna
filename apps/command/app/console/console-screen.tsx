@@ -48,7 +48,12 @@ import { TimeBar } from "@/components/varuna/time-bar";
 import { edgeFadeStyle, useScrollEdges } from "./use-scroll-edges";
 import { useConsoleRoutes } from "./use-console-routes";
 import { WhatIfDrawer, type WhatIfDiff } from "./whatif-drawer";
-import { fetchOpeningRunId, isLiveRun } from "@/lib/opening-run";
+import {
+  RAINVIEWER_CREDIT,
+  fetchOpeningRunId,
+  isLiveRun,
+  usesLiveRadar,
+} from "@/lib/opening-run";
 import { minutesBetween } from "@/lib/format";
 import { DEFAULT_CITY, cityFromSearch } from "@/lib/city";
 import { MIN_AREA_M, type AffectedFrame } from "@/lib/map/affected-bounds";
@@ -578,6 +583,7 @@ function ConsoleView() {
   // A live cycle is today's weather: the 2019 ground truth has nothing to say about it (and the
   // API has none for a live folder), and its chip and notice say which forecast this is.
   const liveRun = isLiveRun({ bundle: run?.provenance.bundle ?? null });
+  const liveRadar = liveRun && usesLiveRadar(run?.provenance.notes);
   const truth = useTruthPins(
     liveRun ? undefined : (run?.provenance.bundle ?? undefined),
     run?.validTs[step] ?? null,
@@ -1027,7 +1033,14 @@ function ConsoleView() {
             floats over it. `MapSlot` stays behind it as the legend and attribution host. */}
         <MapSlot
           legendClearsRightPanel={replayPanelOpen && !inFullView}
-          chipLabel={liveRun ? "Live forecast, NWP rain, no radar" : undefined}
+          chipLabel={
+            liveRun
+              ? liveRadar
+                ? "Live forecast, radar nowcast"
+                : "Live forecast, NWP rain, no radar"
+              : undefined
+          }
+          chipLink={liveRadar ? RAINVIEWER_CREDIT : undefined}
         />
         {/* 3D, the routes layer and the what-if difference reach the map through context: they
             are console-only asks, and `FloodMap` is shared by every screen with a map. */}
@@ -1083,7 +1096,7 @@ function ConsoleView() {
             </p>
             <p className="type-micro text-text-2 mt-0.5">
               Live forecast from {run ? formatStep(run.provenance.cycleTs ?? undefined) : ""} IST,
-              from today&apos;s rain forecast.
+              from {liveRadar ? "live radar and " : ""}today&apos;s rain forecast.
             </p>
             <Button size="sm" variant="outline" className="mt-2" onClick={openReplayPeak}>
               See 2 July 2019 at its peak

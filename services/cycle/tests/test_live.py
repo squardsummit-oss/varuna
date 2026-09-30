@@ -121,3 +121,16 @@ def test_a_live_cycle_takes_only_this_citys_recent_reports():
     kept = live.recent_reports(rows, "mumbai", CYCLE)
     assert [row["id"] for row in kept] == ["a"]
     assert kept[0]["synthetic"] is False
+
+
+def test_the_blend_follows_the_radar_first_and_the_model_later():
+    weights = live.blend_weights(36)
+    assert weights[0] == pytest.approx(np.exp(-5 / live.BLEND_TAU_MIN))
+    assert weights[-1] == pytest.approx(np.exp(-180 / live.BLEND_TAU_MIN))
+    radar = np.full((2, 36, 1, 1), 10.0)
+    nwp = np.zeros((1, 36, 1, 1))
+    out = live.blend(radar, nwp, weights)
+    assert out.shape == (2, 36, 1, 1)
+    assert out[0, 0, 0, 0] == pytest.approx(10.0 * weights[0])
+    assert out[1, -1, 0, 0] == pytest.approx(10.0 * weights[-1])
+    assert out[0, 0, 0, 0] > out[0, 11, 0, 0] > out[0, -1, 0, 0]

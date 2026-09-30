@@ -46,6 +46,7 @@ import {
   type TimeBase,
 } from "@/components/citizen/time-base-switch";
 import { DASHBOARD_OPENING_TS, useDashboardRun } from "@/components/citizen/use-dashboard-run";
+import { RAINVIEWER_CREDIT, usesLiveRadar } from "@/lib/opening-run";
 import { useMyReports, usePublicReports } from "@/components/citizen/use-report-feeds";
 import { WeatherChip } from "@/components/citizen/weather-chip";
 import { ThemeToggle } from "@/components/varuna/theme-toggle";
@@ -853,6 +854,19 @@ export function DashboardScreen() {
           title={run?.provenance.runId ?? undefined}
         >
           {runLine(run, runFailed)}
+          {usesLiveRadar(run?.provenance.notes) ? (
+            <>
+              {" "}
+              <a
+                href={RAINVIEWER_CREDIT.href}
+                target="_blank"
+                rel="noreferrer"
+                className="text-text-2 hover:text-text underline underline-offset-2"
+              >
+                {RAINVIEWER_CREDIT.label}
+              </a>
+            </>
+          ) : null}
         </p>
         <ul className="mt-1.5 flex flex-wrap gap-1.5">
           {HONESTY_CHIPS.map((chip) => (
