@@ -7,6 +7,7 @@ import { DEFAULT_THEME } from "@varuna/tokens";
 
 import { SwRegister } from "@/components/varuna/sw-register";
 import { devanagari } from "@/lib/i18n/devanagari";
+import { KEYWORDS, SITE_DESCRIPTION, SITE_TITLE, SOURCE_REPOSITORY, TEAM_NAME } from "@/lib/seo";
 import { Providers } from "@/lib/providers";
 import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme-bootstrap";
 
@@ -25,12 +26,20 @@ export const metadata: Metadata = {
   // is the honest default and a deployment overrides it with NEXT_PUBLIC_SITE_URL.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "VARUNA",
+    default: SITE_TITLE,
     template: "%s - VARUNA",
   },
-  description:
-    "Street-level urban flood nowcasting digital twin: Doppler radar to street-by-street depth for the next three hours, a drain map that learns from every flood, and routes for emergency services. SIH 2026, PS SIH26085.",
+  description: SITE_DESCRIPTION,
+  keywords: KEYWORDS,
   applicationName: "VARUNA",
+  authors: [{ name: TEAM_NAME, url: SOURCE_REPOSITORY }],
+  creator: TEAM_NAME,
+  openGraph: {
+    type: "website",
+    siteName: "VARUNA",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
   // The SVG mark for browser tabs, and the 180 px PNG iOS asks for when the public map is added
   // to a home screen: Safari ignores an SVG there and would screenshot the page instead.
   icons: {

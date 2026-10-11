@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { Hero } from "@/components/landing/hero";
+import { SITE_DESCRIPTION, SITE_TITLE, structuredData } from "@/lib/seo";
 import { Proof } from "@/components/landing/proof";
 import {
   DataSources,
@@ -14,9 +15,10 @@ import {
 } from "@/components/landing/sections";
 
 export const metadata: Metadata = {
-  title: "VARUNA - every street, three hours early",
-  description:
-    "VARUNA turns Doppler radar into street-by-street flood depth for the next three hours, learns a city's hidden drains from every flood, and routes emergency services around what is coming.",
+  // `absolute`: the landing page is the site's own title, not "<title> - VARUNA".
+  title: { absolute: SITE_TITLE },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
 };
 
 /**
@@ -31,6 +33,11 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <main className="bg-ink text-text flex min-h-dvh flex-col">
+      {/* What search engines and assistants read about the project (lib/seo.ts). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData()) }}
+      />
       <Hero />
       <TheGap />
       <FourWays />

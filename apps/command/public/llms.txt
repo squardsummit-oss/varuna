@@ -1,0 +1,30 @@
+# VARUNA
+
+> VARUNA is an open-source urban flood nowcasting prototype: it turns radar rainfall into street-by-street flood-depth forecasts for the next 0-3 hours, by coupling a 2D surface-water model with a 1D drainage network, and routes emergency vehicles around streets forecast to be impassable. Built for Smart India Hackathon 2026, problem statement SIH26085 (Ministry of Earth Sciences), by Team VARUNA, Vellore Institute of Technology. Licence: MIT.
+
+VARUNA is a research prototype, not an operational warning service. What is real and what is reconstructed or synthetic is labelled on every screen and listed in the repository's docs/SIMPLIFICATIONS.md.
+
+## What it does
+
+- Rainfall: radar reflectivity to rain rate (Z-R), Lucas-Kanade motion and a 20-member STEPS ensemble nowcast (pySTEPS), blended with the DWD ICON-EPS weather-model ensemble.
+- Surface water: a local-inertial shallow-water solver (Bates et al. 2010) on a hydro-conditioned 30 m terrain (Copernicus GLO-30), with SCS curve-number infiltration and a sea boundary held at the tide.
+- Drains: a 1D drainage network inferred from roads and terrain (no surveyed municipal drain GIS was available), with pipe capacity, surcharge, backflow at tide-locked outfalls, and inlet and manhole exchange with the surface. Every pipe is labelled inferred.
+- Learning: an ensemble Kalman filter (ES-MDA) estimates likely drain blockage from traffic slowdowns and citizen reports, as a probability per pipe, not a confirmed fault.
+- Products: per-street flood depth with p10/p50/p90 and the probability of exceeding 15, 30, 45 and 60 cm; hotspots; CAP 1.2 alerts; a pump-dispatch plan; flood-aware routing and hospital reachability.
+- Verification: scores against 17 sourced public reports of the 2 July 2019 Mumbai flood, published with their limitations.
+
+## Live and replay
+
+- Live: radar from RainViewer and rain and sea-level forecasts from Open-Meteo, run through the same engines.
+- Replay: a reconstructed replay of the 2 July 2019 Mumbai flood. Its radar is a storm reconstruction calibrated to public gauge totals, not archived IMD radar.
+
+## Links
+
+- [Website](https://varuna-dhrishta.vercel.app): landing page
+- [Command console](https://varuna-dhrishta.vercel.app/console): flood depth on Mumbai's streets, 0-3 h
+- [Public flood map](https://varuna-dhrishta.vercel.app/map): passable or impassable by vehicle
+- [Citizen dashboard](https://varuna-dhrishta.vercel.app/dashboard)
+- [Verification and limitations](https://varuna-dhrishta.vercel.app/verify)
+- [City onboarding (Chennai)](https://varuna-dhrishta.vercel.app/onboard)
+- [API reference](https://varuna-api-production.up.railway.app/docs)
+- [Source code](https://github.com/squardsummit-oss/varuna)
