@@ -191,7 +191,7 @@ def _reference_detect(
     neighbours: dict[str, list[str]] | None = None,
     incident_segments: set[str] | None = None,
 ) -> list[traffic.TrafficObservation]:
-    """The detector as it stood at 1bc503a, before vectorisation. Do not edit."""
+    """The detector as it stood at f927068, before vectorisation. Do not edit."""
     from datetime import UTC
 
     if not raining or speeds.empty:

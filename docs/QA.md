@@ -487,7 +487,7 @@ a replay raises.
 That last one is tested, not asserted: all 272 committed demo CAP documents validate against the
 vendored OASIS CAP-v1.2.xsd and carry `Exercise`, and generated CAP validates in baked, replay and
 live modes with `Actual` only in live (`services/products/tests/test_cap_schema.py`, 14 tests,
-passing with outbound sockets denied; ADR-0045, measured 14 September 2026 at 78f6c0b).
+passing with outbound sockets denied; ADR-0045, measured 14 September 2026 at 2ddbd4d).
 
 ## "If everyone follows your safe route, don't you just move the jam?"
 
@@ -503,7 +503,7 @@ live traffic counts in this prototype, so demand is unmeasured, and the screen a
 narrowest leg, with the fraction of capacity the water has taken - divided by its travel time.
 
 Measured on the 08:40 demo run, a car from Babasaheb Worlikar Fire Station to Chembur Fire
-Station (2026-09-19, `b6271e6`):
+Station (2026-09-19, `edaee21`):
 
 | Corridor | ETA | Share |
 |---|---|---|
@@ -523,7 +523,7 @@ divides it because a corridor that holds a vehicle twice as long absorbs half th
 
 Against section 14's 300 ms budget, on the 08:40 demo run, an Intel i5-1155G7 laptop:
 
-| Trip | Before 2026-09-19 | After (`983513e`) |
+| Trip | Before 2026-09-19 | After (`baad06c`) |
 |---|---|---|
 | KEM to Sion, ambulance (the demo trip) | 531.5-561.9 ms | **67.6-102.5 ms** |
 | Worli to Chembur, car, 3 corridors + reasons | 1,953-2,533 ms | **215.3-218.3 ms** |

@@ -195,7 +195,7 @@ def test_the_longest_headline_on_the_demo_cycles_still_carries_the_sms_instructi
             lengths.append(len(headline))
             assert len(text) <= SMS_LIMIT
             assert text.endswith("Avoid the street."), text
-    # The seven cycles re-baked on the rebuilt coast (2a0a634) list 76 alerts where the earlier
+    # The seven cycles re-baked on the rebuilt coast (81267cd) list 76 alerts where the earlier
     # bake listed 152; the longest headline was 116 characters then and is 110 now.
     assert len(lengths) == 76
     assert max(lengths) == 110

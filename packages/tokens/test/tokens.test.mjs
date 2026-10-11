@@ -463,7 +463,7 @@ describe("tokens.json shape the Python ramps read", () => {
  * Light theme
  * ---------------------------------------------------------------------------------------------- */
 
-/** sha256 of the dark :root block as it stood before the light theme existed (commit 46007d8). */
+/** sha256 of the dark :root block as it stood before the light theme existed (commit 8913281). */
 const DARK_ROOT_SHA256 = "15bf1ce03f0e7f96231e9da1ebefc48b1515634636bde2c3cc20f825d7c976dd";
 
 /** The `{ "--name": value }` of a `selector { ... }` block. */

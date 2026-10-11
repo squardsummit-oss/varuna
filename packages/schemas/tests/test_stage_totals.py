@@ -112,7 +112,7 @@ def test_committed_demo_runs_total_their_top_level_stages(run_json: Path) -> Non
     raw = json.loads(run_json.read_text(encoding="utf-8"))
     # Derived by a different rule than the one under test: a stage key has no underscore, is
     # not a total, and is not `provenance` - the city fingerprint the cycle times under its own
-    # key (a98b8a5), which is bookkeeping rather than one of the cycle's stages. Agreement on
+    # key (2f31982), which is bookkeeping rather than one of the cycle's stages. Agreement on
     # real files is the point.
     expected = sum(
         ms

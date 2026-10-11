@@ -7,7 +7,7 @@ work), `SPEC.md` (the build spec every rule below inherits).
 
 ## 0. Ground truth about the code we are building on
 
-Measured on the working tree at `b3f2d04`. These facts decide most of the design.
+Measured on the working tree at `e5bb277`. These facts decide most of the design.
 
 | Fact | Consequence |
 |---|---|

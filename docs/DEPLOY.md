@@ -56,7 +56,7 @@ The production alias is `varuna-dhrishta.vercel.app`; the same deployment also a
 `command-mu-lime.vercel.app` and `varuna-git-main-dhrishta.vercel.app`. A second, abandoned
 project called `command` exists on the team with two failed deployments and no alias pointing at
 anything live — it is left over from the first attempt at the root directory setting (commits
-`0f89bd5`, `f1f4612`) and can be deleted whenever someone is in the dashboard.
+`ab95c1f`, `a4723a2`) and can be deleted whenever someone is in the dashboard.
 
 **Deployment protection.** A new Vercel project protects every deployment with Vercel
 Authentication, so the production URL answers 200 but serves Vercel's own sign-in page

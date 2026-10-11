@@ -21,7 +21,7 @@ live timings are the wrappers' own wall clocks; when the run is published its ``
 decode stage, so that segment of the bar stays empty and says so.
 
 **One heavy cycle at a time.** The live rain cycle behind ``/v1/nowcast/rain?compute=true`` and this
-one share a lock: either running refuses the other with 503 ``cycle_busy`` (3adbdd8).
+one share a lock: either running refuses the other with 503 ``cycle_busy`` (ca81901).
 """
 
 from __future__ import annotations

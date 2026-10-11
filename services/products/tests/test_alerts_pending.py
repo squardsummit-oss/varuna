@@ -153,7 +153,7 @@ def test_served_queue_on_the_committed_0840_cycle() -> None:
 
     On the bake this was written against the file listed 60 of 213 raised, and 24 of the 32
     pending places it listed with no row were already raised at a lower level: "Watching, not
-    raised yet" named them. The re-bake on the rebuilt coast (2a0a634) raises 74 and lists 60, and
+    raised yet" named them. The re-bake on the rebuilt coast (81267cd) raises 74 and lists 60, and
     none of its 22 pending places without a row is raised at another level.
     """
     path = (

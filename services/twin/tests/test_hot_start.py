@@ -201,7 +201,7 @@ def _digest(array: np.ndarray) -> str:
 GOLDEN_CPU = "tigerlake"
 """The Numba host CPU the digests below were recorded on.
 
-They were taken from ``run_twin`` at commit 1bc503a, before task P4.2 touched the runner, and
+They were taken from ``run_twin`` at commit f927068, before task P4.2 touched the runner, and
 re-taken after it: every array, every time and every mass-balance float matched bit for bit.
 Numba compiles the kernels for the host with ``fastmath``, so another CPU may round a reduction
 differently without anything being wrong; there the test skips rather than fail, and the

@@ -33,7 +33,7 @@ Fetched from a CDN copy of the `world-atlas` package (Mike Bostock, ISC licence)
 is derived from **Natural Earth**, which places its data in the public domain with no permission
 needed and no attribution required (<https://www.naturalearthdata.com/about/terms-of-use/>).
 
-The exact upstream release was not recorded when the file was committed (commit `505b2a4`).
+The exact upstream release was not recorded when the file was committed (commit `9c0c2a7`).
 Confirm the version before publication if the provenance needs to be exact.
 
 It is committed rather than fetched at runtime because SPEC.md § 17 requires the finale to run
