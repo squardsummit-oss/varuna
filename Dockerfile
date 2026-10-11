@@ -112,6 +112,20 @@ RUN mkdir -p /app/city \
  && test -f /app/city/mumbai/map/terrain.png \
  && test -f /app/city/mumbai/map/basemap.pmtiles
 
+# Chennai, the city Pravesh onboards (ADR-0099). The hosted server cannot run city-in-a-box (it is
+# off here, and a build needs about 1 GB), so it serves the build recorded on the demo laptop: the
+# one the shipped first forecast (demo/onboard/runs) was made on, whose 18,626 streets carry the
+# forecast's ids. With its `segments.parquet` on disk the seeder treats Chennai as built and copies
+# in that recorded build and its first forecast, so Pravesh shows them instead of "Press Start".
+# The tarball leaves out the laptop's own `onboard_last.json`, so the record served is the shipped
+# one marked `seeded: true`, which says it was built elsewhere. Its map layers are already the
+# current export (fingerprint 530539f0b7157a18).
+ARG CHENNAI_TARBALL=https://github.com/shahul-royalss/varuna/releases/download/city-chennai-2026-10-12/city-chennai.tar.gz
+RUN curl -fsSL "${CHENNAI_TARBALL}" | tar -xz -C /app/city \
+ && test -f /app/city/chennai/segments.parquet \
+ && test -f /app/city/chennai/map/segments.geojson \
+ && test ! -e /app/city/chennai/onboard_last.json
+
 # Replay bundles are generated, not committed (see .gitignore), so the entrypoint generates the
 # demo bundle into the mounted volume on first boot, in about seven seconds.
 #

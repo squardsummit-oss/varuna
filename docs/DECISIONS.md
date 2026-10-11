@@ -795,3 +795,11 @@ Five lines each: context, decision, alternatives, consequence, date. Newest at t
 - Alternatives: a satellite switch in the layer panel (it existed until 86e2376, and the team asked for fewer switches); leaving the scrim and lightening only the light theme.
 - Consequence: the depth ramp's 5-15 cm blue now sits on a brighter ground and separates less from it than on the dark map; the flooded streets remain the only saturated lines. The night and mist road-map styles in `lib/maps/google-style.ts` are no longer drawn on the dashboard.
 - Date: 2026-10-11
+
+## ADR-0099 The API image carries the Chennai build Pravesh shows
+
+- Context: on the new Railway service (ADR-0097) Pravesh said "No Chennai layers yet. Press Start onboarding", and Start cannot run there: city-in-a-box is off on the hosted server and a build needs about 1 GB. The old service had worked only because its volume still held a Chennai build from before onboarding was switched off; a fresh volume has none, so the seeder skipped the shipped onboarding record and first forecast, which it copies only into a built city.
+- Decision: the laptop's Chennai build, the one the shipped first forecast was made on (18,626 streets, the forecast's own ids, map export fingerprint 530539f0b7157a18), is published as release `city-chennai-2026-10-12` (41.6 MB) and baked into the image at `/app/city/chennai`, without the laptop's `onboard_last.json`. The seeder then finds Chennai built and copies in the shipped record, marked `seeded: true`, and the first forecast.
+- Alternatives: building Chennai in the image from Overpass and Copernicus (slow, rate-limited, and its ids could drift from the forecast's); serving Pravesh from the console's stored replay (it would show the build only when the server is down).
+- Consequence: measured in the image under 512 MB: `/v1/cities` lists Chennai built, the onboarding record is the finished 206 s build with its first forecast, and the Chennai layer, segments, bounds and rasters answer 200. The release has to be refreshed whenever Chennai is rebuilt.
+- Date: 2026-10-12
