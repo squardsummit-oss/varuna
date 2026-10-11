@@ -4,7 +4,7 @@ import { MessageSquareWarning } from "lucide-react";
 
 import { Skeleton } from "@/components/varuna/skeleton";
 import type { ReportPin } from "@/lib/api/reports";
-import { formatIst } from "@/lib/format";
+import { formatDate, formatIst } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /** The chip a reporter picked, as the console prints it. */
@@ -77,7 +77,13 @@ export function CitizenReportsCard({
           {shown.map((report) => {
             const where = report.place ?? report.text ?? "Reported spot";
             const hint = report.depthHint ? (HINT[report.depthHint] ?? report.depthHint) : null;
-            const when = report.ts ? formatIst(report.ts) : null;
+            // The date as well whenever it is not today: the replay's seeded reports are from
+            // 2 July 2019, and "08:47" alone reads as this morning.
+            const when = report.ts
+              ? formatDate(report.ts) === formatDate(new Date())
+                ? formatIst(report.ts)
+                : `${formatDate(report.ts)}, ${formatIst(report.ts)}`
+              : null;
             return (
               <li key={report.id}>
                 <button
@@ -89,7 +95,15 @@ export function CitizenReportsCard({
                     selectedId === report.id && "bg-well",
                   )}
                 >
-                  <span className="type-small text-text truncate">{where}</span>
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="type-small text-text truncate">{where}</span>
+                    {report.synthetic ? (
+                      // Rule 7: a seeded demo report is labelled synthetic wherever it is shown.
+                      <span className="border-line type-micro text-text-2 shrink-0 rounded-full border px-1.5">
+                        Synthetic
+                      </span>
+                    ) : null}
+                  </span>
                   <span className="num type-micro text-text-2 truncate">
                     {[hint, when, report.statusLabel].filter(Boolean).join(", ")}
                   </span>

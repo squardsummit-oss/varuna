@@ -583,6 +583,13 @@ function ConsoleView() {
   // A live cycle is today's weather: the 2019 ground truth has nothing to say about it (and the
   // API has none for a live folder), and its chip and notice say which forecast this is.
   const liveRun = isLiveRun({ bundle: run?.provenance.bundle ?? null });
+  // A live run is the city today. The replay's seeded demo reports (synthetic, 2 July 2019) are
+  // not shown beside it, where a row reading "Milan Subway, ankle deep, received" would pass for
+  // tonight's complaint; on the replay they stay, labelled synthetic.
+  const visibleReports = useMemo(
+    () => (liveRun ? reportPins.filter((pin) => !pin.synthetic) : reportPins),
+    [liveRun, reportPins],
+  );
   const liveRadar = liveRun && usesLiveRadar(run?.provenance.notes);
   const truth = useTruthPins(
     liveRun ? undefined : (run?.provenance.bundle ?? undefined),
@@ -1081,7 +1088,7 @@ function ConsoleView() {
             showSatellite
             probabilityThresholdCm={layers.probability ? probabilityThresholdCm : undefined}
             truthPins={layers.hotspots && !liveRun ? truth.dropping : undefined}
-            reports={layers.reports ? reportPins : NO_REPORT_PINS}
+            reports={layers.reports ? visibleReports : NO_REPORT_PINS}
             selectedReportId={pickedReportId}
             onPickReport={setPickedReportId}
             onSegmentPick={setPick}
@@ -1221,7 +1228,7 @@ function ConsoleView() {
           )}
           {inFullView || !layers.reports ? null : (
             <CitizenReportsCard
-              reports={reportPins}
+              reports={visibleReports}
               loaded={reportFeed.loaded}
               error={reportFeed.error}
               selectedId={pickedReportId}
