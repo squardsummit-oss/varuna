@@ -28,3 +28,4 @@ VARUNA is a research prototype, not an operational warning service. What is real
 - [City onboarding (Chennai)](https://varuna-dhrishta.vercel.app/onboard)
 - [API reference](https://varuna-api-production.up.railway.app/docs)
 - [Source code](https://github.com/squardsummit-oss/varuna)
+- [Demo video: Urban Flood Nowcasting System, Team SummitSquard, SIH2026 - 26085](https://www.youtube.com/watch?v=tyVrHbtSRnM)

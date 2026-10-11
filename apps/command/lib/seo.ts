@@ -38,6 +38,14 @@ export const KEYWORDS = [
 ];
 
 export const SOURCE_REPOSITORY = "https://github.com/squardsummit-oss/varuna";
+export const DEMO_VIDEO = "https://www.youtube.com/watch?v=tyVrHbtSRnM";
+
+/**
+ * Google Search Console's ownership check for varuna-dhrishta.vercel.app (an HTML-tag check: a
+ * vercel.app subdomain cannot carry the DNS TXT record). Public by design; it proves who may
+ * manage the site's search listing, nothing more.
+ */
+export const GOOGLE_SITE_VERIFICATION = "3-tJ5Ovse3gy397Za7ymLauLLhIDPusVbmzkyMlQPzo";
 export const TEAM_NAME = "Team VARUNA, Vellore Institute of Technology";
 
 /** schema.org JSON-LD for the landing page: the site, the application and its source code. */
@@ -78,7 +86,7 @@ export function structuredData(base: string = siteUrl()): Record<string, unknown
           { "@type": "Place", name: "Chennai, India" },
         ],
         creator,
-        sameAs: [SOURCE_REPOSITORY],
+        sameAs: [SOURCE_REPOSITORY, DEMO_VIDEO],
       },
       {
         "@type": "SoftwareSourceCode",

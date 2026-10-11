@@ -16,6 +16,14 @@ learning drain map, sub-second what-if, and routes for an ambulance. Every simpl
 labelled on screen and listed in [`docs/SIMPLIFICATIONS.md`](docs/SIMPLIFICATIONS.md).
 
 
+## Demo video
+
+[![Urban Flood Nowcasting System | Team SummitSquard | SIH2026 - 26085](https://img.youtube.com/vi/tyVrHbtSRnM/maxresdefault.jpg)](https://www.youtube.com/watch?v=tyVrHbtSRnM)
+
+Watch the walkthrough on YouTube: [Urban Flood Nowcasting System | Team SummitSquard | SIH2026 - 26085](https://www.youtube.com/watch?v=tyVrHbtSRnM).
+
+Try the live prototype: [varuna-dhrishta.vercel.app](https://varuna-dhrishta.vercel.app). The forecast API is at [varuna-api-production.up.railway.app/docs](https://varuna-api-production.up.railway.app/docs).
+
 ## Quick start
 
 ```sh

@@ -7,7 +7,14 @@ import { DEFAULT_THEME } from "@varuna/tokens";
 
 import { SwRegister } from "@/components/varuna/sw-register";
 import { devanagari } from "@/lib/i18n/devanagari";
-import { KEYWORDS, SITE_DESCRIPTION, SITE_TITLE, SOURCE_REPOSITORY, TEAM_NAME } from "@/lib/seo";
+import {
+  GOOGLE_SITE_VERIFICATION,
+  KEYWORDS,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  SOURCE_REPOSITORY,
+  TEAM_NAME,
+} from "@/lib/seo";
 import { Providers } from "@/lib/providers";
 import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme-bootstrap";
 
@@ -34,6 +41,7 @@ export const metadata: Metadata = {
   applicationName: "VARUNA",
   authors: [{ name: TEAM_NAME, url: SOURCE_REPOSITORY }],
   creator: TEAM_NAME,
+  verification: { google: GOOGLE_SITE_VERIFICATION },
   openGraph: {
     type: "website",
     siteName: "VARUNA",
