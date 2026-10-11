@@ -123,12 +123,19 @@ RUN mkdir -p /app/city \
 # Citizen report photos are off here for the same volume, and because the team decided photo
 # uploads are for the demo laptop: a report posted to this image is kept without its photo and
 # the response says so.
-# MALLOC_ARENA_MAX=2: glibc otherwise gives each of the threadpool's threads its own malloc arena,
-# and the freed-but-kept pages of eight arenas are the difference between fitting in 0.5 GB and not.
+# Memory that is freed goes back to the system (ADR-0097). Railway's Free plan caps a service at
+# 0.5 GB, and by default the API kept what every request had ever freed: Arrow's own allocator
+# holds its pool, and glibc keeps freed blocks and a malloc arena per threadpool thread. Measured
+# in this image under a 512 MB cap after every screen's requests: 445 MB of anonymous memory with
+# the defaults, the cgroup peak at the limit; 269 MB with these four, and a 383 MB peak through
+# six heavy requests at once, with no OOM kill and faster answers.
 ENV VARUNA_DATA_DIR=/data \
     VARUNA_CITY_DIR=/app/city \
     VARUNA_BUNDLES_DIR=/data/bundles \
     MALLOC_ARENA_MAX=2 \
+    MALLOC_MMAP_THRESHOLD_=65536 \
+    MALLOC_TRIM_THRESHOLD_=131072 \
+    ARROW_DEFAULT_MEMORY_POOL=system \
     VARUNA_MODE=replay \
     VARUNA_CITY=mumbai \
     VARUNA_ONBOARD_ENABLED=0 \
