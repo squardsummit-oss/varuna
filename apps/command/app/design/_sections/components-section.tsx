@@ -20,6 +20,7 @@ import { IconRail } from "@/components/varuna/icon-rail";
 import { Kbd } from "@/components/varuna/kbd";
 import { LogStream, type LogLine } from "@/components/varuna/log-stream";
 import { ModeBanner } from "@/components/varuna/mode-banner";
+import { ServerStatusBanner } from "@/components/varuna/server-status-banner";
 import {
   IDLE_ONBOARDING_STEPS,
   OnboardingStepDetails,
@@ -641,6 +642,26 @@ export function ComponentsSection() {
             <Demo label="No run" note="The state a cold console opens in." bare>
               <ModeBanner mode="none" />
             </Demo>
+          </div>
+        </Panel>
+
+        <Panel
+          title="Server status"
+          description="Only on the deployed site, when its forecast server does not answer (ADR-0097). Hidden while it does."
+        >
+          <div className="flex flex-col gap-3">
+            {(
+              [
+                ["Waking, stored replay shown", "waking", true],
+                ["Waking, nothing stored", "waking", false],
+                ["Offline, stored replay shown", "offline", true],
+                ["Back", "back", true],
+              ] as const
+            ).map(([label, state, stored]) => (
+              <Demo key={label} label={label} bare>
+                <ServerStatusBanner state={state} stored={stored} className="static inset-auto px-0" />
+              </Demo>
+            ))}
           </div>
         </Panel>
 

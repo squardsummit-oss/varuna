@@ -62,6 +62,7 @@ import type { MapFocus, RouteLine } from "@/components/map/layers/types";
 import { TRUTH_FILL, TRUTH_RING } from "@/components/map/layers/palette";
 import type { PublicProfile } from "@/components/varuna/vehicle-selector";
 import { useCitizenRun, type CitizenRun, type CitizenRunState } from "@/lib/maps/citizen-run";
+import type { MapTypeStyle } from "@/lib/maps/google-style";
 import { toLatLngBounds, useGoogleFit, type FittableMap } from "@/lib/maps/fit";
 import {
   GOOGLE_BOOTSTRAP_TIMEOUT_MS,
@@ -70,8 +71,6 @@ import {
   onGoogleAuthFailure,
   type GoogleFallbackReason,
 } from "@/lib/maps/google";
-import { mapStyleFor } from "@/lib/maps/google-style";
-import { useTheme } from "@/lib/theme";
 import { usePhotorealTileset, type PhotorealState } from "@/lib/maps/photoreal";
 import { useGoogleDeckOverlay, type OverlayFactory } from "@/lib/maps/overlay";
 import { useMediaQuery, usePrefersReducedMotion } from "@/lib/hooks";
@@ -137,6 +136,15 @@ export interface CitizenMapProps {
 
 /** The step a citizen sees unless the screen says otherwise: now. */
 const NOW_STEP = 0;
+
+/**
+ * The satellite map's only restyling: Google's business and transit pins hidden, so the photograph
+ * carries street and area names and nothing that competes with the water and the route.
+ */
+const SATELLITE_STYLES: MapTypeStyle[] = [
+  { featureType: "poi", stylers: [{ visibility: "off" }] },
+  { featureType: "transit", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+];
 
 /**
  * The slice of `google.maps.Map` a focus uses. Structural, as `FittableMap` is: the ambient
@@ -595,10 +603,6 @@ export function CitizenMap({
   );
   /** The one thing the 3D path asks `CityMap` for, memoised so it is one identity per city. */
   const threeDOverlay = useMemo<MapOverlay>(() => ({ city, threeD: true }), [city]);
-  // Resolved inside the component, not at module scope, so a theme override reaches the tiles.
-  // The Google basemap follows the app's theme: the night style on dark, the mist style on light.
-  const { theme } = useTheme();
-  const styles = useMemo(() => mapStyleFor(theme), [theme]);
 
   const pick = useCallback(
     (event: MapTap) => {
@@ -701,10 +705,13 @@ export function CitizenMap({
       <APIProvider apiKey={apiKey} onLoad={onLoad} onError={onError}>
         <GoogleMap
           className="size-full"
-          // A raster map: Google refuses an inline `styles` array on a vector map, and no cloud
-          // Map ID exists for this project (TECH_SPEC 2.3).
           renderingType="RASTER"
-          styles={styles}
+          // Satellite imagery with Google's own street and place labels: the team asked for the
+          // photographed city here, as the console and the public map draw it. The night and
+          // mist road-map styles (lib/maps/google-style.ts) are not applied: on this map type
+          // they recolour the road overlay into dark lines over the photograph.
+          mapTypeId="hybrid"
+          styles={SATELLITE_STYLES}
           defaultBounds={{ ...toLatLngBounds(bounds), padding: 16 }}
           gestureHandling="greedy"
           disableDefaultUI

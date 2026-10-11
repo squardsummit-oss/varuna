@@ -76,8 +76,8 @@ describe("imagery and reference labels in each theme", () => {
     // Dark draws the aerial opaque under the --ink scrim, which is what it has always shown.
     expect(imageryOpacity("dark")).toBe(1);
     expect(imageryOpacity("dark", true)).toBe(1);
-    expect(imageryOpacity("light")).toBe(0.3);
-    expect(imageryOpacity("light", true)).toBeCloseTo(0.21, 10);
+    expect(imageryOpacity("light")).toBe(0.8);
+    expect(imageryOpacity("light", true)).toBeCloseTo(0.56, 10);
   });
 
   it("hands the tile layer's opacity to every tile it draws", () => {
@@ -99,7 +99,7 @@ describe("imagery and reference labels in each theme", () => {
       tile,
       opacity: imagery!.props.opacity,
     });
-    expect(bitmap.props.opacity).toBe(0.3);
+    expect(bitmap.props.opacity).toBe(0.8);
     const [labels] = labelLayers({ enabled: true, theme: "light" }) as (typeof imagery)[];
     const label = labels!.props.renderSubLayers({ id: "l", data: null, tile, opacity: 0.5 });
     expect(label.props.opacity).toBe(0.5);

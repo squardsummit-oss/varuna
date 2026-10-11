@@ -94,10 +94,26 @@ RUN uv sync --frozen --no-dev
 # background city build) re-check the lock against it.
 ENV UV_NO_SYNC=1
 
-# Static city layers and replay bundles are generated, not committed (see .gitignore), so the
-# image ships without them and the entrypoint builds them into the mounted volume on first
-# boot. Every layer endpoint answers 404 with "Run make city CITY=<city>" until it has, which
-# is the honest state rather than a crash.
+# The Mumbai city is baked into the image (ADR-0097). It used to be built into the volume on first
+# boot, which needs about 1 GB of memory, and Railway's Free plan gives a service 0.5 GB. The image
+# takes the build the live workflow already uses (city-mumbai-2026-09-28, every step passed) and
+# derives the three map products the tarball does not carry: the map layers, the Terrarium
+# heightmap and the PMTiles basemap, about a minute of the builder's time. The entrypoint finds
+# the city complete and current, so a boot - including every wake from sleep - builds nothing.
+# The volume keeps only what changes: runs, the replay bundle and citizen reports.
+ARG CITY_TARBALL=https://github.com/shahul-royalss/varuna/releases/download/city-mumbai-2026-09-28/city-mumbai.tar.gz
+RUN mkdir -p /app/city \
+ && curl -fsSL "${CITY_TARBALL}" | tar -xz -C /app/city \
+ && export VARUNA_CITY_DIR=/app/city \
+ && uv run --no-sync python -m varuna_city.export --city mumbai \
+ && uv run --no-sync python -m varuna_city.terrain_export --city mumbai \
+ && uv run --no-sync python -m varuna_city.basemap_tiles --city mumbai \
+ && test -f /app/city/mumbai/map/EXPORT.json \
+ && test -f /app/city/mumbai/map/terrain.png \
+ && test -f /app/city/mumbai/map/basemap.pmtiles
+
+# Replay bundles are generated, not committed (see .gitignore), so the entrypoint generates the
+# demo bundle into the mounted volume on first boot, in about seven seconds.
 #
 # City-in-a-box is off in this image. A public visitor can press Start on /onboard, and a Chennai
 # build needs about 320 MB beside the Mumbai city on a 500 MB volume: the one started on
@@ -107,9 +123,12 @@ ENV UV_NO_SYNC=1
 # Citizen report photos are off here for the same volume, and because the team decided photo
 # uploads are for the demo laptop: a report posted to this image is kept without its photo and
 # the response says so.
+# MALLOC_ARENA_MAX=2: glibc otherwise gives each of the threadpool's threads its own malloc arena,
+# and the freed-but-kept pages of eight arenas are the difference between fitting in 0.5 GB and not.
 ENV VARUNA_DATA_DIR=/data \
-    VARUNA_CITY_DIR=/data/city \
+    VARUNA_CITY_DIR=/app/city \
     VARUNA_BUNDLES_DIR=/data/bundles \
+    MALLOC_ARENA_MAX=2 \
     VARUNA_MODE=replay \
     VARUNA_CITY=mumbai \
     VARUNA_ONBOARD_ENABLED=0 \

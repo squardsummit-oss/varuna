@@ -167,19 +167,24 @@ export function weatherFromBody(body: Record<string, unknown>): Weather {
  */
 export async function loadWeather(
   city = DEFAULT_WEATHER_CITY,
-  options: { signal?: AbortSignal; timeoutMs?: number } = {},
+  options: { signal?: AbortSignal; timeoutMs?: number; fetchImpl?: typeof fetch } = {},
 ): Promise<WeatherState> {
   try {
     const body = await apiFetch<Record<string, unknown>>("/v1/weather", {
       query: { city },
       timeoutMs: options.timeoutMs ?? WEATHER_TIMEOUT_MS,
       signal: options.signal,
+      fetchImpl: options.fetchImpl,
     });
     return { kind: "ready", weather: weatherFromBody(body) };
   } catch (error) {
     if (isApiError(error) && error.code === "aborted") {
       return { kind: "unavailable", reason: "The weather request was cancelled." };
     }
+    // The API only relays Open-Meteo. When it is not answering - asleep, or out of its free
+    // allowance (ADR-0097) - the browser asks Open-Meteo itself, as the sea level card already does.
+    const direct = await loadWeatherDirect(city, options);
+    if (direct) return { kind: "ready", weather: direct };
     return {
       kind: "unavailable",
       reason: errorMessage(
@@ -187,6 +192,107 @@ export async function loadWeather(
         "The live weather source could not be reached. The flood forecast on this page does not depend on it.",
       ),
     };
+  }
+}
+
+/** Centre of each city's AOI (services/city/configs/<city>.yaml), where the API asks too. */
+export const WEATHER_POINTS: Record<string, WeatherPoint> = {
+  mumbai: { lon: 72.86, lat: 19.065 },
+  chennai: { lon: 80.24, lat: 13.005 },
+};
+
+/** WMO 4677 present-weather labels as the API's `WMO_LABELS` gives them. */
+const WMO_LABELS: Record<number, string> = {
+  0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog",
+  48: "Depositing rime fog", 51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+  56: "Light freezing drizzle", 57: "Dense freezing drizzle", 61: "Slight rain",
+  63: "Moderate rain", 65: "Heavy rain", 66: "Light freezing rain", 67: "Heavy freezing rain",
+  71: "Slight snowfall", 73: "Moderate snowfall", 75: "Heavy snowfall", 77: "Snow grains",
+  80: "Slight rain showers", 81: "Moderate rain showers", 82: "Violent rain showers",
+  85: "Slight snow showers", 86: "Heavy snow showers", 95: "Thunderstorm",
+  96: "Thunderstorm with slight hail", 99: "Thunderstorm with heavy hail",
+};
+
+/** Hourly steps the API keeps: the four that end after "now". */
+const DIRECT_HOURLY_STEPS = 4;
+
+function haversineKm(a: WeatherPoint, b: WeatherPoint): number {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLon = (b.lon - a.lon) * rad;
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+
+/**
+ * The same reading the API serves, asked of Open-Meteo straight from the browser. Null when
+ * Open-Meteo does not answer either, or the city has no point. Times are unix seconds so no
+ * timezone parsing is involved; they are written back as ISO instants.
+ */
+export async function loadWeatherDirect(
+  city: string,
+  options: { signal?: AbortSignal; fetchImpl?: typeof fetch } = {},
+): Promise<Weather | null> {
+  const at = WEATHER_POINTS[city];
+  if (!at) return null;
+  const url =
+    "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${at.lat}&longitude=${at.lon}` +
+    "&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m" +
+    "&hourly=precipitation,precipitation_probability&forecast_hours=6&past_hours=1" +
+    "&timezone=Asia%2FKolkata&timeformat=unixtime";
+  try {
+    const doFetch = options.fetchImpl ?? fetch;
+    const response = await doFetch(url, { signal: options.signal });
+    if (!response.ok) return null;
+    const raw = (await response.json()) as Record<string, unknown>;
+    const current = (raw.current ?? null) as Record<string, unknown> | null;
+    if (!current) return null;
+    const hourly = (raw.hourly ?? {}) as Record<string, unknown[]>;
+    const nowS = Date.now() / 1000;
+    const times = (hourly.time ?? []) as number[];
+    const steps: WeatherStep[] = [];
+    times.forEach((t, i) => {
+      if (t <= nowS || steps.length >= DIRECT_HOURLY_STEPS) return;
+      steps.push({
+        ts: new Date(t * 1000).toISOString(),
+        precipitationMm: num(hourly.precipitation?.[i]),
+        precipitationProbabilityPct: num(hourly.precipitation_probability?.[i]),
+      });
+    });
+    const code = num(current.weather_code);
+    const grid = { lon: num(raw.longitude) ?? at.lon, lat: num(raw.latitude) ?? at.lat };
+    const fetchedAt = new Date().toISOString();
+    return {
+      city,
+      point: at,
+      gridPoint: grid,
+      gridOffsetKm: Math.round(haversineKm(at, grid) * 100) / 100,
+      elevationM: num(raw.elevation),
+      current: {
+        ts: typeof current.time === "number" ? new Date(current.time * 1000).toISOString() : fetchedAt,
+        temperatureC: num(current.temperature_2m),
+        humidityPct: num(current.relative_humidity_2m),
+        precipitationMm: num(current.precipitation),
+        windKmh: num(current.wind_speed_10m),
+        weatherCode: code,
+        weather: code !== null ? (WMO_LABELS[code] ?? null) : null,
+      },
+      hourly: steps,
+      fetchedAt,
+      ageS: 0,
+      stale: false,
+      ttlS: 900,
+      source: "open-meteo",
+      sourceUrl: "https://open-meteo.com/",
+      licence: "CC BY 4.0",
+      licenceUrl: "https://creativecommons.org/licenses/by/4.0/",
+      attribution: "Weather data by Open-Meteo.com (CC BY 4.0)",
+      notes: ["Read straight from Open-Meteo, because the forecast server is not answering."],
+    };
+  } catch {
+    return null;
   }
 }
 

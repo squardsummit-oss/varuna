@@ -1,0 +1,1908 @@
+{
+ "version": 1,
+ "generated_at": "2026-10-11T16:32:08.717Z",
+ "note": "Recorded from the VARUNA API for the reconstructed 2 July 2019 replay; see scripts/record-mirror.mjs.",
+ "entries": {
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "6fe247f431e0ce6433fb.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "eefaa6a46e2ef75d1da1.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "491198a98eaef1f3ce12.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "116048a17452210434da.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "ac0d4cde3fd766681729.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "64d043d4e3dd26e8839b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60&run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "5cd2792ad927b1008a9e.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/escalation": {
+   "file": "809beabafa88592b209f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/sender": {
+   "file": "798d145cf38f795c0b77.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "437a3e1495d881a87d62.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "2d9c439fb5fed28b8b18.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "9760645d53828c930cf8.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "6bbb9b03698d8bcec9ea.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "82ad3d1ce1962e182e5b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "0f0224a09e8087596264.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "74e9d98ec452d1b629e9.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "4d0457ea84e283934d75.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "ec04424c3a7c0c636faf.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "b24a2bff5ba9ba1d9679.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "8d9fe70c28122378a004.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "0d527e12000a62dd32a1.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "168050c89767d23d6ce8.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts?level=severe&run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "60b9a1884ae0caab525b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/cities": {
+   "file": "4da8f3ad7bbfa6871a82.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/city/chennai/layers/segments": {
+   "file": "3904d5fbe6e393c6bad1.gz",
+   "type": "application/geo+json",
+   "encoding": "gzip"
+  },
+  "/v1/city/mumbai/layers/assets": {
+   "file": "a12c12f9689ea5966931.gz",
+   "type": "application/geo+json",
+   "encoding": "gzip"
+  },
+  "/v1/city/mumbai/layers/drains": {
+   "file": "02d137f092b1fb802afc.gz",
+   "type": "application/geo+json",
+   "encoding": "gzip"
+  },
+  "/v1/city/mumbai/layers/hotspots": {
+   "file": "69d589cba2f3af165c9e.gz",
+   "type": "application/geo+json",
+   "encoding": "gzip"
+  },
+  "/v1/city/mumbai/layers/segments": {
+   "file": "aa59500d3553daeab975.gz",
+   "type": "application/geo+json",
+   "encoding": "gzip"
+  },
+  "/v1/cycle/compute": {
+   "file": "219c531e7c6fe19c650d.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "7e5005a62f27d8b2dbbe.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "d76ab5ddae79829269db.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "4d6f0daf06fbdb1ac4ce.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "c9e135abae2619d4adb9.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "da39852e49348d4f2066.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "58c427dc01c9fecd24d5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "a1160eaa58526e7ae225.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "3c16b14d32de2ac4907b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "2aef718cb66bc4ac35e5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "36a9591d02d87dbd8383.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "1cbb2a1ed2e3ff6054a0.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "395375f10537672e6ad9.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "dec5bcd27d3b697d8b7a.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned&run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "177613c80d73a1b592c7.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "aec019d084520e9b149b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "fe47f34fa5c24abfccaa.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "3efe4bd9b80fe520f655.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "297dd653ab0d26d3be3a.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "e249cec8971e3086e859.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "af05b2ef63c67c8a8fa6.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/hotspots?limit=100&run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "f3a217e76e924c288edd.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked": {
+   "file": "3d8fadabdcd2e3e11ac0.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "e437f3c2f5d156897592.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "1bcd4ce4aa67a439eecb.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "0efa52848613448251c2.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "0aa1592f08da9fb3f8eb.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "09abb68df9f673e4a8c8.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "4cc4e2c9de788827f1e3.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "a7952712f83a621ac9b2.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=0": {
+   "file": "27ce876c252fb9604350.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=1": {
+   "file": "06d74ca1e8e841827cb2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=10": {
+   "file": "ec90d7b138f34f6c5314.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=11": {
+   "file": "0f8bd27d7470e674e39d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=12": {
+   "file": "9ce8cdc84ebc09fecaae.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=13": {
+   "file": "e932addabcf59c75c590.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=14": {
+   "file": "8bbffa9d949391618231.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=15": {
+   "file": "e8e75f74d6d37acc0c28.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=16": {
+   "file": "28f3cfbd25ed711ff81d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=17": {
+   "file": "7f438248ad1cd40d6c3d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=18": {
+   "file": "7a8912c7f9430ac55f99.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=19": {
+   "file": "b504754620d5f4ed57ff.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=2": {
+   "file": "96051e0a75cf00397b7a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=20": {
+   "file": "cf2ededecc472c5c88dd.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=21": {
+   "file": "8b9e639c8a2319232722.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=22": {
+   "file": "a4aa3037b7bf90feb880.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=23": {
+   "file": "b6b939c5bb7ca2caa6c3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=24": {
+   "file": "713be75dc3451b10b338.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=25": {
+   "file": "11c8b53c951c45d44307.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=26": {
+   "file": "c4da725153df6ec11fff.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=27": {
+   "file": "5f380f043cf81cbcf683.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=28": {
+   "file": "feadaac669bbc234c17a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=29": {
+   "file": "b90e01a5cb9b193c8159.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=3": {
+   "file": "efaf26f52d6582957db9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=30": {
+   "file": "4c7b2b68be919ef68e0e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=4": {
+   "file": "7afd6bdc390c5c56ca4e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=5": {
+   "file": "5a2443ab79efcf53ba79.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=6": {
+   "file": "c86faa2560b6a958258e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=7": {
+   "file": "00e70eb5b2e700d4c4c6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=8": {
+   "file": "165898d7ac3f4fa8f988.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked&step=9": {
+   "file": "e89c10949f7c688138d3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "62c313d2a4df4067781b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "eaf86087c97fe8fa351f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "5b2115a925de0850e3b3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "05dc5525d51534cff553.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "245b83a7f8c9c5386b36.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "80d3d5a3ec0ba491d3b5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "7ec3e60c44616ae04c53.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "3cb74f5737b596a129bd.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "a3caac6bf2913e6dbd4f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "d6adf54ee18b0cd493ca.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "f3c8f228538358576c24.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "a652166ae3edabf39e18.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "7d81549455ebcab41f89.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "58e297b97de238398ece.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "b9041a36c3493a963e2d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "180672ef3da5b9d42a43.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "a1addb8b4300e6c0b616.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "f1f870713cabbaaf45aa.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "e4ea73b9a196d98d478d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "efc3f7733e44527f6084.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "301df77b1ba96fe5cb30.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "4844eefc3891f356765a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "cd8eca9c4b848eee39a5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "e62f5625f99d0afda4a9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "570f4fd21546559a915c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "53542b11c6fc44c82db2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "097ffe110d738773eb10.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "429441e9768fe253b673.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "90c7c75b2cdf26f875ee.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "75092898196c764e2a0a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "cea8f3da08babdeed676.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "1706ff3ca2f640a84bae.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "7424b263fd416907122a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "b72914f63bf1ad87ca6d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "7e70fd33b68820542b9b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "dfb39eaf426937af60da.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "7a2dd6fb18596d382bc2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "16a0bee1c3967152be67.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "e9c01ca0a69a550b7035.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "5ce3e8b0c08a9c94ca30.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "7b98ff57735970bd3d4b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "d34bd00a40e1df4e0736.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "049c084de9a1cfd577c1.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "c0e5452b202560006058.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "fc896f5e46c4eda59b78.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "903e980acd89abe9367f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "5217705ef9220262ac37.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "7a9012be9218baf7c326.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "5243c65cfa874fd26d61.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "2e77cbff2ac631b6ec1e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "c37633930e6764ce0cde.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "13530823ed19d1ae98c9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "19c87c17254ca5edf949.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "686e93bf4de8b20003c6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "a0bbb26a635b229f285d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "1d0011389f9860d5507b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "9f91730fd9d1bf15084b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "af2a9a14236945e5b287.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "52fb7f756f175b84792e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "b060e99bcef6efa1890f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "289122f85d6fc323ad2c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "f7668dbd16131829949b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "b6ab98dbc08b0aa913f3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "b21f7a3a5f7dd9755aa6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "7e21e675c34816ae4534.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "ede5201ae3ce599c9b43.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "d77c2053eea2b2ec3283.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "ec716b63796727c485a8.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "492c350007fb59515702.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "d5a04136cda754395a1f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "121f459ea478b8ce0c43.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "24ae90aa6cd955a4af14.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "517172c8855902da8335.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "ab36f56f0f1b0ef4fd04.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "7a9492ed13921f2ba703.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "106f1c23349c49be639e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "a2db6c1c41b49246a6d9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "8a5d178b60248a07e1f9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "2d713cec181abf653559.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "ca8ffd9efb4bf20b8f29.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "950e19b19d4784243dd8.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "d8db367d81ce47a51dc6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "39278571d8cf3f2feca9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "666e827f1b8838c22e38.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "0be2274cb6b17cec4e92.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "5ed98c954771e42639ce.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "e966fff71519178d1001.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "3dcdba37eb703e033040.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "e5c50f0f6627d8262f1a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "2d2eaf8cd41245de4f53.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "848debb4931d8faea04b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "3a4a578e4d89f931333e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "76afd646cc8c03b8f5e1.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "a1ac6c93f0711bd1c0a4.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "90b6d745b206f42017db.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "d2bf360330eb92da655d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "a61423ae5da8ff5c9685.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "8bcbd06b490c0ab0099e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "f1ee46ea814f6f438ce3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "e9066fb4e57d2ec20037.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "94993296ab748b9acd7f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "ba7e68c7ba2d8d910689.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "29b9765a164cd6a2d017.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "bb357d57d35086b6bccb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "d96f29345c9b996217ff.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "c713801b92f15b0d31cb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "45c93994404d5d0d4fba.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "4acf6c47d673e062a583.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "72776f9f3afdaa419312.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "f155a4bd3d0cd93d2a8e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "05e45c58f9d9447f5ace.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "b9e957914e1b10c2953f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "c4a45f62a9528cff49a1.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "550ee8ff2806cf8c47fc.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "bf73722b9fe8c7e6be1f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "36c6b8b9e0188537855d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "71bf53616dda27fbb6bb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "ff0b7b4a3cf7c6a18cd5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "3117efb4a821a9cec784.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "54e7ca0a295d68c9985c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "00d16a3de5fd1295f47e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "6821675de013740b9ef4.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "518b420e3ce016999524.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "139b61c0500e42aa1d8d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "396ccb4db9210b7a165e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "316705c2e467ca61076b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "3d120104133150ae9055.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "19b105731cc9c52e97fa.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "18c06abb289a78f8442b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "3fc5d5d2526d569a8c3b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "90249ce55c3994ea34cc.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "b9af943aa22f2bf335d4.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "2180d40e8ec72c91acc3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "00f719817be207cd1060.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "4b430a2c771f8ec43cd2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "dc44c868f58f8c742323.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "3faa3384f4873ae78df3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "589ad1ba1e7ed909c2f2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "469b4a218a0d7c044547.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "22d36829ff4a6222c662.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "33691b82371f3c4210eb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "9074585bfaea1a9fcecd.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "0cd2ac0d3299473b8a42.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "1443537b225db2df1ae0.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "459f6113483427eabc86.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "4a5c0e1139dea530cba8.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "74223554e4260316b891.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "67c4190d716dc0124a75.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "8d08645252577a2fb200.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "0eed378c915e87b1b30e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "a828d074b4f8b5830e4c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "50c88f6945e8856549d9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "0759d1e1a0f0a497ba8d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "c95b1fa576a67e1ae9d9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "3eb3dcf6232a020f368c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "4a73f7a217e88b5d778c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "3bab3d932c988b11586d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "4d2625a3f14f4ad02799.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "8014fd30c0d083e90b59.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "3a478fc24e0803fce984.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "c9a629889f48abb900a5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "9ab13f7a8a53f08c7882.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "8d83c856f8b360a6bc05.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "2bcda1978c8cd98937ca.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "c888651b8fd8e2bedda4.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "1740a12655b3f2c77358.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "46e14b3d4a50595f19fb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "c12e90655a119ee6a87a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "fc395c6c7fee7c192b63.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "d7dcca1d28d7870196d5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "fbd99692964e4a381acc.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "6c0d07b85d2af4670242.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "16d6a4394ee7444eb745.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "aa7843e2a079c45ababb.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "31c6fc06f1f244a498b6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "9207b4472328c4e8ad08.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "7d6006b229fc28d856ff.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "de77f8f521a5634c76ef.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "d23f27e61b4f463a68a7.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "3004d0da3e64aebda443.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "5a618f7cfb33f9d124dc.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "7673d4b2bd9fa3fbf565.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "f727990eb4f2ee355a7a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "94150254da2be38022c0.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "8e3e3a8d7f9716e41287.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "71b8e2e84e2e94445830.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "702bcfdf71e38df5aab9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "074800c772f85e6e884e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "5b5aa558a7fdcb6bd888.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "0b1714561a19705e64fd.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "c96ed65d653ce30f73a3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "15b357efec9020cd398b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "d67ca3b476238687a5c4.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "34dd1930d5c2cc3177d3.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "91961eb44b39dbfc6399.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "91bb0a68f6ceddfbc96d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "12b1f76a27e9b4123ab1.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "def6433d8b50aebb708b.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "2046fad9fb82f9ad1340.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "cce1e71deee2494700c5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "fc4896e0c43707b75393.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "ad9fba8d6cfed392abaa.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "38427f52d9d7cc3b74bc.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "8edfa56e9b5262bbcd9a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "37da7c7fe14b0b83f447.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "570d65d759a257917c72.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "68e4336d6b49dc9787c1.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "4cc9c7fa18c9d53d7b59.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "4bf611b5383688ed5e57.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "5d7ae72ed47a03470d88.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "ed9872932cc1b066c338.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "df14aed7d3d2b8077208.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "b43e4a0f9d0d8c813584.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "1e18c0e673b429a7eb26.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "4b9ea19191c69893405f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "0bb559e7c1fbdd763332.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=0": {
+   "file": "4f623a4fd1b8e84a1984.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=1": {
+   "file": "ef8d8caa27da473ea632.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=10": {
+   "file": "2e9a9388376df68ead42.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=11": {
+   "file": "67be15a2f6963e38607a.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=12": {
+   "file": "c91affca5d11ebff82da.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=13": {
+   "file": "607933bc19459de0f448.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=14": {
+   "file": "ba50748de58bb9d5ad49.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=15": {
+   "file": "ea2cc5c997e210886925.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=16": {
+   "file": "e5effe79d3c4b2ebe86d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=17": {
+   "file": "31be8d6072be9be91e57.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=18": {
+   "file": "6a3c31fd78c3e6e42575.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=19": {
+   "file": "3e7465c92a0e54341aa0.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=2": {
+   "file": "6000f1b7a545cdb6aaf9.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=20": {
+   "file": "d04be5043218301c2845.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=21": {
+   "file": "bb6545935593b7bf9f3d.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=22": {
+   "file": "ca42b6845096218a494c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=23": {
+   "file": "a90d369e8423ccc8abde.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=24": {
+   "file": "1a83245c80b8f8794ec5.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=25": {
+   "file": "fb2758d11955add2d6a0.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=26": {
+   "file": "6bd98a147dc62bb0ac61.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=27": {
+   "file": "b4bc8f24fc0c1951dfec.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=28": {
+   "file": "998d746c67065517e3f6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=29": {
+   "file": "766d5801e20e6ce1cc2c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=3": {
+   "file": "4f3a924af012deedda7e.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=30": {
+   "file": "bff40444aae13d0470ae.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=31": {
+   "file": "dff0292b26599934ac33.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=32": {
+   "file": "814b7ce69e684a76e117.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=33": {
+   "file": "fc01780df4a7f001137f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=34": {
+   "file": "78d974ae3de7c75fce41.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=35": {
+   "file": "a5f258ee0dd94873b628.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=4": {
+   "file": "fb238df141e6028dacd6.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=5": {
+   "file": "b53e87939b993d5e6155.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=6": {
+   "file": "070aca29f7f64db057c2.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=7": {
+   "file": "b7e28cef0138912d947f.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=8": {
+   "file": "3e77663a05fc6d058283.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/raster?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked&step=9": {
+   "file": "5d286d7f168495922e8c.png",
+   "type": "image/png"
+  },
+  "/v1/nowcast/segments?run_id=CHN-20260701T0040Z-sky1.0-twin1.0-flash0.0-baked": {
+   "file": "b620d3fec38c9c810dc8.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "777452ac4d67c93281ca.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "0efcee7c16cd99340a4c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "46677782edcdd2a96cbd.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "2502e77bbe94ce32f2f3.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "3c8e5ea38026872879c0.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "70cc8c7c24ef7d71caae.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "f4eec332b0836f018707.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "82abdd2aa2583495b35a.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "fec667754f6565e465e5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "8b041a6cf483578e9d74.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "06f0d8b8741336d5a796.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "733aaac5a0f01d7b2a0b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "dc011c971c963e5e8c6b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/surcharge?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "90eef0fefe6ed7424745.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "c42a8ad47ff8e692cf6f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "f1d01e0995bf2f98ac07.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "3d23c684c2cdb0f6446b.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "e7f7454ae8206d9f403c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "8daff8c29323885ff173.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "d3f0939f681eae68a406.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "50e6e3cd25317cdacfbb.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/onboard/city/chennai": {
+   "file": "4e8c9c92f86dffe412f3.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/cycles": {
+   "file": "80dc0b1119435ebd757d.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "98012e5c18c067a846be.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "d6b16c7724dcf3ee6627.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "ddc53bed83765c5e0075.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "fdc665f35a7e5b2b86f6.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "47d0bbeef001a4efff59.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "1d4c9030dae70343339c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps/map?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "42528495720801d80581.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "45757376737bb9271529.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "9f6d6ffa75b2bd7f8936.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "564d0f8872ba96a24e8f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "b724355dd174e86c1a72.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "2a5014383363d005129e.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "2c436e425288765aae4c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/pumps?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "f3a6f525248ef1cdd8f8.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/replay/bundles": {
+   "file": "473d08f223f1d4398627.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar": {
+   "file": "07f3726380516b3bc3e5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/0.png": {
+   "file": "b86013409d994763c8b9.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/1.png": {
+   "file": "e8c891cfa0370b377cca.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/10.png": {
+   "file": "489348973336ac31d21f.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/11.png": {
+   "file": "3a58560c1b403b1a8037.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/12.png": {
+   "file": "81ee586cf07eaedcd8b3.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/13.png": {
+   "file": "ecb305bacc8e8aed248e.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/14.png": {
+   "file": "06d3ff3c1ba2fdba73d2.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/15.png": {
+   "file": "9f4da8fec51aaeb1c8ba.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/16.png": {
+   "file": "38ff795fd1cbff8994de.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/17.png": {
+   "file": "f79a9302c44f01050957.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/18.png": {
+   "file": "64b019669d9a5eb9347a.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/19.png": {
+   "file": "e3cf959fc8c2d6f111dd.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/2.png": {
+   "file": "687e29b67b45165a13f2.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/20.png": {
+   "file": "f2732521a1b8f40dd35c.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/21.png": {
+   "file": "c2cf2b20f2c9c20be963.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/22.png": {
+   "file": "ae1e5a4bc9b17d2eb8a9.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/23.png": {
+   "file": "c6001c5a79d23275bb78.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/24.png": {
+   "file": "78e5def65ba1f02e4cfa.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/3.png": {
+   "file": "81e5c6d1b3031093ec7f.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/4.png": {
+   "file": "1037387304fdfeefc884.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/5.png": {
+   "file": "49d7323a0fddd10d4227.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/6.png": {
+   "file": "5d73959a72aaa0cadaa5.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/7.png": {
+   "file": "c343d8a8ea79bef3379f.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/8.png": {
+   "file": "1d5318efb5288d73b8e6.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/9.png": {
+   "file": "4949acbbf4527e7a31e9.png",
+   "type": "image/png"
+  },
+  "/v1/replay/bundles/MUM-2019-07-02/radar/accumulation.png": {
+   "file": "8c12111e6894fd4c278d.png",
+   "type": "image/png"
+  },
+  "/v1/replay/clock": {
+   "file": "2e7dce04a58cbe265cc9.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/replay/ground-truth": {
+   "file": "2a9abd75cc151818fb10.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/replay/ground-truth?bundle=MUM-2019-07-02": {
+   "file": "cf7bfd0627d0be2114f9.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/route/facilities?city=mumbai": {
+   "file": "bb4f7335c31720c0ba3e.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs": {
+   "file": "08a66e36f2a67a517149.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "af50e852b1d89510bd93.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "5b49f8ff419e12c201be.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "d274910bfc7ea3aff217.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "76e2b8222889a56e57eb.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "287e62a42423a07a4204.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "1b1cefd02d981707f9d6.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs/MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "85266b64908953a4ccd7.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs?city=all&limit=200": {
+   "file": "80190c28bef4a5ab37ae.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs?city=mumbai": {
+   "file": "2fe47a723e3199356fab.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/runs?limit=1": {
+   "file": "19f3710bd92e5083f10a.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/verification": {
+   "file": "8236f927964c09a3e4d5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/verification/rain-skill?event=MUM-2019-07-02": {
+   "file": "194347ff6884b68560ee.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/verification?event=MUM-2019-07-02": {
+   "file": "a01d25eb45ce476caf96.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0040Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "1c5b09c90f8ae349086f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0110Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "43760a11a05a0b6099cd.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0140Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "489f17945f6dce63539f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0210Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "16e5d0d8f0099379ea65.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0240Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "ac72074288d2d2583b03.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0310Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "108f0dc033e305846c74.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin?run_id=MUM-20190702T0340Z-sky1.0-twin1.0-flash0.1-baked": {
+   "file": "e6aafd9514306ac04844.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/healthz": {
+   "file": "bc862a33cabbfc1a7e7c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts": {
+   "file": "f8dbc50770c7a78490d5.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/alerts/delivery?limit=60": {
+   "file": "4ba170edb2069ff8f71c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/drains/health?limit=6000&order=learned": {
+   "file": "bc1d273da6da273e36c0.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds?city=mumbai": {
+   "file": "e46c8aa6aa88e5bdbb35.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/observations": {
+   "file": "8c9b4148b1ef922e108d.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/whatif/twin": {
+   "file": "55b5ada3272fb0c67f1f.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/raster/bounds": {
+   "file": "02556dc861a64a0e750c.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  },
+  "/v1/nowcast/segments?city=mumbai": {
+   "file": "48ab0c11c0b76f2799db.gz",
+   "type": "application/json",
+   "encoding": "gzip"
+  }
+ }
+}

@@ -101,6 +101,12 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - With no fresh radar a live cycle falls back to NWP alone and says so.
 - Screens label a radar-driven run "Live forecast, radar nowcast" and link "Radar: RainViewer" as its terms require.
 
+**2026-10-11 (ADR-0097, ADR-0098): the site works with no server, and the satellite view is visible.**
+- Railway's trial ended on 2026-10-08 and Railway stopped the API, which blanked every map. The site now carries a recording of what the API answers for the seven baked 2 July 2019 cycles (`apps/command/public/mirror`, 443 answers, 10.5 MB gzipped, written by `scripts/record-mirror.mjs`). A guard on `window.fetch` serves it when the server does not answer and says so in a pill. Live runs, reports, routes and what-if still need the server.
+- Measured against the stopped service: every screen loads, the console from 54 stored answers. Weather is read from Open-Meteo directly when the API is away.
+- The API fits Railway's Free plan only just: 478 MB peak under a 512 MB cap, cgroup peak at the limit, 119 MB of it imports. The Railway image now bakes the Mumbai city and sets `MALLOC_ARENA_MAX=2`; a deploy also needs the service variable `VARUNA_CITY_DIR=/app/city`.
+- Satellite imagery reads as a photograph: scrim 30 % to 10 %, dry streets at 30 % over imagery, light theme 0.3 to 0.8, the dashboard on Google's satellite view.
+
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
 - [ ] R1 A Mumbai replay streams through the same pipeline as live data; the mode banner reads "Replay 30×" and the run stamp says "baked" or "live".

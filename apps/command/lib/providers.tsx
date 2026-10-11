@@ -3,9 +3,14 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
+// First, for its side effect: the fetch guard has to be on `window.fetch` before any screen's
+// effects run, and a module's top level runs when the bundle loads, ahead of every effect.
+import "@/lib/api/resilience";
+
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CommandPalette } from "@/components/varuna/command-palette";
+import { ServerStatusBanner } from "@/components/varuna/server-status-banner";
 import { SettingsDrawer } from "@/components/varuna/settings-drawer";
 import { ShortcutsOverlay } from "@/components/varuna/shortcuts-overlay";
 import { useGlobalShortcuts } from "@/lib/shortcuts";
@@ -48,6 +53,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <CommandPalette />
         <ShortcutsOverlay />
         <SettingsDrawer />
+        <ServerStatusBanner />
         <Toaster theme="dark" position="bottom-center" closeButton={false} />
       </TooltipProvider>
     </QueryClientProvider>

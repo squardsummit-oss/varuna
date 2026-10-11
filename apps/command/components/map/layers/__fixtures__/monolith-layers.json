@@ -107,7 +107,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -898,7 +899,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "probability": {
   "layers": [
@@ -1008,7 +1009,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -1779,7 +1781,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "public": {
   "layers": [
@@ -1889,7 +1891,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "streets-wet",
@@ -2547,7 +2550,7 @@
   "tooltip": null,
   "onClick": false,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "diff-half": {
   "layers": [
@@ -2657,7 +2660,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -3295,7 +3299,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "diff-full": {
   "layers": [
@@ -3405,7 +3409,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -4043,7 +4048,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "hero": {
   "layers": [
@@ -4508,7 +4513,7 @@
   "tooltip": null,
   "onClick": false,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "motion-600ms": {
   "layers": [
@@ -4618,7 +4623,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -5409,7 +5415,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "motion-1000ms": {
   "layers": [
@@ -5519,7 +5525,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -6310,7 +6317,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "motion-2000ms": {
   "layers": [
@@ -6420,7 +6427,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -7211,7 +7219,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "reduced": {
   "layers": [
@@ -7321,7 +7329,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -7972,7 +7981,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "focus": {
   "layers": [
@@ -8082,7 +8091,8 @@
     "jointRounded": true,
     "pickable": false,
     "widthMinPixels": 0.6,
-    "widthUnits": "pixels"
+    "widthUnits": "pixels",
+    "opacity": 0.3
    },
    {
     "id": "drains",
@@ -9041,7 +9051,7 @@
   ],
   "onClick": true,
   "onViewStateChange": true,
-  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/30\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
+  "html": "<div class=\"absolute inset-0 bg-[var(--ink)]\"><div aria-hidden=\"true\" class=\"pointer-events-none absolute inset-0 bg-[var(--ink)]/10\"></div><p class=\"type-micro text-text-3 pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 py-2\">Imagery: Esri, Maxar · Roads: OpenStreetMap · Terrain: Copernicus GLO-30</p></div>"
  },
  "scrub-rebuilt": [
   "streets-wet",

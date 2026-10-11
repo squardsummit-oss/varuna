@@ -524,7 +524,7 @@ export function CityMap({
 
   const streetLayers = useMemo(
     () => [
-      ...(void theme, dryStreetsLayers({ baseSegments, fade: fadeStreets })),
+      ...(void theme, dryStreetsLayers({ baseSegments, fade: fadeStreets, overImagery: imagery })),
       ...drainsLayers({
         drains,
         show: showDrains,
@@ -542,6 +542,7 @@ export function CityMap({
       fadeStreets,
       fadeDrains,
       theme,
+      imagery,
     ],
   );
 
@@ -799,20 +800,18 @@ export function CityMap({
       />
 
       {imagery ? (
-        // The scrim. The imagery is already drawn dim; this takes the last of its contrast out of
-        // the midtones so the depth ramp has the only saturated colour on the screen. It is
-        // `pointer-events-none` because the map underneath still has to be draggable.
-        //
-        // Lighter in hero mode: the landing page lays its own wash across the left of this map
-        // for the headline to sit on, and the full scrim on top of that left the imagery
-        // invisible. The hero wants the city to look like somewhere; the console wants it to
-        // stay out of the water's way.
+        // The scrim: a light wash that takes the glare off the photograph so the depth ramp
+        // stays the most saturated colour on screen. It was 30 % until 2026-10-11, when the team
+        // asked for a satellite view they could see; at 30 %, over a near-opaque street network,
+        // the imagery read as a dark map. `pointer-events-none` because the map underneath still
+        // has to be draggable. Lighter still in hero mode, where the landing page lays its own
+        // wash across the left for the headline.
         <div
           aria-hidden="true"
           className={
             interactive
-              ? "pointer-events-none absolute inset-0 bg-[var(--ink)]/30"
-              : "pointer-events-none absolute inset-0 bg-[var(--ink)]/15"
+              ? "pointer-events-none absolute inset-0 bg-[var(--ink)]/10"
+              : "pointer-events-none absolute inset-0 bg-[var(--ink)]/5"
           }
         />
       ) : null}

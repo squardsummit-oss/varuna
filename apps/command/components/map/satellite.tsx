@@ -105,7 +105,10 @@ const TILE_SIZE = 256;
  * the only saturated thing (UI_UX.md 4).
  */
 const IMAGERY_OPACITY = 1;
-const IMAGERY_OPACITY_LIGHT = 0.3;
+/** Raised from 0.3 on 2026-10-11, when the team asked for a satellite view they could see: at
+ * 0.3 the light theme showed almost none of the photograph. 0.8 keeps it a photograph, lifted a
+ * little toward the mist ground so the 5-15 cm blue still separates from it. */
+const IMAGERY_OPACITY_LIGHT = 0.8;
 
 /** Under a depth raster the light imagery drops to this share of its strength. Dark stays at 1
  * for the reason above. */

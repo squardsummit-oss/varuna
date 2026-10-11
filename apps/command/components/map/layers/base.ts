@@ -42,18 +42,32 @@ export interface DryStreetsLayerOptions {
   baseSegments: readonly SegmentPath[];
   /** 0 to 1 opacity, for the onboarding wizard's layer stack (motion M19). 1 everywhere else. */
   fade?: number;
+  /**
+   * True when satellite imagery is drawn underneath. The photograph already shows every road, so
+   * the network is drawn as a faint trace over it instead of a near-opaque line on each street,
+   * which painted the city over in `--depth-dry` and left little of the satellite view to see.
+   */
+  overImagery?: boolean;
 }
+
+/** How much of the dry network shows over satellite imagery. */
+export const DRY_OVER_IMAGERY = 0.3;
 
 /**
  * The whole street network, dim. This is the geography the operator orients by, and it is the
  * same 21,296 segments the city pipeline derived - not a tile service's idea of Mumbai.
  */
-export function dryStreetsLayers({ baseSegments, fade = 1 }: DryStreetsLayerOptions): unknown[] {
+export function dryStreetsLayers({
+  baseSegments,
+  fade = 1,
+  overImagery = false,
+}: DryStreetsLayerOptions): unknown[] {
   if (baseSegments.length === 0 || fade <= 0) return [];
+  const opacity = fade * (overImagery ? DRY_OVER_IMAGERY : 1);
   return [
     new PathLayer<SegmentPath>({
       id: "streets-dry",
-      ...(fade < 1 ? { opacity: fade } : {}),
+      ...(opacity < 1 ? { opacity } : {}),
       data: baseSegments as SegmentPath[],
       getPath: (d) => d.path,
       getColor: DRY_STREET,
