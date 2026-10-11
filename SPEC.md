@@ -106,6 +106,7 @@ This file is the single source of truth for building the VARUNA prototype. The b
 - Measured against the stopped service: every screen loads, the console from 54 stored answers. Weather is read from Open-Meteo directly when the API is away.
 - The API fits Railway's Free plan only just: 478 MB peak under a 512 MB cap, cgroup peak at the limit, 119 MB of it imports. The Railway image now bakes the Mumbai city and sets `MALLOC_ARENA_MAX=2`; a deploy also needs the service variable `VARUNA_CITY_DIR=/app/city`.
 - Satellite imagery reads as a photograph: scrim 30 % to 10 %, dry streets at 30 % over imagery, light theme 0.3 to 0.8, the dashboard on Google's satellite view.
+- **2026-10-12: the API moved to a new Railway account** (squardsummit@gmail.com, project `varuna-api`), built from `squardsummit-oss/varuna` on push, at https://varuna-api-production.up.railway.app with a 0.5 GB volume at `/data` and app sleeping on. The image returns freed memory to the system (Arrow on the system allocator, mmap above 64 KB, trim above 128 KB): 269 MB after every screen's requests, 383 MB peak under a burst, against 0.5 GB.
 
 **Demo readiness (the eight things that must be true when judges arrive — mirrors blueprint §11.3):**
 
