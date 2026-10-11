@@ -90,3 +90,19 @@ def test_the_laptop_default_still_accepts_a_build(
     assert res.status_code == 202, res.text
     assert res.json()["job_id"] == "onboard-test"
     assert len(started) == 1 and started[0]["city"] == "chennai"
+
+
+@pytest.mark.parametrize(("flag", "expected"), [("0", False), ("1", True)])
+def test_the_city_status_says_whether_this_api_builds_cities(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    fresh_settings: None,
+    flag: str,
+    expected: bool,
+) -> None:
+    """The wizard reads `enabled` on load, so a deployment that builds nothing shows a disabled
+    Start and its recorded build instead of a refusal after the click."""
+    monkeypatch.setenv("VARUNA_ONBOARD_ENABLED", flag)
+    res = client.get("/v1/onboard/city/chennai")
+    assert res.status_code == 200, res.text
+    assert res.json()["enabled"] is expected

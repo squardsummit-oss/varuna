@@ -719,6 +719,8 @@ function OnboardView({ city }: { city: string }) {
   const built = job?.built ?? false;
   const finished = live?.status === "finished";
   const running = live?.status === "running" || live?.status === "queued" || starting;
+  // The API said on load that it builds no cities (city-in-a-box off on the public server).
+  const buildsOff = job?.enabled === false;
   // Built, no job in this API process, and no record of the build that wrote it: the case task
   // D-21 was about. Whether it also has a forecast is `hasRun`, not this.
   const cached = job?.status === "none" && built && !previous;
@@ -954,6 +956,10 @@ function OnboardView({ city }: { city: string }) {
     setStarting(true);
     setError(null);
     try {
+      // Asked first, cleared after: a refused start (a deployment that builds no cities, a city
+      // already building elsewhere) leaves the build and forecast on screen as they were, rather
+      // than an empty map and an empty panel.
+      const next = await startOnboard(city, designStorm);
       asked.current.clear();
       fallbackAsked.current = null;
       setRoads(null);
@@ -964,7 +970,7 @@ function OnboardView({ city }: { city: string }) {
       setDepth(null);
       setNoRun(false);
       setPicked(null);
-      setJob(await startOnboard(city, designStorm));
+      setJob(next);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : String(failure));
     } finally {
@@ -1092,10 +1098,21 @@ function OnboardView({ city }: { city: string }) {
               description="Open data in, a first street flood forecast out."
               honesty="Inferred drain graph"
             />
-            <Button onClick={() => void start()} disabled={running} aria-busy={running}>
+            <Button
+              onClick={() => void start()}
+              disabled={running || buildsOff}
+              aria-busy={running}
+              aria-describedby={buildsOff ? "onboard-builds-off" : undefined}
+            >
               <MapPinned aria-hidden="true" />
               {running ? `Building ${name}` : `Start onboarding ${name}`}
             </Button>
+            {buildsOff ? (
+              <p id="onboard-builds-off" className="type-small text-text-2">
+                New builds run on the demo laptop, where {name} takes about 3 minutes. This server
+                shows the build recorded there.
+              </p>
+            ) : null}
           </div>
 
           {error ? (

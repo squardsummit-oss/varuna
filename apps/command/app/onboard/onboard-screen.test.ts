@@ -49,6 +49,7 @@ function job(over: Partial<OnboardJob>): OnboardJob {
     designStorm: null,
     fromRecord: false,
     built: false,
+    enabled: true,
     previous: null,
     lastAttempt: null,
     ...over,

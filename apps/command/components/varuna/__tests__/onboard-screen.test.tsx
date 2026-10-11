@@ -41,6 +41,7 @@ function job(overrides: Partial<OnboardJob> = {}): OnboardJob {
     designStorm: null,
     fromRecord: false,
     built: false,
+    enabled: true,
     previous: null,
     lastAttempt: null,
     ...overrides,
@@ -241,6 +242,61 @@ describe("OnboardScreen", () => {
     const start = screen.getByRole("button", { name: "Start onboarding Chennai" });
     expect(start).toBeEnabled();
     expect(start).toHaveAttribute("aria-busy", "false");
+  });
+
+  it("disables Start and says where builds run when the API builds no cities", async () => {
+    const fetchMock = stubApi({
+      job_id: null,
+      city: "chennai",
+      status: "none",
+      built: true,
+      enabled: false,
+      previous: null,
+    });
+    renderOnboard();
+    await settle(fetchMock);
+    const start = screen.getByRole("button", { name: "Start onboarding Chennai" });
+    await waitFor(() => expect(start).toBeDisabled());
+    expect(screen.getByText(/New builds run on the demo laptop/)).toBeInTheDocument();
+    expect(start).toHaveAttribute("aria-describedby", "onboard-builds-off");
+  });
+
+  it("keeps the build on screen when the API refuses a start", async () => {
+    const fetchMock = stubApi({
+      job_id: null,
+      city: "chennai",
+      status: "none",
+      built: true,
+      enabled: true,
+      previous: null,
+    });
+    const answer = fetchMock.getMockImplementation()!;
+    // The street layer answers as a built server's does, so the screen keeps it; every other
+    // layer 404s and is retried by design, so only the streets are counted.
+    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (init?.method === "POST") {
+        return json(
+          { error: { code: "onboard_disabled", message: "Building a new city is switched off." } },
+          403,
+        );
+      }
+      if (String(input).includes("/layers/segments")) {
+        return json({ type: "FeatureCollection", features: [] });
+      }
+      return answer(input);
+    });
+    renderOnboard();
+    await settle(fetchMock);
+    const layerAsks = () =>
+      fetchMock.mock.calls.filter(([input]) => String(input).includes("/layers/segments")).length;
+    await waitFor(() => expect(layerAsks()).toBe(1), LOADED);
+    const before = layerAsks();
+    await act(async () => {
+      screen.getByRole("button", { name: "Start onboarding Chennai" }).click();
+    });
+    await waitFor(() => expect(screen.getByText("Building a new city is switched off.")).toBeInTheDocument());
+    // A refused start clears nothing, so nothing is asked for again.
+    expect(layerAsks()).toBe(before);
   });
 
   it("shows the honest empty states until a build has run", () => {

@@ -61,10 +61,10 @@ def onboard(body: OnboardRequest) -> dict[str, Any]:
         raise api_error(
             403,
             "onboard_disabled",
-            "City-in-a-box is switched off on this public deployment. A Chennai build needs about "
-            "320 MB of terrain tiles, OSM responses and outputs, and the volume here is 500 MB "
-            "shared with the Mumbai demo. Run the wizard against a local API (make demo), or "
-            "build from the command line with make city CITY=chennai.",
+            "Building a new city is switched off on this public server: a build needs about 1 GB "
+            "of memory and 320 MB of downloads and outputs, more than it has. This page shows the "
+            "Chennai build recorded on the demo laptop. To build one yourself, run the wizard "
+            "against a local API (make demo), or run make city CITY=chennai.",
         )
 
     city = (body.city or "chennai").strip().lower()
@@ -144,6 +144,12 @@ def onboard_latest(city: str) -> dict[str, Any]:
             "unknown_city",
             f"{city!r} is not a city name. Ask for one of {', '.join(known_cities())}.",
         ) from error
+    # `enabled` tells the wizard before anyone presses Start whether this API builds cities at
+    # all, so a deployment with city-in-a-box off shows its recorded build and a disabled button
+    # rather than a refusal after the click.
+    from varuna_schemas.settings import get_settings
+
+    enabled = get_settings().varuna_onboard_enabled
     state = latest_job(city)
     if state is None:
         return {
@@ -151,8 +157,10 @@ def onboard_latest(city: str) -> dict[str, Any]:
             "city": city,
             "status": "none",
             "built": _built(city),
+            "enabled": enabled,
             **previous_build(city),
         }
     payload = state.to_dict()
     payload["built"] = _built(city)
+    payload["enabled"] = enabled
     return payload
